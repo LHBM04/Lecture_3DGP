@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "ColorRGB.h"
 #include "RendererOptions.h"
 
+class Matrix4x4;
 class Mesh;
 
 class Renderer
@@ -30,7 +31,7 @@ public:
 	void PostRender();
 
 	void Clear();
-	void DrawMesh(const Mesh& mesh_);
+	void DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_);
 	void Present();
 
 private:

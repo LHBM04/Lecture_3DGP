@@ -1,7 +1,9 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Renderer.h"
+
 #include "RenderSystem.h"
 #include "RendererOptions.h"
+#include "Matrix4x4.h"
 #include "Mesh.h"
 
 namespace
@@ -315,7 +317,7 @@ void Renderer::Clear()
 	RenderSystem::commandList->ClearRenderTargetView(descriptorHandle, clearColorValues, 0, nullptr);
 }
 
-void Renderer::DrawMesh(const Mesh& mesh_)
+void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
 {
 	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
 	{
@@ -331,9 +333,12 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 
 	const UINT64 vertexBufferSize = static_cast<UINT64>(sizeof(MeshVertex) * vertices.size());
 	const UINT64 indexBufferSize = static_cast<UINT64>(sizeof(std::uint32_t) * indices.size());
+	const UINT64 constantBufferSize = (sizeof(Matrix4x4) + 255) & ~255; // 256-byte alignment
+
 	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
 	const D3D12_RESOURCE_DESC vertexBufferDesc = CreateBufferDesc(vertexBufferSize);
 	const D3D12_RESOURCE_DESC indexBufferDesc = CreateBufferDesc(indexBufferSize);
+	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
 	if (FAILED(RenderSystem::device->CreateCommittedResource(
@@ -359,6 +364,18 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 		return;
 	}
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&constantBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constantBuffer))))
+	{
+		return;
+	}
+
 	void* mappedData{ nullptr };
 	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
 	{
@@ -376,6 +393,14 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 	std::memcpy(mappedData, indices.data(), static_cast<size_t>(indexBufferSize));
 	indexBuffer->Unmap(0, nullptr);
 
+	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	std::memcpy(mappedData, &worldMatrix_, sizeof(Matrix4x4));
+	constantBuffer->Unmap(0, nullptr);
+
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBufferSize);
@@ -388,6 +413,7 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 
 	RenderSystem::commandList->SetGraphicsRootSignature(RenderSystem::meshRootSignature.Get());
 	RenderSystem::commandList->SetPipelineState(RenderSystem::meshPipelineState.Get());
+	RenderSystem::commandList->SetGraphicsRootConstantBufferView(0, constantBuffer->GetGPUVirtualAddress());
 	RenderSystem::commandList->RSSetViewports(1, &viewport);
 	RenderSystem::commandList->RSSetScissorRects(1, &scissorRect);
 	RenderSystem::commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -397,6 +423,7 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 
 	uploadResources.emplace_back(std::move(vertexBuffer));
 	uploadResources.emplace_back(std::move(indexBuffer));
+	uploadResources.emplace_back(std::move(constantBuffer));
 }
 
 void Renderer::Present()

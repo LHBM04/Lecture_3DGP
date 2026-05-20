@@ -3,6 +3,8 @@
 #include "Renderer.h"
 #include "RendererOptions.h"
 
+#include <d3dcompiler.h>
+
 namespace
 {
 	[[nodiscard]] D3D12_RASTERIZER_DESC CreateDefaultRasterizerDesc() noexcept
@@ -167,9 +169,15 @@ bool RenderSystem::CheckTearingSupport()
 
 bool RenderSystem::CreateMeshPipeline()
 {
+	D3D12_ROOT_PARAMETER rootParameter{};
+	rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter.Descriptor.ShaderRegister = 0;
+	rootParameter.Descriptor.RegisterSpace = 0;
+	rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
-	rootSignatureDesc.NumParameters = 0;
-	rootSignatureDesc.pParameters = nullptr;
+	rootSignatureDesc.NumParameters = 1;
+	rootSignatureDesc.pParameters = &rootParameter;
 	rootSignatureDesc.NumStaticSamplers = 0;
 	rootSignatureDesc.pStaticSamplers = nullptr;
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -208,10 +216,16 @@ struct PSInput
 	float3 color : COLOR;
 };
 
+cbuffer WorldBuffer : register(b0)
+{
+	matrix World;
+};
+
 PSInput VSMain(VSInput input)
 {
 	PSInput output;
-	output.position = float4(input.position.xy, input.position.z * 0.5f + 0.5f, 1.0f);
+	output.position = mul(float4(input.position, 1.0f), World);
+	output.position.z = output.position.z * 0.5f + 0.5f;
 	output.color = abs(input.normal);
 	return output;
 }
