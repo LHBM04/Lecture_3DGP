@@ -2,11 +2,11 @@
 
 #include "CameraProjection.h"
 
-class PerspectiveCameraProjection final : public CameraProjection
+class CameraProjection_Perspective final : public CameraProjection
 {
 public:
-	PerspectiveCameraProjection() noexcept = default;
-	explicit PerspectiveCameraProjection(float fieldOfView_) noexcept;
+	CameraProjection_Perspective() noexcept = default;
+	explicit CameraProjection_Perspective(float fieldOfView_) noexcept;
 
 	[[nodiscard]] float GetFieldOfView() const noexcept;
 	void SetFieldOfView(float fieldOfView_) noexcept;

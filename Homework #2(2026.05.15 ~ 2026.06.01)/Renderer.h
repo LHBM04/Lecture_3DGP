@@ -1,9 +1,10 @@
 ﻿#pragma once
 
 #include "ColorRGB.h"
+#include "Matrix4x4.h"
 #include "RendererOptions.h"
 
-class Matrix4x4;
+class Camera;
 class Mesh;
 
 class Renderer
@@ -31,7 +32,10 @@ public:
 	void PostRender();
 
 	void Clear();
-	void DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_);
+	void SetCamera(const Camera& camera_);
+	void SetObject(const Matrix4x4& worldMatrix_);
+	[[nodiscard]] float GetAspectRatio() const noexcept;
+	void DrawMesh(const Mesh& mesh_);
 	void Present();
 
 private:
@@ -42,17 +46,22 @@ private:
 	[[nodiscard]] bool Initialize(const RendererOptions& options_);
 	[[nodiscard]] bool CreateSwapChain(const RendererOptions& options_);
 	[[nodiscard]] bool CreateRenderTargetViews();
+	[[nodiscard]] bool CreateDepthStencilBuffer();
 	[[nodiscard]] bool CreateFrameResources();
 	[[nodiscard]] bool CreateFence();
 
 	void UpdateViewportAndScissor() noexcept;
 	void WaitForGPU() noexcept;
 	void ReleaseBackBuffers() noexcept;
+	void ReleaseDepthStencilBuffer() noexcept;
+	void SetCameraMatrices(const Matrix4x4& viewMatrix_, const Matrix4x4& projectionMatrix_);
 
 	RendererOptions options{};
 	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> renderTargetViewHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> depthStencilViewHeap;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers;
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>> commandAllocators;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadResources;
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence;

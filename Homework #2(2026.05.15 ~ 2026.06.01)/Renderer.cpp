@@ -1,6 +1,7 @@
 ﻿#include "Precompiled.h"
 #include "Renderer.h"
 
+#include "Camera.h"
 #include "RenderSystem.h"
 #include "RendererOptions.h"
 #include "Matrix4x4.h"
@@ -8,6 +9,22 @@
 
 namespace
 {
+	struct CameraConstants final
+	{
+		Matrix4x4 view;
+		Matrix4x4 projection;
+	};
+
+	struct ObjectConstants final
+	{
+		Matrix4x4 world;
+	};
+
+	[[nodiscard]] constexpr UINT64 AlignConstantBufferSize(const UINT64 size_) noexcept
+	{
+		return (size_ + 255) & ~255ULL;
+	}
+
 	[[nodiscard]] D3D12_RESOURCE_DESC CreateBufferDesc(const UINT64 size_) noexcept
 	{
 		D3D12_RESOURCE_DESC desc{};
@@ -29,6 +46,17 @@ namespace
 	{
 		D3D12_HEAP_PROPERTIES heapProperties{};
 		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProperties.CreationNodeMask = 1;
+		heapProperties.VisibleNodeMask = 1;
+		return heapProperties;
+	}
+
+	[[nodiscard]] D3D12_HEAP_PROPERTIES CreateDefaultHeapProperties() noexcept
+	{
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
 		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 		heapProperties.CreationNodeMask = 1;
@@ -67,6 +95,11 @@ bool Renderer::Initialize(const RendererOptions& options_)
 	}
 
 	if (!CreateRenderTargetViews())
+	{
+		return false;
+	}
+
+	if (!CreateDepthStencilBuffer())
 	{
 		return false;
 	}
@@ -160,6 +193,64 @@ bool Renderer::CreateRenderTargetViews()
 	return true;
 }
 
+bool Renderer::CreateDepthStencilBuffer()
+{
+	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	heapDesc.NumDescriptors = 1;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	heapDesc.NodeMask = 0;
+
+	if (FAILED(RenderSystem::device->CreateDescriptorHeap(
+		&heapDesc,
+		IID_PPV_ARGS(&depthStencilViewHeap))))
+	{
+		return false;
+	}
+
+	D3D12_RESOURCE_DESC depthDesc{};
+	depthDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthDesc.Alignment = 0;
+	depthDesc.Width = static_cast<UINT64>(options.width);
+	depthDesc.Height = static_cast<UINT>(options.height);
+	depthDesc.DepthOrArraySize = 1;
+	depthDesc.MipLevels = 1;
+	depthDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthDesc.SampleDesc.Count = 1;
+	depthDesc.SampleDesc.Quality = 0;
+	depthDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	depthDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_CLEAR_VALUE clearValue{};
+	clearValue.Format = DXGI_FORMAT_D32_FLOAT;
+	clearValue.DepthStencil.Depth = 1.0f;
+	clearValue.DepthStencil.Stencil = 0;
+
+	const D3D12_HEAP_PROPERTIES heapProperties = CreateDefaultHeapProperties();
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&depthDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&clearValue,
+		IID_PPV_ARGS(&depthStencilBuffer))))
+	{
+		return false;
+	}
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC viewDesc{};
+	viewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	viewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	viewDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	RenderSystem::device->CreateDepthStencilView(
+		depthStencilBuffer.Get(),
+		&viewDesc,
+		depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
+
+	return true;
+}
+
 bool Renderer::CreateFrameResources()
 {
 	commandAllocators.resize(bufferCount);
@@ -201,6 +292,7 @@ void Renderer::Resize(int width_, int height_)
 
 	WaitForGPU();
 	ReleaseBackBuffers();
+	ReleaseDepthStencilBuffer();
 
 	options.width = width_;
 	options.height = height_;
@@ -223,6 +315,11 @@ void Renderer::Resize(int width_, int height_)
 	if (!CreateRenderTargetViews())
 	{
 		ReleaseBackBuffers();
+	}
+
+	if (!CreateDepthStencilBuffer())
+	{
+		ReleaseDepthStencilBuffer();
 	}
 }
 
@@ -305,6 +402,8 @@ void Renderer::Clear()
 	D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle =
 		renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
 	descriptorHandle.ptr += static_cast<SIZE_T>(frameIndex) * renderTargetViewDescriptorSize;
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilHandle =
+		depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
 
 	const float clearColorValues[4]{
 		std::clamp(clearColor.x, 0.0f, 1.0f),
@@ -313,11 +412,115 @@ void Renderer::Clear()
 		1.0f
 	};
 
-	RenderSystem::commandList->OMSetRenderTargets(1, &descriptorHandle, FALSE, nullptr);
+	RenderSystem::commandList->OMSetRenderTargets(1, &descriptorHandle, FALSE, &depthStencilHandle);
 	RenderSystem::commandList->ClearRenderTargetView(descriptorHandle, clearColorValues, 0, nullptr);
+	RenderSystem::commandList->ClearDepthStencilView(
+		depthStencilHandle,
+		D3D12_CLEAR_FLAG_DEPTH,
+		1.0f,
+		0,
+		0,
+		nullptr);
 }
 
-void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
+void Renderer::SetCamera(const Camera& camera_)
+{
+	SetCameraMatrices(camera_.GetViewMatrix(), camera_.GetProjectionMatrix(GetAspectRatio()));
+}
+
+void Renderer::SetObject(const Matrix4x4& worldMatrix_)
+{
+	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
+	{
+		return;
+	}
+
+	const UINT64 constantBufferSize = AlignConstantBufferSize(sizeof(ObjectConstants));
+	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
+	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&constantBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constantBuffer))))
+	{
+		return;
+	}
+
+	void* mappedData{ nullptr };
+	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	const ObjectConstants constants{ .world = worldMatrix_ };
+	std::memcpy(mappedData, &constants, sizeof(constants));
+	constantBuffer->Unmap(0, nullptr);
+
+	RenderSystem::commandList->SetPipelineState(RenderSystem::meshPipelineState.Get());
+	RenderSystem::commandList->SetGraphicsRootConstantBufferView(1, constantBuffer->GetGPUVirtualAddress());
+
+	uploadResources.emplace_back(std::move(constantBuffer));
+}
+
+void Renderer::SetCameraMatrices(const Matrix4x4& viewMatrix_, const Matrix4x4& projectionMatrix_)
+{
+	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
+	{
+		return;
+	}
+
+	const UINT64 constantBufferSize = AlignConstantBufferSize(sizeof(CameraConstants));
+	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
+	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&constantBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constantBuffer))))
+	{
+		return;
+	}
+
+	void* mappedData{ nullptr };
+	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	const CameraConstants constants{
+		.view = viewMatrix_,
+		.projection = projectionMatrix_
+	};
+	std::memcpy(mappedData, &constants, sizeof(constants));
+	constantBuffer->Unmap(0, nullptr);
+
+	RenderSystem::commandList->SetGraphicsRootSignature(RenderSystem::meshRootSignature.Get());
+	RenderSystem::commandList->SetPipelineState(RenderSystem::meshPipelineState.Get());
+	RenderSystem::commandList->SetGraphicsRootConstantBufferView(0, constantBuffer->GetGPUVirtualAddress());
+
+	uploadResources.emplace_back(std::move(constantBuffer));
+}
+
+float Renderer::GetAspectRatio() const noexcept
+{
+	if (options.height <= 0)
+	{
+		return 1.0f;
+	}
+
+	return static_cast<float>(options.width) / static_cast<float>(options.height);
+}
+
+void Renderer::DrawMesh(const Mesh& mesh_)
 {
 	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
 	{
@@ -333,12 +536,10 @@ void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
 
 	const UINT64 vertexBufferSize = static_cast<UINT64>(sizeof(MeshVertex) * vertices.size());
 	const UINT64 indexBufferSize = static_cast<UINT64>(sizeof(std::uint32_t) * indices.size());
-	const UINT64 constantBufferSize = (sizeof(Matrix4x4) + 255) & ~255; // 256-byte alignment
 
 	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
 	const D3D12_RESOURCE_DESC vertexBufferDesc = CreateBufferDesc(vertexBufferSize);
 	const D3D12_RESOURCE_DESC indexBufferDesc = CreateBufferDesc(indexBufferSize);
-	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
 	if (FAILED(RenderSystem::device->CreateCommittedResource(
@@ -364,18 +565,6 @@ void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
 		return;
 	}
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&constantBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constantBuffer))))
-	{
-		return;
-	}
-
 	void* mappedData{ nullptr };
 	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
 	{
@@ -393,14 +582,6 @@ void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
 	std::memcpy(mappedData, indices.data(), static_cast<size_t>(indexBufferSize));
 	indexBuffer->Unmap(0, nullptr);
 
-	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	std::memcpy(mappedData, &worldMatrix_, sizeof(Matrix4x4));
-	constantBuffer->Unmap(0, nullptr);
-
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBufferSize);
@@ -411,9 +592,6 @@ void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
 	indexBufferView.SizeInBytes = static_cast<UINT>(indexBufferSize);
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
-	RenderSystem::commandList->SetGraphicsRootSignature(RenderSystem::meshRootSignature.Get());
-	RenderSystem::commandList->SetPipelineState(RenderSystem::meshPipelineState.Get());
-	RenderSystem::commandList->SetGraphicsRootConstantBufferView(0, constantBuffer->GetGPUVirtualAddress());
 	RenderSystem::commandList->RSSetViewports(1, &viewport);
 	RenderSystem::commandList->RSSetScissorRects(1, &scissorRect);
 	RenderSystem::commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -423,7 +601,6 @@ void Renderer::DrawMesh(const Mesh& mesh_, const Matrix4x4& worldMatrix_)
 
 	uploadResources.emplace_back(std::move(vertexBuffer));
 	uploadResources.emplace_back(std::move(indexBuffer));
-	uploadResources.emplace_back(std::move(constantBuffer));
 }
 
 void Renderer::Present()
@@ -487,4 +664,10 @@ void Renderer::ReleaseBackBuffers() noexcept
 
 	backBuffers.clear();
 	renderTargetViewHeap.Reset();
+}
+
+void Renderer::ReleaseDepthStencilBuffer() noexcept
+{
+	depthStencilBuffer.Reset();
+	depthStencilViewHeap.Reset();
 }

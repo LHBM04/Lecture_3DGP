@@ -32,6 +32,9 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -44,10 +47,10 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="OrthographicCameraProjection.cpp">
+    <ClCompile Include="CameraProjection_Orthographic.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PerspectiveCameraProjection.cpp">
+    <ClCompile Include="CameraProjection_Perspective.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Precompiled.cpp">
@@ -66,6 +69,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Vector2D.cpp">
@@ -136,6 +142,12 @@
     <ClInclude Include="GameObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyEvent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -148,10 +160,16 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="OrthographicCameraProjection.h">
+    <ClInclude Include="MouseButton.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PerspectiveCameraProjection.h">
+    <ClInclude Include="MouseEvent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraProjection_Orthographic.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraProjection_Perspective.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Precompiled.h">
@@ -179,6 +197,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Vector2D.h">

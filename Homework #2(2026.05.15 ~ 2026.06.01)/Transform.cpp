@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Transform.h"
 
 const Vector3D& Transform::GetLocalPosition() const
@@ -88,12 +88,12 @@ void Transform::SetWorldScale(const Vector3D& scale_)
 		parentScale.z != 0.0f ? scale_.z / parentScale.z : scale_.z);
 }
 
-Transform* Transform::GetParent()
+Transform* const Transform::GetParent()
 {
 	return parent;
 }
 
-const Transform* Transform::GetParent() const
+Transform* const Transform::GetParent() const
 {
 	return parent;
 }

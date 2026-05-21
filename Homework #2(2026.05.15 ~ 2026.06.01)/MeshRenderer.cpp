@@ -3,6 +3,7 @@
 
 #include "Mesh.h"
 #include "Renderer.h"
+#include "GameObject.h"
 #include "Transform.h"
 
 void MeshRenderer::SetMesh(Mesh* mesh_) noexcept
@@ -24,6 +25,7 @@ void MeshRenderer::OnRender(Renderer& renderer_)
 {
 	if (nullptr != mesh)
 	{
-		renderer_.DrawMesh(*mesh, GetTransform()->GetWorldMatrix());
+		renderer_.SetObject(GetOwner()->GetTransform()->GetWorldMatrix());
+		renderer_.DrawMesh(*mesh);
 	}
 }

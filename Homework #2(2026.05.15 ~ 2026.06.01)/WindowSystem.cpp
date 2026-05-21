@@ -5,6 +5,8 @@
 #include "WindowCloseEvent.h"
 #include "WindowResizeEvent.h"
 #include "EventQueue.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
 
 bool WindowSystem::Initialize(HINSTANCE instance_) noexcept
 {
@@ -129,6 +131,138 @@ LRESULT WindowSystem::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 				currentEventQueue->Push(std::move(e));
 			}
 			break;
+		}
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN:
+		{
+			if (currentEventQueue)
+			{
+				KeyDownEvent e;
+				e.keyCode = static_cast<int>(wParam);
+				e.isRepeat = (lParam & (1 << 30)) != 0;
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+		{
+			if (currentEventQueue)
+			{
+				KeyUpEvent e;
+				e.keyCode = static_cast<int>(wParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_MOUSEMOVE:
+		{
+			if (currentEventQueue)
+			{
+				MouseMoveEvent e;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			if (currentEventQueue)
+			{
+				MouseButtonDownEvent e;
+				e.button = MouseButton::Left;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_LBUTTONUP:
+		{
+			if (currentEventQueue)
+			{
+				MouseButtonUpEvent e;
+				e.button = MouseButton::Left;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_RBUTTONDOWN:
+		{
+			if (currentEventQueue)
+			{
+				MouseButtonDownEvent e;
+				e.button = MouseButton::Right;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_RBUTTONUP:
+		{
+			if (currentEventQueue)
+			{
+				MouseButtonUpEvent e;
+				e.button = MouseButton::Right;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_MBUTTONDOWN:
+		{
+			if (currentEventQueue)
+			{
+				MouseButtonDownEvent e;
+				e.button = MouseButton::Middle;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_MBUTTONUP:
+		{
+			if (currentEventQueue)
+			{
+				MouseButtonUpEvent e;
+				e.button = MouseButton::Middle;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			break;
+		}
+		case WM_XBUTTONDOWN:
+		{
+			const MouseButton button{ HIWORD(wParam) == XBUTTON1 ? MouseButton::X1 : MouseButton::X2 };
+			if (currentEventQueue)
+			{
+				MouseButtonDownEvent e;
+				e.button = button;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			return TRUE;
+		}
+		case WM_XBUTTONUP:
+		{
+			const MouseButton button{ HIWORD(wParam) == XBUTTON1 ? MouseButton::X1 : MouseButton::X2 };
+			if (currentEventQueue)
+			{
+				MouseButtonUpEvent e;
+				e.button = button;
+				e.x = GET_X_LPARAM(lParam);
+				e.y = GET_Y_LPARAM(lParam);
+				currentEventQueue->Push(std::move(e));
+			}
+			return TRUE;
 		}
 		case WM_CLOSE:
 		{

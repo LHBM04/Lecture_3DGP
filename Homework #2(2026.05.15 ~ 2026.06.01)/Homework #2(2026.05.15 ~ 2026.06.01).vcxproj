@@ -84,7 +84,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;XInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +103,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;XInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -120,7 +120,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;XInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,7 +139,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;XInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,12 +153,13 @@
     <ClCompile Include="EventDispatcher.cpp" />
     <ClCompile Include="EventQueue.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
-    <ClCompile Include="OrthographicCameraProjection.cpp" />
-    <ClCompile Include="PerspectiveCameraProjection.cpp" />
+    <ClCompile Include="CameraProjection_Orthographic.cpp" />
+    <ClCompile Include="CameraProjection_Perspective.cpp" />
     <ClCompile Include="Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -173,6 +174,7 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vector2D.cpp" />
     <ClCompile Include="Vector3D.cpp" />
     <ClCompile Include="Vector4D.cpp" />
@@ -191,12 +193,16 @@
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventQueue.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="KeyEvent.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
-    <ClInclude Include="OrthographicCameraProjection.h" />
-    <ClInclude Include="PerspectiveCameraProjection.h" />
+    <ClInclude Include="MouseButton.h" />
+    <ClInclude Include="MouseEvent.h" />
+    <ClInclude Include="CameraProjection_Orthographic.h" />
+    <ClInclude Include="CameraProjection_Perspective.h" />
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Renderer.h" />
@@ -207,6 +213,7 @@
     <ClInclude Include="Scene_Title.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector2D.h" />
     <ClInclude Include="Vector3D.h" />
     <ClInclude Include="Vector4D.h" />

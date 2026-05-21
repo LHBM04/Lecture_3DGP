@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Component.h"
 #include "Matrix4x4.h"
@@ -28,8 +28,8 @@ public:
 	[[nodiscard]] Vector3D GetWorldScale() const;
 	void SetWorldScale(const Vector3D& scale_);
 
-	[[nodiscard]] Transform* GetParent();
-	[[nodiscard]] const Transform* GetParent() const;
+	[[nodiscard]] Transform* const GetParent();
+	[[nodiscard]] Transform* const GetParent() const;
 	void SetParent(Transform* parent_);
 
 	[[nodiscard]] Matrix4x4 GetLocalMatrix() const;

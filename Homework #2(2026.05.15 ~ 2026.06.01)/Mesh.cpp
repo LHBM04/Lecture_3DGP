@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Mesh.h"
 
 namespace
@@ -94,7 +94,7 @@ void Mesh::SetData(std::vector<MeshVertex> vertices_, std::vector<std::uint32_t>
 bool Mesh::LoadOBJ(const std::filesystem::path& path_)
 {
 	std::ifstream file{ path_ };
-	if (!file.is_open())
+	if (not file)
 	{
 		return false;
 	}

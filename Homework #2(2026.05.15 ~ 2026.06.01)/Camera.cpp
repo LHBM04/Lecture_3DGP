@@ -1,13 +1,13 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Camera.h"
 
 #include "GameObject.h"
-#include "PerspectiveCameraProjection.h"
+#include "CameraProjection_Perspective.h"
 #include "Scene.h"
 #include "Transform.h"
 
 Camera::Camera()
-	: projection(std::make_unique<PerspectiveCameraProjection>())
+	: projection(std::make_unique<CameraProjection_Perspective>())
 {
 }
 
@@ -68,7 +68,7 @@ void Camera::SetViewportRect(const Vector4D& viewportRect_) noexcept
 
 Matrix4x4 Camera::GetViewMatrix() const
 {
-	const Transform* transform{ GetTransform() };
+	const Transform* transform{ GetOwner()->GetTransform()};
 	if (nullptr == transform)
 	{
 		return Matrix4x4::GetIdentity();

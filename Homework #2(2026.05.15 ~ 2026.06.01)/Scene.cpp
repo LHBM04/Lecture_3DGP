@@ -1,8 +1,9 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene.h"
 
 #include "Camera.h"
 #include "GameObject.h"
+#include "Renderer.h"
 
 void Scene::AddCamera(Camera* const camera_)
 {
@@ -109,6 +110,11 @@ void Scene::Render(Renderer& renderer_)
 	if (!isLoaded)
 	{
 		return;
+	}
+
+	if (nullptr != mainCamera)
+	{
+		renderer_.SetCamera(*mainCamera);
 	}
 
 	OnRender(renderer_);

@@ -169,15 +169,20 @@ bool RenderSystem::CheckTearingSupport()
 
 bool RenderSystem::CreateMeshPipeline()
 {
-	D3D12_ROOT_PARAMETER rootParameter{};
-	rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter.Descriptor.ShaderRegister = 0;
-	rootParameter.Descriptor.RegisterSpace = 0;
-	rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	D3D12_ROOT_PARAMETER rootParameters[2]{};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[0].Descriptor.ShaderRegister = 0;
+	rootParameters[0].Descriptor.RegisterSpace = 0;
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[1].Descriptor.ShaderRegister = 1;
+	rootParameters[1].Descriptor.RegisterSpace = 0;
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
-	rootSignatureDesc.NumParameters = 1;
-	rootSignatureDesc.pParameters = &rootParameter;
+	rootSignatureDesc.NumParameters = static_cast<UINT>(sizeof(rootParameters) / sizeof(rootParameters[0]));
+	rootSignatureDesc.pParameters = rootParameters;
 	rootSignatureDesc.NumStaticSamplers = 0;
 	rootSignatureDesc.pStaticSamplers = nullptr;
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -203,6 +208,8 @@ bool RenderSystem::CreateMeshPipeline()
 	}
 
 	constexpr char shaderSource[] = R"(
+#pragma pack_matrix(row_major)
+
 struct VSInput
 {
 	float3 position : POSITION;
@@ -216,7 +223,13 @@ struct PSInput
 	float3 color : COLOR;
 };
 
-cbuffer WorldBuffer : register(b0)
+cbuffer CameraConstants : register(b0)
+{
+	matrix View;
+	matrix Projection;
+};
+
+cbuffer ObjectConstants : register(b1)
 {
 	matrix World;
 };
@@ -225,7 +238,8 @@ PSInput VSMain(VSInput input)
 {
 	PSInput output;
 	output.position = mul(float4(input.position, 1.0f), World);
-	output.position.z = output.position.z * 0.5f + 0.5f;
+	output.position = mul(output.position, View);
+	output.position = mul(output.position, Projection);
 	output.color = abs(input.normal);
 	return output;
 }
@@ -289,12 +303,15 @@ float4 PSMain(PSInput input) : SV_TARGET
 	pipelineDesc.BlendState = CreateDefaultBlendDesc();
 	pipelineDesc.SampleMask = UINT_MAX;
 	pipelineDesc.RasterizerState = CreateDefaultRasterizerDesc();
-	pipelineDesc.DepthStencilState.DepthEnable = FALSE;
+	pipelineDesc.DepthStencilState.DepthEnable = TRUE;
+	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 	pipelineDesc.DepthStencilState.StencilEnable = FALSE;
 	pipelineDesc.InputLayout = { inputElements, static_cast<UINT>(sizeof(inputElements) / sizeof(inputElements[0])) };
 	pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	pipelineDesc.NumRenderTargets = 1;
 	pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	pipelineDesc.SampleDesc.Count = 1;
 	pipelineDesc.SampleDesc.Quality = 0;
 

@@ -9,8 +9,12 @@
 #include "RendererOptions.h"
 #include "EventQueue.h"
 #include "EventDispatcher.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
 #include "SceneManager.h"
 #include "Scene_Title.h"
+#include "Timer.h"
+#include "Input.h"
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -64,9 +68,13 @@ INT APIENTRY wWinMain(
 
 	SceneManager::LoadScene(std::make_unique<Scene_Title>());
 
+	Timer::Initialize();
+
 	bool isRunning = true;
 	while (isRunning)
 	{
+		Input::BeginFrame();
+
 		EventQueue eventQueue;
 		if (!WindowSystem::PollEvents(eventQueue))
 		{
@@ -74,6 +82,43 @@ INT APIENTRY wWinMain(
 		}
 
 		EventDispatcher dispatcher{ eventQueue };
+
+		dispatcher.Dispatch<KeyDownEvent>(
+			[](KeyDownEvent& e)
+			{
+				Input::SetKey(e.keyCode, true);
+				e.SetHandled(true);
+			});
+
+		dispatcher.Dispatch<KeyUpEvent>(
+			[](KeyUpEvent& e)
+			{
+				Input::SetKey(e.keyCode, false);
+				e.SetHandled(true);
+			});
+
+		dispatcher.Dispatch<MouseMoveEvent>(
+			[](MouseMoveEvent& e)
+			{
+				Input::SetMousePosition(e.x, e.y);
+				e.SetHandled(true);
+			});
+
+		dispatcher.Dispatch<MouseButtonDownEvent>(
+			[](MouseButtonDownEvent& e)
+			{
+				Input::SetMousePosition(e.x, e.y);
+				Input::SetMouseButton(e.button, true);
+				e.SetHandled(true);
+			});
+
+		dispatcher.Dispatch<MouseButtonUpEvent>(
+			[](MouseButtonUpEvent& e)
+			{
+				Input::SetMousePosition(e.x, e.y);
+				Input::SetMouseButton(e.button, false);
+				e.SetHandled(true);
+			});
 
 		dispatcher.Dispatch<WindowCloseEvent>(
 			[&](WindowCloseEvent& e)
@@ -96,7 +141,10 @@ INT APIENTRY wWinMain(
 
 		renderer->PreRender();
 		renderer->Clear();
+		
+		Timer::Tick();
 		SceneManager::Update();
+		
 		SceneManager::Render(*renderer);
 		renderer->Present();
 	}

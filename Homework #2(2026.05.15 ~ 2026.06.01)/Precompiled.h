@@ -43,7 +43,6 @@
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
 
-#include <xinput.h>
 #include <xaudio2.h>
 
 #define STATIC_CLASS(type)                      \

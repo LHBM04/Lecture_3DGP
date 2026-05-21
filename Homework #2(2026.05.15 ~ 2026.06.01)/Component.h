@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class Transform;
 class GameObject;
@@ -28,9 +28,6 @@ public:
 
 	[[nodiscard]] inline GameObject* GetOwner();
 	[[nodiscard]] inline const GameObject* GetOwner() const;
-
-	[[nodiscard]] Transform* GetTransform();
-	[[nodiscard]] const Transform* GetTransform() const;
 
 	void NotifyAttach(GameObject* const owner_);
 	void NotifyDetach();
