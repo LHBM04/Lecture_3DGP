@@ -1,14 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <cmath>
-#include <compare>
-#include <cstddef>
-#include <limits>
-#include <numbers>
-
-#include <DirectXMath.h>
-
 namespace Mathf
 {
     constexpr float PI{ std::numbers::pi_v<float> };

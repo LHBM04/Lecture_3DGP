@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 class Timer final
 {
 	STATIC_CLASS(Timer);

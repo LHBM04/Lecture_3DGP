@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <array>
-#include <cstddef>
-
 #include "MouseButton.h"
 
 class Input final

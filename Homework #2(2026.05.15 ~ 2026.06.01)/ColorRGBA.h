@@ -1,7 +1,5 @@
 #pragma once
 
-#include <windef.h>
-
 #include "Math.h"
 
 struct Vector3D;
