@@ -4,7 +4,7 @@ class EventQueue;
 class Window;
 struct WindowOptions;
 
-class WindowSystem
+class WindowSystem final
 {
 	STATIC_CLASS(WindowSystem);
 

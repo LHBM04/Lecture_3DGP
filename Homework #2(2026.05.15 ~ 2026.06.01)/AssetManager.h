@@ -1,16 +1,16 @@
-#pragma once
+﻿#pragma once
 
 #include "Asset.h"
 
-class AssetManager
+class AssetManager final
 {
 	STATIC_CLASS(AssetManager);
 
 public:
 	template <std::derived_from<Asset> TAsset>
 	[[nodiscard]] static TAsset* Load(const std::filesystem::path& path_);
-
 	static void Unload(Asset* asset_) noexcept;
+
 	static void Clear() noexcept;
 
 private:

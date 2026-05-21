@@ -3,7 +3,7 @@
 class Renderer;
 struct RendererOptions;
 
-class RenderSystem
+class RenderSystem final
 {
 	friend class Renderer;
 	STATIC_CLASS(RenderSystem);
