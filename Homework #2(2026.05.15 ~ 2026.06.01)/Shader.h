@@ -13,6 +13,7 @@ public:
 
 	[[nodiscard]] ID3DBlob* GetByteCode() const noexcept;
 	[[nodiscard]] D3D12_SHADER_BYTECODE GetShaderByteCode() const noexcept;
+	[[nodiscard]] bool HasByteCode() const noexcept;
 
 	bool Compile(
 		const std::filesystem::path& path_,

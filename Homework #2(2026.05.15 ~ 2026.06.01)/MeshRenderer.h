@@ -3,6 +3,7 @@
 #include "Component.h"
 
 class Mesh;
+class Material;
 class Renderer;
 
 class MeshRenderer final : public Component
@@ -15,9 +16,14 @@ public:
 	[[nodiscard]] Mesh* GetMesh() noexcept;
 	[[nodiscard]] const Mesh* GetMesh() const noexcept;
 
+	void SetMaterial(Material* material_) noexcept;
+	[[nodiscard]] Material* GetMaterial() noexcept;
+	[[nodiscard]] const Material* GetMaterial() const noexcept;
+
 protected:
 	virtual void OnRender(Renderer& renderer_) override;
 
 private:
 	Mesh* mesh{ nullptr };
+	Material* material{ nullptr };
 };

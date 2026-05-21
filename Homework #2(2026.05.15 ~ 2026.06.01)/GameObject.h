@@ -9,7 +9,7 @@ class Renderer;
 class GameObject
 {
 public:
-	GameObject();
+	explicit GameObject(bool useRectTransform_ = false);
 	~GameObject() noexcept;
 
 	GameObject(const GameObject&) = delete;
@@ -50,6 +50,7 @@ public:
 
 	void Update();
 	void Render(Renderer& renderer_);
+	void Render(Renderer& renderer_, bool renderMeshRenderers_);
 
 private:
 	friend class Scene;

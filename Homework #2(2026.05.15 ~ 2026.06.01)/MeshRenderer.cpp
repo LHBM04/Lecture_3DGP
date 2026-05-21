@@ -2,6 +2,7 @@
 #include "MeshRenderer.h"
 
 #include "Mesh.h"
+#include "Material.h"
 #include "Renderer.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -21,10 +22,26 @@ const Mesh* MeshRenderer::GetMesh() const noexcept
 	return mesh;
 }
 
+void MeshRenderer::SetMaterial(Material* material_) noexcept
+{
+	material = material_;
+}
+
+Material* MeshRenderer::GetMaterial() noexcept
+{
+	return material;
+}
+
+const Material* MeshRenderer::GetMaterial() const noexcept
+{
+	return material;
+}
+
 void MeshRenderer::OnRender(Renderer& renderer_)
 {
 	if (nullptr != mesh)
 	{
+		renderer_.SetMaterial(nullptr != material ? *material : Material::GetDefault());
 		renderer_.SetObject(GetOwner()->GetTransform()->GetWorldMatrix());
 		renderer_.DrawMesh(*mesh);
 	}

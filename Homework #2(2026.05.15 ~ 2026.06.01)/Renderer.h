@@ -1,11 +1,14 @@
 ﻿#pragma once
 
 #include "ColorRGB.h"
+#include "ColorRGBA.h"
 #include "Matrix4x4.h"
 #include "RendererOptions.h"
 
 class Camera;
+class Material;
 class Mesh;
+class RectTransform;
 
 class Renderer
 {
@@ -34,8 +37,16 @@ public:
 	void Clear();
 	void SetCamera(const Camera& camera_);
 	void SetObject(const Matrix4x4& worldMatrix_);
+	void SetMaterial(const Material& material_);
 	[[nodiscard]] float GetAspectRatio() const noexcept;
+	[[nodiscard]] int GetWidth() const noexcept;
+	[[nodiscard]] int GetHeight() const noexcept;
 	void DrawMesh(const Mesh& mesh_);
+	void DrawMeshInstanced(const Mesh& mesh_, std::span<const Matrix4x4> worldMatrices_);
+	void DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_);
+	void DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_, const Material& material_);
+	void DrawUIRectPixels(float left_, float top_, float width_, float height_, const ColorRGBA& color_);
+	void DrawUIRectPixels(float left_, float top_, float width_, float height_, const ColorRGBA& color_, const Material& material_);
 	void Present();
 
 private:
@@ -55,6 +66,13 @@ private:
 	void ReleaseBackBuffers() noexcept;
 	void ReleaseDepthStencilBuffer() noexcept;
 	void SetCameraMatrices(const Matrix4x4& viewMatrix_, const Matrix4x4& projectionMatrix_);
+	void DrawUIRectPixelsInternal(
+		float left_,
+		float top_,
+		float width_,
+		float height_,
+		const ColorRGBA& color_,
+		ID3D12PipelineState* pipelineState_);
 
 	RendererOptions options{};
 	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
@@ -76,4 +94,5 @@ private:
 	bool isTearingEnabled{ false };
 	bool isRecording{ false };
 	ColorRGB clearColor{ 0.08f, 0.10f, 0.14f };
+	Matrix4x4 currentObjectMatrix{ Matrix4x4::GetIdentity() };
 };

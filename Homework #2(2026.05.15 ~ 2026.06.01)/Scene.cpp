@@ -3,7 +3,36 @@
 
 #include "Camera.h"
 #include "GameObject.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "MeshRenderer.h"
 #include "Renderer.h"
+#include "Transform.h"
+#include "UIComponent.h"
+
+namespace
+{
+	struct MeshBatchKey final
+	{
+		const Mesh* mesh{ nullptr };
+		const Material* material{ nullptr };
+
+		[[nodiscard]] bool operator==(const MeshBatchKey& other_) const noexcept
+		{
+			return mesh == other_.mesh && material == other_.material;
+		}
+	};
+
+	struct MeshBatchKeyHash final
+	{
+		[[nodiscard]] std::size_t operator()(const MeshBatchKey& key_) const noexcept
+		{
+			const std::size_t meshHash{ std::hash<const Mesh*>{}(key_.mesh) };
+			const std::size_t materialHash{ std::hash<const Material*>{}(key_.material) };
+			return meshHash ^ (materialHash + 0x9e3779b97f4a7c15ULL + (meshHash << 6) + (meshHash >> 2));
+		}
+	};
+}
 
 void Scene::AddCamera(Camera* const camera_)
 {
@@ -64,6 +93,17 @@ GameObject* Scene::AddGameObject()
 	return objects.back().get();
 }
 
+GameObject* Scene::AddUIGameObject()
+{
+	std::unique_ptr<GameObject> newObject = std::make_unique<GameObject>(true);
+	newObject->SetCurrentScene(this);
+	newObject->SetName("New UI Object");
+	newObject->SetTag("UI");
+
+	objects.push_back(std::move(newObject));
+	return objects.back().get();
+}
+
 void Scene::RemoveGameObject(GameObject* const gameObject_)
 {
 	objects.erase(std::remove_if(objects.begin(), objects.end(),
@@ -71,6 +111,21 @@ void Scene::RemoveGameObject(GameObject* const gameObject_)
 		{
 			return object.get() == gameObject_;
 		}), objects.end());
+}
+
+void Scene::AddUIComponent(UIComponent* const uiComponent_)
+{
+	if (nullptr == uiComponent_ || std::find(uiComponents.begin(), uiComponents.end(), uiComponent_) != uiComponents.end())
+	{
+		return;
+	}
+
+	uiComponents.push_back(uiComponent_);
+}
+
+void Scene::RemoveUIComponent(UIComponent* const uiComponent_)
+{
+	uiComponents.erase(std::remove(uiComponents.begin(), uiComponents.end(), uiComponent_), uiComponents.end());
 }
 
 void Scene::Load()
@@ -121,7 +176,62 @@ void Scene::Render(Renderer& renderer_)
 
 	for (const std::unique_ptr<GameObject>& object : objects)
 	{
-		object->Render(renderer_);
+		object->Render(renderer_, false);
+	}
+
+	RenderInstancedMeshes(renderer_);
+
+	for (UIComponent* const uiComponent : uiComponents)
+	{
+		if (nullptr != uiComponent && uiComponent->IsEnabled())
+		{
+			uiComponent->RenderUI(renderer_);
+		}
+	}
+}
+
+void Scene::RenderInstancedMeshes(Renderer& renderer_)
+{
+	std::unordered_map<MeshBatchKey, std::vector<Matrix4x4>, MeshBatchKeyHash> batches;
+
+	for (const std::unique_ptr<GameObject>& object : objects)
+	{
+		if (nullptr == object || !object->IsActive())
+		{
+			continue;
+		}
+
+		MeshRenderer* const meshRenderer{ object->GetComponent<MeshRenderer>() };
+		if (nullptr == meshRenderer || !meshRenderer->IsEnabled())
+		{
+			continue;
+		}
+
+		const Mesh* const mesh{ meshRenderer->GetMesh() };
+		if (nullptr == mesh)
+		{
+			continue;
+		}
+
+		const Transform* const transform{ object->GetTransform() };
+		if (nullptr == transform)
+		{
+			continue;
+		}
+
+		const Material* const material{ meshRenderer->GetMaterial() };
+		batches[MeshBatchKey{ mesh, material }].push_back(transform->GetWorldMatrix());
+	}
+
+	for (const auto& [key, worldMatrices] : batches)
+	{
+		if (nullptr == key.mesh || worldMatrices.empty())
+		{
+			continue;
+		}
+
+		renderer_.SetMaterial(nullptr != key.material ? *key.material : Material::GetDefault());
+		renderer_.DrawMeshInstanced(*key.mesh, worldMatrices);
 	}
 }
 
@@ -135,6 +245,7 @@ void Scene::Unload()
 	OnUnload();
 
 	cameras.clear();
+	uiComponents.clear();
 	mainCamera = nullptr;
 	objects.clear();
 	isLoaded = false;

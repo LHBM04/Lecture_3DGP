@@ -152,9 +152,12 @@
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventDispatcher.cpp" />
     <ClCompile Include="EventQueue.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ImageView.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
@@ -167,6 +170,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="RectTransform.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -174,6 +178,9 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="UIComponent.cpp" />
+    <ClCompile Include="UIRectRenderer.cpp" />
+    <ClCompile Include="TextView.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vector2D.cpp" />
     <ClCompile Include="Vector3D.cpp" />
@@ -192,9 +199,12 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventQueue.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="ImageView.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="KeyEvent.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Mesh.h" />
@@ -205,6 +215,7 @@
     <ClInclude Include="CameraProjection_Perspective.h" />
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="RectTransform.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RendererOptions.h" />
     <ClInclude Include="RenderSystem.h" />
@@ -213,6 +224,9 @@
     <ClInclude Include="Scene_Title.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="UIComponent.h" />
+    <ClInclude Include="UIRectRenderer.h" />
+    <ClInclude Include="TextView.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector2D.h" />
     <ClInclude Include="Vector3D.h" />

@@ -32,10 +32,16 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ImageView.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Matrix4x4.cpp">
@@ -59,6 +65,9 @@
     <ClCompile Include="Quaternion.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="RectTransform.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -69,6 +78,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRectRenderer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TextView.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
@@ -93,6 +111,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="EventQueue.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
@@ -139,13 +160,22 @@
     <ClInclude Include="EventQueue.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="GameObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageView.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="KeyEvent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Math.h">
@@ -178,6 +208,9 @@
     <ClInclude Include="Quaternion.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="RectTransform.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -197,6 +230,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRectRenderer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TextView.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">

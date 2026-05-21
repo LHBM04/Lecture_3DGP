@@ -1,9 +1,12 @@
 #include "Precompiled.h"
 #include "GameObject.h"
 
-GameObject::GameObject()
+#include "MeshRenderer.h"
+#include "RectTransform.h"
+
+GameObject::GameObject(bool useRectTransform_)
 {
-	transform = AddComponent<Transform>();
+	transform = useRectTransform_ ? AddComponent<RectTransform>() : AddComponent<Transform>();
 }
 
 GameObject::~GameObject() noexcept
@@ -34,6 +37,11 @@ void GameObject::Update()
 
 void GameObject::Render(Renderer& renderer_)
 {
+	Render(renderer_, true);
+}
+
+void GameObject::Render(Renderer& renderer_, bool renderMeshRenderers_)
+{
 	if (!isActive)
 	{
 		return;
@@ -43,6 +51,11 @@ void GameObject::Render(Renderer& renderer_)
 	{
 		if (component->IsEnabled())
 		{
+			if (!renderMeshRenderers_ && type == typeid(MeshRenderer))
+			{
+				continue;
+			}
+
 			component->OnRender(renderer_);
 		}
 	}

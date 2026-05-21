@@ -4,8 +4,10 @@
 #include "Camera.h"
 #include "RenderSystem.h"
 #include "RendererOptions.h"
+#include "Material.h"
 #include "Matrix4x4.h"
 #include "Mesh.h"
+#include "RectTransform.h"
 
 namespace
 {
@@ -18,6 +20,22 @@ namespace
 	struct ObjectConstants final
 	{
 		Matrix4x4 world;
+	};
+
+	struct MaterialConstants final
+	{
+		ColorRGBA albedoColor;
+	};
+
+	struct MeshInstanceData final
+	{
+		Matrix4x4 world;
+	};
+
+	struct UIVertex final
+	{
+		Vector2D position;
+		ColorRGBA color;
 	};
 
 	[[nodiscard]] constexpr UINT64 AlignConstantBufferSize(const UINT64 size_) noexcept
@@ -430,7 +448,9 @@ void Renderer::SetCamera(const Camera& camera_)
 
 void Renderer::SetObject(const Matrix4x4& worldMatrix_)
 {
-	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
+	currentObjectMatrix = worldMatrix_;
+
+	if (!isRecording || nullptr == RenderSystem::meshRootSignature)
 	{
 		return;
 	}
@@ -461,8 +481,52 @@ void Renderer::SetObject(const Matrix4x4& worldMatrix_)
 	std::memcpy(mappedData, &constants, sizeof(constants));
 	constantBuffer->Unmap(0, nullptr);
 
-	RenderSystem::commandList->SetPipelineState(RenderSystem::meshPipelineState.Get());
 	RenderSystem::commandList->SetGraphicsRootConstantBufferView(1, constantBuffer->GetGPUVirtualAddress());
+
+	uploadResources.emplace_back(std::move(constantBuffer));
+}
+
+void Renderer::SetMaterial(const Material& material_)
+{
+	if (!isRecording || nullptr == RenderSystem::meshRootSignature)
+	{
+		return;
+	}
+
+	ID3D12PipelineState* const pipelineState{ RenderSystem::GetMeshPipelineState(material_) };
+	if (nullptr == pipelineState)
+	{
+		return;
+	}
+
+	const UINT64 constantBufferSize = AlignConstantBufferSize(sizeof(MaterialConstants));
+	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
+	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&constantBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constantBuffer))))
+	{
+		return;
+	}
+
+	void* mappedData{ nullptr };
+	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	const MaterialConstants constants{ .albedoColor = material_.GetAlbedoColor() };
+	std::memcpy(mappedData, &constants, sizeof(constants));
+	constantBuffer->Unmap(0, nullptr);
+
+	RenderSystem::commandList->SetPipelineState(pipelineState);
+	RenderSystem::commandList->SetGraphicsRootConstantBufferView(2, constantBuffer->GetGPUVirtualAddress());
 
 	uploadResources.emplace_back(std::move(constantBuffer));
 }
@@ -520,7 +584,22 @@ float Renderer::GetAspectRatio() const noexcept
 	return static_cast<float>(options.width) / static_cast<float>(options.height);
 }
 
+int Renderer::GetWidth() const noexcept
+{
+	return options.width;
+}
+
+int Renderer::GetHeight() const noexcept
+{
+	return options.height;
+}
+
 void Renderer::DrawMesh(const Mesh& mesh_)
+{
+	DrawMeshInstanced(mesh_, std::span<const Matrix4x4>{ &currentObjectMatrix, 1 });
+}
+
+void Renderer::DrawMeshInstanced(const Mesh& mesh_, std::span<const Matrix4x4> worldMatrices_)
 {
 	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
 	{
@@ -529,17 +608,19 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 
 	const std::vector<MeshVertex>& vertices = mesh_.GetVertices();
 	const std::vector<std::uint32_t>& indices = mesh_.GetIndices();
-	if (vertices.empty() || indices.empty())
+	if (vertices.empty() || indices.empty() || worldMatrices_.empty())
 	{
 		return;
 	}
 
 	const UINT64 vertexBufferSize = static_cast<UINT64>(sizeof(MeshVertex) * vertices.size());
 	const UINT64 indexBufferSize = static_cast<UINT64>(sizeof(std::uint32_t) * indices.size());
+	const UINT64 instanceBufferSize = static_cast<UINT64>(sizeof(MeshInstanceData) * worldMatrices_.size());
 
 	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
 	const D3D12_RESOURCE_DESC vertexBufferDesc = CreateBufferDesc(vertexBufferSize);
 	const D3D12_RESOURCE_DESC indexBufferDesc = CreateBufferDesc(indexBufferSize);
+	const D3D12_RESOURCE_DESC instanceBufferDesc = CreateBufferDesc(instanceBufferSize);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
 	if (FAILED(RenderSystem::device->CreateCommittedResource(
@@ -565,6 +646,18 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 		return;
 	}
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> instanceBuffer;
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&instanceBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&instanceBuffer))))
+	{
+		return;
+	}
+
 	void* mappedData{ nullptr };
 	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
 	{
@@ -582,25 +675,168 @@ void Renderer::DrawMesh(const Mesh& mesh_)
 	std::memcpy(mappedData, indices.data(), static_cast<size_t>(indexBufferSize));
 	indexBuffer->Unmap(0, nullptr);
 
+	if (FAILED(instanceBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	std::memcpy(mappedData, worldMatrices_.data(), static_cast<size_t>(instanceBufferSize));
+	instanceBuffer->Unmap(0, nullptr);
+
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBufferSize);
 	vertexBufferView.StrideInBytes = sizeof(MeshVertex);
+
+	D3D12_VERTEX_BUFFER_VIEW instanceBufferView{};
+	instanceBufferView.BufferLocation = instanceBuffer->GetGPUVirtualAddress();
+	instanceBufferView.SizeInBytes = static_cast<UINT>(instanceBufferSize);
+	instanceBufferView.StrideInBytes = sizeof(MeshInstanceData);
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 	indexBufferView.SizeInBytes = static_cast<UINT>(indexBufferSize);
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
+	const D3D12_VERTEX_BUFFER_VIEW vertexBufferViews[]{ vertexBufferView, instanceBufferView };
+	RenderSystem::commandList->RSSetViewports(1, &viewport);
+	RenderSystem::commandList->RSSetScissorRects(1, &scissorRect);
+	RenderSystem::commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	RenderSystem::commandList->IASetVertexBuffers(0, static_cast<UINT>(std::size(vertexBufferViews)), vertexBufferViews);
+	RenderSystem::commandList->IASetIndexBuffer(&indexBufferView);
+	RenderSystem::commandList->DrawIndexedInstanced(
+		static_cast<UINT>(indices.size()),
+		static_cast<UINT>(worldMatrices_.size()),
+		0,
+		0,
+		0);
+
+	uploadResources.emplace_back(std::move(vertexBuffer));
+	uploadResources.emplace_back(std::move(indexBuffer));
+	uploadResources.emplace_back(std::move(instanceBuffer));
+}
+
+void Renderer::DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_)
+{
+	DrawUIRectPixels(
+		rectTransform_.GetLeft(static_cast<float>(std::max(options.width, 1))),
+		rectTransform_.GetTop(static_cast<float>(std::max(options.height, 1))),
+		rectTransform_.GetWidth(),
+		rectTransform_.GetHeight(),
+		color_);
+}
+
+void Renderer::DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_, const Material& material_)
+{
+	DrawUIRectPixels(
+		rectTransform_.GetLeft(static_cast<float>(std::max(options.width, 1))),
+		rectTransform_.GetTop(static_cast<float>(std::max(options.height, 1))),
+		rectTransform_.GetWidth(),
+		rectTransform_.GetHeight(),
+		color_,
+		material_);
+}
+
+void Renderer::DrawUIRectPixels(float leftPixels_, float topPixels_, float width_, float height_, const ColorRGBA& color_)
+{
+	if (!isRecording || nullptr == RenderSystem::uiPipelineState || nullptr == RenderSystem::uiRootSignature)
+	{
+		return;
+	}
+
+	DrawUIRectPixelsInternal(
+		leftPixels_,
+		topPixels_,
+		width_,
+		height_,
+		color_,
+		RenderSystem::uiPipelineState.Get());
+}
+
+void Renderer::DrawUIRectPixels(float leftPixels_, float topPixels_, float width_, float height_, const ColorRGBA& color_, const Material& material_)
+{
+	if (!isRecording || nullptr == RenderSystem::uiRootSignature)
+	{
+		return;
+	}
+
+	ID3D12PipelineState* const pipelineState{ RenderSystem::GetUIPipelineState(material_) };
+	if (nullptr == pipelineState)
+	{
+		return;
+	}
+
+	DrawUIRectPixelsInternal(leftPixels_, topPixels_, width_, height_, color_, pipelineState);
+}
+
+void Renderer::DrawUIRectPixelsInternal(float leftPixels_, float topPixels_, float width_, float height_, const ColorRGBA& color_, ID3D12PipelineState* pipelineState_)
+{
+	if (!isRecording || nullptr == pipelineState_ || nullptr == RenderSystem::uiRootSignature)
+	{
+		return;
+	}
+
+	const float viewportWidth{ static_cast<float>(std::max(options.width, 1)) };
+	const float viewportHeight{ static_cast<float>(std::max(options.height, 1)) };
+
+	const float rightPixels{ leftPixels_ + width_ };
+	const float bottomPixels{ topPixels_ + height_ };
+
+	const float left{ leftPixels_ / viewportWidth * 2.0f - 1.0f };
+	const float right{ rightPixels / viewportWidth * 2.0f - 1.0f };
+	const float top{ 1.0f - topPixels_ / viewportHeight * 2.0f };
+	const float bottom{ 1.0f - bottomPixels / viewportHeight * 2.0f };
+
+	const UIVertex vertices[]
+	{
+		{ Vector2D(left, top), color_ },
+		{ Vector2D(right, top), color_ },
+		{ Vector2D(right, bottom), color_ },
+		{ Vector2D(left, top), color_ },
+		{ Vector2D(right, bottom), color_ },
+		{ Vector2D(left, bottom), color_ }
+	};
+
+	const UINT64 vertexBufferSize{ static_cast<UINT64>(sizeof(vertices)) };
+	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
+	const D3D12_RESOURCE_DESC vertexBufferDesc = CreateBufferDesc(vertexBufferSize);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
+	if (FAILED(RenderSystem::device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&vertexBufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertexBuffer))))
+	{
+		return;
+	}
+
+	void* mappedData{ nullptr };
+	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	std::memcpy(mappedData, vertices, sizeof(vertices));
+	vertexBuffer->Unmap(0, nullptr);
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBufferSize);
+	vertexBufferView.StrideInBytes = sizeof(UIVertex);
+
+	RenderSystem::commandList->SetGraphicsRootSignature(RenderSystem::uiRootSignature.Get());
+	RenderSystem::commandList->SetPipelineState(pipelineState_);
 	RenderSystem::commandList->RSSetViewports(1, &viewport);
 	RenderSystem::commandList->RSSetScissorRects(1, &scissorRect);
 	RenderSystem::commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	RenderSystem::commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	RenderSystem::commandList->IASetIndexBuffer(&indexBufferView);
-	RenderSystem::commandList->DrawIndexedInstanced(static_cast<UINT>(indices.size()), 1, 0, 0, 0);
+	RenderSystem::commandList->IASetIndexBuffer(nullptr);
+	RenderSystem::commandList->DrawInstanced(static_cast<UINT>(sizeof(vertices) / sizeof(vertices[0])), 1, 0, 0);
 
 	uploadResources.emplace_back(std::move(vertexBuffer));
-	uploadResources.emplace_back(std::move(indexBuffer));
 }
 
 void Renderer::Present()

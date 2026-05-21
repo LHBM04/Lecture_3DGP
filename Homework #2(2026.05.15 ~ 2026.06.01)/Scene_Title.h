@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 class Mesh;
+class Font;
 
 class Scene_Title final : public Scene
 {
@@ -13,4 +14,5 @@ protected:
 
 private:
 	Mesh* cube{ nullptr };
+	Font* font{ nullptr };
 };

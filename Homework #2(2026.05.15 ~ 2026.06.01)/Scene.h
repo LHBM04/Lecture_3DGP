@@ -4,6 +4,7 @@
 
 class Camera;
 class Renderer;
+class UIComponent;
 
 class Scene
 {
@@ -27,7 +28,10 @@ public:
 	[[nodiscard]] const std::vector<Camera*>& GetCameras() const noexcept;
 
 	[[nodiscard]] GameObject* AddGameObject();
+	[[nodiscard]] GameObject* AddUIGameObject();
 	void RemoveGameObject(GameObject* const gameObject_);
+	void AddUIComponent(UIComponent* const uiComponent_);
+	void RemoveUIComponent(UIComponent* const uiComponent_);
 
 	void Load();
 	void Update();
@@ -41,8 +45,11 @@ protected:
 	virtual void OnUnload() {}
 
 private:
+	void RenderInstancedMeshes(Renderer& renderer_);
+
 	bool isLoaded{ false };
 	Camera* mainCamera{ nullptr };
 	std::vector<Camera*> cameras;
+	std::vector<UIComponent*> uiComponents;
 	std::vector<std::unique_ptr<GameObject>> objects;
 };

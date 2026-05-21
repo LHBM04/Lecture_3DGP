@@ -36,6 +36,11 @@ D3D12_SHADER_BYTECODE Shader::GetShaderByteCode() const noexcept
 	return shaderByteCode;
 }
 
+bool Shader::HasByteCode() const noexcept
+{
+	return nullptr != byteCode && byteCode->GetBufferPointer() != nullptr && byteCode->GetBufferSize() > 0;
+}
+
 bool Shader::Compile(
 	const std::filesystem::path& path_,
 	const std::string& entryPoint_,
