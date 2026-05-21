@@ -20,11 +20,11 @@ void SceneManager::Update()
 	}
 }
 
-void SceneManager::Render(Renderer& renderer_)
+void SceneManager::Render(RenderTarget& renderTarget_)
 {
 	if (nullptr != currentScene)
 	{
-		currentScene->Render(renderer_);
+		currentScene->Render(renderTarget_);
 	}
 }
 

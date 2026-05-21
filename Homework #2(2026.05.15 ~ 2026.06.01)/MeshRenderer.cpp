@@ -1,9 +1,9 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "MeshRenderer.h"
 
 #include "Mesh.h"
 #include "Material.h"
-#include "Renderer.h"
+#include "RenderTarget.h"
 #include "GameObject.h"
 #include "Transform.h"
 
@@ -37,12 +37,12 @@ const Material* MeshRenderer::GetMaterial() const noexcept
 	return material;
 }
 
-void MeshRenderer::OnRender(Renderer& renderer_)
+void MeshRenderer::OnRender(RenderTarget& renderTarget_)
 {
 	if (nullptr != mesh)
 	{
-		renderer_.SetMaterial(nullptr != material ? *material : Material::GetDefault());
-		renderer_.SetObject(GetOwner()->GetTransform()->GetWorldMatrix());
-		renderer_.DrawMesh(*mesh);
+		renderTarget_.SetMaterial(nullptr != material ? *material : Material::GetDefault());
+		renderTarget_.SetObject(GetOwner()->GetTransform()->GetWorldMatrix());
+		renderTarget_.DrawMesh(*mesh);
 	}
 }

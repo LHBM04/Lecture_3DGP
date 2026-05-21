@@ -4,7 +4,7 @@
 
 class Mesh;
 class Material;
-class Renderer;
+class RenderTarget;
 
 class MeshRenderer final : public Component
 {
@@ -21,7 +21,7 @@ public:
 	[[nodiscard]] const Material* GetMaterial() const noexcept;
 
 protected:
-	virtual void OnRender(Renderer& renderer_) override;
+	virtual void OnRender(RenderTarget& renderTarget_) override;
 
 private:
 	Mesh* mesh{ nullptr };

@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "Material.h"
 #include "RectTransform.h"
-#include "Renderer.h"
+#include "RenderTarget.h"
 
 const ColorRGBA& ImageView::GetColor() const noexcept
 {
@@ -31,7 +31,7 @@ void ImageView::SetMaterial(Material* material_) noexcept
 	material = material_;
 }
 
-void ImageView::OnRenderUI(Renderer& renderer_)
+void ImageView::OnRenderUI(RenderTarget& renderTarget_)
 {
 	const GameObject* const owner{ GetOwner() };
 	if (nullptr == owner)
@@ -47,9 +47,9 @@ void ImageView::OnRenderUI(Renderer& renderer_)
 
 	if (nullptr != material)
 	{
-		renderer_.DrawUIRect(*rectTransform, material->GetAlbedoColor(), *material);
+		renderTarget_.DrawUIRect(*rectTransform, material->GetAlbedoColor(), *material);
 		return;
 	}
 
-	renderer_.DrawUIRect(*rectTransform, color);
+	renderTarget_.DrawUIRect(*rectTransform, color);
 }

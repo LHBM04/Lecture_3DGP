@@ -4,7 +4,7 @@
 #include "Transform.h"
 
 class Scene;
-class Renderer;
+class RenderTarget;
 
 class GameObject
 {
@@ -49,8 +49,8 @@ public:
 	[[nodiscard]] inline const Transform* GetTransform() const;
 
 	void Update();
-	void Render(Renderer& renderer_);
-	void Render(Renderer& renderer_, bool renderMeshRenderers_);
+	void Render(RenderTarget& renderTarget_);
+	void Render(RenderTarget& renderTarget_, bool renderMeshRenderers_);
 
 private:
 	friend class Scene;

@@ -34,7 +34,6 @@ bool Font::Load(const std::filesystem::path& path_)
 void Font::Unload() noexcept
 {
 	glyphs.clear();
-	ClearPath();
 	SetLoaded(false);
 }
 

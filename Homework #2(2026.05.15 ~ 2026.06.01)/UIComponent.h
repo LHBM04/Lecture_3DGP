@@ -2,15 +2,15 @@
 
 #include "Component.h"
 
-class Renderer;
+class RenderTarget;
 
 class UIComponent : public Component
 {
 public:
-	void RenderUI(Renderer& renderer_);
+	void RenderUI(RenderTarget& renderTarget_);
 
 protected:
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
-	virtual void OnRenderUI(Renderer&) {}
+	virtual void OnRenderUI(RenderTarget&) {}
 };

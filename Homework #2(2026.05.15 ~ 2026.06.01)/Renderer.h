@@ -1,98 +1,43 @@
-﻿#pragma once
+#pragma once
 
-#include "ColorRGB.h"
-#include "ColorRGBA.h"
-#include "Matrix4x4.h"
-#include "RendererOptions.h"
-
-class Camera;
+class RenderTarget;
 class Material;
-class Mesh;
-class RectTransform;
+struct RenderTargetOptions;
 
-class Renderer
+class Renderer final
 {
-	friend class RenderSystem;
+	friend class RenderTarget;
+	STATIC_CLASS(Renderer);
 
-public:
-	~Renderer() noexcept;
+	[[nodiscard]] static bool Initialize();
+	static void Shutdown() noexcept;
 
-	Renderer(const Renderer&) = delete;
-	Renderer& operator=(const Renderer&) = delete;
-
-	Renderer(Renderer&&) = delete;
-	Renderer& operator=(Renderer&&) = delete;
-
-	void Resize(int width_, int height_);
-
-	[[nodiscard]] bool ShouldVSync() const noexcept;
-	void SetShouldVSync(bool enabled_) noexcept;
-
-	[[nodiscard]] bool ShouldTearing() const noexcept;
-	void SetShouldTearing(bool enabled_) noexcept;
-
-	void PreRender();
-	void PostRender();
-
-	void Clear();
-	void SetCamera(const Camera& camera_);
-	void SetObject(const Matrix4x4& worldMatrix_);
-	void SetMaterial(const Material& material_);
-	[[nodiscard]] float GetAspectRatio() const noexcept;
-	[[nodiscard]] int GetWidth() const noexcept;
-	[[nodiscard]] int GetHeight() const noexcept;
-	void DrawMesh(const Mesh& mesh_);
-	void DrawMeshInstanced(const Mesh& mesh_, std::span<const Matrix4x4> worldMatrices_);
-	void DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_);
-	void DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_, const Material& material_);
-	void DrawUIRectPixels(float left_, float top_, float width_, float height_, const ColorRGBA& color_);
-	void DrawUIRectPixels(float left_, float top_, float width_, float height_, const ColorRGBA& color_, const Material& material_);
-	void Present();
+	static std::unique_ptr<RenderTarget> CreateRenderTarget(const RenderTargetOptions& options_);
 
 private:
-	static constexpr UINT bufferCount = 2;
+	[[nodiscard]] static bool CheckTearingSupport();
+	[[nodiscard]] static bool CreateMeshPipeline();
+	[[nodiscard]] static bool CreateUIPipeline();
+	[[nodiscard]] static ID3D12PipelineState* GetMeshPipelineState(const Material& material_);
+	[[nodiscard]] static ID3D12PipelineState* GetUIPipelineState(const Material& material_);
+	[[nodiscard]] static bool CreateMeshPipelineState(
+		const D3D12_SHADER_BYTECODE& vertexShader_,
+		const D3D12_SHADER_BYTECODE& pixelShader_,
+		ID3D12PipelineState** pipelineState_);
+	[[nodiscard]] static bool CreateUIPipelineState(
+		const D3D12_SHADER_BYTECODE& vertexShader_,
+		const D3D12_SHADER_BYTECODE& pixelShader_,
+		ID3D12PipelineState** pipelineState_);
 
-	Renderer() noexcept = default;
-
-	[[nodiscard]] bool Initialize(const RendererOptions& options_);
-	[[nodiscard]] bool CreateSwapChain(const RendererOptions& options_);
-	[[nodiscard]] bool CreateRenderTargetViews();
-	[[nodiscard]] bool CreateDepthStencilBuffer();
-	[[nodiscard]] bool CreateFrameResources();
-	[[nodiscard]] bool CreateFence();
-
-	void UpdateViewportAndScissor() noexcept;
-	void WaitForGPU() noexcept;
-	void ReleaseBackBuffers() noexcept;
-	void ReleaseDepthStencilBuffer() noexcept;
-	void SetCameraMatrices(const Matrix4x4& viewMatrix_, const Matrix4x4& projectionMatrix_);
-	void DrawUIRectPixelsInternal(
-		float left_,
-		float top_,
-		float width_,
-		float height_,
-		const ColorRGBA& color_,
-		ID3D12PipelineState* pipelineState_);
-
-	RendererOptions options{};
-	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> renderTargetViewHeap;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> depthStencilViewHeap;
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers;
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
-	std::vector<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>> commandAllocators;
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadResources;
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-	HANDLE fenceEvent{ nullptr };
-	D3D12_VIEWPORT viewport{};
-	D3D12_RECT scissorRect{};
-
-	UINT renderTargetViewDescriptorSize{ 0 };
-	UINT frameIndex{ 0 };
-	UINT64 fenceValue{ 0 };
-	bool isVSyncEnabled{ true };
-	bool isTearingEnabled{ false };
-	bool isRecording{ false };
-	ColorRGB clearColor{ 0.08f, 0.10f, 0.14f };
-	Matrix4x4 currentObjectMatrix{ Matrix4x4::GetIdentity() };
+	static Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
+	static Microsoft::WRL::ComPtr<ID3D12Device> device;
+	static Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
+	static Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> meshRootSignature;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> meshPipelineState;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> uiRootSignature;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> uiPipelineState;
+	static std::unordered_map<std::size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> meshMaterialPipelineStates;
+	static std::unordered_map<std::size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> uiMaterialPipelineStates;
+	static bool tearingSupported;
 };

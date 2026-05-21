@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="ColorRGB.cpp" />
     <ClCompile Include="ColorRGBA.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -171,15 +172,14 @@
     </ClCompile>
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="RectTransform.cpp" />
+    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIComponent.cpp" />
-    <ClCompile Include="UIRectRenderer.cpp" />
     <ClCompile Include="TextView.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vector2D.cpp" />
@@ -191,6 +191,7 @@
   <ItemGroup>
     <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraProjection.h" />
     <ClInclude Include="ColorRGB.h" />
@@ -216,16 +217,16 @@
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RectTransform.h" />
+    <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="RenderTargetOptions.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RendererOptions.h" />
-    <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Scene_Title.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIComponent.h" />
-    <ClInclude Include="UIRectRenderer.h" />
     <ClInclude Include="TextView.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector2D.h" />
@@ -237,6 +238,9 @@
     <ClInclude Include="WindowOptions.h" />
     <ClInclude Include="WindowResizeEvent.h" />
     <ClInclude Include="WindowSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Homework #2(2026.05.15 ~ 2026.06.01).rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

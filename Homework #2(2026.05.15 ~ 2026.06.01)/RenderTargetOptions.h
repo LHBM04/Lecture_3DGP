@@ -2,7 +2,7 @@
 
 #include "ColorRGB.h"
 
-struct RendererOptions final
+struct RenderTargetOptions final
 {
 	HWND window{ nullptr };
 	int width{ 0 };

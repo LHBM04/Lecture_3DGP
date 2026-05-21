@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
 
 class Transform;
 class GameObject;
-class Renderer;
+class RenderTarget;
 
 class Component
 {
@@ -35,7 +35,7 @@ public:
 protected:
 	virtual void OnAttach() {}
 	virtual void OnUpdate() {}
-	virtual void OnRender(Renderer&) {}
+	virtual void OnRender(RenderTarget&) {}
 	virtual void OnDetach() {}
 
 private:

@@ -105,6 +105,16 @@ int Input::GetMouseDeltaY() noexcept
 	return mouseY - previousMouseY;
 }
 
+int Input::GetScreenWidth() noexcept
+{
+	return screenWidth;
+}
+
+int Input::GetScreenHeight() noexcept
+{
+	return screenHeight;
+}
+
 void Input::SetKey(int virtualKey_, bool isDown_) noexcept
 {
 	if (IsValidVirtualKey(virtualKey_))
@@ -125,4 +135,10 @@ void Input::SetMousePosition(int x_, int y_) noexcept
 {
 	mouseX = x_;
 	mouseY = y_;
+}
+
+void Input::SetScreenSize(int width_, int height_) noexcept
+{
+	screenWidth = std::max(1, width_);
+	screenHeight = std::max(1, height_);
 }

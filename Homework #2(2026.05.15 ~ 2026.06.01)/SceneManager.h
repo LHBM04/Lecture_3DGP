@@ -2,7 +2,7 @@
 
 #include "Scene.h"
 
-class Renderer;
+class RenderTarget;
 
 class SceneManager final
 {
@@ -11,7 +11,7 @@ class SceneManager final
 public:
 	static void LoadScene(std::unique_ptr<Scene> scene_);
 	static void Update();
-	static void Render(Renderer& renderer_);
+	static void Render(RenderTarget& renderTarget_);
 	static void UnloadScene();
 
 	[[nodiscard]] static Scene* GetCurrentScene() noexcept;

@@ -4,9 +4,9 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-void UIComponent::RenderUI(Renderer& renderer_)
+void UIComponent::RenderUI(RenderTarget& renderTarget_)
 {
-	OnRenderUI(renderer_);
+	OnRenderUI(renderTarget_);
 }
 
 void UIComponent::OnAttach()

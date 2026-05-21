@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Mesh.h"
 
 namespace
@@ -67,7 +67,6 @@ bool Mesh::Load(const std::filesystem::path& path_)
 
 void Mesh::Unload() noexcept
 {
-	ClearPath();
 	SetLoaded(false);
 	vertices.clear();
 	indices.clear();
@@ -85,7 +84,6 @@ const std::vector<std::uint32_t>& Mesh::GetIndices() const noexcept
 
 void Mesh::SetData(std::vector<MeshVertex> vertices_, std::vector<std::uint32_t> indices_)
 {
-	ClearPath();
 	vertices = std::move(vertices_);
 	indices = std::move(indices_);
 	SetLoaded(!vertices.empty());

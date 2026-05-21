@@ -3,7 +3,7 @@
 #include "GameObject.h"
 
 class Camera;
-class Renderer;
+class RenderTarget;
 class UIComponent;
 
 class Scene
@@ -35,17 +35,17 @@ public:
 
 	void Load();
 	void Update();
-	void Render(Renderer& renderer_);
+	void Render(RenderTarget& renderTarget_);
 	void Unload();
 
 protected:
 	virtual void OnLoad() {}
 	virtual void OnUpdate() {}
-	virtual void OnRender(Renderer& renderer_) {}
+	virtual void OnRender(RenderTarget& renderTarget_) {}
 	virtual void OnUnload() {}
 
 private:
-	void RenderInstancedMeshes(Renderer& renderer_);
+	void RenderInstancedMeshes(RenderTarget& renderTarget_);
 
 	bool isLoaded{ false };
 	Camera* mainCamera{ nullptr };

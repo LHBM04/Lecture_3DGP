@@ -33,7 +33,7 @@ public:
 	void SetLineSpacing(float lineSpacing_) noexcept;
 
 protected:
-	virtual void OnRenderUI(Renderer& renderer_) override;
+	virtual void OnRenderUI(RenderTarget& renderTarget_) override;
 
 private:
 	std::string text{ "Text" };

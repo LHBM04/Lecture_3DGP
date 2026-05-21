@@ -16,7 +16,7 @@ public:
 	void SetMaterial(Material* material_) noexcept;
 
 protected:
-	virtual void OnRenderUI(Renderer& renderer_) override;
+	virtual void OnRenderUI(RenderTarget& renderTarget_) override;
 
 private:
 	ColorRGBA color{ ColorRGBA::GetWhite() };

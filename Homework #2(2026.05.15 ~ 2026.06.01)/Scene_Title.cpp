@@ -2,6 +2,7 @@
 #include "Scene_Title.h"
 
 #include "AssetManager.h"
+#include "Button.h"
 #include "Camera.h"
 #include "Font.h"
 #include "GameObject.h"
@@ -62,6 +63,20 @@ void Scene_Title::OnLoad()
 	textView->SetFont(font);
 	textView->SetPixelSize(4.0f);
 	textView->SetColor(ColorRGBA::GetWhite());
+
+	Button* const button = testPanel->AddComponent<Button>();
+	button->SetTargetGraphic(imageView);
+	button->SetNormalColor(ColorRGBA(0.95f, 0.35f, 0.15f, 0.85f));
+	button->SetHoveredColor(ColorRGBA(1.00f, 0.48f, 0.22f, 0.95f));
+	button->SetPressedColor(ColorRGBA(0.75f, 0.20f, 0.10f, 1.00f));
+	button->SetOnClick(
+		[textView]()
+		{
+			if (nullptr != textView)
+			{
+				textView->SetText("CLICKED");
+			}
+		});
 }
 
 void Scene_Title::OnUpdate()

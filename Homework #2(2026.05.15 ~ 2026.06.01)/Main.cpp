@@ -1,20 +1,21 @@
-#include "Precompiled.h"
-#include "WindowSystem.h"
-#include "Window.h"
-#include "WindowOptions.h"
-#include "WindowCloseEvent.h"
-#include "WindowResizeEvent.h"
-#include "RenderSystem.h"
-#include "Renderer.h"
-#include "RendererOptions.h"
-#include "EventQueue.h"
+﻿#include "Precompiled.h"
+
 #include "EventDispatcher.h"
+#include "EventQueue.h"
+#include "Input.h"
 #include "KeyEvent.h"
 #include "MouseEvent.h"
-#include "SceneManager.h"
+#include "Renderer.h"
+#include "RenderTarget.h"
+#include "RenderTargetOptions.h"
 #include "Scene_Title.h"
+#include "SceneManager.h"
 #include "Timer.h"
-#include "Input.h"
+#include "Window.h"
+#include "WindowCloseEvent.h"
+#include "WindowOptions.h"
+#include "WindowResizeEvent.h"
+#include "WindowSystem.h"
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -42,25 +43,26 @@ INT APIENTRY wWinMain(
 		return -1;
 	}
 
-	if (!RenderSystem::Initialize())
+	if (!Renderer::Initialize())
 	{
 		mainWindow.reset();
 		WindowSystem::Release();
 		return -1;
 	}
 
-	RendererOptions rendererOptions;
-	rendererOptions.window = mainWindow->GetHandle();
-	rendererOptions.width = windowOptions.width;
-	rendererOptions.height = windowOptions.height;
-	rendererOptions.clearColor = ColorRGB(0.12f, 0.15f, 0.22f);
-	rendererOptions.allowTearing = true;
-	rendererOptions.vSync = true;
+	RenderTargetOptions renderTargetOptions;
+	renderTargetOptions.window = mainWindow->GetHandle();
+	renderTargetOptions.width = windowOptions.width;
+	renderTargetOptions.height = windowOptions.height;
+	renderTargetOptions.clearColor = ColorRGB(0.12f, 0.15f, 0.22f);
+	renderTargetOptions.allowTearing = true;
+	renderTargetOptions.vSync = true;
+	Input::SetScreenSize(renderTargetOptions.width, renderTargetOptions.height);
 
-	std::unique_ptr<Renderer> renderer = RenderSystem::CreateRenderer(rendererOptions);
-	if (nullptr == renderer)
+	std::unique_ptr<RenderTarget> renderTarget = Renderer::CreateRenderTarget(renderTargetOptions);
+	if (nullptr == renderTarget)
 	{
-		RenderSystem::Shutdown();
+		Renderer::Shutdown();
 		mainWindow.reset();
 		WindowSystem::Release();
 		return -1;
@@ -130,7 +132,8 @@ INT APIENTRY wWinMain(
 		dispatcher.Dispatch<WindowResizeEvent>(
 			[&](WindowResizeEvent& e)
 			{
-				renderer->Resize(e.width, e.height);
+				renderTarget->Resize(e.width, e.height);
+				Input::SetScreenSize(e.width, e.height);
 				e.SetHandled(true);
 			});
 
@@ -139,19 +142,19 @@ INT APIENTRY wWinMain(
 			break;
 		}
 
-		renderer->PreRender();
-		renderer->Clear();
+		renderTarget->PreRender();
+		renderTarget->Clear();
 		
 		Timer::Tick();
 		SceneManager::Update();
 		
-		SceneManager::Render(*renderer);
-		renderer->Present();
+		SceneManager::Render(*renderTarget);
+		renderTarget->Present();
 	}
 
 	SceneManager::UnloadScene();
-	renderer.reset();
-	RenderSystem::Shutdown();
+	renderTarget.reset();
+	Renderer::Shutdown();
 	mainWindow.reset();
 	WindowSystem::Release();
 

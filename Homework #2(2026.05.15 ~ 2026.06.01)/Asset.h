@@ -20,8 +20,7 @@ public:
 protected:
 	Asset() noexcept = default;
 
-	void SetPath(const std::filesystem::path& path_);
-	void ClearPath() noexcept;
+	void SetPath(const std::filesystem::path& path_) noexcept;
 	void SetLoaded(bool isLoaded_) noexcept;
 
 private:

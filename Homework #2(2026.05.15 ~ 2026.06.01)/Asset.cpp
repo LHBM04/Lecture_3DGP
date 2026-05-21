@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Asset.h"
 
 const std::filesystem::path& Asset::GetPath() const noexcept
@@ -6,19 +6,14 @@ const std::filesystem::path& Asset::GetPath() const noexcept
 	return path;
 }
 
-bool Asset::IsLoaded() const noexcept
-{
-	return isLoaded;
-}
-
-void Asset::SetPath(const std::filesystem::path& path_)
+void Asset::SetPath(const std::filesystem::path& path_) noexcept
 {
 	path = path_;
 }
 
-void Asset::ClearPath() noexcept
+bool Asset::IsLoaded() const noexcept
 {
-	path.clear();
+	return isLoaded;
 }
 
 void Asset::SetLoaded(bool isLoaded_) noexcept

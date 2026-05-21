@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Scene.h"
 
 #include "Camera.h"
@@ -6,7 +6,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
-#include "Renderer.h"
+#include "RenderTarget.h"
 #include "Transform.h"
 #include "UIComponent.h"
 
@@ -160,7 +160,7 @@ void Scene::Update()
 		}), objects.end());
 }
 
-void Scene::Render(Renderer& renderer_)
+void Scene::Render(RenderTarget& renderTarget_)
 {
 	if (!isLoaded)
 	{
@@ -169,28 +169,28 @@ void Scene::Render(Renderer& renderer_)
 
 	if (nullptr != mainCamera)
 	{
-		renderer_.SetCamera(*mainCamera);
+		renderTarget_.SetCamera(*mainCamera);
 	}
 
-	OnRender(renderer_);
+	OnRender(renderTarget_);
 
 	for (const std::unique_ptr<GameObject>& object : objects)
 	{
-		object->Render(renderer_, false);
+		object->Render(renderTarget_, false);
 	}
 
-	RenderInstancedMeshes(renderer_);
+	RenderInstancedMeshes(renderTarget_);
 
 	for (UIComponent* const uiComponent : uiComponents)
 	{
 		if (nullptr != uiComponent && uiComponent->IsEnabled())
 		{
-			uiComponent->RenderUI(renderer_);
+			uiComponent->RenderUI(renderTarget_);
 		}
 	}
 }
 
-void Scene::RenderInstancedMeshes(Renderer& renderer_)
+void Scene::RenderInstancedMeshes(RenderTarget& renderTarget_)
 {
 	std::unordered_map<MeshBatchKey, std::vector<Matrix4x4>, MeshBatchKeyHash> batches;
 
@@ -230,8 +230,8 @@ void Scene::RenderInstancedMeshes(Renderer& renderer_)
 			continue;
 		}
 
-		renderer_.SetMaterial(nullptr != key.material ? *key.material : Material::GetDefault());
-		renderer_.DrawMeshInstanced(*key.mesh, worldMatrices);
+		renderTarget_.SetMaterial(nullptr != key.material ? *key.material : Material::GetDefault());
+		renderTarget_.DrawMeshInstanced(*key.mesh, worldMatrices);
 	}
 }
 

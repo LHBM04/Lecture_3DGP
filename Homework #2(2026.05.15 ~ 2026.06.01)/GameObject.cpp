@@ -35,12 +35,12 @@ void GameObject::Update()
 	RemoveDestroyedComponents();
 }
 
-void GameObject::Render(Renderer& renderer_)
+void GameObject::Render(RenderTarget& renderTarget_)
 {
-	Render(renderer_, true);
+	Render(renderTarget_, true);
 }
 
-void GameObject::Render(Renderer& renderer_, bool renderMeshRenderers_)
+void GameObject::Render(RenderTarget& renderTarget_, bool renderMeshRenderers_)
 {
 	if (!isActive)
 	{
@@ -56,7 +56,7 @@ void GameObject::Render(Renderer& renderer_, bool renderMeshRenderers_)
 				continue;
 			}
 
-			component->OnRender(renderer_);
+			component->OnRender(renderTarget_);
 		}
 	}
 }

@@ -1,909 +1,455 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Renderer.h"
 
-#include "Camera.h"
-#include "RenderSystem.h"
-#include "RendererOptions.h"
 #include "Material.h"
-#include "Matrix4x4.h"
-#include "Mesh.h"
-#include "RectTransform.h"
+#include "RenderTarget.h"
+#include "RenderTargetOptions.h"
+#include "Shader.h"
 
 namespace
 {
-	struct CameraConstants final
+	[[nodiscard]] D3D12_RASTERIZER_DESC CreateDefaultRasterizerDesc() noexcept
 	{
-		Matrix4x4 view;
-		Matrix4x4 projection;
-	};
-
-	struct ObjectConstants final
-	{
-		Matrix4x4 world;
-	};
-
-	struct MaterialConstants final
-	{
-		ColorRGBA albedoColor;
-	};
-
-	struct MeshInstanceData final
-	{
-		Matrix4x4 world;
-	};
-
-	struct UIVertex final
-	{
-		Vector2D position;
-		ColorRGBA color;
-	};
-
-	[[nodiscard]] constexpr UINT64 AlignConstantBufferSize(const UINT64 size_) noexcept
-	{
-		return (size_ + 255) & ~255ULL;
-	}
-
-	[[nodiscard]] D3D12_RESOURCE_DESC CreateBufferDesc(const UINT64 size_) noexcept
-	{
-		D3D12_RESOURCE_DESC desc{};
-		desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		desc.Alignment = 0;
-		desc.Width = size_;
-		desc.Height = 1;
-		desc.DepthOrArraySize = 1;
-		desc.MipLevels = 1;
-		desc.Format = DXGI_FORMAT_UNKNOWN;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
-		desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		D3D12_RASTERIZER_DESC desc{};
+		desc.FillMode = D3D12_FILL_MODE_SOLID;
+		desc.CullMode = D3D12_CULL_MODE_NONE;
+		desc.FrontCounterClockwise = FALSE;
+		desc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		desc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		desc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		desc.DepthClipEnable = TRUE;
+		desc.MultisampleEnable = FALSE;
+		desc.AntialiasedLineEnable = FALSE;
+		desc.ForcedSampleCount = 0;
+		desc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 		return desc;
 	}
 
-	[[nodiscard]] D3D12_HEAP_PROPERTIES CreateUploadHeapProperties() noexcept
+	[[nodiscard]] D3D12_BLEND_DESC CreateDefaultBlendDesc() noexcept
 	{
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-		heapProperties.CreationNodeMask = 1;
-		heapProperties.VisibleNodeMask = 1;
-		return heapProperties;
-	}
+		D3D12_BLEND_DESC desc{};
+		desc.AlphaToCoverageEnable = FALSE;
+		desc.IndependentBlendEnable = FALSE;
 
-	[[nodiscard]] D3D12_HEAP_PROPERTIES CreateDefaultHeapProperties() noexcept
-	{
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
-		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-		heapProperties.CreationNodeMask = 1;
-		heapProperties.VisibleNodeMask = 1;
-		return heapProperties;
-	}
-}
+		D3D12_RENDER_TARGET_BLEND_DESC renderTargetDesc{};
+		renderTargetDesc.BlendEnable = FALSE;
+		renderTargetDesc.LogicOpEnable = FALSE;
+		renderTargetDesc.SrcBlend = D3D12_BLEND_ONE;
+		renderTargetDesc.DestBlend = D3D12_BLEND_ZERO;
+		renderTargetDesc.BlendOp = D3D12_BLEND_OP_ADD;
+		renderTargetDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+		renderTargetDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+		renderTargetDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		renderTargetDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
+		renderTargetDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-Renderer::~Renderer() noexcept
-{
-	WaitForGPU();
-
-	if (nullptr != fenceEvent)
-	{
-		CloseHandle(fenceEvent);
-		fenceEvent = nullptr;
-	}
-}
-
-bool Renderer::Initialize(const RendererOptions& options_)
-{
-	options = options_;
-	isVSyncEnabled = options.vSync;
-	isTearingEnabled = options.allowTearing && RenderSystem::tearingSupported;
-	clearColor = options.clearColor;
-	UpdateViewportAndScissor();
-
-	if (nullptr == options.window || options.width <= 0 || options.height <= 0)
-	{
-		return false;
-	}
-
-	if (!CreateSwapChain(options))
-	{
-		return false;
-	}
-
-	if (!CreateRenderTargetViews())
-	{
-		return false;
-	}
-
-	if (!CreateDepthStencilBuffer())
-	{
-		return false;
-	}
-
-	if (!CreateFrameResources())
-	{
-		return false;
-	}
-
-	if (!CreateFence())
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool Renderer::CreateSwapChain(const RendererOptions& options_)
-{
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = static_cast<UINT>(options_.width);
-	swapChainDesc.Height = static_cast<UINT>(options_.height);
-	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.Stereo = FALSE;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = bufferCount;
-	swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-	swapChainDesc.Flags = isTearingEnabled ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
-
-	Microsoft::WRL::ComPtr<IDXGISwapChain1> createdSwapChain;
-	const HRESULT result = RenderSystem::factory->CreateSwapChainForHwnd(
-		RenderSystem::commandQueue.Get(),
-		options_.window,
-		&swapChainDesc,
-		nullptr,
-		nullptr,
-		&createdSwapChain);
-
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	if (FAILED(createdSwapChain.As(&swapChain)))
-	{
-		return false;
-	}
-
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
-	return true;
-}
-
-bool Renderer::CreateRenderTargetViews()
-{
-	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	heapDesc.NumDescriptors = bufferCount;
-	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	heapDesc.NodeMask = 0;
-
-	if (FAILED(RenderSystem::device->CreateDescriptorHeap(
-		&heapDesc,
-		IID_PPV_ARGS(&renderTargetViewHeap))))
-	{
-		return false;
-	}
-
-	renderTargetViewDescriptorSize =
-		RenderSystem::device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-	backBuffers.resize(bufferCount);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle =
-		renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
-
-	for (UINT i = 0; i < bufferCount; ++i)
-	{
-		if (FAILED(swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffers[i]))))
+		for (D3D12_RENDER_TARGET_BLEND_DESC& target : desc.RenderTarget)
 		{
-			return false;
+			target = renderTargetDesc;
 		}
 
-		RenderSystem::device->CreateRenderTargetView(backBuffers[i].Get(), nullptr, descriptorHandle);
-		descriptorHandle.ptr += renderTargetViewDescriptorSize;
+		return desc;
+	}
+
+	[[nodiscard]] D3D12_BLEND_DESC CreateAlphaBlendDesc() noexcept
+	{
+		D3D12_BLEND_DESC desc{ CreateDefaultBlendDesc() };
+		D3D12_RENDER_TARGET_BLEND_DESC& target{ desc.RenderTarget[0] };
+		target.BlendEnable = TRUE;
+		target.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		target.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		target.BlendOp = D3D12_BLEND_OP_ADD;
+		target.SrcBlendAlpha = D3D12_BLEND_ONE;
+		target.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+		target.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		return desc;
+	}
+
+	[[nodiscard]] std::size_t HashShaderPair(const Shader* vertexShader_, const Shader* pixelShader_) noexcept
+	{
+		const std::size_t vertexHash{ std::hash<const Shader*>{}(vertexShader_) };
+		const std::size_t pixelHash{ std::hash<const Shader*>{}(pixelShader_) };
+		return vertexHash ^ (pixelHash + 0x9e3779b97f4a7c15ULL + (vertexHash << 6) + (vertexHash >> 2));
+	}
+}
+
+Microsoft::WRL::ComPtr<IDXGIFactory4> Renderer::factory;
+Microsoft::WRL::ComPtr<ID3D12Device> Renderer::device;
+Microsoft::WRL::ComPtr<ID3D12CommandQueue> Renderer::commandQueue;
+Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> Renderer::commandList;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> Renderer::meshRootSignature;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> Renderer::meshPipelineState;
+Microsoft::WRL::ComPtr<ID3D12RootSignature> Renderer::uiRootSignature;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> Renderer::uiPipelineState;
+std::unordered_map<std::size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> Renderer::meshMaterialPipelineStates;
+std::unordered_map<std::size_t, Microsoft::WRL::ComPtr<ID3D12PipelineState>> Renderer::uiMaterialPipelineStates;
+bool Renderer::tearingSupported = false;
+
+bool Renderer::Initialize()
+{
+	UINT factoryFlags = 0;
+
+#if defined(_DEBUG)
+	Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+	{
+		debugController->EnableDebugLayer();
+		factoryFlags = DXGI_CREATE_FACTORY_DEBUG;
+	}
+#endif
+
+	if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&factory))))
+	{
+		return false;
+	}
+
+	tearingSupported = CheckTearingSupport();
+
+	if (FAILED(D3D12CreateDevice(
+		nullptr,
+		D3D_FEATURE_LEVEL_11_0,
+		IID_PPV_ARGS(&device))))
+	{
+		return false;
+	}
+
+	D3D12_COMMAND_QUEUE_DESC queueDesc{};
+	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	queueDesc.NodeMask = 0;
+
+	if (FAILED(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue))))
+	{
+		return false;
+	}
+
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> temporaryAllocator;
+	if (FAILED(device->CreateCommandAllocator(
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(&temporaryAllocator))))
+	{
+		return false;
+	}
+
+	if (FAILED(device->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		temporaryAllocator.Get(),
+		nullptr,
+		IID_PPV_ARGS(&commandList))))
+	{
+		return false;
+	}
+
+	commandList->Close();
+	if (!CreateMeshPipeline())
+	{
+		return false;
+	}
+
+	if (!CreateUIPipeline())
+	{
+		return false;
 	}
 
 	return true;
 }
 
-bool Renderer::CreateDepthStencilBuffer()
+void Renderer::Shutdown() noexcept
 {
-	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	heapDesc.NumDescriptors = 1;
-	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	heapDesc.NodeMask = 0;
+	uiMaterialPipelineStates.clear();
+	meshMaterialPipelineStates.clear();
+	uiPipelineState.Reset();
+	uiRootSignature.Reset();
+	meshPipelineState.Reset();
+	meshRootSignature.Reset();
+	commandList.Reset();
+	commandQueue.Reset();
+	device.Reset();
+	factory.Reset();
+	tearingSupported = false;
+}
 
-	if (FAILED(RenderSystem::device->CreateDescriptorHeap(
-		&heapDesc,
-		IID_PPV_ARGS(&depthStencilViewHeap))))
+std::unique_ptr<RenderTarget> Renderer::CreateRenderTarget(const RenderTargetOptions& options_)
+{
+	std::unique_ptr<RenderTarget> renderTarget{ new RenderTarget() };
+	if (!renderTarget->Initialize(options_))
+	{
+		return nullptr;
+	}
+
+	return renderTarget;
+}
+
+bool Renderer::CheckTearingSupport()
+{
+	Microsoft::WRL::ComPtr<IDXGIFactory5> factory5;
+	if (FAILED(factory.As(&factory5)))
 	{
 		return false;
 	}
 
-	D3D12_RESOURCE_DESC depthDesc{};
-	depthDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthDesc.Alignment = 0;
-	depthDesc.Width = static_cast<UINT64>(options.width);
-	depthDesc.Height = static_cast<UINT>(options.height);
-	depthDesc.DepthOrArraySize = 1;
-	depthDesc.MipLevels = 1;
-	depthDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	depthDesc.SampleDesc.Count = 1;
-	depthDesc.SampleDesc.Quality = 0;
-	depthDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	depthDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-
-	D3D12_CLEAR_VALUE clearValue{};
-	clearValue.Format = DXGI_FORMAT_D32_FLOAT;
-	clearValue.DepthStencil.Depth = 1.0f;
-	clearValue.DepthStencil.Stencil = 0;
-
-	const D3D12_HEAP_PROPERTIES heapProperties = CreateDefaultHeapProperties();
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&depthDesc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&clearValue,
-		IID_PPV_ARGS(&depthStencilBuffer))))
+	BOOL allowTearing = FALSE;
+	if (FAILED(factory5->CheckFeatureSupport(
+		DXGI_FEATURE_PRESENT_ALLOW_TEARING,
+		&allowTearing,
+		sizeof(allowTearing))))
 	{
 		return false;
 	}
 
-	D3D12_DEPTH_STENCIL_VIEW_DESC viewDesc{};
-	viewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	viewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	viewDesc.Flags = D3D12_DSV_FLAG_NONE;
-
-	RenderSystem::device->CreateDepthStencilView(
-		depthStencilBuffer.Get(),
-		&viewDesc,
-		depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart());
-
-	return true;
+	return TRUE == allowTearing;
 }
 
-bool Renderer::CreateFrameResources()
+bool Renderer::CreateMeshPipeline()
 {
-	commandAllocators.resize(bufferCount);
+	D3D12_ROOT_PARAMETER rootParameters[3]{};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[0].Descriptor.ShaderRegister = 0;
+	rootParameters[0].Descriptor.RegisterSpace = 0;
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
-	for (UINT i = 0; i < bufferCount; ++i)
-	{
-		if (FAILED(RenderSystem::device->CreateCommandAllocator(
-			D3D12_COMMAND_LIST_TYPE_DIRECT,
-			IID_PPV_ARGS(&commandAllocators[i]))))
-		{
-			return false;
-		}
-	}
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[1].Descriptor.ShaderRegister = 1;
+	rootParameters[1].Descriptor.RegisterSpace = 0;
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
-	return true;
-}
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[2].Descriptor.ShaderRegister = 2;
+	rootParameters[2].Descriptor.RegisterSpace = 0;
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-bool Renderer::CreateFence()
-{
-	if (FAILED(RenderSystem::device->CreateFence(
-		0,
-		D3D12_FENCE_FLAG_NONE,
-		IID_PPV_ARGS(&fence))))
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
+	rootSignatureDesc.NumParameters = static_cast<UINT>(sizeof(rootParameters) / sizeof(rootParameters[0]));
+	rootSignatureDesc.pParameters = rootParameters;
+	rootSignatureDesc.NumStaticSamplers = 0;
+	rootSignatureDesc.pStaticSamplers = nullptr;
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	Microsoft::WRL::ComPtr<ID3DBlob> rootSignatureBlob;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+	if (FAILED(D3D12SerializeRootSignature(
+		&rootSignatureDesc,
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		&rootSignatureBlob,
+		&errorBlob)))
 	{
 		return false;
 	}
 
-	fenceValue = 1;
-	fenceEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
-	return nullptr != fenceEvent;
-}
-
-void Renderer::Resize(int width_, int height_)
-{
-	if (width_ <= 0 || height_ <= 0 || nullptr == swapChain)
+	if (FAILED(device->CreateRootSignature(
+		0,
+		rootSignatureBlob->GetBufferPointer(),
+		rootSignatureBlob->GetBufferSize(),
+		IID_PPV_ARGS(&meshRootSignature))))
 	{
-		return;
+		return false;
 	}
 
-	WaitForGPU();
-	ReleaseBackBuffers();
-	ReleaseDepthStencilBuffer();
-
-	options.width = width_;
-	options.height = height_;
-	UpdateViewportAndScissor();
-
-	const UINT flags = isTearingEnabled ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
-	const HRESULT result = swapChain->ResizeBuffers(
-		bufferCount,
-		static_cast<UINT>(width_),
-		static_cast<UINT>(height_),
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		flags);
-
-	if (FAILED(result))
+	Shader vertexShader;
+	if (!vertexShader.Compile(L"Assets/GameObject.hlsl", "VSMain", "vs_5_0"))
 	{
-		return;
+		return false;
 	}
 
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
-	if (!CreateRenderTargetViews())
+	Shader pixelShader;
+	if (!pixelShader.Compile(L"Assets/GameObject.hlsl", "PSMain", "ps_5_0"))
 	{
-		ReleaseBackBuffers();
+		return false;
 	}
 
-	if (!CreateDepthStencilBuffer())
+	return CreateMeshPipelineState(
+		vertexShader.GetShaderByteCode(),
+		pixelShader.GetShaderByteCode(),
+		meshPipelineState.ReleaseAndGetAddressOf());
+}
+
+bool Renderer::CreateUIPipeline()
+{
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
+	rootSignatureDesc.NumParameters = 0;
+	rootSignatureDesc.pParameters = nullptr;
+	rootSignatureDesc.NumStaticSamplers = 0;
+	rootSignatureDesc.pStaticSamplers = nullptr;
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	Microsoft::WRL::ComPtr<ID3DBlob> rootSignatureBlob;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+	if (FAILED(D3D12SerializeRootSignature(
+		&rootSignatureDesc,
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		&rootSignatureBlob,
+		&errorBlob)))
 	{
-		ReleaseDepthStencilBuffer();
-	}
-}
-
-bool Renderer::ShouldVSync() const noexcept
-{
-	return isVSyncEnabled;
-}
-
-void Renderer::SetShouldVSync(bool enabled_) noexcept
-{
-	isVSyncEnabled = enabled_;
-}
-
-bool Renderer::ShouldTearing() const noexcept
-{
-	return isTearingEnabled;
-}
-
-void Renderer::SetShouldTearing(bool enabled_) noexcept
-{
-	isTearingEnabled = enabled_ && RenderSystem::tearingSupported;
-}
-
-void Renderer::PreRender()
-{
-	if (isRecording)
-	{
-		return;
+		return false;
 	}
 
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
-
-	ID3D12CommandAllocator* const commandAllocator = commandAllocators[frameIndex].Get();
-	commandAllocator->Reset();
-	RenderSystem::commandList->Reset(commandAllocator, nullptr);
-
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = backBuffers[frameIndex].Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-
-	RenderSystem::commandList->ResourceBarrier(1, &barrier);
-	isRecording = true;
-}
-
-void Renderer::PostRender()
-{
-	if (!isRecording)
+	if (FAILED(device->CreateRootSignature(
+		0,
+		rootSignatureBlob->GetBufferPointer(),
+		rootSignatureBlob->GetBufferSize(),
+		IID_PPV_ARGS(&uiRootSignature))))
 	{
-		return;
+		return false;
 	}
 
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = backBuffers[frameIndex].Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-
-	RenderSystem::commandList->ResourceBarrier(1, &barrier);
-	RenderSystem::commandList->Close();
-
-	ID3D12CommandList* commandLists[] = { RenderSystem::commandList.Get() };
-	RenderSystem::commandQueue->ExecuteCommandLists(1, commandLists);
-
-	isRecording = false;
-}
-
-void Renderer::Clear()
-{
-	if (!isRecording)
+	Shader vertexShader;
+	if (!vertexShader.Compile(L"Assets/UIObject.hlsl", "VSMain", "vs_5_0"))
 	{
-		return;
+		return false;
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle =
-		renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
-	descriptorHandle.ptr += static_cast<SIZE_T>(frameIndex) * renderTargetViewDescriptorSize;
-	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilHandle =
-		depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+	Shader pixelShader;
+	if (!pixelShader.Compile(L"Assets/UIObject.hlsl", "PSMain", "ps_5_0"))
+	{
+		return false;
+	}
 
-	const float clearColorValues[4]{
-		std::clamp(clearColor.x, 0.0f, 1.0f),
-		std::clamp(clearColor.y, 0.0f, 1.0f),
-		std::clamp(clearColor.z, 0.0f, 1.0f),
-		1.0f
+	return CreateUIPipelineState(
+		vertexShader.GetShaderByteCode(),
+		pixelShader.GetShaderByteCode(),
+		uiPipelineState.ReleaseAndGetAddressOf());
+}
+
+ID3D12PipelineState* Renderer::GetMeshPipelineState(const Material& material_)
+{
+	const Shader* const vertexShader{ material_.GetVertexShader() };
+	const Shader* const pixelShader{ material_.GetPixelShader() };
+	if (nullptr == vertexShader || nullptr == pixelShader || !vertexShader->HasByteCode() || !pixelShader->HasByteCode())
+	{
+		return meshPipelineState.Get();
+	}
+
+	const std::size_t key{ HashShaderPair(vertexShader, pixelShader) };
+	const auto iterator{ meshMaterialPipelineStates.find(key) };
+	if (iterator != meshMaterialPipelineStates.end())
+	{
+		return iterator->second.Get();
+	}
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
+	if (!CreateMeshPipelineState(
+		vertexShader->GetShaderByteCode(),
+		pixelShader->GetShaderByteCode(),
+		pipelineState.GetAddressOf()))
+	{
+		return meshPipelineState.Get();
+	}
+
+	ID3D12PipelineState* const createdPipelineState{ pipelineState.Get() };
+	meshMaterialPipelineStates.emplace(key, std::move(pipelineState));
+	return createdPipelineState;
+}
+
+ID3D12PipelineState* Renderer::GetUIPipelineState(const Material& material_)
+{
+	const Shader* const vertexShader{ material_.GetVertexShader() };
+	const Shader* const pixelShader{ material_.GetPixelShader() };
+	if (nullptr == vertexShader || nullptr == pixelShader || !vertexShader->HasByteCode() || !pixelShader->HasByteCode())
+	{
+		return uiPipelineState.Get();
+	}
+
+	const std::size_t key{ HashShaderPair(vertexShader, pixelShader) };
+	const auto iterator{ uiMaterialPipelineStates.find(key) };
+	if (iterator != uiMaterialPipelineStates.end())
+	{
+		return iterator->second.Get();
+	}
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
+	if (!CreateUIPipelineState(
+		vertexShader->GetShaderByteCode(),
+		pixelShader->GetShaderByteCode(),
+		pipelineState.GetAddressOf()))
+	{
+		return uiPipelineState.Get();
+	}
+
+	ID3D12PipelineState* const createdPipelineState{ pipelineState.Get() };
+	uiMaterialPipelineStates.emplace(key, std::move(pipelineState));
+	return createdPipelineState;
+}
+
+bool Renderer::CreateMeshPipelineState(
+	const D3D12_SHADER_BYTECODE& vertexShader_,
+	const D3D12_SHADER_BYTECODE& pixelShader_,
+	ID3D12PipelineState** pipelineState_)
+{
+	if (nullptr == pipelineState_ || nullptr == meshRootSignature)
+	{
+		return false;
+	}
+
+	const D3D12_INPUT_ELEMENT_DESC inputElements[]
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "INSTANCEWORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCEWORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCEWORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCEWORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 }
 	};
 
-	RenderSystem::commandList->OMSetRenderTargets(1, &descriptorHandle, FALSE, &depthStencilHandle);
-	RenderSystem::commandList->ClearRenderTargetView(descriptorHandle, clearColorValues, 0, nullptr);
-	RenderSystem::commandList->ClearDepthStencilView(
-		depthStencilHandle,
-		D3D12_CLEAR_FLAG_DEPTH,
-		1.0f,
-		0,
-		0,
-		nullptr);
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
+	pipelineDesc.pRootSignature = meshRootSignature.Get();
+	pipelineDesc.VS = vertexShader_;
+	pipelineDesc.PS = pixelShader_;
+	pipelineDesc.BlendState = CreateDefaultBlendDesc();
+	pipelineDesc.SampleMask = UINT_MAX;
+	pipelineDesc.RasterizerState = CreateDefaultRasterizerDesc();
+	pipelineDesc.DepthStencilState.DepthEnable = TRUE;
+	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	pipelineDesc.DepthStencilState.StencilEnable = FALSE;
+	pipelineDesc.InputLayout = { inputElements, static_cast<UINT>(sizeof(inputElements) / sizeof(inputElements[0])) };
+	pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	pipelineDesc.NumRenderTargets = 1;
+	pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	pipelineDesc.SampleDesc.Count = 1;
+	pipelineDesc.SampleDesc.Quality = 0;
+
+	return SUCCEEDED(device->CreateGraphicsPipelineState(
+		&pipelineDesc,
+		IID_PPV_ARGS(pipelineState_)));
 }
 
-void Renderer::SetCamera(const Camera& camera_)
+bool Renderer::CreateUIPipelineState(
+	const D3D12_SHADER_BYTECODE& vertexShader_,
+	const D3D12_SHADER_BYTECODE& pixelShader_,
+	ID3D12PipelineState** pipelineState_)
 {
-	SetCameraMatrices(camera_.GetViewMatrix(), camera_.GetProjectionMatrix(GetAspectRatio()));
-}
-
-void Renderer::SetObject(const Matrix4x4& worldMatrix_)
-{
-	currentObjectMatrix = worldMatrix_;
-
-	if (!isRecording || nullptr == RenderSystem::meshRootSignature)
+	if (nullptr == pipelineState_ || nullptr == uiRootSignature)
 	{
-		return;
+		return false;
 	}
 
-	const UINT64 constantBufferSize = AlignConstantBufferSize(sizeof(ObjectConstants));
-	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
-	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&constantBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constantBuffer))))
+	const D3D12_INPUT_ELEMENT_DESC inputElements[]
 	{
-		return;
-	}
-
-	void* mappedData{ nullptr };
-	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	const ObjectConstants constants{ .world = worldMatrix_ };
-	std::memcpy(mappedData, &constants, sizeof(constants));
-	constantBuffer->Unmap(0, nullptr);
-
-	RenderSystem::commandList->SetGraphicsRootConstantBufferView(1, constantBuffer->GetGPUVirtualAddress());
-
-	uploadResources.emplace_back(std::move(constantBuffer));
-}
-
-void Renderer::SetMaterial(const Material& material_)
-{
-	if (!isRecording || nullptr == RenderSystem::meshRootSignature)
-	{
-		return;
-	}
-
-	ID3D12PipelineState* const pipelineState{ RenderSystem::GetMeshPipelineState(material_) };
-	if (nullptr == pipelineState)
-	{
-		return;
-	}
-
-	const UINT64 constantBufferSize = AlignConstantBufferSize(sizeof(MaterialConstants));
-	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
-	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&constantBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constantBuffer))))
-	{
-		return;
-	}
-
-	void* mappedData{ nullptr };
-	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	const MaterialConstants constants{ .albedoColor = material_.GetAlbedoColor() };
-	std::memcpy(mappedData, &constants, sizeof(constants));
-	constantBuffer->Unmap(0, nullptr);
-
-	RenderSystem::commandList->SetPipelineState(pipelineState);
-	RenderSystem::commandList->SetGraphicsRootConstantBufferView(2, constantBuffer->GetGPUVirtualAddress());
-
-	uploadResources.emplace_back(std::move(constantBuffer));
-}
-
-void Renderer::SetCameraMatrices(const Matrix4x4& viewMatrix_, const Matrix4x4& projectionMatrix_)
-{
-	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
-	{
-		return;
-	}
-
-	const UINT64 constantBufferSize = AlignConstantBufferSize(sizeof(CameraConstants));
-	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
-	const D3D12_RESOURCE_DESC constantBufferDesc = CreateBufferDesc(constantBufferSize);
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&constantBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constantBuffer))))
-	{
-		return;
-	}
-
-	void* mappedData{ nullptr };
-	if (FAILED(constantBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	const CameraConstants constants{
-		.view = viewMatrix_,
-		.projection = projectionMatrix_
-	};
-	std::memcpy(mappedData, &constants, sizeof(constants));
-	constantBuffer->Unmap(0, nullptr);
-
-	RenderSystem::commandList->SetGraphicsRootSignature(RenderSystem::meshRootSignature.Get());
-	RenderSystem::commandList->SetPipelineState(RenderSystem::meshPipelineState.Get());
-	RenderSystem::commandList->SetGraphicsRootConstantBufferView(0, constantBuffer->GetGPUVirtualAddress());
-
-	uploadResources.emplace_back(std::move(constantBuffer));
-}
-
-float Renderer::GetAspectRatio() const noexcept
-{
-	if (options.height <= 0)
-	{
-		return 1.0f;
-	}
-
-	return static_cast<float>(options.width) / static_cast<float>(options.height);
-}
-
-int Renderer::GetWidth() const noexcept
-{
-	return options.width;
-}
-
-int Renderer::GetHeight() const noexcept
-{
-	return options.height;
-}
-
-void Renderer::DrawMesh(const Mesh& mesh_)
-{
-	DrawMeshInstanced(mesh_, std::span<const Matrix4x4>{ &currentObjectMatrix, 1 });
-}
-
-void Renderer::DrawMeshInstanced(const Mesh& mesh_, std::span<const Matrix4x4> worldMatrices_)
-{
-	if (!isRecording || nullptr == RenderSystem::meshPipelineState || nullptr == RenderSystem::meshRootSignature)
-	{
-		return;
-	}
-
-	const std::vector<MeshVertex>& vertices = mesh_.GetVertices();
-	const std::vector<std::uint32_t>& indices = mesh_.GetIndices();
-	if (vertices.empty() || indices.empty() || worldMatrices_.empty())
-	{
-		return;
-	}
-
-	const UINT64 vertexBufferSize = static_cast<UINT64>(sizeof(MeshVertex) * vertices.size());
-	const UINT64 indexBufferSize = static_cast<UINT64>(sizeof(std::uint32_t) * indices.size());
-	const UINT64 instanceBufferSize = static_cast<UINT64>(sizeof(MeshInstanceData) * worldMatrices_.size());
-
-	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
-	const D3D12_RESOURCE_DESC vertexBufferDesc = CreateBufferDesc(vertexBufferSize);
-	const D3D12_RESOURCE_DESC indexBufferDesc = CreateBufferDesc(indexBufferSize);
-	const D3D12_RESOURCE_DESC instanceBufferDesc = CreateBufferDesc(instanceBufferSize);
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer))))
-	{
-		return;
-	}
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&indexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&indexBuffer))))
-	{
-		return;
-	}
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> instanceBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&instanceBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&instanceBuffer))))
-	{
-		return;
-	}
-
-	void* mappedData{ nullptr };
-	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	std::memcpy(mappedData, vertices.data(), static_cast<size_t>(vertexBufferSize));
-	vertexBuffer->Unmap(0, nullptr);
-
-	if (FAILED(indexBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	std::memcpy(mappedData, indices.data(), static_cast<size_t>(indexBufferSize));
-	indexBuffer->Unmap(0, nullptr);
-
-	if (FAILED(instanceBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	std::memcpy(mappedData, worldMatrices_.data(), static_cast<size_t>(instanceBufferSize));
-	instanceBuffer->Unmap(0, nullptr);
-
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBufferSize);
-	vertexBufferView.StrideInBytes = sizeof(MeshVertex);
-
-	D3D12_VERTEX_BUFFER_VIEW instanceBufferView{};
-	instanceBufferView.BufferLocation = instanceBuffer->GetGPUVirtualAddress();
-	instanceBufferView.SizeInBytes = static_cast<UINT>(instanceBufferSize);
-	instanceBufferView.StrideInBytes = sizeof(MeshInstanceData);
-
-	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-	indexBufferView.SizeInBytes = static_cast<UINT>(indexBufferSize);
-	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-
-	const D3D12_VERTEX_BUFFER_VIEW vertexBufferViews[]{ vertexBufferView, instanceBufferView };
-	RenderSystem::commandList->RSSetViewports(1, &viewport);
-	RenderSystem::commandList->RSSetScissorRects(1, &scissorRect);
-	RenderSystem::commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderSystem::commandList->IASetVertexBuffers(0, static_cast<UINT>(std::size(vertexBufferViews)), vertexBufferViews);
-	RenderSystem::commandList->IASetIndexBuffer(&indexBufferView);
-	RenderSystem::commandList->DrawIndexedInstanced(
-		static_cast<UINT>(indices.size()),
-		static_cast<UINT>(worldMatrices_.size()),
-		0,
-		0,
-		0);
-
-	uploadResources.emplace_back(std::move(vertexBuffer));
-	uploadResources.emplace_back(std::move(indexBuffer));
-	uploadResources.emplace_back(std::move(instanceBuffer));
-}
-
-void Renderer::DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_)
-{
-	DrawUIRectPixels(
-		rectTransform_.GetLeft(static_cast<float>(std::max(options.width, 1))),
-		rectTransform_.GetTop(static_cast<float>(std::max(options.height, 1))),
-		rectTransform_.GetWidth(),
-		rectTransform_.GetHeight(),
-		color_);
-}
-
-void Renderer::DrawUIRect(const RectTransform& rectTransform_, const ColorRGBA& color_, const Material& material_)
-{
-	DrawUIRectPixels(
-		rectTransform_.GetLeft(static_cast<float>(std::max(options.width, 1))),
-		rectTransform_.GetTop(static_cast<float>(std::max(options.height, 1))),
-		rectTransform_.GetWidth(),
-		rectTransform_.GetHeight(),
-		color_,
-		material_);
-}
-
-void Renderer::DrawUIRectPixels(float leftPixels_, float topPixels_, float width_, float height_, const ColorRGBA& color_)
-{
-	if (!isRecording || nullptr == RenderSystem::uiPipelineState || nullptr == RenderSystem::uiRootSignature)
-	{
-		return;
-	}
-
-	DrawUIRectPixelsInternal(
-		leftPixels_,
-		topPixels_,
-		width_,
-		height_,
-		color_,
-		RenderSystem::uiPipelineState.Get());
-}
-
-void Renderer::DrawUIRectPixels(float leftPixels_, float topPixels_, float width_, float height_, const ColorRGBA& color_, const Material& material_)
-{
-	if (!isRecording || nullptr == RenderSystem::uiRootSignature)
-	{
-		return;
-	}
-
-	ID3D12PipelineState* const pipelineState{ RenderSystem::GetUIPipelineState(material_) };
-	if (nullptr == pipelineState)
-	{
-		return;
-	}
-
-	DrawUIRectPixelsInternal(leftPixels_, topPixels_, width_, height_, color_, pipelineState);
-}
-
-void Renderer::DrawUIRectPixelsInternal(float leftPixels_, float topPixels_, float width_, float height_, const ColorRGBA& color_, ID3D12PipelineState* pipelineState_)
-{
-	if (!isRecording || nullptr == pipelineState_ || nullptr == RenderSystem::uiRootSignature)
-	{
-		return;
-	}
-
-	const float viewportWidth{ static_cast<float>(std::max(options.width, 1)) };
-	const float viewportHeight{ static_cast<float>(std::max(options.height, 1)) };
-
-	const float rightPixels{ leftPixels_ + width_ };
-	const float bottomPixels{ topPixels_ + height_ };
-
-	const float left{ leftPixels_ / viewportWidth * 2.0f - 1.0f };
-	const float right{ rightPixels / viewportWidth * 2.0f - 1.0f };
-	const float top{ 1.0f - topPixels_ / viewportHeight * 2.0f };
-	const float bottom{ 1.0f - bottomPixels / viewportHeight * 2.0f };
-
-	const UIVertex vertices[]
-	{
-		{ Vector2D(left, top), color_ },
-		{ Vector2D(right, top), color_ },
-		{ Vector2D(right, bottom), color_ },
-		{ Vector2D(left, top), color_ },
-		{ Vector2D(right, bottom), color_ },
-		{ Vector2D(left, bottom), color_ }
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 
-	const UINT64 vertexBufferSize{ static_cast<UINT64>(sizeof(vertices)) };
-	const D3D12_HEAP_PROPERTIES heapProperties = CreateUploadHeapProperties();
-	const D3D12_RESOURCE_DESC vertexBufferDesc = CreateBufferDesc(vertexBufferSize);
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
+	pipelineDesc.pRootSignature = uiRootSignature.Get();
+	pipelineDesc.VS = vertexShader_;
+	pipelineDesc.PS = pixelShader_;
+	pipelineDesc.BlendState = CreateAlphaBlendDesc();
+	pipelineDesc.SampleMask = UINT_MAX;
+	pipelineDesc.RasterizerState = CreateDefaultRasterizerDesc();
+	pipelineDesc.DepthStencilState.DepthEnable = FALSE;
+	pipelineDesc.DepthStencilState.StencilEnable = FALSE;
+	pipelineDesc.InputLayout = { inputElements, static_cast<UINT>(sizeof(inputElements) / sizeof(inputElements[0])) };
+	pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	pipelineDesc.NumRenderTargets = 1;
+	pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pipelineDesc.SampleDesc.Count = 1;
+	pipelineDesc.SampleDesc.Quality = 0;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
-	if (FAILED(RenderSystem::device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer))))
-	{
-		return;
-	}
-
-	void* mappedData{ nullptr };
-	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
-	{
-		return;
-	}
-
-	std::memcpy(mappedData, vertices, sizeof(vertices));
-	vertexBuffer->Unmap(0, nullptr);
-
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBufferSize);
-	vertexBufferView.StrideInBytes = sizeof(UIVertex);
-
-	RenderSystem::commandList->SetGraphicsRootSignature(RenderSystem::uiRootSignature.Get());
-	RenderSystem::commandList->SetPipelineState(pipelineState_);
-	RenderSystem::commandList->RSSetViewports(1, &viewport);
-	RenderSystem::commandList->RSSetScissorRects(1, &scissorRect);
-	RenderSystem::commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	RenderSystem::commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	RenderSystem::commandList->IASetIndexBuffer(nullptr);
-	RenderSystem::commandList->DrawInstanced(static_cast<UINT>(sizeof(vertices) / sizeof(vertices[0])), 1, 0, 0);
-
-	uploadResources.emplace_back(std::move(vertexBuffer));
-}
-
-void Renderer::Present()
-{
-	PostRender();
-
-	const UINT syncInterval = isVSyncEnabled ? 1 : 0;
-	const UINT flags = (!isVSyncEnabled && isTearingEnabled) ? DXGI_PRESENT_ALLOW_TEARING : 0;
-	swapChain->Present(syncInterval, flags);
-
-	WaitForGPU();
-	uploadResources.clear();
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
-}
-
-void Renderer::UpdateViewportAndScissor() noexcept
-{
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.Width = static_cast<float>(std::max(options.width, 0));
-	viewport.Height = static_cast<float>(std::max(options.height, 0));
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
-	scissorRect.left = 0;
-	scissorRect.top = 0;
-	scissorRect.right = std::max(options.width, 0);
-	scissorRect.bottom = std::max(options.height, 0);
-}
-
-void Renderer::WaitForGPU() noexcept
-{
-	if (nullptr == fenceEvent || nullptr == fence || nullptr == RenderSystem::commandQueue)
-	{
-		return;
-	}
-
-	const UINT64 currentFenceValue = fenceValue;
-	if (FAILED(RenderSystem::commandQueue->Signal(fence.Get(), currentFenceValue)))
-	{
-		return;
-	}
-
-	++fenceValue;
-
-	if (fence->GetCompletedValue() < currentFenceValue)
-	{
-		if (SUCCEEDED(fence->SetEventOnCompletion(currentFenceValue, fenceEvent)))
-		{
-			WaitForSingleObject(fenceEvent, INFINITE);
-		}
-	}
-}
-
-void Renderer::ReleaseBackBuffers() noexcept
-{
-	for (Microsoft::WRL::ComPtr<ID3D12Resource>& backBuffer : backBuffers)
-	{
-		backBuffer.Reset();
-	}
-
-	backBuffers.clear();
-	renderTargetViewHeap.Reset();
-}
-
-void Renderer::ReleaseDepthStencilBuffer() noexcept
-{
-	depthStencilBuffer.Reset();
-	depthStencilViewHeap.Reset();
+	return SUCCEEDED(device->CreateGraphicsPipelineState(
+		&pipelineDesc,
+		IID_PPV_ARGS(pipelineState_)));
 }

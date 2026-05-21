@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Material.h"
 #include "RectTransform.h"
-#include "Renderer.h"
+#include "RenderTarget.h"
 
 const std::string& TextView::GetText() const noexcept
 {
@@ -87,7 +87,7 @@ void TextView::SetLineSpacing(float lineSpacing_) noexcept
 	lineSpacing = std::max(0.0f, lineSpacing_);
 }
 
-void TextView::OnRenderUI(Renderer& renderer_)
+void TextView::OnRenderUI(RenderTarget& renderTarget_)
 {
 	const GameObject* const owner{ GetOwner() };
 	if (nullptr == owner)
@@ -101,8 +101,8 @@ void TextView::OnRenderUI(Renderer& renderer_)
 		return;
 	}
 
-	const float left{ rectTransform->GetLeft(static_cast<float>(renderer_.GetWidth())) };
-	const float top{ rectTransform->GetTop(static_cast<float>(renderer_.GetHeight())) };
+	const float left{ rectTransform->GetLeft(static_cast<float>(renderTarget_.GetWidth())) };
+	const float top{ rectTransform->GetTop(static_cast<float>(renderTarget_.GetHeight())) };
 	const float characterAdvance{ pixelSize * static_cast<float>(font->GetGlyphWidth() + 1) + characterSpacing };
 	const float lineAdvance{ pixelSize * static_cast<float>(font->GetGlyphHeight() + 1) + lineSpacing };
 
@@ -136,7 +136,7 @@ void TextView::OnRenderUI(Renderer& renderer_)
 
 				if (nullptr != material)
 				{
-					renderer_.DrawUIRectPixels(
+					renderTarget_.DrawUIRectPixels(
 						cursorX + static_cast<float>(column) * pixelSize,
 						cursorY + static_cast<float>(row) * pixelSize,
 						pixelSize,
@@ -146,7 +146,7 @@ void TextView::OnRenderUI(Renderer& renderer_)
 				}
 				else
 				{
-					renderer_.DrawUIRectPixels(
+					renderTarget_.DrawUIRectPixels(
 						cursorX + static_cast<float>(column) * pixelSize,
 						cursorY + static_cast<float>(row) * pixelSize,
 						pixelSize,

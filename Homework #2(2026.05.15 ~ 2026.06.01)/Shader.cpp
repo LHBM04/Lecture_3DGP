@@ -17,7 +17,6 @@ bool Shader::Load(const std::filesystem::path& path_)
 
 void Shader::Unload() noexcept
 {
-	ClearPath();
 	SetLoaded(false);
 	byteCode.Reset();
 	errorMessage.Reset();

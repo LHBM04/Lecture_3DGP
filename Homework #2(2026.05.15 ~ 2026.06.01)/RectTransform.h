@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "Vector2D.h"
 
-class Renderer;
+class RenderTarget;
 
 class RectTransform final : public Transform
 {

@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Transform.h"
 
 const Vector3D& Transform::GetLocalPosition() const

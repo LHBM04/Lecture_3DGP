@@ -14,7 +14,6 @@ bool Material::Load(const std::filesystem::path& path_)
 
 void Material::Unload() noexcept
 {
-	ClearPath();
 	SetLoaded(false);
 	albedoColor = ColorRGBA::GetWhite();
 	vertexShader = nullptr;
