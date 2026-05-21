@@ -150,10 +150,10 @@
       <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Sources</Filter>
+      <Filter>Sources\Game</Filter>
     </ClCompile>
     <ClCompile Include="Scene_Title.cpp">
-      <Filter>Sources</Filter>
+      <Filter>Sources\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,11 +298,11 @@
     <ClInclude Include="UIComponent.h">
       <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Scene_Title.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Title.h">
+      <Filter>Sources\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
