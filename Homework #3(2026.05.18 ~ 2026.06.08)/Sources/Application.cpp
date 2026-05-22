@@ -1,147 +1,237 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Application.h"
 
-namespace
-{
-	Application application;
-}
+#undef CreateWindow
 
-bool Application::Initialize(HINSTANCE instance, const Options& options)
+LRESULT CALLBACK Engine::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	Options resolvedOptions{ options };
-	resolvedOptions.instance = instance;
-	return application.InitializeInstance(resolvedOptions);
-}
+	Engine* app{ nullptr };
 
-int Application::Run()
-{
-	return application.RunInstance();
-}
-
-void Application::Shutdown() noexcept
-{
-	application.ShutdownInstance();
-}
-
-LRESULT CALLBACK Application::WindowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
+	if (uMsg == WM_NCCREATE)
 	{
-	case WM_CLOSE:
-		::DestroyWindow(windowHandle);
-		return 0;
-	case WM_DESTROY:
-		::PostQuitMessage(0);
-		return 0;
-	default:
-		return ::DefWindowProcW(windowHandle, message, wParam, lParam);
+		const CREATESTRUCTW* createStruct{ reinterpret_cast<const CREATESTRUCTW*>(lParam) };
+		app = reinterpret_cast<Engine*>(createStruct->lpCreateParams);
+		SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app));
 	}
-}
-
-bool Application::InitializeInstance(const Options& options)
-{
-	instance = options.instance;
-	width = options.width;
-	height = options.height;
-
-	if (!CreateMainWindow(options))
+	else
 	{
-		return false;
+		app = reinterpret_cast<Engine*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
 	}
 
-	if (!renderer.Initialize(windowHandle, width, height))
+	if (app != nullptr)
 	{
-		ShutdownInstance();
-		return false;
+		switch (uMsg)
+		{
+		case WM_CLOSE:
+			app->SetShouldClose(true);
+			return 0;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
+		case WM_SIZE:
+			app->Resize(LOWORD(lParam), HIWORD(lParam));
+			return 0;
+		default:
+			break;
+		}
 	}
 
-	::ShowWindow(windowHandle, options.showCommand);
-	::UpdateWindow(windowHandle);
-
-	running = true;
-	return true;
+	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-int Application::RunInstance()
+DWORD Engine::ResolveWindowStyle() const noexcept
 {
+	if (options_.fullscreen || options_.borderless)
+	{
+		return WS_POPUP | WS_VISIBLE;
+	}
+
+	if (options_.resizable)
+	{
+		return WS_OVERLAPPEDWINDOW;
+	}
+
+	return WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+}
+
+bool Engine::Initialize(HINSTANCE instance__) noexcept
+{
+	instance_ = instance__;
+
+	WNDCLASSEXW wc
+	{
+		.cbSize = sizeof(WNDCLASSEXW),
+		.style = CS_HREDRAW | CS_VREDRAW,
+		.lpfnWndProc = WindowProc,
+		.cbClsExtra = 0,
+		.cbWndExtra = 0,
+		.hInstance = instance_,
+		.hIcon = LoadIconW(nullptr, IDI_APPLICATION),
+		.hCursor = LoadCursorW(nullptr, IDC_ARROW),
+		.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1),
+		.lpszMenuName = nullptr,
+		.lpszClassName = WINDOW_CLASS_NAME,
+		.hIconSm = LoadIconW(nullptr, IDI_APPLICATION)
+	};
+
+	return RegisterClassExW(&wc) != 0;
+}
+
+int Engine::Run(const Options& options)
+{
+	options_ = options;
+	
 	MSG message{};
-
-	while (running)
+	while (!ShouldClose())
 	{
-		while (::PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
+		if (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (message.message == WM_QUIT)
 			{
-				running = false;
+				SetShouldClose(true);
 				break;
 			}
 
-			::TranslateMessage(&message);
-			::DispatchMessageW(&message);
-		}
-
-		if (running)
-		{
-			renderer.Render();
+			TranslateMessage(&message);
+			DispatchMessageW(&message);
 		}
 	}
 
-	ShutdownInstance();
 	return static_cast<int>(message.wParam);
 }
 
-void Application::ShutdownInstance() noexcept
+bool Engine::ShouldClose() const noexcept
 {
-	renderer.Shutdown();
-
-	if (windowHandle != nullptr)
-	{
-		::DestroyWindow(windowHandle);
-		windowHandle = nullptr;
-	}
-
-	instance = nullptr;
-	width = 0;
-	height = 0;
-	running = false;
+	return shouldClose_;
 }
 
-bool Application::CreateMainWindow(const Options& options)
+void Engine::SetShouldClose(bool shouldClose__) noexcept
 {
-	constexpr LPCWSTR className{ L"Homework3DX12Window" };
+	shouldClose_ = shouldClose__;
+}
 
-	WNDCLASSEXW windowClass{};
-	windowClass.cbSize = sizeof(WNDCLASSEXW);
-	windowClass.style = CS_HREDRAW | CS_VREDRAW;
-	windowClass.lpfnWndProc = &Application::WindowProcedure;
-	windowClass.hInstance = instance;
-	windowClass.hCursor = ::LoadCursorW(nullptr, IDC_ARROW);
-	windowClass.lpszClassName = className;
+LPCWSTR Engine::GetTitle() const noexcept
+{
+	return options_.title;
+}
 
-	if (::RegisterClassExW(&windowClass) == 0)
+void Engine::SetTitle(LPCWSTR title_) noexcept
+{
+	options_.title = title_;
+	if (window_ != nullptr)
 	{
-		return false;
+		SetWindowTextW(window_, title_);
+	}
+}
+
+int Engine::GetWidth() const noexcept
+{
+	return options_.width;
+}
+
+void Engine::SetWidth(int width_) noexcept
+{
+	options_.width = width_;
+	ApplyWindowMode();
+}
+
+int Engine::GetHeight() const noexcept
+{
+	return options_.height;
+}
+
+void Engine::SetHeight(int height_) noexcept
+{
+	options_.height = height_;
+	ApplyWindowMode();
+}
+
+bool Engine::IsResizable() const noexcept
+{
+	return options_.resizable;
+}
+
+void Engine::SetResizable(bool resizable_) noexcept
+{
+	options_.resizable = resizable_;
+	ApplyWindowMode();
+}
+
+bool Engine::IsFullscreen() const noexcept
+{
+	return options_.fullscreen;
+}
+
+void Engine::SetFullscreen(bool fullscreen_) noexcept
+{
+	options_.fullscreen = fullscreen_;
+	if (fullscreen_)
+	{
+		options_.borderless = false;
+	}
+	ApplyWindowMode();
+}
+
+bool Engine::IsBorderless() const noexcept
+{
+	return options_.borderless;
+}
+
+void Engine::SetBorderless(bool borderless_) noexcept
+{
+	options_.borderless = borderless_;
+	if (borderless_)
+	{
+		options_.fullscreen = false;
+	}
+	ApplyWindowMode();
+}
+
+void Engine::Resize(int width_, int height_) noexcept
+{
+	options_.width = std::max(1, width_);
+	options_.height = std::max(1, height_);
+}
+
+void Engine::ApplyWindowMode() noexcept
+{
+	if (window_ == nullptr)
+	{
+		return;
 	}
 
-	RECT windowRect{ 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
-	if (!::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE))
+	const DWORD style{ ResolveWindowStyle() };
+	SetWindowLongPtrW(window_, GWL_STYLE, static_cast<LONG_PTR>(style));
+
+	if (options_.fullscreen)
 	{
-		return false;
+		SetWindowPos(
+			window_,
+			HWND_TOP,
+			0,
+			0,
+			GetSystemMetrics(SM_CXSCREEN),
+			GetSystemMetrics(SM_CYSCREEN),
+			SWP_FRAMECHANGED | SWP_NOACTIVATE
+		);
+		return;
 	}
 
-	windowHandle = ::CreateWindowExW(
+	RECT rect
+	{
+		.left = 0,
+		.top = 0,
+		.right = static_cast<LONG>(options_.width),
+		.bottom = static_cast<LONG>(options_.height)
+	};
+	AdjustWindowRectEx(&rect, style, FALSE, 0);
+	SetWindowPos(
+		window_,
+		nullptr,
 		0,
-		className,
-		options.title,
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		windowRect.right - windowRect.left,
-		windowRect.bottom - windowRect.top,
-		nullptr,
-		nullptr,
-		instance,
-		nullptr);
-
-	return windowHandle != nullptr;
+		0,
+		rect.right - rect.left,
+		rect.bottom - rect.top,
+		SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOACTIVATE
+	);
 }

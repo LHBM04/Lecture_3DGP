@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.h"
 #include "Application.h"
 
-std::unique_ptr<Engine> app;
+std::unique_ptr<Engine> engine{ nullptr };
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -11,22 +11,21 @@ INT APIENTRY wWinMain(
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-	UNREFERENCED_PARAMETER(nCmdShow);
-
-	app = std::make_unique<Engine>();
-	if (!app->Initialize(hInstance))
-	{
-		::MessageBoxW(nullptr, L"애플리케이션을 생성할 수 없습니다!", L"Oops!", MB_OK | MB_ICONERROR);
-		return -1;
-	}
+	
+	engine = std::make_unique<Engine>(hInstance);
 
 	Engine::Options options{};
-	options.title = L"Homework #3(2026.05.18 ~ 2026.06.08)";
+	options.title = L"Homework #2(2026.05.15 ~ 2026.06.01)";
 	options.width = 1280;
 	options.height = 720;
 	options.fullscreen = false;
-	options.resizable = false;
+	options.resizable = true;
 	options.borderless = false;
 
-	return app->Run(options);
+	if (!engine->Initialize(options))
+	{
+		return -1;
+	}
+
+	return engine->Run();
 }
