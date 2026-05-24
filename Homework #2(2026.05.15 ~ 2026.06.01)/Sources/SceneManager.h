@@ -1,33 +1,22 @@
 #pragma once
 
-#include "Singleton.h"
-#include "Scene.h"
-
 #include <memory>
-#include <vector>
+#include <string>
 
-class SceneManager final : public Singleton<SceneManager>
+class Scene;
+
+namespace SceneManager
 {
-	friend class Singleton<SceneManager>;
-
-private:
-	SceneManager() = default;
-	~SceneManager() = default;
-
-public:
-	bool Initialize();
-	void Release();
-
-	void ChangeScene(std::unique_ptr<Scene> scene_);
 	void Update();
 	void Render();
 
+	void AddScene(const std::wstring& name_, std::unique_ptr<Scene> scene_);
+	void RemoveScene(const std::wstring& name_);
+
+	void LoadScene(std::size_t index_) noexcept;
+	void UnloadScene(std::size_t index_) noexcept;
+	void LoadScene(const std::wstring& name_) noexcept;
+	void UnloadScene(const std::wstring& name_) noexcept;
+
 	[[nodiscard]] Scene* GetCurrentScene() noexcept;
-	[[nodiscard]] const Scene* GetCurrentScene() const noexcept;
-
-private:
-	void ApplyPendingScene();
-
-	std::unique_ptr<Scene> currentScene;
-	std::unique_ptr<Scene> pendingScene;
-};
+}

@@ -3,7 +3,7 @@
 #include "Singleton.h"
 #include "CameraConstants.h"
 #include "DrawCall.h"
-#include "RendererOptions.h"
+#include "System.h"
 
 #include <dxgi1_6.h>
 #include <wrl.h>
@@ -17,9 +17,24 @@ class Mesh;
 class Camera;
 class GameObject;
 
-class Renderer final : public Singleton<Renderer>
+struct RendererOptions final
+{
+	HWND window;
+	int x;
+	int y;
+	int width;
+	int height;
+	bool msaa4xEnable;
+	bool enableTripleBuffering;
+	bool vSync;
+	bool fullscreen;
+};
+
+class Renderer final : public System<RendererOptions>
 {
 public:
+	~Renderer() noexcept override;
+
 	bool Initialize(const RendererOptions& options_);
 	void Release();
 
@@ -38,8 +53,13 @@ public:
 	void Render();
 	void Flush();
 	void WaitIdle();
+	void SetFullscreen(bool fullscreen_);
+	void ToggleFullscreen();
 
 	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
+	[[nodiscard]] bool IsFullscreen() const noexcept;
+	[[nodiscard]] int GetWidth() const noexcept;
+	[[nodiscard]] int GetHeight() const noexcept;
 
 private:
 	struct BackBuffer final
@@ -83,6 +103,9 @@ private:
 	void CreateCommandList();
 	void CreateFence();
 
+	void ReleaseBackBuffers();
+	void ReleaseDepthStencilBuffer();
+	void ApplyFullscreenState();
 	void TransitionBackBuffer(D3D12_RESOURCE_STATES state_);
 
 	void BindCameraConstants();
@@ -110,6 +133,9 @@ private:
 	static constexpr std::size_t UploadBufferSize{ 4u * 1024u * 1024u };
 
 	RendererOptions options;
+	bool isFullscreen;
+	int windowedWidth;
+	int windowedHeight;
 
 #if defined(_DEBUG)
 	Microsoft::WRL::ComPtr<ID3D12Debug> debugController;

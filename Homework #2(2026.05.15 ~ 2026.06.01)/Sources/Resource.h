@@ -14,6 +14,9 @@ public:
 	Resource(Resource&&) = delete;
 	Resource& operator=(Resource&&) = delete;
 
+	virtual bool Load(const std::filesystem::path& path_) = 0;
+	virtual void Unload() = 0;
+
 	[[nodiscard]] const std::filesystem::path& GetPath() const noexcept;
 	void SetPath(const std::filesystem::path& path_);
 

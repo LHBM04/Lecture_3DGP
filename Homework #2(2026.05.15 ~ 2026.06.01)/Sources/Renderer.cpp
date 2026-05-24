@@ -19,9 +19,19 @@ namespace
 	}
 }
 
+Renderer::~Renderer()
+{
+	Renderer::Release();
+}
+
 bool Renderer::Initialize(const RendererOptions& options_)
 {
+	const bool requestedFullscreen{ options_.fullscreen };
 	options = options_;
+	options.fullscreen = false;
+	isFullscreen = false;
+	windowedWidth = std::max(1, options.width);
+	windowedHeight = std::max(1, options.height);
 
 	for (BackBuffer& backBuffer : backBuffers)
 	{
@@ -56,6 +66,10 @@ bool Renderer::Initialize(const RendererOptions& options_)
 	CreateBackBuffers();
 	CreateDepthStencilBuffer();
 	CreateFence();
+	if (requestedFullscreen)
+	{
+		SetFullscreen(true);
+	}
 
 	return nullptr != device &&
 		nullptr != commandQueue &&
@@ -72,6 +86,11 @@ void Renderer::Release()
 {
 	WaitIdle();
 
+	if (nullptr != swapChain)
+	{
+		(void)swapChain->SetFullscreenState(FALSE, nullptr);
+	}
+
 	for (FrameResource& frameResource : frameResources)
 	{
 		if (nullptr != frameResource.mappedUploadBuffer && nullptr != frameResource.uploadBuffer)
@@ -87,16 +106,10 @@ void Renderer::Release()
 		frameResource.fenceValue = 0;
 	}
 
-	depthStencilBuffer.Reset();
+	ReleaseDepthStencilBuffer();
 	dsvDescriptorHeap.Reset();
 
-	for (BackBuffer& backBuffer : backBuffers)
-	{
-		backBuffer.resource.Reset();
-		backBuffer.rtv = {};
-		backBuffer.state = D3D12_RESOURCE_STATE_PRESENT;
-	}
-
+	ReleaseBackBuffers();
 	rtvDescriptorHeap.Reset();
 	swapChain.Reset();
 	commandList.Reset();
@@ -114,6 +127,7 @@ void Renderer::Release()
 	drawCalls.clear();
 	visibleDrawCalls.clear();
 	batches.clear();
+	isFullscreen = false;
 }
 
 void Renderer::BeginRender()
@@ -179,10 +193,38 @@ void Renderer::EndRender()
 
 void Renderer::SetCamera(const Camera* camera_)
 {
+	if (nullptr == camera_)
+	{
+		return;
+	}
+
 	currentCameraConstants = {};
+
+	const Vector4D& viewportRect{ camera_->GetViewport() };
+	const float targetWidth{ static_cast<float>(std::max(1, options.width)) };
+	const float targetHeight{ static_cast<float>(std::max(1, options.height)) };
+
+	D3D12_VIEWPORT viewport{};
+	viewport.TopLeftX = viewportRect.x * targetWidth;
+	viewport.TopLeftY = viewportRect.y * targetHeight;
+	viewport.Width = std::max(1.0f, viewportRect.z * targetWidth);
+	viewport.Height = std::max(1.0f, viewportRect.w * targetHeight);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	commandList->RSSetViewports(1, &viewport);
+
+	D3D12_RECT scissorRect{};
+	scissorRect.left = static_cast<LONG>(viewport.TopLeftX);
+	scissorRect.top = static_cast<LONG>(viewport.TopLeftY);
+	scissorRect.right = static_cast<LONG>(viewport.TopLeftX + viewport.Width);
+	scissorRect.bottom = static_cast<LONG>(viewport.TopLeftY + viewport.Height);
+	commandList->RSSetScissorRects(1, &scissorRect);
+
+	const float aspect{ viewport.Width / viewport.Height };
+
 	currentCameraConstants.view = camera_->GetViewMatrix();
-	currentCameraConstants.projection = camera_->GetProjectionMatrix(16 / 9);
-	currentCameraConstants.viewProjection = camera_->GetViewProjectionMatrix(16 / 9);
+	currentCameraConstants.projection = camera_->GetProjectionMatrix(aspect);
+	currentCameraConstants.viewProjection = camera_->GetViewProjectionMatrix(aspect);
 }
 
 void Renderer::BindPipeline(const Shader& shader_)
@@ -266,12 +308,120 @@ ID3D12Device* Renderer::GetDevice() const noexcept
 	return device.Get();
 }
 
+bool Renderer::IsFullscreen() const noexcept
+{
+	return isFullscreen;
+}
+
+int Renderer::GetWidth() const noexcept
+{
+	return options.width;
+}
+
+int Renderer::GetHeight() const noexcept
+{
+	return options.height;
+}
+
 void Renderer::WaitIdle()
 {
 	for (FrameResource& frameResource : frameResources)
 	{
 		WaitForFrame(frameResource);
 	}
+}
+
+void Renderer::SetFullscreen(bool fullscreen_)
+{
+	if (nullptr == swapChain)
+	{
+		return;
+	}
+
+	if (fullscreen_ == isFullscreen)
+	{
+		return;
+	}
+
+	WaitIdle();
+
+	if (!isFullscreen)
+	{
+		windowedWidth = std::max(1, options.width);
+		windowedHeight = std::max(1, options.height);
+	}
+
+	ReleaseDepthStencilBuffer();
+	ReleaseBackBuffers();
+
+	int targetWidth{ windowedWidth };
+	int targetHeight{ windowedHeight };
+
+	if (fullscreen_)
+	{
+		Microsoft::WRL::ComPtr<IDXGIOutput> output;
+		if (SUCCEEDED(swapChain->GetContainingOutput(&output)))
+		{
+			DXGI_MODE_DESC desiredMode{};
+			desiredMode.Width = static_cast<UINT>(options.width);
+			desiredMode.Height = static_cast<UINT>(options.height);
+			desiredMode.RefreshRate.Numerator = 0;
+			desiredMode.RefreshRate.Denominator = 1;
+			desiredMode.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			desiredMode.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+			desiredMode.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+			DXGI_MODE_DESC closestMode{};
+			if (SUCCEEDED(output->FindClosestMatchingMode(&desiredMode, &closestMode, device.Get())))
+			{
+				(void)swapChain->ResizeTarget(&closestMode);
+				targetWidth = static_cast<int>(closestMode.Width);
+				targetHeight = static_cast<int>(closestMode.Height);
+			}
+
+			const HRESULT result{ swapChain->SetFullscreenState(TRUE, output.Get()) };
+			if (FAILED(result))
+			{
+				fullscreen_ = false;
+				targetWidth = windowedWidth;
+				targetHeight = windowedHeight;
+			}
+		}
+		else
+		{
+			fullscreen_ = false;
+		}
+	}
+	else
+	{
+		(void)swapChain->SetFullscreenState(FALSE, nullptr);
+	}
+
+	const HRESULT resizeResult
+	{
+		swapChain->ResizeBuffers(
+			static_cast<UINT>(FrameCount),
+			static_cast<UINT>(targetWidth),
+			static_cast<UINT>(targetHeight),
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+			0)
+	};
+
+	assert(SUCCEEDED(resizeResult));
+
+	options.width = targetWidth;
+	options.height = targetHeight;
+	options.fullscreen = fullscreen_;
+	isFullscreen = fullscreen_;
+
+	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	CreateBackBuffers();
+	CreateDepthStencilBuffer();
+}
+
+void Renderer::ToggleFullscreen()
+{
+	SetFullscreen(!isFullscreen);
 }
 
 void Renderer::CreateDevice()
@@ -368,6 +518,8 @@ void Renderer::CreateSwapChain()
 	assert(SUCCEEDED(factory->CreateSwapChainForHwnd(commandQueue.Get(), options.window, &desc, nullptr, nullptr, &swapChain1)));
 	assert(SUCCEEDED(swapChain1.As(&swapChain)));
 
+	assert(SUCCEEDED(factory->MakeWindowAssociation(options.window, DXGI_MWA_NO_ALT_ENTER)));
+
 	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
 }
 
@@ -447,6 +599,21 @@ void Renderer::CreateDepthStencilBuffer()
 		dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
+void Renderer::ReleaseBackBuffers()
+{
+	for (BackBuffer& backBuffer : backBuffers)
+	{
+		backBuffer.resource.Reset();
+		backBuffer.rtv = {};
+		backBuffer.state = D3D12_RESOURCE_STATE_PRESENT;
+	}
+}
+
+void Renderer::ReleaseDepthStencilBuffer()
+{
+	depthStencilBuffer.Reset();
+}
+
 void Renderer::CreateFence()
 {
 	assert(nullptr != device);
@@ -455,6 +622,11 @@ void Renderer::CreateFence()
 	fenceEvent = ::CreateEventExW(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
 	assert(nullptr != fenceEvent);
 	nextFenceValue = 1;
+}
+
+void Renderer::ApplyFullscreenState()
+{
+	SetFullscreen(options.fullscreen);
 }
 
 void Renderer::TransitionBackBuffer(D3D12_RESOURCE_STATES state_)

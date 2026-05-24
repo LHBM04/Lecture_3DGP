@@ -1,5 +1,7 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Mesh.h"
+
+#include "Application.h"
 
 namespace
 {
@@ -88,7 +90,7 @@ namespace
 	}
 }
 
-bool Mesh::LoadFromBinary(ID3D12Device* device_, const std::filesystem::path& path_)
+bool Mesh::Load(const std::filesystem::path& path_)
 {
 	std::ifstream file{ path_, std::ios::binary };
 	if (!file)
@@ -216,8 +218,10 @@ bool Mesh::LoadFromBinary(ID3D12Device* device_, const std::filesystem::path& pa
 		}
 	}
 
+	auto device{ Application::GetRenderer().GetDevice() };
+
 	const std::size_t vertexByteSize{ vertices.size() * sizeof(MeshVertex) };
-	if (!CreateUploadBuffer(device_, vertices.data(), vertexByteSize, vertexBuffer))
+	if (!CreateUploadBuffer(device, vertices.data(), vertexByteSize, vertexBuffer))
 	{
 		return false;
 	}
@@ -230,7 +234,7 @@ bool Mesh::LoadFromBinary(ID3D12Device* device_, const std::filesystem::path& pa
 	if (!indices.empty())
 	{
 		const std::size_t indexByteSize{ indices.size() * sizeof(std::uint32_t) };
-		if (!CreateUploadBuffer(device_, indices.data(), indexByteSize, indexBuffer))
+		if (!CreateUploadBuffer(device, indices.data(), indexByteSize, indexBuffer))
 		{
 			return false;
 		}
@@ -245,6 +249,28 @@ bool Mesh::LoadFromBinary(ID3D12Device* device_, const std::filesystem::path& pa
 	SetPath(path_);
 	SetLoaded(true);
 	return true;
+}
+
+bool Mesh::LoadFromBinary(ID3D12Device* device_, const std::filesystem::path& path_)
+{
+	if (nullptr == device_)
+	{
+		return false;
+	}
+
+	return Load(path_);
+}
+
+void Mesh::Unload()
+{
+	vertexBuffer.Reset();
+	indexBuffer.Reset();
+	vertexBufferView = {};
+	indexBufferView = {};
+	hasIndexBuffer = false;
+	vertexCount = 0;
+	indexCount = 0;
+	SetLoaded(false);
 }
 
 uint64_t Mesh::GetId() const noexcept
@@ -308,4 +334,5 @@ void Mesh::SetIndexCount(UINT count_) noexcept
 {
 	indexCount = count_;
 }
+
 

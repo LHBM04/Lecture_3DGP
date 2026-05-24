@@ -4,7 +4,6 @@
 #include "Camera.h"
 #include "MeshRenderer.h"
 #include "PlayerController.h"
-#include "ResourceManager.h"
 #include "Transform.h"
 
 bool Scene_Test::LoadResources(ID3D12Device* device_)
@@ -14,23 +13,21 @@ bool Scene_Test::LoadResources(ID3D12Device* device_)
 		return false;
 	}
 
-	ResourceManager& rm{ ResourceManager::GetInstance() };
-
-	testMesh = rm.Create<Mesh>("Stairs");
-	if (!testMesh->LoadFromBinary(device_, "Resources/Models/Stairs.bin"))
+	testMesh = std::make_shared<Mesh>();
+	if (!testMesh->LoadFromBinary(device_, "Resources/Models/Cube.bin"))
 	{
 		return false;
 	}
 	testMesh->SetId(1);
 
-	testShader = rm.Create<Shader>("GameObjectShader");
+	testShader = std::make_shared<Shader>();
 	if (!testShader->LoadFromFile(device_, L"Resources/Shaders/GameObject.hlsl"))
 	{
 		return false;
 	}
 	testShader->SetPipelineId(1);
 
-	testMaterial = rm.Create<Material>("TestMaterial");
+	testMaterial = std::make_shared<Material>();
 	testMaterial->SetId(1);
 	testMaterial->SetColor(ColorRGBA::GetWhite());
 	testMaterial->SetShader(testShader.get());

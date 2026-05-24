@@ -1,8 +1,10 @@
 ﻿#include "Precompiled.h"
 #include "Scene.h"
 
+#include "Application.h"
 #include "Camera.h"
 #include "GameObject.h"
+#include "Renderer.h"
 #include "ResourceManager.h"
 
 void Scene::AddCamera(Camera* camera_)
@@ -67,7 +69,7 @@ void Scene::Update()
 
 void Scene::Render()
 {
-	Renderer& renderer{ Renderer::GetInstance() };
+	Renderer& renderer{ Application::GetRenderer() };
 
 	for (Camera* camera : cameras)
 	{

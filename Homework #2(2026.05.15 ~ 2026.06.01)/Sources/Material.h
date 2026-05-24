@@ -20,6 +20,9 @@ public:
 	Material(Material&&) = delete;
 	Material& operator=(Material&&) = delete;
 
+	bool Load(const std::filesystem::path& path_) override;
+	void Unload() override;
+
 	[[nodiscard]] uint64_t GetId() const noexcept;
 	void SetId(uint64_t id_) noexcept;
 

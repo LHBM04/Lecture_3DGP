@@ -1,15 +1,37 @@
 ﻿#include "Precompiled.h"
 #include "Timer.h"
 
-#include <algorithm>
+namespace
+{
+	using Clock = std::chrono::high_resolution_clock;
+	using TimePoint = std::chrono::time_point<Clock>;
 
-void Timer::Initialize() noexcept
+	TimePoint startTime{};
+	TimePoint lastTime{};
+
+	float deltaTime{ 0.0f };
+	float unscaledDeltaTime{ 0.0f };
+
+	float totalTime{ 0.0f };
+	float unscaledTime{ 0.0f };
+
+	float fixedDeltaTime{ 0.02f };
+	float timeScale{ 1.0f };
+
+	int frameCount{ 0 };
+	int totalFrameCount{ 0 };
+
+	float fpsTimer{ 0.0f };
+	int currentFps{ 0 };
+}
+
+void Timer::Reset()
 {
 	startTime = Clock::now();
 	lastTime = startTime;
 }
 
-void Timer::Tick() noexcept
+void Timer::Tick()
 {
 	const TimePoint currentTime{ Clock::now() };
 	const std::chrono::duration<float> duration{ currentTime - lastTime };
@@ -34,32 +56,32 @@ void Timer::Tick() noexcept
 	}
 }
 
-float Timer::GetTotalTime() const noexcept
+float Timer::GetTotalTime() noexcept
 {
 	return totalTime;
 }
 
-float Timer::GetDeltaTime() const noexcept
+float Timer::GetDeltaTime() noexcept
 {
 	return deltaTime;
 }
 
-float Timer::GetUnscaledDeltaTime() const noexcept
+float Timer::GetUnscaledDeltaTime() noexcept
 {
 	return unscaledDeltaTime;
 }
 
-float Timer::GetUnscaledTime() const noexcept
+float Timer::GetUnscaledTime() noexcept
 {
 	return unscaledTime;
 }
 
-float Timer::GetFixedDeltaTime() const noexcept
+float Timer::GetFixedDeltaTime() noexcept
 {
 	return fixedDeltaTime * timeScale;
 }
 
-float Timer::GetUnscaledFixedDeltaTime() const noexcept
+float Timer::GetUnscaledFixedDeltaTime() noexcept
 {
 	return fixedDeltaTime;
 }
@@ -69,17 +91,17 @@ void Timer::SetFixedDeltaTime(float fixedDeltaTime_) noexcept
 	fixedDeltaTime = std::max(fixedDeltaTime_, 0.0f);
 }
 
-int Timer::GetFrameCount() const noexcept
+int Timer::GetTotalFrameCount() noexcept 
 {
 	return totalFrameCount;
 }
 
-int Timer::GetFPS() const noexcept
+int Timer::GetFrameCount() noexcept
 {
-	return currentFps;
+	return frameCount;
 }
 
-float Timer::GetTimeScale() const noexcept
+float Timer::GetTimeScale() noexcept
 {
 	return timeScale;
 }

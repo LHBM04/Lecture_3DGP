@@ -1,9 +1,12 @@
 ﻿#include "Precompiled.h"
 #include "Window.h"
 
-#include "KeyCode.h"
-#include "MouseCode.h"
-#include "WindowOptions.h"
+#include "InputManager.h"
+
+Window::~Window() noexcept
+{
+	Window::Release();
+}
 
 bool Window::Initialize(const WindowOptions& options_)
 {
@@ -42,14 +45,18 @@ bool Window::Initialize(const WindowOptions& options_)
 
 	const int windowWidth{ rect.right - rect.left };
 	const int windowHeight{ rect.bottom - rect.top };
+	const int screenWidth{ ::GetSystemMetrics(SM_CXSCREEN) };
+	const int screenHeight{ ::GetSystemMetrics(SM_CYSCREEN) };
+	const int windowX{ (screenWidth - windowWidth) / 2 + options.x };
+	const int windowY{ (screenHeight - windowHeight) / 2 + options.y };
 
 	handle = ::CreateWindowExW(
 		options.styleEx,
 		className,
 		options.title.c_str(),
 		options.style,
-		options.x,
-		options.y,
+		windowX,
+		windowY,
 		windowWidth,
 		windowHeight,
 		nullptr,
@@ -67,23 +74,6 @@ void Window::Release()
 		::DestroyWindow(handle);
 		handle = nullptr;
 	}
-}
-
-bool Window::ProcessMessages() const noexcept
-{
-	MSG message{};
-	while (::PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
-	{
-		if (WM_QUIT == message.message)
-		{
-			return false;
-		}
-
-		::TranslateMessage(&message);
-		::DispatchMessageW(&message);
-	}
-
-	return true;
 }
 
 HWND Window::GetHandle() const noexcept
@@ -105,12 +95,12 @@ void Window::SetTitle(const std::wstring& title_) noexcept
 	}
 }
 
-int Window::GetX() const noexcept
+int Window::GetPositionX() const noexcept
 {
 	return options.x;
 }
 
-void Window::SetX(int x_) noexcept
+void Window::SetPositionX(int x_) noexcept
 {
 	if (nullptr != handle)
 	{
@@ -119,12 +109,12 @@ void Window::SetX(int x_) noexcept
 	}
 }
 
-int Window::GetY() const noexcept
+int Window::GetPositionY() const noexcept
 {
 	return options.y;
 }
 
-void Window::SetY(int y_) noexcept
+void Window::SetPositionY(int y_) noexcept
 {
 	if (nullptr != handle)
 	{
@@ -308,7 +298,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::KeyDown;
-			event.key.keyCode = static_cast<int>(wParam_);
+			event.key.keyCode = (KeyCode)wParam_;
 			eventQueue.push(event);
 			return 0;
 		}
@@ -316,9 +306,21 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::KeyUp;
-			event.key.keyCode = static_cast<int>(wParam_);
+			event.key.keyCode = (KeyCode)wParam_;
 			eventQueue.push(event);
 			return 0;
+		}
+		case WM_SYSKEYDOWN:
+		{
+			const bool isAltDown{ 0 != (lParam_ & (1 << 29)) };
+			if (isAltDown && VK_RETURN == wParam_)
+			{
+				Event event{};
+				event.type = Event::Type::WindowFullscreenToggle;
+				eventQueue.push(event);
+				return 0;
+			}
+			break;
 		}
 		case WM_MOUSEMOVE:
 		{
@@ -336,9 +338,9 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 			Event event{};
 			event.type = Event::Type::MouseButtonDown;
 			event.mouseButton.button =
-				WM_LBUTTONDOWN == message_ ? static_cast<int>(MouseCode::Left) :
-				WM_RBUTTONDOWN == message_ ? static_cast<int>(MouseCode::Right) :
-				static_cast<int>(MouseCode::Middle);
+				WM_LBUTTONDOWN == message_ ? ButtonCode::Left :
+				WM_RBUTTONDOWN == message_ ? ButtonCode::Right :
+					ButtonCode::Middle;
 			event.mouseButton.x = GET_X_LPARAM(lParam_);
 			event.mouseButton.y = GET_Y_LPARAM(lParam_);
 			eventQueue.push(event);
@@ -351,9 +353,9 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 			Event event{};
 			event.type = Event::Type::MouseButtonUp;
 			event.mouseButton.button =
-				WM_LBUTTONUP == message_ ? static_cast<int>(MouseCode::Left) :
-				WM_RBUTTONUP == message_ ? static_cast<int>(MouseCode::Right) :
-				static_cast<int>(MouseCode::Middle);
+				WM_LBUTTONUP == message_ ? ButtonCode::Left :
+				WM_RBUTTONUP == message_ ? ButtonCode::Right :
+					ButtonCode::Middle;
 			event.mouseButton.x = GET_X_LPARAM(lParam_);
 			event.mouseButton.y = GET_Y_LPARAM(lParam_);
 			eventQueue.push(event);

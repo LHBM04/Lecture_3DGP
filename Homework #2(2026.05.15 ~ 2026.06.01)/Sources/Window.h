@@ -1,35 +1,42 @@
 ﻿#pragma once
 
 #include "Event.h"
-#include "WindowOptions.h"
+#include "System.h"
 
-class Window final
+struct WindowOptions final
+{
+	std::wstring title;
+	int x;
+	int y;
+	int width;
+	int height;
+	DWORD style;
+	DWORD styleEx;
+};
+
+class Window final : public System<WindowOptions>
 {
 public:
-	Window() noexcept = default;
-	~Window() noexcept = default;
+	~Window() noexcept override;
 
-	Window(const Window&) = delete;
-	Window& operator=(const Window&) = delete;
+	bool Initialize(const WindowOptions& options_) override;
+	void Release() override;
 
-	Window(Window&&) = delete;
-	Window& operator=(Window&&) = delete;
+	bool PollEvent(Event& event_);
 
-	bool Initialize(const WindowOptions& options_);
-	void Release();
-
-	[[nodiscard]] bool ProcessMessages() const noexcept;
+	void Show() const noexcept;
+	void Hide() const noexcept;
 
 	[[nodiscard]] HWND GetHandle() const noexcept;
 
 	[[nodiscard]] const std::wstring& GetTitle() const noexcept;
 	void SetTitle(const std::wstring& title_) noexcept;
 
-	[[nodiscard]] int GetX() const noexcept;
-	void SetX(int x_) noexcept;
+	[[nodiscard]] int GetPositionX() const noexcept;
+	void SetPositionX(int x_) noexcept;
 
-	[[nodiscard]] int GetY() const noexcept;
-	void SetY(int y_) noexcept;
+	[[nodiscard]] int GetPositionY() const noexcept;
+	void SetPositionY(int y_) noexcept;
 
 	[[nodiscard]] std::pair<int, int> GetPosition() const noexcept;
 	void SetPosition(int x_, int y_) noexcept;
@@ -48,11 +55,6 @@ public:
 
 	[[nodiscard]] DWORD GetStyleEx() const noexcept;
 	void SetStyleEx(DWORD styleEx_) noexcept;
-
-	void Show() const noexcept;
-	void Hide() const noexcept;
-
-	bool PollEvent(Event& event_);
 
 private:
 	static LRESULT CALLBACK WindowProc(

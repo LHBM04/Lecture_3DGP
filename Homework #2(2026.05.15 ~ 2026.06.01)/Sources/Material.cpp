@@ -1,6 +1,20 @@
 #include "Precompiled.h"
 #include "Material.h"
 
+bool Material::Load(const std::filesystem::path& path_)
+{
+	SetPath(path_);
+	SetLoaded(true);
+	return true;
+}
+
+void Material::Unload()
+{
+	shader = nullptr;
+	descriptorTable = {};
+	SetLoaded(false);
+}
+
 uint64_t Material::GetId() const noexcept
 {
 	return id;

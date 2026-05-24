@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 #include "MeshRenderer.h"
 
+#include "Application.h"
 #include "GameObject.h"
 #include "Material.h"
 #include "Mesh.h"
@@ -63,7 +64,7 @@ void MeshRenderer::OnRender()
 		return;
 	}
 
-	Renderer& renderer{ Renderer::GetInstance() };
+	Renderer& renderer{ Application::GetRenderer()};
 
 	renderer.BindPipeline(*shader);
 	renderer.BindMaterial(*material);

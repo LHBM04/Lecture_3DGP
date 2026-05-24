@@ -1,71 +1,47 @@
 #pragma once
 
-#include "Singleton.h"
 #include "Resource.h"
 
-#include <memory>
-#include <string>
-#include <typeindex>
-#include <unordered_map>
 #include <concepts>
+#include <filesystem>
+#include <memory>
+#include <unordered_map>
 
-class ResourceManager final : public Singleton<ResourceManager>
+namespace ResourceManager
 {
-	friend class Singleton<ResourceManager>;
+	using ResourceStorage = std::unordered_map<std::filesystem::path, std::unique_ptr<Resource>>;
 
-private:
-	ResourceManager() = default;
-	~ResourceManager() = default;
+	[[nodiscard]] ResourceStorage& GetStorage() noexcept;
 
-public:
-	template <std::derived_from<Resource> T>
-	[[nodiscard]] std::shared_ptr<T> Get(const std::string& name_)
+	template <std::derived_from<Resource> TResource>
+	[[nodiscard]] TResource* LoadResource(const std::filesystem::path& path_)
 	{
-		const std::type_index typeIndex{ typeid(T) };
-		auto& typeMap{ resources[typeIndex] };
+		ResourceStorage& resources{ GetStorage() };
 
-		const auto it{ typeMap.find(name_) };
-		if (it != typeMap.end())
+		if (auto iterator{ resources.find(path_) }; resources.end() != iterator)
 		{
-			return std::static_pointer_cast<T>(it->second);
+			return dynamic_cast<TResource*>(iterator->second.get());
 		}
 
-		return nullptr;
-	}
-
-	template <std::derived_from<Resource> T, typename... Args>
-	std::shared_ptr<T> Create(const std::string& name_, Args&&... args_)
-	{
-		const std::type_index typeIndex{ typeid(T) };
-		auto& typeMap{ resources[typeIndex] };
-
-		if (typeMap.contains(name_))
+		std::unique_ptr<TResource> resource{ std::make_unique<TResource>() };
+		TResource* result{ resource.get() };
+		if (!result->Load(path_))
 		{
-			return std::static_pointer_cast<T>(typeMap[name_]);
+			return nullptr;
 		}
 
-		auto resource{ std::make_shared<T>(std::forward<Args>(args_)...) };
-		typeMap[name_] = resource;
-
-		return resource;
+		resources.emplace(path_, std::move(resource));
+		return result;
 	}
 
-	template <std::derived_from<Resource> T>
-	void Remove(const std::string& name_)
+	[[nodiscard]] Resource* GetResource(const std::filesystem::path& path_);
+
+	template <std::derived_from<Resource> TResource>
+	[[nodiscard]] TResource* GetResource(const std::filesystem::path& path_)
 	{
-		const std::type_index typeIndex{ typeid(T) };
-		auto it{ resources.find(typeIndex) };
-		if (it != resources.end())
-		{
-			it->second.erase(name_);
-		}
+		return dynamic_cast<TResource*>(GetResource(path_));
 	}
 
-	void Clear()
-	{
-		resources.clear();
-	}
-
-private:
-	std::unordered_map<std::type_index, std::unordered_map<std::string, std::shared_ptr<Resource>>> resources;
-};
+	void UnloadResource(const std::filesystem::path& path_);
+	void Clear();
+}

@@ -1,8 +1,21 @@
 ﻿#include "Precompiled.h"
 #include "Shader.h"
 
+#include "Application.h"
 #include "Renderer.h"
 #include "RootParameterSlot.h"
+
+bool Shader::Load(const std::filesystem::path& path_)
+{
+	return LoadFromFile(Application::GetRenderer().GetDevice(), path_);
+}
+
+void Shader::Unload()
+{
+	pipelineState.Reset();
+	graphicsRootSignature.Reset();
+	SetLoaded(false);
+}
 
 bool Shader::LoadFromFile(ID3D12Device* device_, const std::filesystem::path& path_)
 {

@@ -2,7 +2,7 @@
 #include "PlayerController.h"
 
 #include "GameObject.h"
-#include "Input.h"
+#include "InputManager.h"
 #include "Quaternion.h"
 #include "Transform.h"
 #include "Vector3D.h"
@@ -22,12 +22,12 @@ void PlayerController::OnUpdate()
 	}
 
 	float yawDelta{ 0.0f };
-	if (Input::GetInstance().IsKeyDown(KeyCode::A) || Input::GetInstance().IsKeyDown(KeyCode::Left))
+	if (InputManager::IsKeyDown(KeyCode::A) || InputManager::IsKeyDown(KeyCode::Left))
 	{
 		yawDelta -= rotationSpeed;
 	}
 
-	if (Input::GetInstance().IsKeyDown(KeyCode::D) || Input::GetInstance().IsKeyDown(KeyCode::Right))
+	if (InputManager::IsKeyDown(KeyCode::D) || InputManager::IsKeyDown(KeyCode::Right))
 	{
 		yawDelta += rotationSpeed;
 	}

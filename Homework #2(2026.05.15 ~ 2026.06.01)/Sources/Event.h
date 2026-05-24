@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "InputManager.h"
+
 struct Event
 {
     enum class Type : unsigned char
@@ -8,6 +10,7 @@ struct Event
 
         WindowClose,
         WindowResize,
+        WindowFullscreenToggle,
 
         KeyDown,
         KeyUp,
@@ -29,7 +32,7 @@ struct Event
 
         struct
         {
-            int keyCode;
+            KeyCode keyCode;
         } key;
 
         struct
@@ -40,7 +43,7 @@ struct Event
 
         struct
         {
-            int button;
+            ButtonCode button;
             int x;
             int y;
         } mouseButton;

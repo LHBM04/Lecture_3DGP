@@ -19,6 +19,9 @@ public:
 	Shader(Shader&&) = delete;
 	Shader& operator=(Shader&&) = delete;
 
+	bool Load(const std::filesystem::path& path_) override;
+	void Unload() override;
+
 	[[nodiscard]] uint64_t GetPipelineId() const noexcept;
 	void SetPipelineId(uint64_t pipelineId_) noexcept;
 
