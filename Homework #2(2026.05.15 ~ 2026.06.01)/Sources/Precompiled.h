@@ -1,0 +1,70 @@
+﻿#pragma once
+
+// ---- Standard ----
+#include <algorithm>
+#include <array>
+#include <bit>
+#include <bitset>
+#include <cassert>
+#include <cmath>
+#include <concepts>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <deque>
+#include <exception>
+#include <filesystem>
+#include <format>
+#include <forward_list>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <list>
+#include <map>
+#include <numbers>
+#include <numeric>
+#include <queue>
+#include <ranges>
+#include <set>
+#include <span>
+#include <stack>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
+
+// ---- Windows API ----
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#include <windowsx.h>
+
+#include <mmsystem.h>
+
+#include <wrl.h>
+
+// ---- DirectX API----
+#include <d3dcommon.h>
+
+#include <d3d12.h>
+#include <d3d12sdklayers.h>
+
+#include <dxgi1_6.h>
+
+#include <d3dcommon.h>
+#include <d3dcompiler.h>
+
+// ---- DirectX Utility ----
+#include <DirectXCollision.h>
+#include <DirectXColors.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+
