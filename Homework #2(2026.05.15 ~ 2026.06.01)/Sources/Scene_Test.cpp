@@ -1,16 +1,18 @@
 ﻿#include "Precompiled.h"
 #include "Scene_Test.h"
 
+#include "Application.h"
+#include "Button.h"
 #include "Camera.h"
 #include "CameraController.h"
-#include "Button.h"
-#include "ImageView.h"
 #include "Font.h"
+#include "ImageView.h"
 #include "Light.h"
 #include "MeshRenderer.h"
-#include "SceneManager.h"
 #include "PlayerController.h"
 #include "RectTransform.h"
+#include "Renderer.h"
+#include "SceneManager.h"
 #include "TextView.h"
 #include "Transform.h"
 #include "Vector2D.h"
@@ -173,6 +175,8 @@ bool Scene_Test::LoadResources(ID3D12Device* device_)
 
 void Scene_Test::OnLoad()
 {
+	LoadResources(Application::GetRenderer().GetDevice());
+
 	GameObject& cameraObject{ CreateGameObject("Main Camera") };
 	Transform* cameraTransform{ cameraObject.AddComponent<Transform>() };
 	Camera* camera{ cameraObject.AddComponent<Camera>() };

@@ -94,9 +94,6 @@
     <ClCompile Include="Sources\ResourceManager.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Main.cpp">
-      <Filter>Sources Files\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Logger.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -113,6 +110,15 @@
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\TextView.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Main.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Title.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SceneSystem.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -276,6 +282,12 @@
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\TextView.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Title.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SceneSystem.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
   </ItemGroup>

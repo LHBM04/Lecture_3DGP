@@ -53,6 +53,7 @@
     <ClCompile Include="Sources\ResourceManager.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
     <ClCompile Include="Sources\SceneManager.cpp" />
+    <ClCompile Include="Sources\SceneSystem.cpp" />
     <ClCompile Include="Sources\Scene_Test.cpp" />
     <ClCompile Include="Sources\Scene_Title.cpp" />
     <ClCompile Include="Sources\Shader.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="Sources\ResourceManager.h" />
     <ClInclude Include="Sources\RootParameterSlot.h" />
     <ClInclude Include="Sources\RendererOptions.h" />
+    <ClInclude Include="Sources\SceneSystem.h" />
     <ClInclude Include="Sources\Scene_Title.h" />
     <ClInclude Include="Sources\System.h" />
     <ClInclude Include="Sources\Scene.h" />

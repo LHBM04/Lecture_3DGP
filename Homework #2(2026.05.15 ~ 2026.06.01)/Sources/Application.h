@@ -1,6 +1,7 @@
-#pragma once
+﻿#pragma once
 
 #include "Renderer.h"
+#include "SceneSystem.h"
 #include "Window.h"
 
 struct ApplicationOptions final
@@ -22,4 +23,5 @@ namespace Application
 
 	Renderer& GetRenderer();
 	Window& GetWindow();
+	SceneSystem& GetSceneSystem();
 }

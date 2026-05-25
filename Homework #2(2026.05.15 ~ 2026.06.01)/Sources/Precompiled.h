@@ -19,6 +19,7 @@
 #include <format>
 #include <forward_list>
 #include <fstream>
+#include <initializer_list>
 #include <iostream>
 #include <iterator>
 #include <list>

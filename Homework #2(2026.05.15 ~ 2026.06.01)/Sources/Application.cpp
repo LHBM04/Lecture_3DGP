@@ -2,10 +2,14 @@
 #include "Application.h"
 
 #include "InputManager.h"
-#include "Timer.h"
-#include "SceneManager.h"
 #include "Scene_Test.h"
 #include "Scene_Title.h"
+#include "SceneManager.h"
+#include "SceneSystem.h"
+#include "Timer.h"
+
+#define SCENE_ENTRY(SceneType, SceneName) \
+    SceneBuildEntry{ SceneName, []() -> std::unique_ptr<Scene> { return std::make_unique<SceneType>(); } }
 
 namespace
 {
@@ -13,6 +17,7 @@ namespace
 
 	Window window;
 	Renderer renderer;
+	SceneSystem sceneSystem;
 }
 
 bool Application::Initialize(const ApplicationOptions& options_)
@@ -68,26 +73,20 @@ bool Application::Initialize(const ApplicationOptions& options_)
 		}
 	}
 
-	if (!SceneManager::Initialize(renderer.GetDevice()))
-	{
-		return false;
-	}
-
 	InputManager::Reset();
 	InputManager::SetScreenSize(window.GetWidth(), window.GetHeight());
 	Timer::Reset();
 
-	std::unique_ptr<Scene_Test> scene{ std::make_unique<Scene_Test>() };
-	if (!scene->LoadResources(renderer.GetDevice()))
-	{
-		return false;
-	}
+	SceneOptions options{
+		.scenes =
+		{
+			SCENE_ENTRY(Scene_Test,  L"Title"),
+			SCENE_ENTRY(Scene_Title, L"Game")
+		},
+		.startIndex = 0
+	};
 
-	std::unique_ptr<Scene_Title> newScene{ std::make_unique<Scene_Title>() };
-
-	SceneManager::AddScene(L"Test", std::move(scene));
-	SceneManager::AddScene(L"Title", std::move(newScene));
-	SceneManager::LoadScene(L"Test");
+	sceneSystem.Initialize(options);
 
 	isRunning = false;
 	
@@ -125,16 +124,14 @@ int Application::Run()
 			InputManager::ProcessEvent(event);
 		}
 
-		SceneManager::Update();
+		sceneSystem.Update();
 
 		renderer.BeginRender();
-
-		SceneManager::Render();
-
+		sceneSystem.Render();
 		renderer.EndRender();
 	}
 
-	SceneManager::Release();
+	sceneSystem.Release();
 	renderer.Release();
 	window.Release();
 
@@ -157,3 +154,7 @@ Renderer& Application::GetRenderer()
 	return renderer;
 }
 
+SceneSystem& Application::GetSceneSystem()
+{
+	return sceneSystem;
+}
