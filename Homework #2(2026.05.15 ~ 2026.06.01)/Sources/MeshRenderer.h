@@ -1,21 +1,14 @@
-#pragma once
+﻿#pragma once
 
 #include "Component.h"
 
 class Material;
 class Mesh;
 
-class MeshRenderer final : public Component
+class MeshRenderer : public Component
 {
 public:
-	MeshRenderer() = default;
 	virtual ~MeshRenderer() = default;
-
-	MeshRenderer(const MeshRenderer&) = delete;
-	MeshRenderer& operator=(const MeshRenderer&) = delete;
-
-	MeshRenderer(MeshRenderer&&) = delete;
-	MeshRenderer& operator=(MeshRenderer&&) = delete;
 
 	[[nodiscard]] Mesh* GetMesh() noexcept;
 	[[nodiscard]] const Mesh* GetMesh() const noexcept;

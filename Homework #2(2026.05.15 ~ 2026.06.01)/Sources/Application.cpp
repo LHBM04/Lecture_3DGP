@@ -5,6 +5,7 @@
 #include "Timer.h"
 #include "SceneManager.h"
 #include "Scene_Test.h"
+#include "Scene_Title.h"
 
 namespace
 {
@@ -67,8 +68,14 @@ bool Application::Initialize(const ApplicationOptions& options_)
 		}
 	}
 
+	if (!SceneManager::Initialize(renderer.GetDevice()))
+	{
+		return false;
+	}
+
 	InputManager::Reset();
 	InputManager::SetScreenSize(window.GetWidth(), window.GetHeight());
+	Timer::Reset();
 
 	std::unique_ptr<Scene_Test> scene{ std::make_unique<Scene_Test>() };
 	if (!scene->LoadResources(renderer.GetDevice()))
@@ -76,7 +83,10 @@ bool Application::Initialize(const ApplicationOptions& options_)
 		return false;
 	}
 
+	std::unique_ptr<Scene_Title> newScene{ std::make_unique<Scene_Title>() };
+
 	SceneManager::AddScene(L"Test", std::move(scene));
+	SceneManager::AddScene(L"Title", std::move(newScene));
 	SceneManager::LoadScene(L"Test");
 
 	isRunning = false;
@@ -111,18 +121,20 @@ int Application::Run()
 			default:
 				break;
 			}
+
+			InputManager::ProcessEvent(event);
 		}
 
 		SceneManager::Update();
 
 		renderer.BeginRender();
-		renderer.Clear();
 
 		SceneManager::Render();
 
 		renderer.EndRender();
 	}
 
+	SceneManager::Release();
 	renderer.Release();
 	window.Release();
 

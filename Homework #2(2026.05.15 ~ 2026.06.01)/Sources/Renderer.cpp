@@ -3,13 +3,9 @@
 
 #include "Camera.h"
 #include "CameraConstants.h"
-#include "GameObject.h"
-#include "Material.h"
-#include "Mesh.h"
+#include "Light.h"
 #include "RendererOptions.h"
 #include "RootParameterSlot.h"
-#include "Shader.h"
-#include "Transform.h"
 
 namespace
 {
@@ -56,6 +52,11 @@ bool Renderer::Initialize(const RendererOptions& options_)
 	dsvDescriptorOffset = 0;
 	nextFenceValue = 1;
 	fenceEvent = nullptr;
+	currentLightDirection = Vector3D::GetForward();
+	currentLightColor = ColorRGB::GetWhite();
+	currentLightIntensity = 1.0f;
+	currentCameraClearMode = CameraClearMode::SolidColor;
+	currentCameraClearColor = ColorRGBA::GetBlue();
 
 	CreateDevice();
 	CreateCommandQueue();
@@ -84,7 +85,7 @@ bool Renderer::Initialize(const RendererOptions& options_)
 
 void Renderer::Release()
 {
-	WaitIdle();
+	WaitForFrames();
 
 	if (nullptr != swapChain)
 	{
@@ -132,6 +133,10 @@ void Renderer::Release()
 
 void Renderer::BeginRender()
 {
+	drawCalls.clear();
+	visibleDrawCalls.clear();
+	batches.clear();
+
 	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
 	currentFrameResourceIndex = currentBackBufferIndex;
 
@@ -150,6 +155,37 @@ void Renderer::BeginRender()
 	D3D12_CPU_DESCRIPTOR_HANDLE dsv{ dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
 	commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
 
+	ResetViewport();
+}
+
+void Renderer::Clear()
+{
+	if (CameraClearMode::None == currentCameraClearMode)
+	{
+		return;
+	}
+
+	BackBuffer& backBuffer{ backBuffers[currentBackBufferIndex] };
+	D3D12_CPU_DESCRIPTOR_HANDLE rtv{ backBuffer.rtv };
+	D3D12_CPU_DESCRIPTOR_HANDLE dsv{ dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
+
+	if (CameraClearMode::SolidColor == currentCameraClearMode)
+	{
+		const FLOAT color[4]
+		{
+			currentCameraClearColor.x,
+			currentCameraClearColor.y,
+			currentCameraClearColor.z,
+			currentCameraClearColor.w
+		};
+		commandList->ClearRenderTargetView(rtv, color, 0, nullptr);
+	}
+
+	commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+}
+
+void Renderer::ResetViewport()
+{
 	D3D12_VIEWPORT viewport{};
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
@@ -165,16 +201,6 @@ void Renderer::BeginRender()
 	scissorRect.right = options.width;
 	scissorRect.bottom = options.height;
 	commandList->RSSetScissorRects(1, &scissorRect);
-}
-
-void Renderer::Clear()
-{
-	BackBuffer& backBuffer{ backBuffers[currentBackBufferIndex] };
-	D3D12_CPU_DESCRIPTOR_HANDLE rtv{ backBuffer.rtv };
-	D3D12_CPU_DESCRIPTOR_HANDLE dsv{ dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
-
-	commandList->ClearRenderTargetView(rtv, DirectX::Colors::Blue, 0, nullptr);
-	commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 }
 
 void Renderer::EndRender()
@@ -225,67 +251,30 @@ void Renderer::SetCamera(const Camera* camera_)
 	currentCameraConstants.view = camera_->GetViewMatrix();
 	currentCameraConstants.projection = camera_->GetProjectionMatrix(aspect);
 	currentCameraConstants.viewProjection = camera_->GetViewProjectionMatrix(aspect);
+	currentCameraClearMode = camera_->GetClearMode();
+	currentCameraClearColor = camera_->GetClearColor();
 }
 
-void Renderer::BindPipeline(const Shader& shader_)
+void Renderer::SetLight(const Light* light_)
 {
-	currentDrawCall.pipelineId = shader_.GetPipelineId();
-	currentDrawCall.pipelineState = const_cast<ID3D12PipelineState*>(shader_.GetPipelineState());
-	currentDrawCall.graphicsRootSignature = const_cast<ID3D12RootSignature*>(shader_.GetGraphicsRootSignature());
-	currentDrawCall.primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; // Default, adjust if your Shader has topology
-}
-
-void Renderer::BindMaterial(const Material& material_)
-{
-	currentDrawCall.materialId = material_.GetId();
-	currentDrawCall.materialDescriptorTable = material_.GetDescriptorTable();
-	currentDrawCall.materialColor = material_.GetColor();
-}
-
-void Renderer::BindMesh(const Mesh& mesh_)
-{
-	currentDrawCall.meshId = mesh_.GetId();
-	currentDrawCall.vertexBufferView = mesh_.GetVertexBufferView();
-
-	if (mesh_.HasIndexBuffer())
-	{
-		currentDrawCall.indexBufferView = mesh_.GetIndexBufferView();
-		currentDrawCall.hasIndexBuffer = true;
-		currentDrawCall.indexed = true;
-
-		currentDrawCall.indexCount = mesh_.GetIndexCount();
-		currentDrawCall.startIndexLocation = 0; // Tick if mesh adds this
-		currentDrawCall.baseVertexLocation = 0; // Tick if mesh adds this
-	}
-	else
-	{
-		currentDrawCall.indexBufferView = {};
-		currentDrawCall.hasIndexBuffer = false;
-		currentDrawCall.indexed = false;
-
-		currentDrawCall.vertexCount = mesh_.GetVertexCount();
-		currentDrawCall.startVertexLocation = 0; // Tick if mesh adds this
-	}
-}
-
-void Renderer::SetObject(const GameObject* gameObject_)
-{
-	currentDrawCall.worldTransform = gameObject_->GetComponent<Transform>()->GetWorldMatrix();
-}
-
-void Renderer::Render()
-{
-	if (!IsValidDrawCall(currentDrawCall))
+	if (nullptr == light_)
 	{
 		return;
 	}
 
-	DrawCall drawCall{ currentDrawCall };
-	drawCall.instanceCount = 1;
-	drawCall.startInstanceLocation = 0;
-	drawCall.sortKey = BuildSortKey(drawCall);
+	currentLightDirection = light_->GetDirection();
+	currentLightColor = light_->GetColor();
+	currentLightIntensity = light_->GetIntensity();
+}
 
-	drawCalls.push_back(drawCall);
+void Renderer::SubmitDrawCall(const DrawCall& drawCall_)
+{
+	if (!IsValidDrawCall(drawCall_))
+	{
+		return;
+	}
+
+	drawCalls.push_back(drawCall_);
 }
 
 void Renderer::Flush()
@@ -323,7 +312,7 @@ int Renderer::GetHeight() const noexcept
 	return options.height;
 }
 
-void Renderer::WaitIdle()
+void Renderer::WaitForFrames()
 {
 	for (FrameResource& frameResource : frameResources)
 	{
@@ -343,7 +332,7 @@ void Renderer::SetFullscreen(bool fullscreen_)
 		return;
 	}
 
-	WaitIdle();
+	WaitForFrames();
 
 	if (!isFullscreen)
 	{
@@ -437,7 +426,52 @@ void Renderer::CreateDevice()
 #endif
 
 	assert(SUCCEEDED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&factory))));
-	assert(SUCCEEDED(D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))));
+
+	CreateHardwareDevice();
+
+	if (nullptr == device)
+	{
+		CreateWarpDevice();
+	}
+}
+
+void Renderer::CreateHardwareDevice()
+{
+	assert(nullptr != factory);
+
+	for (UINT adapterIndex{ 0 };; ++adapterIndex)
+	{
+		Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
+		if (DXGI_ERROR_NOT_FOUND == factory->EnumAdapters1(adapterIndex, &adapter))
+		{
+			break;
+		}
+
+		DXGI_ADAPTER_DESC1 description{};
+		if (FAILED(adapter->GetDesc1(&description)))
+		{
+			continue;
+		}
+
+		if (0 != (description.Flags & DXGI_ADAPTER_FLAG_SOFTWARE))
+		{
+			continue;
+		}
+
+		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))))
+		{
+			break;
+		}
+	}
+}
+
+void Renderer::CreateWarpDevice()
+{
+	assert(nullptr != factory);
+
+	Microsoft::WRL::ComPtr<IDXGIAdapter> warpAdapter;
+	assert(SUCCEEDED(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter))));
+	assert(SUCCEEDED(D3D12CreateDevice(warpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))));
 }
 
 void Renderer::CreateCommandQueue()
@@ -658,6 +692,21 @@ void Renderer::BindCameraConstants()
 	}
 }
 
+void Renderer::BindLightConstants()
+{
+	LightConstants lightConstants{};
+	lightConstants.direction = currentLightDirection;
+	lightConstants.intensity = currentLightIntensity;
+	lightConstants.color = currentLightColor;
+	lightConstants.padding = 0.0f;
+
+	const D3D12_GPU_VIRTUAL_ADDRESS lightAddress{ UploadConstantData(&lightConstants, sizeof(LightConstants)) };
+	if (0 != lightAddress)
+	{
+		commandList->SetGraphicsRootConstantBufferView((UINT)RootParameterSlot::Light, lightAddress);
+	}
+}
+
 void Renderer::BuildVisibleDrawCalls()
 {
 	visibleDrawCalls.clear();
@@ -720,6 +769,10 @@ bool Renderer::CanBatchTogether(const DrawCall& a_, const DrawCall& b_) const no
 		a_.materialId == b_.materialId &&
 		a_.pipelineId == b_.pipelineId &&
 		a_.materialDescriptorTable.ptr == b_.materialDescriptorTable.ptr &&
+		a_.materialColor.x == b_.materialColor.x &&
+		a_.materialColor.y == b_.materialColor.y &&
+		a_.materialColor.z == b_.materialColor.z &&
+		a_.materialColor.w == b_.materialColor.w &&
 		a_.indexed == b_.indexed &&
 		a_.hasIndexBuffer == b_.hasIndexBuffer &&
 		a_.vertexCount == b_.vertexCount &&
@@ -756,6 +809,7 @@ void Renderer::ExecuteBatches()
 			currentRootSignature = drawCall.graphicsRootSignature;
 
 			BindCameraConstants();
+			BindLightConstants();
 
 			const D3D12_GPU_VIRTUAL_ADDRESS materialAddress{ UploadConstantData(&drawCall.materialColor, sizeof(ColorRGBA)) };
 			if (0 != materialAddress)

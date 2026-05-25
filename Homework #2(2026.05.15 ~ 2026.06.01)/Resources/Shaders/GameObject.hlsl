@@ -14,7 +14,7 @@ struct VSInput
 struct PSInput
 {
 	float4 position : SV_POSITION;
-	float3 color : COLOR;
+	float3 normalWS : NORMAL;
 };
 
 cbuffer CameraConstants : register(b0)
@@ -33,6 +33,15 @@ cbuffer MaterialConstants : register(b2)
 	float4 AlbedoColor;
 };
 
+cbuffer LightConstants : register(b3)
+{
+	float3 LightDirection;
+	float LightIntensity;
+
+	float3 LightColor;
+	float LightPadding;
+};
+
 PSInput VSMain(VSInput input)
 {
 	PSInput output;
@@ -40,11 +49,16 @@ PSInput VSMain(VSInput input)
 	output.position = mul(float4(input.position, 1.0f), instanceWorld);
 	output.position = mul(output.position, View);
 	output.position = mul(output.position, Projection);
-	output.color = abs(input.normal);
+	output.normalWS = normalize(mul(float4(input.normal, 0.0f), instanceWorld).xyz);
 	return output;
 }
 
 float4 PSMain(PSInput input) : SV_TARGET
 {
-	return AlbedoColor;
+	float3 n = normalize(input.normalWS);
+	float3 l = normalize(-LightDirection);
+	float ndotl = saturate(dot(n, l));
+	float diffuse = max(0.1f, ndotl * LightIntensity);
+	float3 litColor = AlbedoColor.rgb * LightColor * diffuse;
+	return float4(litColor, AlbedoColor.a);
 }

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 template <class TOptions>
 class System
@@ -7,11 +7,11 @@ public:
 	System() noexcept = default;
 	virtual ~System() noexcept = default;
 
-	// º¹»ç ±İÁö.
+	// ë³µì‚¬ ê¸ˆì§€.
 	System(const System&) = delete;
 	System operator=(const System&) = delete;
 
-	// ÀÌµ¿ ±İÁö.
+	// ì´ë™ ê¸ˆì§€.
 	System(System&&) = delete;
 	System operator=(System&&) = delete;
 

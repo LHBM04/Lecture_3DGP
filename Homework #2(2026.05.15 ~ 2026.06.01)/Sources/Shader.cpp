@@ -24,6 +24,7 @@ bool Shader::LoadFromFile(ID3D12Device* device_, const std::filesystem::path& pa
 		return false;
 	}
 
+	const bool isUIShader{ path_.filename() == L"UIObject.hlsl" };
 	std::ofstream clearLog{ "Resources/LastShaderError.log", std::ios::trunc };
 
 	UINT compileFlags{ 0 };
@@ -65,7 +66,7 @@ bool Shader::LoadFromFile(ID3D12Device* device_, const std::filesystem::path& pa
 		return false;
 	}
 
-	D3D12_ROOT_PARAMETER rootParameters[3]{};
+	D3D12_ROOT_PARAMETER rootParameters[4]{};
 	rootParameters[(UINT)RootParameterSlot::Camera].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[(UINT)RootParameterSlot::Camera].Descriptor.ShaderRegister = 0;
 	rootParameters[(UINT)RootParameterSlot::Camera].Descriptor.RegisterSpace = 0;
@@ -80,6 +81,11 @@ bool Shader::LoadFromFile(ID3D12Device* device_, const std::filesystem::path& pa
 	rootParameters[(UINT)RootParameterSlot::Material].Descriptor.ShaderRegister = 2;
 	rootParameters[(UINT)RootParameterSlot::Material].Descriptor.RegisterSpace = 0;
 	rootParameters[(UINT)RootParameterSlot::Material].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	rootParameters[(UINT)RootParameterSlot::Light].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[(UINT)RootParameterSlot::Light].Descriptor.ShaderRegister = 3;
+	rootParameters[(UINT)RootParameterSlot::Light].Descriptor.RegisterSpace = 0;
+	rootParameters[(UINT)RootParameterSlot::Light].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDescription{};
 	rootSignatureDescription.NumParameters = static_cast<UINT>(std::size(rootParameters));
@@ -141,20 +147,20 @@ bool Shader::LoadFromFile(ID3D12Device* device_, const std::filesystem::path& pa
 	pipelineDescription.RasterizerState.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
 	pipelineDescription.RasterizerState.DepthClipEnable = TRUE;
 
-	pipelineDescription.BlendState.RenderTarget[0].BlendEnable = FALSE;
+	pipelineDescription.BlendState.RenderTarget[0].BlendEnable = isUIShader;
 	pipelineDescription.BlendState.RenderTarget[0].LogicOpEnable = FALSE;
-	pipelineDescription.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
-	pipelineDescription.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+	pipelineDescription.BlendState.RenderTarget[0].SrcBlend = isUIShader ? D3D12_BLEND_SRC_ALPHA : D3D12_BLEND_ONE;
+	pipelineDescription.BlendState.RenderTarget[0].DestBlend = isUIShader ? D3D12_BLEND_INV_SRC_ALPHA : D3D12_BLEND_ZERO;
 	pipelineDescription.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	pipelineDescription.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	pipelineDescription.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	pipelineDescription.BlendState.RenderTarget[0].DestBlendAlpha = isUIShader ? D3D12_BLEND_INV_SRC_ALPHA : D3D12_BLEND_ZERO;
 	pipelineDescription.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	pipelineDescription.BlendState.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
 	pipelineDescription.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-	pipelineDescription.DepthStencilState.DepthEnable = TRUE;
-	pipelineDescription.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	pipelineDescription.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	pipelineDescription.DepthStencilState.DepthEnable = !isUIShader;
+	pipelineDescription.DepthStencilState.DepthWriteMask = isUIShader ? D3D12_DEPTH_WRITE_MASK_ZERO : D3D12_DEPTH_WRITE_MASK_ALL;
+	pipelineDescription.DepthStencilState.DepthFunc = isUIShader ? D3D12_COMPARISON_FUNC_ALWAYS : D3D12_COMPARISON_FUNC_LESS;
 	pipelineDescription.DepthStencilState.StencilEnable = FALSE;
 
 	if (FAILED(device_->CreateGraphicsPipelineState(&pipelineDescription, IID_PPV_ARGS(&pipelineState))))

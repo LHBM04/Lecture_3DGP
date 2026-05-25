@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CameraClearMode.h"
+#include "ColorRGBA.h"
 #include "Component.h"
 #include "Matrix4x4.h"
 #include "Vector4D.h"
@@ -33,6 +35,12 @@ public:
 	[[nodiscard]] const Vector4D& GetViewport() const noexcept;
 	void SetViewport(const Vector4D& viewport_) noexcept;
 
+	[[nodiscard]] CameraClearMode GetClearMode() const noexcept;
+	void SetClearMode(CameraClearMode clearMode_) noexcept;
+
+	[[nodiscard]] const ColorRGBA& GetClearColor() const noexcept;
+	void SetClearColor(const ColorRGBA& clearColor_) noexcept;
+
 	[[nodiscard]] Matrix4x4 GetViewMatrix() const;
 	[[nodiscard]] Matrix4x4 GetViewProjectionMatrix(float aspectRatio_) const;
 
@@ -47,4 +55,6 @@ private:
 	float nearPlane{ 0.1f };
 	float farPlane{ 100.0f };
 	Vector4D viewportRect{ 0.0f, 0.0f, 1.0f, 1.0f };
+	CameraClearMode clearMode{ CameraClearMode::SolidColor };
+	ColorRGBA clearColor{ ColorRGBA::GetBlue() };
 };

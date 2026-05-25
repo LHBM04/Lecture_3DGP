@@ -4,5 +4,6 @@ enum class RootParameterSlot : unsigned int
 {
 	Camera = 0,
 	Object = 1,
-	Material = 2
+	Material = 2,
+	Light = 3
 };

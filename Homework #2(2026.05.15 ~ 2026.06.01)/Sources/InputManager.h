@@ -1,4 +1,6 @@
-﻿#pragma once
+#pragma once
+
+struct Event;
 
 enum class KeyCode : unsigned char
 {
@@ -70,6 +72,7 @@ namespace InputManager
 {
 	void Reset() noexcept;
 	void Update() noexcept;
+	void ProcessEvent(const Event& event_) noexcept;
 
 	[[nodiscard]] bool IsKeyDown(KeyCode keyCode_) noexcept;
 	[[nodiscard]] bool IsKeyPressed(KeyCode keyCode_) noexcept;

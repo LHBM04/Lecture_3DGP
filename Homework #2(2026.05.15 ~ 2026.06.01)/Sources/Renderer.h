@@ -2,20 +2,26 @@
 
 #include "Singleton.h"
 #include "CameraConstants.h"
+#include "CameraClearMode.h"
+#include "ColorRGB.h"
+#include "ColorRGBA.h"
 #include "DrawCall.h"
 #include "System.h"
+#include "Vector3D.h"
 
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <array>
 #include <vector>
 #include <span>
+#include <string>
 
 class Shader;
 class Material;
 class Mesh;
 class Camera;
 class GameObject;
+class Light;
 
 struct RendererOptions final
 {
@@ -35,24 +41,22 @@ class Renderer final : public System<RendererOptions>
 public:
 	~Renderer() noexcept override;
 
-	bool Initialize(const RendererOptions& options_);
-	void Release();
+	bool Initialize(const RendererOptions& options_) override;
+	void Release() override;
 
 	void Clear();
+	void ResetViewport();
 	
 	void BeginRender();
 	void EndRender();
 
 	void SetCamera(const Camera* camera_);
-	void SetObject(const GameObject* gameObject_);
+	void SetLight(const Light* light_);
 
-	void BindPipeline(const Shader& shader_);
-	void BindMaterial(const Material& material_);
-	void BindMesh(const Mesh& mesh_);
+	void SubmitDrawCall(const DrawCall& drawCall_);
 
-	void Render();
 	void Flush();
-	void WaitIdle();
+	void WaitForFrames();
 	void SetFullscreen(bool fullscreen_);
 	void ToggleFullscreen();
 
@@ -94,6 +98,8 @@ private:
 	};
 
 	void CreateDevice();
+	void CreateHardwareDevice();
+	void CreateWarpDevice();
 	void CreateCommandQueue();
 	void CreateSwapChain();
 	void CreateDescriptorHeaps();
@@ -109,7 +115,7 @@ private:
 	void TransitionBackBuffer(D3D12_RESOURCE_STATES state_);
 
 	void BindCameraConstants();
-	void BindObjectConstants();
+	void BindLightConstants();
 
 	void BuildVisibleDrawCalls();
 	void SortDrawCalls();
@@ -166,7 +172,19 @@ private:
 	HANDLE fenceEvent;
 
 	CameraConstants currentCameraConstants{};
-	DrawCall currentDrawCall{};
+	struct LightConstants final
+	{
+		Vector3D direction;
+		float intensity;
+		ColorRGB color;
+		float padding;
+	};
+
+	Vector3D currentLightDirection{};
+	ColorRGB currentLightColor{};
+	float currentLightIntensity{};
+	CameraClearMode currentCameraClearMode{ CameraClearMode::SolidColor };
+	ColorRGBA currentCameraClearColor{ ColorRGBA::GetBlue() };
 
 	std::vector<DrawCall> drawCalls;
 	std::vector<DrawCall> visibleDrawCalls;

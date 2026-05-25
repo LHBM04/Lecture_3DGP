@@ -4,6 +4,7 @@
 #include "GameObject.h"
 
 class Camera;
+class Light;
 
 class Scene
 {
@@ -21,6 +22,8 @@ public:
 
 	void AddCamera(Camera* camera_);
 	void RemoveCamera(Camera* camera_);
+	void AddLight(Light* light_);
+	void RemoveLight(Light* light_);
 
 	GameObject& CreateGameObject(const std::string& name_ = "GameObject");
 
@@ -36,10 +39,13 @@ protected:
 	virtual void OnUnload() {};
 
 private:
+	void PickAtMouse();
+
 	friend class GameObject;
 
 	bool isLoaded{ false };
 
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
 	std::vector<Camera*> cameras;
+	std::vector<Light*> lights;
 };

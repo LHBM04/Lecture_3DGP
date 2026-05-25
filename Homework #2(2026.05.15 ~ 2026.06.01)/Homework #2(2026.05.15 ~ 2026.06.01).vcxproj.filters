@@ -82,7 +82,13 @@
     <ClCompile Include="Sources\InputManager.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Light.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Application.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\CameraController.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\ResourceManager.cpp">
@@ -92,6 +98,21 @@
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Logger.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Button.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Font.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ImageView.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\RectTransform.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TextView.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -138,6 +159,9 @@
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Camera.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CameraClearMode.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Transform.h">
@@ -224,13 +248,34 @@
     <ClInclude Include="Sources\InputManager.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Light.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Application.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CameraController.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\System.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Logger.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Button.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Font.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImageView.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RectTransform.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TextView.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
   </ItemGroup>

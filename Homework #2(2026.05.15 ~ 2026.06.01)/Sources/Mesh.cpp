@@ -5,13 +5,6 @@
 
 namespace
 {
-	struct MeshVertex final
-	{
-		float position[3];
-		float normal[3];
-		float texCoord[2];
-	};
-
 	bool ReadSectionName(const std::vector<std::byte>& bytes_, std::size_t& offset_, std::string& name_)
 	{
 		if (offset_ >= bytes_.size())
@@ -88,6 +81,48 @@ namespace
 		resource_->Unmap(0, nullptr);
 		return true;
 	}
+}
+
+bool Mesh::BuildFromRaw(
+	ID3D12Device* device_,
+	std::span<const Vertex> vertices_,
+	std::span<const std::uint32_t> indices_)
+{
+	if (nullptr == device_ || vertices_.empty())
+	{
+		return false;
+	}
+
+	Unload();
+
+	const std::size_t vertexByteSize{ vertices_.size() * sizeof(Vertex) };
+	if (!CreateUploadBuffer(device_, vertices_.data(), vertexByteSize, vertexBuffer))
+	{
+		return false;
+	}
+
+	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexByteSize);
+	vertexBufferView.StrideInBytes = sizeof(Vertex);
+	vertexCount = static_cast<UINT>(vertices_.size());
+
+	if (!indices_.empty())
+	{
+		const std::size_t indexByteSize{ indices_.size() * sizeof(std::uint32_t) };
+		if (!CreateUploadBuffer(device_, indices_.data(), indexByteSize, indexBuffer))
+		{
+			return false;
+		}
+
+		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
+		indexBufferView.SizeInBytes = static_cast<UINT>(indexByteSize);
+		indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+		hasIndexBuffer = true;
+		indexCount = static_cast<UINT>(indices_.size());
+	}
+
+	SetLoaded(true);
+	return true;
 }
 
 bool Mesh::Load(const std::filesystem::path& path_)
@@ -197,7 +232,7 @@ bool Mesh::Load(const std::filesystem::path& path_)
 		return false;
 	}
 
-	std::vector<MeshVertex> vertices(vertexCountValue);
+	std::vector<Vertex> vertices(vertexCountValue);
 	for (std::size_t index{ 0 }; index < vertexCountValue; ++index)
 	{
 		vertices[index].position[0] = positions[index * 3u + 0u];
@@ -220,7 +255,7 @@ bool Mesh::Load(const std::filesystem::path& path_)
 
 	auto device{ Application::GetRenderer().GetDevice() };
 
-	const std::size_t vertexByteSize{ vertices.size() * sizeof(MeshVertex) };
+	const std::size_t vertexByteSize{ vertices.size() * sizeof(Vertex) };
 	if (!CreateUploadBuffer(device, vertices.data(), vertexByteSize, vertexBuffer))
 	{
 		return false;
@@ -228,7 +263,7 @@ bool Mesh::Load(const std::filesystem::path& path_)
 
 	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 	vertexBufferView.SizeInBytes = static_cast<UINT>(vertexByteSize);
-	vertexBufferView.StrideInBytes = sizeof(MeshVertex);
+	vertexBufferView.StrideInBytes = sizeof(Vertex);
 	vertexCount = static_cast<UINT>(vertices.size());
 
 	if (!indices.empty())

@@ -84,6 +84,26 @@ void Camera::SetViewport(const Vector4D& viewport_) noexcept
 	viewportRect.w = Mathf::Clamp(viewport_.w, 0.0f, 1.0f - viewportRect.y);
 }
 
+CameraClearMode Camera::GetClearMode() const noexcept
+{
+	return clearMode;
+}
+
+void Camera::SetClearMode(CameraClearMode clearMode_) noexcept
+{
+	clearMode = clearMode_;
+}
+
+const ColorRGBA& Camera::GetClearColor() const noexcept
+{
+	return clearColor;
+}
+
+void Camera::SetClearColor(const ColorRGBA& clearColor_) noexcept
+{
+	clearColor = clearColor_;
+}
+
 Matrix4x4 Camera::GetViewMatrix() const
 {
 	const Transform* transform{ GetOwner()->GetComponent<Transform>() };

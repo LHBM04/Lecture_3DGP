@@ -4,9 +4,13 @@
 #include <string>
 
 class Scene;
+struct ID3D12Device;
 
 namespace SceneManager
 {
+	bool Initialize(ID3D12Device* device_) noexcept;
+	void Release() noexcept;
+
 	void Update();
 	void Render();
 
@@ -19,4 +23,6 @@ namespace SceneManager
 	void UnloadScene(const std::wstring& name_) noexcept;
 
 	[[nodiscard]] Scene* GetCurrentScene() noexcept;
+
+	void SetTransitionDuration(float duration_) noexcept;
 }

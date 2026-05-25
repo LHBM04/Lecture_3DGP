@@ -1,19 +1,14 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Logger.h"
 
+#include <array>
+#include <cstdarg>
+#include <cstdio>
 #include <mutex>
 
 namespace
 {
-	std::mutex mutex;
-	std::ofstream fileStream;
-
-	LogLevel minimumLevel{ LogLevel::Trace };
-	bool consoleOutputEnabled{ true };
-	bool debugOutputEnabled{ true };
-	bool fileOutputEnabled{ true };
-
-	const char* ToString(LogLevel level_) noexcept
+	const char* GetLogPrefix(LogLevel level_) noexcept
 	{
 		switch (level_)
 		{
@@ -32,14 +27,9 @@ namespace
 		}
 	}
 
-	bool ShouldWrite(LogLevel level_) noexcept
-	{
-		return static_cast<unsigned char>(level_) >= static_cast<unsigned char>(minimumLevel);
-	}
-
 	std::string GetTimestamp()
 	{
-		SYSTEMTIME time;
+		SYSTEMTIME time{};
 		::GetLocalTime(&time);
 
 		return std::format(
@@ -53,143 +43,78 @@ namespace
 			time.wMilliseconds);
 	}
 
-	std::string WideToUtf8(std::wstring_view text_)
+	std::string CreateFormat(const char* format_, va_list args_)
 	{
-		if (text_.empty())
+		if (nullptr == format_)
 		{
 			return {};
 		}
 
-		const int requiredSize
+		std::array<char, 2048> buffer{};
+		va_list copied{};
+		va_copy(copied, args_);
+		const int written{ std::vsnprintf(buffer.data(), buffer.size(), format_, copied) };
+		va_end(copied);
+
+		if (written <= 0)
 		{
-			::WideCharToMultiByte(
-				CP_UTF8,
-				0,
-				text_.data(),
-				static_cast<int>(text_.size()),
-				nullptr,
-				0,
-				nullptr,
-				nullptr)
+			return {};
+		}
+
+		const std::size_t count{
+			static_cast<std::size_t>(std::min<int>(written, static_cast<int>(buffer.size() - 1)))
 		};
-
-		if (requiredSize <= 0)
-		{
-			return {};
-		}
-
-		std::string result(static_cast<std::size_t>(requiredSize), '\0');
-		::WideCharToMultiByte(
-			CP_UTF8,
-			0,
-			text_.data(),
-			static_cast<int>(text_.size()),
-			result.data(),
-			requiredSize,
-			nullptr,
-			nullptr);
-
-		return result;
-	}
-
-	std::string BuildLine(LogLevel level_, std::string_view message_)
-	{
-		return std::format("[{}][{}] {}", GetTimestamp(), ToString(level_), message_);
+		return std::string(buffer.data(), count);
 	}
 }
 
-bool Logger::Initialize(const std::filesystem::path& filePath_)
+void Logger::Trace(const char* format_, ...)
 {
-	std::scoped_lock lock{ mutex };
-
-	if (!filePath_.empty())
-	{
-		const std::filesystem::path parentPath{ filePath_.parent_path() };
-		if (!parentPath.empty())
-		{
-			std::error_code errorCode;
-			std::filesystem::create_directories(parentPath, errorCode);
-		}
-
-		fileStream.open(filePath_, std::ios::out | std::ios::app);
-		fileOutputEnabled = fileStream.is_open();
-	}
-
-	return !fileOutputEnabled || fileStream.is_open();
+	va_list args{};
+	va_start(args, format_);
+	Log(LogLevel::Trace, format_, args);
+	va_end(args);
 }
 
-void Logger::Release()
+void Logger::Info(const char* format_, ...)
 {
-	std::scoped_lock lock{ mutex };
-
-	if (fileStream.is_open())
-	{
-		fileStream.flush();
-		fileStream.close();
-	}
+	va_list args{};
+	va_start(args, format_);
+	Log(LogLevel::Info, format_, args);
+	va_end(args);
 }
 
-void Logger::SetMinimumLevel(LogLevel level_) noexcept
+void Logger::Warning(const char* format_, ...)
 {
-	std::scoped_lock lock{ mutex };
-	minimumLevel = level_;
+	va_list args{};
+	va_start(args, format_);
+	Log(LogLevel::Warning, format_, args);
+	va_end(args);
 }
 
-LogLevel Logger::GetMinimumLevel() noexcept
+void Logger::Error(const char* format_, ...)
 {
-	std::scoped_lock lock{ mutex };
-	return minimumLevel;
+	va_list args{};
+	va_start(args, format_);
+	Log(LogLevel::Error, format_, args);
+	va_end(args);
 }
 
-void Logger::EnableConsoleOutput(bool enabled_) noexcept
+void Logger::Critical(const char* format_, ...)
 {
-	std::scoped_lock lock{ mutex };
-	consoleOutputEnabled = enabled_;
+	va_list args{};
+	va_start(args, format_);
+	Log(LogLevel::Critical, format_, args);
+	va_end(args);
 }
 
-void Logger::EnableDebugOutput(bool enabled_) noexcept
+void Logger::Log(LogLevel level_, const char* format_, va_list args_)
 {
-	std::scoped_lock lock{ mutex };
-	debugOutputEnabled = enabled_;
-}
+	const std::string line{
+		std::format("[{}][{}] {}\n", GetTimestamp(), GetLogPrefix(level_), CreateFormat(format_, args_))
+	};
 
-void Logger::EnableFileOutput(bool enabled_) noexcept
-{
-	std::scoped_lock lock{ mutex };
-	fileOutputEnabled = enabled_;
-}
-
-void Logger::Write(LogLevel level_, std::string_view message_)
-{
-	std::scoped_lock lock{ mutex };
-
-	if (!ShouldWrite(level_))
-	{
-		return;
-	}
-
-	const std::string line{ BuildLine(level_, message_) };
-
-	if (consoleOutputEnabled)
-	{
-		std::ostream& stream{ level_ >= LogLevel::Warning ? std::cerr : std::cout };
-		stream << line << '\n';
-	}
-
-	if (debugOutputEnabled)
-	{
-		::OutputDebugStringA(line.c_str());
-		::OutputDebugStringA("\n");
-	}
-
-	if (fileOutputEnabled && fileStream.is_open())
-	{
-		fileStream << line << '\n';
-		fileStream.flush();
-	}
-}
-
-void Logger::Write(LogLevel level_, std::wstring_view message_)
-{
-	Write(level_, WideToUtf8(message_));
+	::OutputDebugStringA(line.c_str());
+	std::fputs(line.c_str(), stdout);
+	std::fflush(stdout);
 }

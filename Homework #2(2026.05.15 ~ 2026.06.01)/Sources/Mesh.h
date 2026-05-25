@@ -7,10 +7,18 @@
 #include <wrl.h>
 #include <cstdint>
 #include <filesystem>
+#include <span>
 
 class Mesh final : public Resource
 {
 public:
+	struct Vertex final
+	{
+		float position[3];
+		float normal[3];
+		float texCoord[2];
+	};
+
 	virtual ~Mesh() = default;
 
 	bool Load(const std::filesystem::path& path_) override;
@@ -35,6 +43,10 @@ public:
 	void SetIndexCount(UINT count_) noexcept;
 
 	[[nodiscard]] bool LoadFromBinary(ID3D12Device* device_, const std::filesystem::path& path_);
+	[[nodiscard]] bool BuildFromRaw(
+		ID3D12Device* device_,
+		std::span<const Vertex> vertices_,
+		std::span<const std::uint32_t> indices_);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
@@ -46,4 +58,3 @@ private:
 	UINT vertexCount{ 0 };
 	UINT indexCount{ 0 };
 };
-
