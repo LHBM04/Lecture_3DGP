@@ -30,7 +30,7 @@ public:
 
 protected:
 	void OnAttach() override;
-	void OnRenderUI() override;
+	void OnRenderUI(RenderContext& context_) override;
 
 private:
 	void MarkDirty() noexcept;

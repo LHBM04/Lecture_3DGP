@@ -47,6 +47,9 @@ public:
 		ID3D12Device* device_,
 		std::span<const Vertex> vertices_,
 		std::span<const std::uint32_t> indices_);
+	[[nodiscard]] bool BuildFromRaw(
+		std::span<const Vertex> vertices_,
+		std::span<const std::uint32_t> indices_);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;

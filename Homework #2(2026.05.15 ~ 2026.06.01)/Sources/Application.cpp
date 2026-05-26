@@ -2,6 +2,8 @@
 #include "Application.h"
 
 #include "InputManager.h"
+#include "PlayerInputMapper.h"
+#include "RenderContext.h"
 #include "Scene_Test.h"
 #include "Scene_Title.h"
 #include "SceneManager.h"
@@ -22,6 +24,8 @@ namespace
 	RenderSystem renderSystem;
 	SceneSystem sceneSystem;
 	RenderTargetHandle mainRenderTarget{};
+	PlayerInputMapper playerInputMapper;
+	RenderContext renderContext;
 
 	void ShutdownSystems() noexcept
 	{
@@ -168,6 +172,9 @@ int Application::Run()
 			InputManager::ProcessEvent(event);
 		}
 
+		const PlayerInput playerInput{ playerInputMapper.Build() };
+		sceneSystem.HandlePlayerInput(playerInput);
+
 		sceneSystem.Update();
 
 		fixedUpdateAccumulator += Timer::GetUnscaledDeltaTime();
@@ -193,7 +200,8 @@ int Application::Run()
 		}
 
 		renderer->BeginRender();
-		sceneSystem.Render();
+		renderContext.Clear();
+		sceneSystem.Render(renderContext);
 		renderer->EndRender();
 	}
 

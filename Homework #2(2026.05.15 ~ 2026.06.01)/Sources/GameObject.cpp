@@ -1,17 +1,31 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "GameObject.h"
+
+namespace
+{
+	template <typename T>
+	[[nodiscard]] Component* TryGetActiveComponent(T* role_) noexcept
+	{
+		if (nullptr == role_)
+		{
+			return nullptr;
+		}
+
+		Component* component{ dynamic_cast<Component*>(role_) };
+		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		{
+			return nullptr;
+		}
+
+		return component;
+	}
+}
 
 void GameObject::Update()
 {
 	for (Updatable* updatable : updatables)
 	{
-		if (nullptr == updatable)
-		{
-			continue;
-		}
-
-		Component* component{ dynamic_cast<Component*>(updatable) };
-		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		if (nullptr == TryGetActiveComponent(updatable))
 		{
 			continue;
 		}
@@ -28,41 +42,42 @@ void GameObject::FixedUpdate()
 	}
 }
 
-void GameObject::Render()
+void GameObject::Render(RenderContext& context_)
 {
 	for (Renderable* renderable : renderables)
 	{
-		if (nullptr == renderable)
+		if (nullptr == TryGetActiveComponent(renderable))
 		{
 			continue;
 		}
 
-		Component* component{ dynamic_cast<Component*>(renderable) };
-		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
-		{
-			continue;
-		}
-
-		renderable->OnRender();
+		renderable->OnRender(context_);
 	}
 }
 
-void GameObject::RenderUI()
+void GameObject::RenderUI(RenderContext& context_)
 {
 	for (RenderableUI* renderable : uiRenderables)
 	{
-		if (nullptr == renderable)
+		if (nullptr == TryGetActiveComponent(renderable))
 		{
 			continue;
 		}
 
-		Component* component{ dynamic_cast<Component*>(renderable) };
-		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		renderable->OnRenderUI(context_);
+	}
+}
+
+void GameObject::HandlePlayerInput(const PlayerInput& input_)
+{
+	for (PlayerInputReceiver* receiver : playerInputReceivers)
+	{
+		if (nullptr == TryGetActiveComponent(receiver))
 		{
 			continue;
 		}
 
-		renderable->OnRenderUI();
+		receiver->OnPlayerInput(input_);
 	}
 }
 
@@ -70,13 +85,7 @@ void GameObject::NotifyCollisionEnter(GameObject& other_)
 {
 	for (Collidable* collidable : collidables)
 	{
-		if (nullptr == collidable)
-		{
-			continue;
-		}
-
-		Component* component{ dynamic_cast<Component*>(collidable) };
-		if (nullptr != component && !component->IsDestroyed() && component->IsEnabled())
+		if (nullptr != TryGetActiveComponent(collidable))
 		{
 			collidable->OnCollisionEnter(other_);
 		}
@@ -87,13 +96,7 @@ void GameObject::NotifyCollisionStay(GameObject& other_)
 {
 	for (Collidable* collidable : collidables)
 	{
-		if (nullptr == collidable)
-		{
-			continue;
-		}
-
-		Component* component{ dynamic_cast<Component*>(collidable) };
-		if (nullptr != component && !component->IsDestroyed() && component->IsEnabled())
+		if (nullptr != TryGetActiveComponent(collidable))
 		{
 			collidable->OnCollisionStay(other_);
 		}
@@ -116,6 +119,11 @@ bool GameObject::HasCollisionListeners() const noexcept
 	return !collidables.empty();
 }
 
+std::span<SceneTransitionRequest* const> GameObject::GetSceneTransitionRequests() noexcept
+{
+	return sceneTransitionRequests;
+}
+
 Scene* GameObject::GetCurrentScene()
 {
 	return currentScene;
@@ -125,7 +133,6 @@ const Scene* GameObject::GetCurrentScene() const
 {
 	return currentScene;
 }
-
 
 const std::string& GameObject::GetName() const
 {
@@ -167,4 +174,3 @@ void GameObject::Destroy()
 	isDestroyed = true;
 	isActive = false;
 }
-

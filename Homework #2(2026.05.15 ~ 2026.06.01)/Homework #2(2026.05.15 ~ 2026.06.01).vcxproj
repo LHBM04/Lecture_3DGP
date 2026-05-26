@@ -42,6 +42,7 @@
     <ClCompile Include="Sources\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\PlayerController.cpp" />
+    <ClCompile Include="Sources\PlayerInputMapper.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -50,13 +51,16 @@
     </ClCompile>
     <ClCompile Include="Sources\Quaternion.cpp" />
     <ClCompile Include="Sources\RectTransform.cpp" />
+    <ClCompile Include="Sources\RenderContext.cpp" />
     <ClCompile Include="Sources\RenderSystem.cpp" />
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\Resource.cpp" />
     <ClCompile Include="Sources\ResourceManager.cpp" />
+    <ClCompile Include="Sources\SceneContext.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
     <ClCompile Include="Sources\SceneManager.cpp" />
     <ClCompile Include="Sources\SceneSystem.cpp" />
+    <ClCompile Include="Sources\ScenePortal.cpp" />
     <ClCompile Include="Sources\Scene_Test.cpp" />
     <ClCompile Include="Sources\Scene_Title.cpp" />
     <ClCompile Include="Sources\Shader.cpp" />
@@ -97,9 +101,13 @@
     <ClInclude Include="Sources\MeshRenderer.h" />
     <ClInclude Include="Sources\Matrix4x4.h" />
     <ClInclude Include="Sources\PlayerController.h" />
+    <ClInclude Include="Sources\PlayerInput.h" />
+    <ClInclude Include="Sources\PlayerInputMapper.h" />
+    <ClInclude Include="Sources\PlayerInputReceiver.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Quaternion.h" />
     <ClInclude Include="Sources\RectTransform.h" />
+    <ClInclude Include="Sources\RenderContext.h" />
     <ClInclude Include="Sources\RenderSystem.h" />
     <ClInclude Include="Sources\Renderer.h" />
     <ClInclude Include="Sources\Renderable.h" />
@@ -109,6 +117,9 @@
     <ClInclude Include="Sources\RootParameterSlot.h" />
     <ClInclude Include="Sources\RendererOptions.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
+    <ClInclude Include="Sources\SceneContext.h" />
+    <ClInclude Include="Sources\ScenePortal.h" />
+    <ClInclude Include="Sources\SceneTransitionRequest.h" />
     <ClInclude Include="Sources\Scene_Title.h" />
     <ClInclude Include="Sources\System.h" />
     <ClInclude Include="Sources\Scene.h" />

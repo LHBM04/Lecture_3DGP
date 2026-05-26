@@ -20,7 +20,7 @@ public:
 	void SetMaterial(Material* material_) noexcept;
 
 protected:
-	virtual void OnRender() override;
+	virtual void OnRender(RenderContext& context_) override;
 
 private:
 	Mesh* mesh{ nullptr };

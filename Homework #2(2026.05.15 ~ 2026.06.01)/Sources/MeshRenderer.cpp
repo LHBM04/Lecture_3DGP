@@ -1,12 +1,10 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "MeshRenderer.h"
 
-#include "Application.h"
 #include "GameObject.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "Renderer.h"
-#include "Shader.h"
+#include "RenderContext.h"
 #include "Transform.h"
 
 Mesh* MeshRenderer::GetMesh() noexcept
@@ -39,22 +37,13 @@ void MeshRenderer::SetMaterial(Material* material_) noexcept
 	material = material_;
 }
 
-void MeshRenderer::OnRender()
+void MeshRenderer::OnRender(RenderContext& context_)
 {
 	GameObject* owner{ GetOwner() };
-
-	if (nullptr == mesh || nullptr == material)
+	if (nullptr == owner || nullptr == mesh || nullptr == material)
 	{
 		return;
 	}
-
-	Shader* shader{ material->GetShader() };
-	if (nullptr == shader)
-	{
-		return;
-	}
-
-	Renderer& renderer{ Application::GetRenderer() };
 
 	Transform* transform{ owner->GetComponent<Transform>() };
 	if (nullptr == transform)
@@ -62,20 +51,5 @@ void MeshRenderer::OnRender()
 		return;
 	}
 
-	renderer.UseProgram(shader);
-	renderer.BindVertexBuffer(mesh->GetVertexBufferView(), mesh->GetVertexCount(), mesh->GetId());
-	if (mesh->HasIndexBuffer())
-	{
-		renderer.BindElementBuffer(mesh->GetIndexBufferView(), mesh->GetIndexCount());
-	}
-	renderer.BindMaterial(material);
-	renderer.SetModelMatrix(transform->GetWorldMatrix());
-	if (mesh->HasIndexBuffer())
-	{
-		renderer.DrawElements();
-	}
-	else
-	{
-		renderer.DrawArrays();
-	}
+	context_.DrawMesh(*mesh, *material, transform->GetWorldMatrix());
 }

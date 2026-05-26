@@ -125,6 +125,13 @@ bool Mesh::BuildFromRaw(
 	return true;
 }
 
+bool Mesh::BuildFromRaw(
+	std::span<const Vertex> vertices_,
+	std::span<const std::uint32_t> indices_)
+{
+	return BuildFromRaw(Application::GetRenderer().GetDevice(), vertices_, indices_);
+}
+
 bool Mesh::Load(const std::filesystem::path& path_)
 {
 	std::ifstream file{ path_, std::ios::binary };

@@ -1,130 +1,148 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "SceneSystem.h"
 
 #include "Logger.h"
+#include "PlayerInput.h"
+#include "RenderContext.h"
 
 SceneSystem::~SceneSystem() noexcept
 {
 	SceneSystem::Release();
 }
 
-bool SceneSystem::Initialize(const SceneOptions & options_)
+bool SceneSystem::Initialize(const SceneOptions& options_)
 {
-    for (const SceneBuildEntry& entry : options_.scenes)
-    {
-        if (entry.name.empty() || entry.create == nullptr)
-        {
-            Release();
-            return false;
-        }
+	for (const SceneBuildEntry& entry : options_.scenes)
+	{
+		if (entry.name.empty() || entry.create == nullptr)
+		{
+			Release();
+			return false;
+		}
 
-        if (forName.contains(entry.name))
-        {
-            Release();
-            return false;
-        }
+		if (forName.contains(entry.name))
+		{
+			Release();
+			return false;
+		}
 
-        std::unique_ptr<Scene> scene = entry.create();
+		std::unique_ptr<Scene> scene = entry.create();
+		if (scene == nullptr)
+		{
+			Release();
+			return false;
+		}
 
-        if (scene == nullptr)
-        {
-            Release();
-            return false;
-        }
+		const std::size_t buildIndex = scenes.size();
+		forName.emplace(entry.name, buildIndex);
+		scenes.emplace_back(std::move(scene));
+	}
 
-        const std::size_t buildIndex = scenes.size();
-
-        forName.emplace(entry.name, buildIndex);
-        scenes.emplace_back(std::move(scene));
-    }
-
-    LoadScene(options_.startIndex);
-    return true;
+	LoadScene(options_.startIndex);
+	return true;
 }
 
 void SceneSystem::Release()
 {
-    if (nullptr != currentScene)
-    {
-        currentScene->Unload();
-    }
+	if (nullptr != currentScene)
+	{
+		currentScene->Unload();
+	}
 
-    currentScene = nullptr;
-    nextScene = nullptr;
+	currentScene = nullptr;
+	nextScene = nullptr;
+	sceneContext.ClearSceneChangeRequest();
 
-    forName.clear();
-    scenes.clear();
+	forName.clear();
+	scenes.clear();
 }
 
 void SceneSystem::Update()
 {
-    if (nullptr != nextScene)
-    {
-        if (nullptr != currentScene)
-        {
-            currentScene->Unload();
-        }
+	if (nullptr != nextScene)
+	{
+		if (nullptr != currentScene)
+		{
+			currentScene->Unload();
+		}
 
-        currentScene = nextScene;
-        nextScene = nullptr;
+		currentScene = nextScene;
+		nextScene = nullptr;
+		currentScene->Load(sceneContext);
+	}
 
-        currentScene->Load();
-    }
+	if (nullptr == currentScene)
+	{
+		Logger::Critical("No Current Scene!!");
+		return;
+	}
 
-    if (nullptr == currentScene)
-    {
-        Logger::Critical("No Current Scene!!");
-        return;
-    }
+	sceneContext.ClearSceneChangeRequest();
+	currentScene->Update();
 
-    currentScene->Update();
+	if (sceneContext.HasSceneChangeRequest())
+	{
+		LoadScene(sceneContext.GetRequestedSceneName());
+		sceneContext.ClearSceneChangeRequest();
+	}
 }
 
 void SceneSystem::FixedUpdate()
 {
-    if (nullptr == currentScene)
-    {
-        return;
-    }
+	if (nullptr == currentScene)
+	{
+		return;
+	}
 
-    currentScene->FixedUpdate();
+	currentScene->FixedUpdate();
 }
 
-void SceneSystem::Render()
+void SceneSystem::Render(RenderContext& context_)
 {
-    if (nullptr == currentScene)
-    {
-        Logger::Critical("No Current Scene!!");
-        return;
-    }
+	if (nullptr == currentScene)
+	{
+		Logger::Critical("No Current Scene!!");
+		return;
+	}
 
-    currentScene->Render();
+	currentScene->Render(context_);
+}
+
+void SceneSystem::HandlePlayerInput(const PlayerInput& input_)
+{
+	if (nullptr != currentScene)
+	{
+		currentScene->HandlePlayerInput(input_);
+	}
 }
 
 void SceneSystem::LoadScene(std::size_t index_)
 {
-    if (index_ >= scenes.size())
-    {
-        return;
-    }
+	if (index_ >= scenes.size())
+	{
+		return;
+	}
 
-    nextScene = scenes[index_].get();
+	nextScene = scenes[index_].get();
 }
 
 void SceneSystem::LoadScene(std::wstring name_)
 {
-    const auto iter = forName.find(name_);
-    if (iter == forName.end())
-    {
-        return;
-    }
+	const auto iter = forName.find(name_);
+	if (iter == forName.end())
+	{
+		return;
+	}
 
-    return LoadScene(iter->second);
+	LoadScene(iter->second);
 }
 
 void SceneSystem::UnloadScene()
 {
-	currentScene->Unload();
+	if (nullptr != currentScene)
+	{
+		currentScene->Unload();
+	}
 }
 
 Scene* SceneSystem::GetCurrentScene() const noexcept

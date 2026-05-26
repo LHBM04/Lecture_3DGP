@@ -10,8 +10,11 @@
 #include "Light.h"
 #include "Logger.h"
 #include "MeshRenderer.h"
+#include "PlayerInput.h"
+#include "RenderContext.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "SceneContext.h"
 #include "Transform.h"
 
 void Scene::AddCamera(Camera* camera_)
@@ -55,13 +58,14 @@ GameObject& Scene::CreateGameObject(const std::string& name_)
 	return reference;
 }
 
-void Scene::Load()
+void Scene::Load(SceneContext& context_)
 {
 	if (isLoaded)
 	{
 		return;
 	}
 
+	context = &context_;
 	isLoaded = true;
 	OnLoad();
 }
@@ -83,6 +87,7 @@ void Scene::Update()
 		}
 	}
 
+	CollectSceneTransitionRequests();
 	RemoveDestroyedGameObjects();
 
 	PickAtMouse();
@@ -109,7 +114,7 @@ void Scene::FixedUpdate()
 	DispatchCollisionEvents();
 }
 
-void Scene::Render()
+void Scene::Render(RenderContext& context_)
 {
 	Renderer& renderer{ Application::GetRenderer() };
 
@@ -143,9 +148,11 @@ void Scene::Render()
 				}
 			}
 
-			gameObject->Render();
+			gameObject->Render(context_);
 		}
 
+		renderer.Render(context_);
+		context_.Clear();
 		renderer.Flush();
 	}
 
@@ -154,11 +161,29 @@ void Scene::Render()
 	{
 		if (gameObject->IsActive())
 		{
-			gameObject->RenderUI();
+			gameObject->RenderUI(context_);
 		}
 	}
 
+	renderer.Render(context_);
+	context_.Clear();
 	renderer.FlushUIObjects();
+}
+
+void Scene::HandlePlayerInput(const PlayerInput& input_)
+{
+	if (!isLoaded)
+	{
+		return;
+	}
+
+	for (const std::unique_ptr<GameObject>& object : gameObjects)
+	{
+		if (object->IsActive())
+		{
+			object->HandlePlayerInput(input_);
+		}
+	}
 }
 
 void Scene::Unload()
@@ -170,7 +195,46 @@ void Scene::Unload()
 
 	OnUnload();
 	activeCollisionPairs.clear();
+	context = nullptr;
 	isLoaded = false;
+}
+
+SceneContext* Scene::GetSceneContext() noexcept
+{
+	return context;
+}
+
+const SceneContext* Scene::GetSceneContext() const noexcept
+{
+	return context;
+}
+
+void Scene::CollectSceneTransitionRequests()
+{
+	if (nullptr == context)
+	{
+		return;
+	}
+
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	{
+		if (nullptr == gameObject || !gameObject->IsActive())
+		{
+			continue;
+		}
+
+		for (SceneTransitionRequest* request : gameObject->GetSceneTransitionRequests())
+		{
+			if (nullptr == request || !request->HasSceneTransitionRequest())
+			{
+				continue;
+			}
+
+			context->RequestSceneChange(request->GetTargetSceneName());
+			request->ClearSceneTransitionRequest();
+			return;
+		}
+	}
 }
 
 void Scene::PickAtMouse()

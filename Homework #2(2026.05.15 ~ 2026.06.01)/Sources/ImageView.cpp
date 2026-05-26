@@ -8,8 +8,7 @@
 #include "MeshRenderer.h"
 #include "RectTransform.h"
 #include "InputManager.h"
-#include "Renderer.h"
-#include "Shader.h"
+#include "RenderContext.h"
 #include "Vector2D.h"
 
 namespace
@@ -73,7 +72,7 @@ void ImageView::OnAttach()
 	}
 }
 
-void ImageView::OnRenderUI()
+void ImageView::OnRenderUI(RenderContext& context_)
 {
 	GameObject* owner{ GetOwner() };
 	if (nullptr == owner)
@@ -88,12 +87,6 @@ void ImageView::OnRenderUI()
 			return;
 		}
 
-		Shader* shader{ material->GetShader() };
-		if (nullptr == shader)
-		{
-			return;
-		}
-
 		const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
 		const Vector2D& anchoredPosition{ rectTransform->GetAnchoredPosition() };
 		const Vector2D& pivot{ rectTransform->GetPivot() };
@@ -102,7 +95,6 @@ void ImageView::OnRenderUI()
 		const int x{ static_cast<int>(screenWidth * 0.5f + anchoredPosition.x - rectSize.x * pivot.x) };
 		const int y{ static_cast<int>(screenHeight * 0.5f - anchoredPosition.y - rectSize.y * pivot.y) };
 
-		Renderer& renderer{ Application::GetRenderer() };
 		const Matrix4x4 worldTransform = BuildClipSpaceRectMatrix(
 			x,
 			y,
@@ -111,22 +103,7 @@ void ImageView::OnRenderUI()
 			std::max(1, screenWidth),
 			std::max(1, screenHeight));
 
-		renderer.UseProgram(shader);
-		renderer.BindVertexBuffer(mesh->GetVertexBufferView(), mesh->GetVertexCount(), mesh->GetId());
-		if (mesh->HasIndexBuffer())
-		{
-			renderer.BindElementBuffer(mesh->GetIndexBufferView(), mesh->GetIndexCount());
-		}
-		renderer.BindMaterial(material, &color);
-		renderer.SetModelMatrix(worldTransform);
-		if (mesh->HasIndexBuffer())
-		{
-			renderer.DrawUIElements();
-		}
-		else
-		{
-			renderer.DrawUIArrays();
-		}
+		context_.DrawMesh(*mesh, *material, worldTransform, color, true);
 
 		return;
 	}

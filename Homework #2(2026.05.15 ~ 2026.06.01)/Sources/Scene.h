@@ -1,10 +1,12 @@
 ﻿#pragma once
 
-#include "Renderer.h"
 #include "GameObject.h"
 
 class Camera;
 class Light;
+struct PlayerInput;
+class RenderContext;
+class SceneContext;
 
 class Scene
 {
@@ -27,13 +29,17 @@ public:
 
 	GameObject& CreateGameObject(const std::string& name_ = "GameObject");
 
-	void Load();
+	void Load(SceneContext& context_);
 	void Update();
 	void FixedUpdate();
-	void Render();
+	void Render(RenderContext& context_);
+	void HandlePlayerInput(const PlayerInput& input_);
 	void Unload();
 
 protected:
+	[[nodiscard]] SceneContext* GetSceneContext() noexcept;
+	[[nodiscard]] const SceneContext* GetSceneContext() const noexcept;
+
 	virtual void OnLoad() {};
 	virtual void OnUpdate() {};
 	virtual void OnFixedUpdate() {};
@@ -63,12 +69,14 @@ private:
 	};
 
 	void PickAtMouse();
+	void CollectSceneTransitionRequests();
 	void DispatchCollisionEvents();
 	void RemoveDestroyedGameObjects();
 
 	friend class GameObject;
 
 	bool isLoaded{ false };
+	SceneContext* context{ nullptr };
 
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
 	std::vector<Camera*> cameras;

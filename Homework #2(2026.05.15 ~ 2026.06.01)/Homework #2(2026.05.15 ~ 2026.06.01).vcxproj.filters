@@ -76,6 +76,9 @@
     <ClCompile Include="Sources\PlayerController.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\PlayerInputMapper.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\CameraProjection_Orthographic.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -115,6 +118,9 @@
     <ClCompile Include="Sources\RectTransform.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\RenderContext.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\RenderSystem.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -128,6 +134,12 @@
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\SceneSystem.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SceneContext.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ScenePortal.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\WindowSystem.cpp">
@@ -236,6 +248,15 @@
     <ClInclude Include="Sources\PlayerController.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\PlayerInput.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PlayerInputMapper.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PlayerInputReceiver.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\ResourceManager.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
@@ -299,6 +320,9 @@
     <ClInclude Include="Sources\RectTransform.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\RenderContext.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\RenderSystem.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
@@ -318,6 +342,15 @@
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\SceneSystem.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SceneContext.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ScenePortal.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SceneTransitionRequest.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
   </ItemGroup>

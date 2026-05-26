@@ -20,7 +20,9 @@ class Mesh;
 class Camera;
 class GameObject;
 class Light;
+class RenderContext;
 class RenderSystem;
+struct DrawMeshCommand;
 
 struct RendererOptions final
 {
@@ -51,7 +53,7 @@ public:
 	void SetCamera(const Camera* camera_);
 	void SetLight(const Light* light_);
 
-	void UseProgram(Shader* shader_);
+	void UseProgram(const Shader* shader_);
 	void BindVertexBuffer(
 		const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView_,
 		UINT vertexCount_,
@@ -69,6 +71,7 @@ public:
 	void DrawElements();
 	void DrawUIArrays();
 	void DrawUIElements();
+	void Render(const RenderContext& context_);
 
 	void Flush();
 	void FlushGameObjects();
@@ -192,6 +195,7 @@ private:
 	void ExecuteUIObjectBatches();
 	void ExecuteBatch(const GameObjectBatch& batch_);
 	void ExecuteBatch(const UIObjectBatch& batch_);
+	void DrawMeshNow(const DrawMeshCommand& command_);
 
 	[[nodiscard]] bool IsValidCommand(const GameObjectCommand& command_) const noexcept;
 	[[nodiscard]] uint64_t BuildSortKey(const GameObjectCommand& command_) const noexcept;

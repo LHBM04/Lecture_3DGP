@@ -1,7 +1,6 @@
 #include "Precompiled.h"
 #include "TextView.h"
 
-#include "Application.h"
 #include "GameObject.h"
 #include "Font.h"
 #include "InputManager.h"
@@ -9,8 +8,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "RectTransform.h"
-#include "Renderer.h"
-#include "Shader.h"
+#include "RenderContext.h"
 
 namespace
 {
@@ -134,7 +132,7 @@ void TextView::OnAttach()
 	MarkDirty();
 }
 
-void TextView::OnRenderUI()
+void TextView::OnRenderUI(RenderContext& context_)
 {
 	GameObject* owner{ GetOwner() };
 	if (nullptr == owner)
@@ -171,14 +169,7 @@ void TextView::OnRenderUI()
 		return;
 	}
 
-	Shader* shader{ material->GetShader() };
-	if (nullptr == shader)
-	{
-		return;
-	}
-
 	hasLoggedMissingFont = false;
-	Renderer& renderer{ Application::GetRenderer() };
 	RebuildMeshIfDirty(*rectTransform);
 
 	if (nullptr == cachedMesh || 0 == cachedMesh->GetVertexCount())
@@ -186,22 +177,7 @@ void TextView::OnRenderUI()
 		return;
 	}
 
-	renderer.UseProgram(shader);
-	renderer.BindVertexBuffer(cachedMesh->GetVertexBufferView(), cachedMesh->GetVertexCount(), cachedMesh->GetId());
-	if (cachedMesh->HasIndexBuffer())
-	{
-		renderer.BindElementBuffer(cachedMesh->GetIndexBufferView(), cachedMesh->GetIndexCount());
-	}
-	renderer.BindMaterial(material, &color);
-	renderer.SetModelMatrix(Matrix4x4::GetIdentity());
-	if (cachedMesh->HasIndexBuffer())
-	{
-		renderer.DrawUIElements();
-	}
-	else
-	{
-		renderer.DrawUIArrays();
-	}
+	context_.DrawMesh(*cachedMesh, *material, Matrix4x4::GetIdentity(), color, true);
 }
 
 void TextView::MarkDirty() noexcept
@@ -328,8 +304,7 @@ void TextView::RebuildMeshIfDirty(RectTransform& rectTransform_)
 	}
 	else
 	{
-		ID3D12Device* device{ Application::GetRenderer().GetDevice() };
-		if (nullptr != device && cachedMesh->BuildFromRaw(device, vertices, indices))
+		if (cachedMesh->BuildFromRaw(vertices, indices))
 		{
 			const std::size_t hashValue{ std::hash<const TextView*>{}(this) };
 			cachedMesh->SetId(static_cast<uint64_t>(0x10000000ull | (hashValue & 0x0FFFFFFFull)));

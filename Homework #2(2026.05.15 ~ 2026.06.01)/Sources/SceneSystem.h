@@ -1,7 +1,11 @@
 ﻿#pragma once
 
+#include "SceneContext.h"
 #include "Scene.h"
 #include "System.h"
+
+struct PlayerInput;
+class RenderContext;
 
 struct SceneBuildEntry final
 {
@@ -25,7 +29,8 @@ public:
 
 	void Update();
 	void FixedUpdate();
-	void Render();
+	void Render(RenderContext& context_);
+	void HandlePlayerInput(const PlayerInput& input_);
 
 	template <std::derived_from<Scene> TScene>
 	void AddScene(std::wstring name_);
@@ -43,6 +48,7 @@ private:
 
 	Scene* currentScene{ nullptr };
 	Scene* nextScene{ nullptr };
+	SceneContext sceneContext;
 };
 
 template<std::derived_from<Scene> TScene>
@@ -50,6 +56,7 @@ inline void SceneSystem::AddScene(std::wstring name_)
 {
 	std::unique_ptr<TScene> scene{ std::make_unique<TScene>() };
 
-	forName.emplace(name_, scene.get());
+	const std::size_t buildIndex{ scenes.size() };
+	forName.emplace(std::move(name_), buildIndex);
 	scenes.emplace_back(std::move(scene));
 }

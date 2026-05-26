@@ -3,11 +3,14 @@
 #include "Component.h"
 #include "Collidable.h"
 #include "Matrix4x4.h"
+#include "PlayerInputReceiver.h"
 #include "Renderable.h"
 #include "RenderableUI.h"
+#include "SceneTransitionRequest.h"
 #include "Updatable.h"
 
 class Scene;
+class RenderContext;
 
 class GameObject
 {
@@ -57,12 +60,14 @@ public:
 
 	void Update();
 	void FixedUpdate();
-	void Render();
-	void RenderUI();
+	void Render(RenderContext& context_);
+	void RenderUI(RenderContext& context_);
+	void HandlePlayerInput(const PlayerInput& input_);
 	void NotifyCollisionEnter(GameObject& other_);
 	void NotifyCollisionStay(GameObject& other_);
 	void NotifyCollisionExit(GameObject& other_);
 	[[nodiscard]] bool HasCollisionListeners() const noexcept;
+	[[nodiscard]] std::span<SceneTransitionRequest* const> GetSceneTransitionRequests() noexcept;
 
 private:
 	Scene* currentScene{ nullptr };
@@ -78,6 +83,8 @@ private:
 	std::vector<Updatable*> updatables;
 	std::vector<Renderable*> renderables;
 	std::vector<RenderableUI*> uiRenderables;
+	std::vector<SceneTransitionRequest*> sceneTransitionRequests;
+	std::vector<PlayerInputReceiver*> playerInputReceivers;
 };
 
 template <std::derived_from<Component> TComponent>
@@ -106,6 +113,14 @@ inline TComponent* GameObject::AddComponent() noexcept
 		if constexpr (std::derived_from<TComponent, RenderableUI>)
 		{
 			uiRenderables.push_back(static_cast<RenderableUI*>(component));
+		}
+		if constexpr (std::derived_from<TComponent, SceneTransitionRequest>)
+		{
+			sceneTransitionRequests.push_back(static_cast<SceneTransitionRequest*>(component));
+		}
+		if constexpr (std::derived_from<TComponent, PlayerInputReceiver>)
+		{
+			playerInputReceivers.push_back(static_cast<PlayerInputReceiver*>(component));
 		}
 
 		return component;

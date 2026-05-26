@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "RenderContext.h"
 #include "RendererOptions.h"
 #include "Shader.h"
 
@@ -274,15 +275,15 @@ void Renderer::SetLight(const Light* light_)
 	currentLightIntensity = light_->GetIntensity();
 }
 
-void Renderer::UseProgram(Shader* shader_)
+void Renderer::UseProgram(const Shader* shader_)
 {
 	if (nullptr == shader_)
 	{
 		return;
 	}
 
-	drawState.pipelineState = shader_->GetPipelineState();
-	drawState.graphicsRootSignature = shader_->GetGraphicsRootSignature();
+	drawState.pipelineState = const_cast<ID3D12PipelineState*>(shader_->GetPipelineState());
+	drawState.graphicsRootSignature = const_cast<ID3D12RootSignature*>(shader_->GetGraphicsRootSignature());
 	drawState.pipelineId = shader_->GetPipelineId();
 
 	drawState.cameraSlot = UINT_MAX;
@@ -403,6 +404,14 @@ void Renderer::DrawUIElements()
 	uiObjectCommands.push_back(command);
 }
 
+void Renderer::Render(const RenderContext& context_)
+{
+	for (const DrawMeshCommand& command : context_.GetDrawMeshCommands())
+	{
+		DrawMeshNow(command);
+	}
+}
+
 void Renderer::Flush()
 {
 	FlushGameObjects();
@@ -435,6 +444,54 @@ void Renderer::FlushUIObjects()
 	uiObjectCommands.clear();
 	uiObjectBatches.clear();
 	drawState = {};
+}
+
+void Renderer::DrawMeshNow(const DrawMeshCommand& command_)
+{
+	if (nullptr == command_.mesh || nullptr == command_.material)
+	{
+		return;
+	}
+
+	const Shader* shader{ command_.material->GetShader() };
+	if (nullptr == shader)
+	{
+		return;
+	}
+
+	const Mesh& mesh{ *command_.mesh };
+	UseProgram(shader);
+	BindVertexBuffer(mesh.GetVertexBufferView(), mesh.GetVertexCount(), mesh.GetId());
+	if (mesh.HasIndexBuffer())
+	{
+		BindElementBuffer(mesh.GetIndexBufferView(), mesh.GetIndexCount());
+	}
+
+	const ColorRGBA* colorOverride{ command_.hasColorOverride ? &command_.colorOverride : nullptr };
+	BindMaterial(command_.material, colorOverride);
+	SetModelMatrix(command_.worldMatrix);
+
+	if (command_.isUI)
+	{
+		if (mesh.HasIndexBuffer())
+		{
+			DrawUIElements();
+		}
+		else
+		{
+			DrawUIArrays();
+		}
+		return;
+	}
+
+	if (mesh.HasIndexBuffer())
+	{
+		DrawElements();
+	}
+	else
+	{
+		DrawArrays();
+	}
 }
 
 ID3D12Device* Renderer::GetDevice() const noexcept
