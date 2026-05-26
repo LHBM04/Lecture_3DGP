@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Renderer.h"
+#include "RenderSystem.h"
 #include "SceneSystem.h"
-#include "Window.h"
+#include "WindowSystem.h"
 
 struct ApplicationOptions final
 {

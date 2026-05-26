@@ -1,13 +1,11 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Renderer.h"
 
 #include "Camera.h"
-#include "CameraConstants.h"
 #include "Light.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "RendererOptions.h"
-#include "RootParameterSlot.h"
 #include "Shader.h"
 
 namespace
@@ -18,7 +16,7 @@ namespace
 	}
 }
 
-Renderer::~Renderer()
+Renderer::~Renderer() noexcept
 {
 	Renderer::Release();
 }
@@ -128,18 +126,22 @@ void Renderer::Release()
 		fenceEvent = nullptr;
 	}
 
-	drawCalls.clear();
-	visibleDrawCalls.clear();
-	batches.clear();
+	gameObjectCommands.clear();
+	visibleGameObjectCommands.clear();
+	uiObjectCommands.clear();
+	gameObjectBatches.clear();
+	uiObjectBatches.clear();
 	drawState = {};
 	isFullscreen = false;
 }
 
 void Renderer::BeginRender()
 {
-	drawCalls.clear();
-	visibleDrawCalls.clear();
-	batches.clear();
+	gameObjectCommands.clear();
+	visibleGameObjectCommands.clear();
+	uiObjectCommands.clear();
+	gameObjectBatches.clear();
+	uiObjectBatches.clear();
 	drawState = {};
 
 	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
@@ -282,6 +284,15 @@ void Renderer::UseProgram(Shader* shader_)
 	drawState.pipelineState = shader_->GetPipelineState();
 	drawState.graphicsRootSignature = shader_->GetGraphicsRootSignature();
 	drawState.pipelineId = shader_->GetPipelineId();
+
+	drawState.cameraSlot = UINT_MAX;
+	drawState.objectSlot = UINT_MAX;
+	drawState.materialSlot = UINT_MAX;
+	drawState.lightSlot = UINT_MAX;
+	(void)shader_->TryGetRootParameterIndex("Camera", drawState.cameraSlot);
+	(void)shader_->TryGetRootParameterIndex("Object", drawState.objectSlot);
+	(void)shader_->TryGetRootParameterIndex("Material", drawState.materialSlot);
+	(void)shader_->TryGetRootParameterIndex("Light", drawState.lightSlot);
 }
 
 void Renderer::BindVertexBuffer(
@@ -332,47 +343,97 @@ void Renderer::SetModelMatrix(const Matrix4x4& modelMatrix_)
 
 void Renderer::DrawArrays()
 {
-	DrawCall drawCall{ drawState };
-	drawCall.indexed = false;
-	drawCall.hasIndexBuffer = false;
-	drawCall.indexCount = 0;
-	drawCall.startIndexLocation = 0;
-	drawCall.baseVertexLocation = 0;
-	drawCall.sortKey = BuildSortKey(drawCall);
-	if (!IsValidDrawCall(drawCall))
+	GameObjectCommand command{ drawState };
+	command.indexed = false;
+	command.hasIndexBuffer = false;
+	command.indexCount = 0;
+	command.startIndexLocation = 0;
+	command.baseVertexLocation = 0;
+	command.sortKey = BuildSortKey(command);
+	if (!IsValidCommand(command))
 	{
 		return;
 	}
 
-	drawCalls.push_back(drawCall);
+	gameObjectCommands.push_back(command);
 }
 
 void Renderer::DrawElements()
 {
-	DrawCall drawCall{ drawState };
-	drawCall.indexed = drawCall.hasIndexBuffer && drawCall.indexCount > 0;
-	drawCall.sortKey = BuildSortKey(drawCall);
-	if (!IsValidDrawCall(drawCall))
+	GameObjectCommand command{ drawState };
+	command.indexed = command.hasIndexBuffer && command.indexCount > 0;
+	command.sortKey = BuildSortKey(command);
+	if (!IsValidCommand(command))
 	{
 		return;
 	}
 
-	drawCalls.push_back(drawCall);
+	gameObjectCommands.push_back(command);
+}
+
+void Renderer::DrawUIArrays()
+{
+	UIObjectCommand command{};
+	static_cast<GameObjectCommand&>(command) = drawState;
+	command.indexed = false;
+	command.hasIndexBuffer = false;
+	command.indexCount = 0;
+	command.startIndexLocation = 0;
+	command.baseVertexLocation = 0;
+	command.sortKey = BuildSortKey(command);
+	if (!IsValidCommand(command))
+	{
+		return;
+	}
+
+	uiObjectCommands.push_back(command);
+}
+
+void Renderer::DrawUIElements()
+{
+	UIObjectCommand command{};
+	static_cast<GameObjectCommand&>(command) = drawState;
+	command.indexed = command.hasIndexBuffer && command.indexCount > 0;
+	command.sortKey = BuildSortKey(command);
+	if (!IsValidCommand(command))
+	{
+		return;
+	}
+
+	uiObjectCommands.push_back(command);
 }
 
 void Renderer::Flush()
 {
-	visibleDrawCalls.clear();
-	batches.clear();
+	FlushGameObjects();
+}
 
-	BuildVisibleDrawCalls();
-	SortDrawCalls();
-	BuildBatches();
-	ExecuteBatches();
+void Renderer::FlushGameObjects()
+{
+	visibleGameObjectCommands.clear();
+	gameObjectBatches.clear();
 
-	drawCalls.clear();
-	visibleDrawCalls.clear();
-	batches.clear();
+	BuildVisibleGameObjectCommands();
+	SortGameObjectCommands();
+	BuildGameObjectBatches();
+	ExecuteGameObjectBatches();
+
+	gameObjectCommands.clear();
+	visibleGameObjectCommands.clear();
+	gameObjectBatches.clear();
+	drawState = {};
+}
+
+void Renderer::FlushUIObjects()
+{
+	uiObjectBatches.clear();
+
+	SortUIObjectCommands();
+	BuildUIObjectBatches();
+	ExecuteUIObjectBatches();
+
+	uiObjectCommands.clear();
+	uiObjectBatches.clear();
 	drawState = {};
 }
 
@@ -402,6 +463,42 @@ void Renderer::WaitForFrames()
 	{
 		WaitForFrame(frameResource);
 	}
+}
+
+void Renderer::Resize(int width_, int height_)
+{
+	if (nullptr == swapChain)
+	{
+		return;
+	}
+
+	const int clampedWidth{ std::max(1, width_) };
+	const int clampedHeight{ std::max(1, height_) };
+	if (options.width == clampedWidth && options.height == clampedHeight)
+	{
+		return;
+	}
+
+	WaitForFrames();
+	ReleaseDepthStencilBuffer();
+	ReleaseBackBuffers();
+
+	const HRESULT resizeResult
+	{
+		swapChain->ResizeBuffers(
+			static_cast<UINT>(FrameCount),
+			static_cast<UINT>(clampedWidth),
+			static_cast<UINT>(clampedHeight),
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+			0)
+	};
+	assert(SUCCEEDED(resizeResult));
+
+	options.width = clampedWidth;
+	options.height = clampedHeight;
+	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	CreateBackBuffers();
+	CreateDepthStencilBuffer();
 }
 
 void Renderer::SetFullscreen(bool fullscreen_)
@@ -767,17 +864,27 @@ void Renderer::TransitionBackBuffer(D3D12_RESOURCE_STATES state_)
 	current.state = state_;
 }
 
-void Renderer::BindCameraConstants()
+void Renderer::BindCameraConstants(UINT slot_)
 {
+	if (UINT_MAX == slot_)
+	{
+		return;
+	}
+
 	const D3D12_GPU_VIRTUAL_ADDRESS cameraAddress{ UploadConstantData(&currentCameraConstants, sizeof(CameraConstants)) };
 	if (0 != cameraAddress)
 	{
-		commandList->SetGraphicsRootConstantBufferView((UINT)RootParameterSlot::Camera, cameraAddress);
+		commandList->SetGraphicsRootConstantBufferView(slot_, cameraAddress);
 	}
 }
 
-void Renderer::BindLightConstants()
+void Renderer::BindLightConstants(UINT slot_)
 {
+	if (UINT_MAX == slot_)
+	{
+		return;
+	}
+
 	LightConstants lightConstants{};
 	lightConstants.direction = currentLightDirection;
 	lightConstants.intensity = currentLightIntensity;
@@ -787,64 +894,132 @@ void Renderer::BindLightConstants()
 	const D3D12_GPU_VIRTUAL_ADDRESS lightAddress{ UploadConstantData(&lightConstants, sizeof(LightConstants)) };
 	if (0 != lightAddress)
 	{
-		commandList->SetGraphicsRootConstantBufferView((UINT)RootParameterSlot::Light, lightAddress);
+		commandList->SetGraphicsRootConstantBufferView(slot_, lightAddress);
 	}
 }
 
-void Renderer::BuildVisibleDrawCalls()
+void Renderer::BindObjectConstants(UINT slot_, const Matrix4x4& world_)
 {
-	visibleDrawCalls.clear();
-	visibleDrawCalls.reserve(drawCalls.size());
-
-	for (const DrawCall& drawCall : drawCalls)
+	if (UINT_MAX == slot_)
 	{
-		visibleDrawCalls.push_back(drawCall);
+		return;
+	}
+
+	ObjectConstants objectConstants{};
+	objectConstants.world = world_;
+	objectConstants.inverseWorld = world_.GetInverse();
+
+	const D3D12_GPU_VIRTUAL_ADDRESS objectAddress{ UploadConstantData(&objectConstants, sizeof(ObjectConstants)) };
+	if (0 != objectAddress)
+	{
+		commandList->SetGraphicsRootConstantBufferView(slot_, objectAddress);
 	}
 }
 
-void Renderer::SortDrawCalls()
+void Renderer::BindMaterialConstants(UINT slot_, const ColorRGBA& materialColor_)
 {
-	std::ranges::sort(visibleDrawCalls, [](const DrawCall& a_, const DrawCall& b_) {
+	if (UINT_MAX == slot_)
+	{
+		return;
+	}
+
+	const D3D12_GPU_VIRTUAL_ADDRESS materialAddress{ UploadConstantData(&materialColor_, sizeof(ColorRGBA)) };
+	if (0 != materialAddress)
+	{
+		commandList->SetGraphicsRootConstantBufferView(slot_, materialAddress);
+	}
+}
+
+void Renderer::BuildVisibleGameObjectCommands()
+{
+	visibleGameObjectCommands.clear();
+	visibleGameObjectCommands.reserve(gameObjectCommands.size());
+
+	for (const GameObjectCommand& command : gameObjectCommands)
+	{
+		visibleGameObjectCommands.push_back(command);
+	}
+}
+
+void Renderer::SortGameObjectCommands()
+{
+	std::ranges::sort(visibleGameObjectCommands, [](const GameObjectCommand& a_, const GameObjectCommand& b_) {
 			return a_.sortKey < b_.sortKey;
 		});
 }
 
-void Renderer::BuildBatches()
+void Renderer::SortUIObjectCommands()
 {
-	batches.clear();
+	std::ranges::sort(uiObjectCommands, [](const UIObjectCommand& a_, const UIObjectCommand& b_) {
+			return a_.sortKey < b_.sortKey;
+		});
+}
 
-	Batch currentBatch{};
-	const DrawCall* previous{ nullptr };
+void Renderer::BuildGameObjectBatches()
+{
+	gameObjectBatches.clear();
 
-	for (const DrawCall& drawCall : visibleDrawCalls)
+	GameObjectBatch currentBatch{};
+	const GameObjectCommand* previous{ nullptr };
+
+	for (const GameObjectCommand& command : visibleGameObjectCommands)
 	{
-		const bool newBatch{ nullptr == previous || !CanBatchTogether(*previous, drawCall) };
+		const bool newBatch{ nullptr == previous || !CanBatchTogether(*previous, command) };
 		if (newBatch)
 		{
 			if (!currentBatch.instances.empty())
 			{
-				batches.push_back(std::move(currentBatch));
+				gameObjectBatches.push_back(std::move(currentBatch));
 				currentBatch = {};
 			}
 
-			currentBatch.baseCall = drawCall;
+			currentBatch.baseCall = command;
 		}
 
-		InstanceData instance{};
-		instance.worldTransform = drawCall.worldTransform;
-		currentBatch.instances.push_back(instance);
+		currentBatch.instances.push_back(command.worldTransform);
 
-		previous = &drawCall;
+		previous = &command;
 	}
 
 	if (!currentBatch.instances.empty())
 	{
-		batches.push_back(std::move(currentBatch));
-		currentBatch = {};
+		gameObjectBatches.push_back(std::move(currentBatch));
 	}
 }
 
-bool Renderer::CanBatchTogether(const DrawCall& lhs_, const DrawCall& rhs_) const noexcept
+void Renderer::BuildUIObjectBatches()
+{
+	uiObjectBatches.clear();
+
+	UIObjectBatch currentBatch{};
+	const UIObjectCommand* previous{ nullptr };
+
+	for (const UIObjectCommand& command : uiObjectCommands)
+	{
+		const bool newBatch{ nullptr == previous || !CanBatchTogether(*previous, command) };
+		if (newBatch)
+		{
+			if (!currentBatch.instances.empty())
+			{
+				uiObjectBatches.push_back(std::move(currentBatch));
+				currentBatch = {};
+			}
+
+			currentBatch.baseCall = command;
+		}
+
+		currentBatch.instances.push_back(command.worldTransform);
+
+		previous = &command;
+	}
+
+	if (!currentBatch.instances.empty())
+	{
+		uiObjectBatches.push_back(std::move(currentBatch));
+	}
+}
+
+bool Renderer::CanBatchTogether(const GameObjectCommand& lhs_, const GameObjectCommand& rhs_) const noexcept
 {
 	return lhs_.pipelineState == rhs_.pipelineState &&
 		   lhs_.graphicsRootSignature == rhs_.graphicsRootSignature &&
@@ -866,9 +1041,9 @@ bool Renderer::CanBatchTogether(const DrawCall& lhs_, const DrawCall& rhs_) cons
 		   lhs_.baseVertexLocation == rhs_.baseVertexLocation;
 }
 
-void Renderer::ExecuteBatches()
+void Renderer::ExecuteGameObjectBatches()
 {
-	if (batches.empty())
+	if (gameObjectBatches.empty())
 	{
 		return;
 	}
@@ -877,42 +1052,33 @@ void Renderer::ExecuteBatches()
 	ID3D12RootSignature* currentRootSignature{ nullptr };
 	ColorRGBA currentMaterialColor{ -1.0f, -1.0f, -1.0f, -1.0f };
 
-	for (const Batch& batch : batches)
+	for (const GameObjectBatch& batch : gameObjectBatches)
 	{
-		const DrawCall& drawCall{ batch.baseCall };
+		const GameObjectCommand& command{ batch.baseCall };
 
-		if (drawCall.pipelineState != currentPipelineState)
+		if (command.pipelineState != currentPipelineState)
 		{
-			commandList->SetPipelineState(drawCall.pipelineState);
-			currentPipelineState = drawCall.pipelineState;
+			commandList->SetPipelineState(command.pipelineState);
+			currentPipelineState = command.pipelineState;
 		}
 
-		if (drawCall.graphicsRootSignature != currentRootSignature)
+		if (command.graphicsRootSignature != currentRootSignature)
 		{
-			commandList->SetGraphicsRootSignature(drawCall.graphicsRootSignature);
-			currentRootSignature = drawCall.graphicsRootSignature;
+			commandList->SetGraphicsRootSignature(command.graphicsRootSignature);
+			currentRootSignature = command.graphicsRootSignature;
 
-			BindCameraConstants();
-			BindLightConstants();
-
-			const D3D12_GPU_VIRTUAL_ADDRESS materialAddress{ UploadConstantData(&drawCall.materialColor, sizeof(ColorRGBA)) };
-			if (0 != materialAddress)
-			{
-				commandList->SetGraphicsRootConstantBufferView((UINT)RootParameterSlot::Material, materialAddress);
-			}
-			currentMaterialColor = drawCall.materialColor;
+			BindCameraConstants(command.cameraSlot);
+			BindObjectConstants(command.objectSlot, Matrix4x4::GetIdentity());
+			BindLightConstants(command.lightSlot);
+			BindMaterialConstants(command.materialSlot, command.materialColor);
+			currentMaterialColor = command.materialColor;
 		}
 		else
 		{
-			if (drawCall.materialColor != currentMaterialColor)
+			if (command.materialColor != currentMaterialColor)
 			{
-				const D3D12_GPU_VIRTUAL_ADDRESS materialAddress{ UploadConstantData(&drawCall.materialColor, sizeof(ColorRGBA)) };
-				if (0 != materialAddress)
-				{
-					commandList->SetGraphicsRootConstantBufferView((UINT)RootParameterSlot::Material, materialAddress);
-				}
-
-				currentMaterialColor = drawCall.materialColor;
+				BindMaterialConstants(command.materialSlot, command.materialColor);
+				currentMaterialColor = command.materialColor;
 			}
 		}
 
@@ -920,59 +1086,136 @@ void Renderer::ExecuteBatches()
 	}
 }
 
-void Renderer::ExecuteBatch(const Batch& batch_)
+void Renderer::ExecuteUIObjectBatches()
+{
+	if (uiObjectBatches.empty())
+	{
+		return;
+	}
+
+	ID3D12PipelineState* currentPipelineState{ nullptr };
+	ID3D12RootSignature* currentRootSignature{ nullptr };
+	ColorRGBA currentMaterialColor{ -1.0f, -1.0f, -1.0f, -1.0f };
+
+	for (const UIObjectBatch& batch : uiObjectBatches)
+	{
+		const UIObjectCommand& command{ batch.baseCall };
+
+		if (command.pipelineState != currentPipelineState)
+		{
+			commandList->SetPipelineState(command.pipelineState);
+			currentPipelineState = command.pipelineState;
+		}
+
+		if (command.graphicsRootSignature != currentRootSignature)
+		{
+			commandList->SetGraphicsRootSignature(command.graphicsRootSignature);
+			currentRootSignature = command.graphicsRootSignature;
+
+			BindCameraConstants(command.cameraSlot);
+			BindObjectConstants(command.objectSlot, Matrix4x4::GetIdentity());
+			BindLightConstants(command.lightSlot);
+			BindMaterialConstants(command.materialSlot, command.materialColor);
+			currentMaterialColor = command.materialColor;
+		}
+		else if (command.materialColor != currentMaterialColor)
+		{
+			BindMaterialConstants(command.materialSlot, command.materialColor);
+			currentMaterialColor = command.materialColor;
+		}
+
+		ExecuteBatch(batch);
+	}
+}
+
+void Renderer::ExecuteBatch(const GameObjectBatch& batch_)
 {
 	if (batch_.instances.empty()) [[unlikely]]
 	{
 		return;
 	}
 
-	const DrawCall& drawCall{ batch_.baseCall };
+	const GameObjectCommand& command{ batch_.baseCall };
 
-	commandList->IASetPrimitiveTopology(drawCall.primitiveTopology);
+	commandList->IASetPrimitiveTopology(command.primitiveTopology);
 
 	D3D12_VERTEX_BUFFER_VIEW instanceBufferView{ UploadInstanceData(batch_.instances) };
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferViews[2]{ drawCall.vertexBufferView, instanceBufferView };
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViews[2]{ command.vertexBufferView, instanceBufferView };
 	commandList->IASetVertexBuffers(0, 2, vertexBufferViews);
 
-	if (drawCall.indexed)
+	if (command.indexed)
 	{
-		commandList->IASetIndexBuffer(&drawCall.indexBufferView);
+		commandList->IASetIndexBuffer(&command.indexBufferView);
 		commandList->DrawIndexedInstanced(
-			drawCall.indexCount,
+			command.indexCount,
 			static_cast<UINT>(batch_.instances.size()),
-			drawCall.startIndexLocation,
-			drawCall.baseVertexLocation,
+			command.startIndexLocation,
+			command.baseVertexLocation,
 			0);
 	}
 	else
 	{
 		commandList->DrawInstanced(
-			drawCall.vertexCount,
+			command.vertexCount,
 			static_cast<UINT>(batch_.instances.size()),
-			drawCall.startVertexLocation,
+			command.startVertexLocation,
 			0);
 	}
 }
 
-bool Renderer::IsValidDrawCall(const DrawCall& drawCall_) const noexcept
+void Renderer::ExecuteBatch(const UIObjectBatch& batch_)
 {
-	if (nullptr == drawCall_.pipelineState)
+	if (batch_.instances.empty()) [[unlikely]]
+	{
+		return;
+	}
+
+	const UIObjectCommand& command{ batch_.baseCall };
+
+	commandList->IASetPrimitiveTopology(command.primitiveTopology);
+
+	D3D12_VERTEX_BUFFER_VIEW instanceBufferView{ UploadInstanceData(batch_.instances) };
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViews[2]{ command.vertexBufferView, instanceBufferView };
+	commandList->IASetVertexBuffers(0, 2, vertexBufferViews);
+
+	if (command.indexed)
+	{
+		commandList->IASetIndexBuffer(&command.indexBufferView);
+		commandList->DrawIndexedInstanced(
+			command.indexCount,
+			static_cast<UINT>(batch_.instances.size()),
+			command.startIndexLocation,
+			command.baseVertexLocation,
+			0);
+	}
+	else
+	{
+		commandList->DrawInstanced(
+			command.vertexCount,
+			static_cast<UINT>(batch_.instances.size()),
+			command.startVertexLocation,
+			0);
+	}
+}
+
+bool Renderer::IsValidCommand(const GameObjectCommand& command_) const noexcept
+{
+	if (nullptr == command_.pipelineState)
 	{
 		return false;
 	}
 
-	if (nullptr == drawCall_.graphicsRootSignature)
+	if (nullptr == command_.graphicsRootSignature)
 	{
 		return false;
 	}
 
-	if (0 == drawCall_.vertexBufferView.BufferLocation)
+	if (0 == command_.vertexBufferView.BufferLocation)
 	{
 		return false;
 	}
 
-	if (drawCall_.indexed && 0 == drawCall_.indexBufferView.BufferLocation)
+	if (command_.indexed && 0 == command_.indexBufferView.BufferLocation)
 	{
 		return false;
 	}
@@ -980,11 +1223,11 @@ bool Renderer::IsValidDrawCall(const DrawCall& drawCall_) const noexcept
 	return true;
 }
 
-uint64_t Renderer::BuildSortKey(const DrawCall& drawCall_) const noexcept
+uint64_t Renderer::BuildSortKey(const GameObjectCommand& command_) const noexcept
 {
-	return ((drawCall_.pipelineId & 0xFFFFull) << 48) |
-		((drawCall_.materialId & 0xFFFFFFull) << 24) |
-		(drawCall_.meshId & 0xFFFFFFull);
+	return ((command_.pipelineId & 0xFFFFull) << 48) |
+		((command_.materialId & 0xFFFFFFull) << 24) |
+		(command_.meshId & 0xFFFFFFull);
 }
 
 
@@ -1021,7 +1264,7 @@ D3D12_GPU_VIRTUAL_ADDRESS Renderer::UploadConstantData(const void* data_, std::s
 	return gpuAddress;
 }
 
-D3D12_VERTEX_BUFFER_VIEW Renderer::UploadInstanceData(std::span<const InstanceData> instances_)
+D3D12_VERTEX_BUFFER_VIEW Renderer::UploadInstanceData(std::span<const Matrix4x4> instances_)
 {
 	D3D12_VERTEX_BUFFER_VIEW view{};
 	if (instances_.empty())
@@ -1029,9 +1272,9 @@ D3D12_VERTEX_BUFFER_VIEW Renderer::UploadInstanceData(std::span<const InstanceDa
 		return view;
 	}
 
-	const std::size_t byteSize{ sizeof(InstanceData) * instances_.size() };
+	const std::size_t byteSize{ sizeof(Matrix4x4) * instances_.size() };
 	D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ 0 };
-	void* cpuAddress{ AllocateUploadMemory(byteSize, alignof(InstanceData), gpuAddress) };
+	void* cpuAddress{ AllocateUploadMemory(byteSize, alignof(Matrix4x4), gpuAddress) };
 	if (nullptr == cpuAddress)
 	{
 		return view;
@@ -1041,7 +1284,7 @@ D3D12_VERTEX_BUFFER_VIEW Renderer::UploadInstanceData(std::span<const InstanceDa
 
 	view.BufferLocation = gpuAddress;
 	view.SizeInBytes = static_cast<UINT>(byteSize);
-	view.StrideInBytes = sizeof(InstanceData);
+	view.StrideInBytes = sizeof(Matrix4x4);
 	return view;
 }
 

@@ -58,20 +58,6 @@ namespace
 		}
 	}
 
-	Matrix4x4 BuildClipSpaceRectMatrix(int x_, int y_, int width_, int height_, int screenWidth_, int screenHeight_) noexcept
-	{
-		const float left{ (static_cast<float>(x_) / static_cast<float>(screenWidth_)) * 2.0f - 1.0f };
-		const float right{ (static_cast<float>(x_ + width_) / static_cast<float>(screenWidth_)) * 2.0f - 1.0f };
-		const float top{ 1.0f - (static_cast<float>(y_) / static_cast<float>(screenHeight_)) * 2.0f };
-		const float bottom{ 1.0f - (static_cast<float>(y_ + height_) / static_cast<float>(screenHeight_)) * 2.0f };
-
-		return Matrix4x4(
-			right - left, 0.0f, 0.0f, 0.0f,
-			0.0f, bottom - top, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			left, top, 0.0f, 1.0f);
-	}
-
 }
 
 const std::wstring& TextView::GetText() const noexcept
@@ -82,6 +68,7 @@ const std::wstring& TextView::GetText() const noexcept
 void TextView::SetText(const std::wstring& text_) noexcept
 {
 	text = text_;
+	MarkDirty();
 }
 
 Font* TextView::GetFont() const noexcept
@@ -93,6 +80,7 @@ void TextView::SetFont(Font* font_) noexcept
 {
 	font = font_;
 	hasLoggedMissingFont = false;
+	MarkDirty();
 }
 
 Mesh* TextView::GetMesh() const noexcept
@@ -103,6 +91,7 @@ Mesh* TextView::GetMesh() const noexcept
 void TextView::SetMesh(Mesh* mesh_) noexcept
 {
 	mesh = mesh_;
+	MarkDirty();
 }
 
 Material* TextView::GetMaterial() const noexcept
@@ -137,9 +126,15 @@ void TextView::OnAttach()
 	{
 		owner->AddComponent<RectTransform>();
 	}
+
+	if (nullptr == cachedMesh)
+	{
+		cachedMesh = std::make_unique<Mesh>();
+	}
+	MarkDirty();
 }
 
-void TextView::OnRender()
+void TextView::OnRenderUI()
 {
 	GameObject* owner{ GetOwner() };
 	if (nullptr == owner)
@@ -171,7 +166,7 @@ void TextView::OnRender()
 		}
 		return;
 	}
-	if (nullptr == mesh || nullptr == material)
+	if (nullptr == material)
 	{
 		return;
 	}
@@ -184,13 +179,71 @@ void TextView::OnRender()
 
 	hasLoggedMissingFont = false;
 	Renderer& renderer{ Application::GetRenderer() };
+	RebuildMeshIfDirty(*rectTransform);
+
+	if (nullptr == cachedMesh || 0 == cachedMesh->GetVertexCount())
+	{
+		return;
+	}
+
+	renderer.UseProgram(shader);
+	renderer.BindVertexBuffer(cachedMesh->GetVertexBufferView(), cachedMesh->GetVertexCount(), cachedMesh->GetId());
+	if (cachedMesh->HasIndexBuffer())
+	{
+		renderer.BindElementBuffer(cachedMesh->GetIndexBufferView(), cachedMesh->GetIndexCount());
+	}
+	renderer.BindMaterial(material, &color);
+	renderer.SetModelMatrix(Matrix4x4::GetIdentity());
+	if (cachedMesh->HasIndexBuffer())
+	{
+		renderer.DrawUIElements();
+	}
+	else
+	{
+		renderer.DrawUIArrays();
+	}
+}
+
+void TextView::MarkDirty() noexcept
+{
+	isDirty = true;
+}
+
+void TextView::RebuildMeshIfDirty(RectTransform& rectTransform_)
+{
+	if (nullptr == cachedMesh || nullptr == font)
+	{
+		return;
+	}
 
 	const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
-	const Vector2D& anchoredPosition{ rectTransform->GetAnchoredPosition() };
-	const Vector2D& pivot{ rectTransform->GetPivot() };
-	const Vector2D& size{ rectTransform->GetSize() };
-
+	const Vector2D anchoredPosition{ rectTransform_.GetAnchoredPosition() };
+	const Vector2D pivot{ rectTransform_.GetPivot() };
+	const Vector2D size{ rectTransform_.GetSize() };
 	const int fontSize{ font->GetSize() };
+
+	const bool transformChanged{
+		anchoredPosition.x != cachedAnchoredPosition.x ||
+		anchoredPosition.y != cachedAnchoredPosition.y ||
+		size.x != cachedSize.x ||
+		size.y != cachedSize.y ||
+		pivot.x != cachedPivot.x ||
+		pivot.y != cachedPivot.y ||
+		screenWidth != cachedScreenWidth ||
+		screenHeight != cachedScreenHeight ||
+		fontSize != cachedFontSize
+	};
+
+	if (!isDirty && !transformChanged)
+	{
+		return;
+	}
+
+	std::vector<Mesh::Vertex> vertices;
+	std::vector<std::uint32_t> indices;
+	vertices.reserve(text.size() * 4u * 16u);
+	indices.reserve(text.size() * 6u * 16u);
+
 	const int rectX{ static_cast<int>(screenWidth * 0.5f + anchoredPosition.x - size.x * pivot.x) };
 	const int rectY{ static_cast<int>(screenHeight * 0.5f - anchoredPosition.y - size.y * pivot.y) };
 	const int x{ rectX };
@@ -199,9 +252,17 @@ void TextView::OnRender()
 	const int pixelScale{ std::max(1, fontSize / 7) };
 	const int glyphAdvance{ pixelScale * 6 };
 
+	auto pixelToClipX = [screenWidth](int px_) noexcept
+		{
+			return (static_cast<float>(px_) / static_cast<float>(std::max(1, screenWidth))) * 2.0f - 1.0f;
+		};
+	auto pixelToClipY = [screenHeight](int py_) noexcept
+		{
+			return 1.0f - (static_cast<float>(py_) / static_cast<float>(std::max(1, screenHeight))) * 2.0f;
+		};
+
 	int cursorX{ x };
 	int cursorY{ y };
-
 	for (wchar_t character : text)
 	{
 		if (L'\n' == character)
@@ -233,33 +294,53 @@ void TextView::OnRender()
 					continue;
 				}
 
-				const Matrix4x4 worldTransform = BuildClipSpaceRectMatrix(
-					cursorX + (column * pixelScale),
-					cursorY + (row * pixelScale),
-					pixelScale,
-					pixelScale,
-					std::max(1, screenWidth),
-					std::max(1, screenHeight));
+				const int leftPx{ cursorX + column * pixelScale };
+				const int topPx{ cursorY + row * pixelScale };
+				const int rightPx{ leftPx + pixelScale };
+				const int bottomPx{ topPx + pixelScale };
 
-				renderer.UseProgram(shader);
-				renderer.BindVertexBuffer(mesh->GetVertexBufferView(), mesh->GetVertexCount(), mesh->GetId());
-				if (mesh->HasIndexBuffer())
-				{
-					renderer.BindElementBuffer(mesh->GetIndexBufferView(), mesh->GetIndexCount());
-				}
-				renderer.BindMaterial(material, &color);
-				renderer.SetModelMatrix(worldTransform);
-				if (mesh->HasIndexBuffer())
-				{
-					renderer.DrawElements();
-				}
-				else
-				{
-					renderer.DrawArrays();
-				}
+				const float left{ pixelToClipX(leftPx) };
+				const float right{ pixelToClipX(rightPx) };
+				const float top{ pixelToClipY(topPx) };
+				const float bottom{ pixelToClipY(bottomPx) };
+
+				const std::uint32_t baseIndex{ static_cast<std::uint32_t>(vertices.size()) };
+				vertices.push_back(Mesh::Vertex{ { left,  top,    0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f } });
+				vertices.push_back(Mesh::Vertex{ { right, top,    0.0f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 0.0f } });
+				vertices.push_back(Mesh::Vertex{ { right, bottom, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 1.0f } });
+				vertices.push_back(Mesh::Vertex{ { left,  bottom, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f } });
+
+				indices.push_back(baseIndex + 0u);
+				indices.push_back(baseIndex + 1u);
+				indices.push_back(baseIndex + 2u);
+				indices.push_back(baseIndex + 0u);
+				indices.push_back(baseIndex + 2u);
+				indices.push_back(baseIndex + 3u);
 			}
 		}
 
 		cursorX += glyphAdvance;
 	}
+
+	if (vertices.empty())
+	{
+		cachedMesh->Unload();
+	}
+	else
+	{
+		ID3D12Device* device{ Application::GetRenderer().GetDevice() };
+		if (nullptr != device && cachedMesh->BuildFromRaw(device, vertices, indices))
+		{
+			const std::size_t hashValue{ std::hash<const TextView*>{}(this) };
+			cachedMesh->SetId(static_cast<uint64_t>(0x10000000ull | (hashValue & 0x0FFFFFFFull)));
+		}
+	}
+
+	cachedAnchoredPosition = anchoredPosition;
+	cachedSize = size;
+	cachedPivot = pivot;
+	cachedScreenWidth = screenWidth;
+	cachedScreenHeight = screenHeight;
+	cachedFontSize = fontSize;
+	isDirty = false;
 }

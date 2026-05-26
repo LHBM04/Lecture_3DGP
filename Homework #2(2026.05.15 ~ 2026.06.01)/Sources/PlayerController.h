@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Component.h"
+#include "Updatable.h"
 #include <algorithm>
 
-class PlayerController final : public Component
+class PlayerController final : public Component, public Updatable
 {
 public:
 	PlayerController() = default;

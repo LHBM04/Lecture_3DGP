@@ -54,7 +54,7 @@ void MeshRenderer::OnRender()
 		return;
 	}
 
-	Renderer& renderer{ Application::GetRenderer()};
+	Renderer& renderer{ Application::GetRenderer() };
 
 	Transform* transform{ owner->GetComponent<Transform>() };
 	if (nullptr == transform)

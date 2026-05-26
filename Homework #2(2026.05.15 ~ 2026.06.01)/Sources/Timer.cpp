@@ -15,7 +15,7 @@ namespace
 	float totalTime{ 0.0f };
 	float unscaledTime{ 0.0f };
 
-	float fixedDeltaTime{ 0.02f };
+	float fixedDeltaTime{ 1.0f / 60.0f };
 	float timeScale{ 1.0f };
 
 	int frameCount{ 0 };

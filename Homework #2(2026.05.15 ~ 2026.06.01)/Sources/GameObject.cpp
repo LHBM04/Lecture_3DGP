@@ -3,18 +3,117 @@
 
 void GameObject::Update()
 {
+	for (Updatable* updatable : updatables)
+	{
+		if (nullptr == updatable)
+		{
+			continue;
+		}
+
+		Component* component{ dynamic_cast<Component*>(updatable) };
+		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		{
+			continue;
+		}
+
+		updatable->OnUpdate();
+	}
+}
+
+void GameObject::FixedUpdate()
+{
 	for (const std::unique_ptr<Component>& component : components | std::views::values)
 	{
-		component->OnUpdate();
+		component->TickFixedUpdate();
 	}
 }
 
 void GameObject::Render()
 {
-	for (const std::unique_ptr<Component>& component : components | std::views::values)
+	for (Renderable* renderable : renderables)
 	{
-		component->OnRender();
+		if (nullptr == renderable)
+		{
+			continue;
+		}
+
+		Component* component{ dynamic_cast<Component*>(renderable) };
+		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		{
+			continue;
+		}
+
+		renderable->OnRender();
 	}
+}
+
+void GameObject::RenderUI()
+{
+	for (RenderableUI* renderable : uiRenderables)
+	{
+		if (nullptr == renderable)
+		{
+			continue;
+		}
+
+		Component* component{ dynamic_cast<Component*>(renderable) };
+		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		{
+			continue;
+		}
+
+		renderable->OnRenderUI();
+	}
+}
+
+void GameObject::NotifyCollisionEnter(GameObject& other_)
+{
+	for (Collidable* collidable : collidables)
+	{
+		if (nullptr == collidable)
+		{
+			continue;
+		}
+
+		Component* component{ dynamic_cast<Component*>(collidable) };
+		if (nullptr != component && !component->IsDestroyed() && component->IsEnabled())
+		{
+			collidable->OnCollisionEnter(other_);
+		}
+	}
+}
+
+void GameObject::NotifyCollisionStay(GameObject& other_)
+{
+	for (Collidable* collidable : collidables)
+	{
+		if (nullptr == collidable)
+		{
+			continue;
+		}
+
+		Component* component{ dynamic_cast<Component*>(collidable) };
+		if (nullptr != component && !component->IsDestroyed() && component->IsEnabled())
+		{
+			collidable->OnCollisionStay(other_);
+		}
+	}
+}
+
+void GameObject::NotifyCollisionExit(GameObject& other_)
+{
+	for (Collidable* collidable : collidables)
+	{
+		if (nullptr != collidable)
+		{
+			collidable->OnCollisionExit(other_);
+		}
+	}
+}
+
+bool GameObject::HasCollisionListeners() const noexcept
+{
+	return !collidables.empty();
 }
 
 Scene* GameObject::GetCurrentScene()

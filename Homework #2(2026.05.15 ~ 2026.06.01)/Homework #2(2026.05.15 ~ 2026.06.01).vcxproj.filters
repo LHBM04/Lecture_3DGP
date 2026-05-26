@@ -115,6 +115,9 @@
     <ClCompile Include="Sources\RectTransform.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\RenderSystem.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\TextView.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -125,6 +128,9 @@
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\SceneSystem.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\WindowSystem.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -248,13 +254,16 @@
     <ClInclude Include="Sources\CameraProjection.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CameraConstants.h">
+    <ClInclude Include="Sources\Collidable.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Event.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Window.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowSystem.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\InputManager.h">
@@ -290,7 +299,19 @@
     <ClInclude Include="Sources\RectTransform.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\RenderSystem.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Renderable.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderableUI.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\TextView.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Updatable.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene_Title.h">

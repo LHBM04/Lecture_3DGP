@@ -20,7 +20,8 @@ struct Event
         MouseButtonUp,
     };
 
-    Type type;
+    Type type{ Type::None };
+    HWND windowHandle{ nullptr };
 
     union
     {

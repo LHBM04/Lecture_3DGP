@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Component.h"
+#include "Updatable.h"
 #include "Vector3D.h"
 #include <algorithm>
 
 class Transform;
 
-class CameraController final : public Component
+class CameraController final : public Component, public Updatable
 {
 public:
 	CameraController() = default;

@@ -1,9 +1,8 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Shader.h"
 
 #include "Application.h"
 #include "Renderer.h"
-#include "RootParameterSlot.h"
 
 bool Shader::Load(const std::filesystem::path& path_)
 {
@@ -14,6 +13,7 @@ void Shader::Unload()
 {
 	pipelineState.Reset();
 	graphicsRootSignature.Reset();
+	rootParameterIndices.clear();
 	SetLoaded(false);
 }
 
@@ -66,30 +66,37 @@ bool Shader::LoadFromFile(ID3D12Device* device_, const std::filesystem::path& pa
 		return false;
 	}
 
-	D3D12_ROOT_PARAMETER rootParameters[4]{};
-	rootParameters[(UINT)RootParameterSlot::Camera].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[(UINT)RootParameterSlot::Camera].Descriptor.ShaderRegister = 0;
-	rootParameters[(UINT)RootParameterSlot::Camera].Descriptor.RegisterSpace = 0;
-	rootParameters[(UINT)RootParameterSlot::Camera].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	struct RootBindingDesc final
+	{
+		const char* semanticName;
+		UINT shaderRegister;
+		UINT registerSpace;
+		D3D12_SHADER_VISIBILITY visibility;
+	};
+	const RootBindingDesc bindingDescs[]
+	{
+		{ "Camera", 0u, 0u, D3D12_SHADER_VISIBILITY_VERTEX },
+		{ "Object", 1u, 0u, D3D12_SHADER_VISIBILITY_VERTEX },
+		{ "Material", 2u, 0u, D3D12_SHADER_VISIBILITY_PIXEL },
+		{ "Light", 3u, 0u, D3D12_SHADER_VISIBILITY_PIXEL },
+	};
 
-	rootParameters[(UINT)RootParameterSlot::Object].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[(UINT)RootParameterSlot::Object].Descriptor.ShaderRegister = 1;
-	rootParameters[(UINT)RootParameterSlot::Object].Descriptor.RegisterSpace = 0;
-	rootParameters[(UINT)RootParameterSlot::Object].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-
-	rootParameters[(UINT)RootParameterSlot::Material].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[(UINT)RootParameterSlot::Material].Descriptor.ShaderRegister = 2;
-	rootParameters[(UINT)RootParameterSlot::Material].Descriptor.RegisterSpace = 0;
-	rootParameters[(UINT)RootParameterSlot::Material].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	rootParameters[(UINT)RootParameterSlot::Light].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[(UINT)RootParameterSlot::Light].Descriptor.ShaderRegister = 3;
-	rootParameters[(UINT)RootParameterSlot::Light].Descriptor.RegisterSpace = 0;
-	rootParameters[(UINT)RootParameterSlot::Light].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	std::array<D3D12_ROOT_PARAMETER, std::size(bindingDescs)> rootParameters{};
+	rootParameterIndices.clear();
+	for (UINT i{ 0u }; i < static_cast<UINT>(rootParameters.size()); ++i)
+	{
+		const RootBindingDesc& binding{ bindingDescs[i] };
+		D3D12_ROOT_PARAMETER& parameter{ rootParameters[i] };
+		parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		parameter.Descriptor.ShaderRegister = binding.shaderRegister;
+		parameter.Descriptor.RegisterSpace = binding.registerSpace;
+		parameter.ShaderVisibility = binding.visibility;
+		rootParameterIndices.emplace(binding.semanticName, i);
+	}
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDescription{};
-	rootSignatureDescription.NumParameters = static_cast<UINT>(std::size(rootParameters));
-	rootSignatureDescription.pParameters = rootParameters;
+	rootSignatureDescription.NumParameters = static_cast<UINT>(rootParameters.size());
+	rootSignatureDescription.pParameters = rootParameters.data();
 	rootSignatureDescription.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
@@ -211,4 +218,16 @@ const ID3D12RootSignature* Shader::GetGraphicsRootSignature() const noexcept
 void Shader::SetGraphicsRootSignature(ID3D12RootSignature* rootSignature_) noexcept
 {
 	graphicsRootSignature = rootSignature_;
+}
+
+bool Shader::TryGetRootParameterIndex(const std::string& semanticName_, UINT& outIndex_) const noexcept
+{
+	const auto iterator{ rootParameterIndices.find(semanticName_) };
+	if (iterator == rootParameterIndices.end())
+	{
+		return false;
+	}
+
+	outIndex_ = iterator->second;
+	return true;
 }

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Component.h"
+#include "Updatable.h"
 
 #include <functional>
 
 class RectTransform;
 
-class Button final : public Component
+class Button final : public Component, public Updatable
 {
 public:
 	using Callback = std::function<void(Button&)>;

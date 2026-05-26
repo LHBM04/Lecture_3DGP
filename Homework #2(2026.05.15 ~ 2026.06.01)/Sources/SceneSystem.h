@@ -24,6 +24,7 @@ public:
 	void Release() override;
 
 	void Update();
+	void FixedUpdate();
 	void Render();
 
 	template <std::derived_from<Scene> TScene>

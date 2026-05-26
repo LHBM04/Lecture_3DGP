@@ -15,6 +15,8 @@ public:
 	void SetSize(const Vector3D& size_) noexcept;
 
 	[[nodiscard]] bool Intersects(const DirectX::BoundingFrustum& frustum_) const override;
+	[[nodiscard]] bool Intersects(const Collider& other_) const override;
+	[[nodiscard]] DirectX::BoundingOrientedBox GetWorldOrientedBox() const;
 
 private:
 	[[nodiscard]] DirectX::BoundingOrientedBox BuildWorldOrientedBox() const;

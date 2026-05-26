@@ -80,6 +80,16 @@ void SceneSystem::Update()
     currentScene->Update();
 }
 
+void SceneSystem::FixedUpdate()
+{
+    if (nullptr == currentScene)
+    {
+        return;
+    }
+
+    currentScene->FixedUpdate();
+}
+
 void SceneSystem::Render()
 {
     if (nullptr == currentScene)

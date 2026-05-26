@@ -1,12 +1,10 @@
 ﻿#pragma once
 
 #include "Singleton.h"
-#include "CameraConstants.h"
 #include "CameraClearMode.h"
 #include "ColorRGB.h"
 #include "ColorRGBA.h"
 #include "Matrix4x4.h"
-#include "System.h"
 #include "Vector3D.h"
 
 #include <dxgi1_6.h>
@@ -22,6 +20,7 @@ class Mesh;
 class Camera;
 class GameObject;
 class Light;
+class RenderSystem;
 
 struct RendererOptions final
 {
@@ -36,13 +35,12 @@ struct RendererOptions final
 	bool fullscreen;
 };
 
-class Renderer final : public System<RendererOptions>
+class Renderer final
 {
-public:
-	~Renderer() noexcept override;
+	friend class RenderSystem;
 
-	bool Initialize(const RendererOptions& options_) override;
-	void Release() override;
+public:
+	~Renderer() noexcept;
 
 	void Clear();
 	void ResetViewport();
@@ -69,8 +67,13 @@ public:
 	void SetModelMatrix(const Matrix4x4& modelMatrix_);
 	void DrawArrays();
 	void DrawElements();
+	void DrawUIArrays();
+	void DrawUIElements();
 
 	void Flush();
+	void FlushGameObjects();
+	void FlushUIObjects();
+	void Resize(int width_, int height_);
 	void WaitForFrames();
 	void SetFullscreen(bool fullscreen_);
 	void ToggleFullscreen();
@@ -81,7 +84,7 @@ public:
 	[[nodiscard]] int GetHeight() const noexcept;
 
 private:
-	struct DrawCall final
+	struct GameObjectCommand
 	{
 		ID3D12PipelineState* pipelineState{ nullptr };
 		ID3D12RootSignature* graphicsRootSignature{ nullptr };
@@ -114,6 +117,15 @@ private:
 		Matrix4x4 worldTransform{ Matrix4x4::GetIdentity() };
 
 		uint64_t sortKey{ 0 };
+
+		UINT cameraSlot{ UINT_MAX };
+		UINT objectSlot{ UINT_MAX };
+		UINT materialSlot{ UINT_MAX };
+		UINT lightSlot{ UINT_MAX };
+	};
+
+	struct UIObjectCommand : GameObjectCommand
+	{
 	};
 
 	struct BackBuffer final
@@ -136,15 +148,16 @@ private:
 		UINT64 fenceValue;
 	};
 
-	struct InstanceData final
+	struct GameObjectBatch final
 	{
-		Matrix4x4 worldTransform;
+		GameObjectCommand baseCall;
+		std::vector<Matrix4x4> instances;
 	};
 
-	struct Batch final
+	struct UIObjectBatch final
 	{
-		DrawCall baseCall;
-		std::vector<InstanceData> instances;
+		UIObjectCommand baseCall;
+		std::vector<Matrix4x4> instances;
 	};
 
 	void CreateDevice();
@@ -164,23 +177,29 @@ private:
 	void ApplyFullscreenState();
 	void TransitionBackBuffer(D3D12_RESOURCE_STATES state_);
 
-	void BindCameraConstants();
-	void BindLightConstants();
+	void BindCameraConstants(UINT slot_);
+	void BindObjectConstants(UINT slot_, const Matrix4x4& world_);
+	void BindLightConstants(UINT slot_);
+	void BindMaterialConstants(UINT slot_, const ColorRGBA& materialColor_);
 
-	void BuildVisibleDrawCalls();
-	void SortDrawCalls();
+	void BuildVisibleGameObjectCommands();
+	void SortGameObjectCommands();
+	void SortUIObjectCommands();
 	
-	void BuildBatches();
-	void ExecuteBatches();
-	void ExecuteBatch(const Batch& batch_);
+	void BuildGameObjectBatches();
+	void BuildUIObjectBatches();
+	void ExecuteGameObjectBatches();
+	void ExecuteUIObjectBatches();
+	void ExecuteBatch(const GameObjectBatch& batch_);
+	void ExecuteBatch(const UIObjectBatch& batch_);
 
-	[[nodiscard]] bool IsValidDrawCall(const DrawCall& drawCall_) const noexcept;
-	[[nodiscard]] uint64_t BuildSortKey(const DrawCall& drawCall_) const noexcept;
-	[[nodiscard]] bool CanBatchTogether(const DrawCall& a_, const DrawCall& b_) const noexcept;
+	[[nodiscard]] bool IsValidCommand(const GameObjectCommand& command_) const noexcept;
+	[[nodiscard]] uint64_t BuildSortKey(const GameObjectCommand& command_) const noexcept;
+	[[nodiscard]] bool CanBatchTogether(const GameObjectCommand& a_, const GameObjectCommand& b_) const noexcept;
 
 	[[nodiscard]] void* AllocateUploadMemory(std::size_t sizeInBytes_, std::size_t alignment_, D3D12_GPU_VIRTUAL_ADDRESS& outGpuAddress_);
 	[[nodiscard]] D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, std::size_t sizeInBytes_);
-	[[nodiscard]] D3D12_VERTEX_BUFFER_VIEW UploadInstanceData(std::span<const InstanceData> instances_);
+	[[nodiscard]] D3D12_VERTEX_BUFFER_VIEW UploadInstanceData(std::span<const Matrix4x4> instances_);
 
 	UINT64 SignalFence();
 	void WaitForFrame(FrameResource& frame_);
@@ -221,7 +240,18 @@ private:
 	UINT64 nextFenceValue;
 	HANDLE fenceEvent;
 
+	struct CameraConstants final
+	{
+		Matrix4x4 view;
+		Matrix4x4 projection;
+		Matrix4x4 viewProjection;
+	};
 	CameraConstants currentCameraConstants{};
+	struct ObjectConstants final
+	{
+		Matrix4x4 world;
+		Matrix4x4 inverseWorld;
+	};
 	struct LightConstants final
 	{
 		Vector3D direction;
@@ -236,8 +266,13 @@ private:
 	CameraClearMode currentCameraClearMode{ CameraClearMode::SolidColor };
 	ColorRGBA currentCameraClearColor{ ColorRGBA::GetBlue() };
 
-	std::vector<DrawCall> drawCalls;
-	std::vector<DrawCall> visibleDrawCalls;
-	std::vector<Batch> batches;
-	DrawCall drawState{};
+	std::vector<GameObjectCommand> gameObjectCommands;
+	std::vector<GameObjectCommand> visibleGameObjectCommands;
+	std::vector<UIObjectCommand> uiObjectCommands;
+	std::vector<GameObjectBatch> gameObjectBatches;
+	std::vector<UIObjectBatch> uiObjectBatches;
+	GameObjectCommand drawState{};
+
+	bool Initialize(const RendererOptions& options_);
+	void Release();
 };

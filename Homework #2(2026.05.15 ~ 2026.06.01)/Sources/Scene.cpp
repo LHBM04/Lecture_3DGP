@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Camera.h"
 #include "Collider.h"
+#include "CubeCollider.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Light.h"
@@ -82,12 +83,30 @@ void Scene::Update()
 		}
 	}
 
-	std::erase_if(gameObjects, [](const auto& object)
-		{
-			return object->IsDestroyed();
-		});
+	RemoveDestroyedGameObjects();
 
 	PickAtMouse();
+}
+
+void Scene::FixedUpdate()
+{
+	if (!isLoaded)
+	{
+		return;
+	}
+
+	OnFixedUpdate();
+
+	for (const std::unique_ptr<GameObject>& object : gameObjects)
+	{
+		if (object->IsActive())
+		{
+			object->FixedUpdate();
+		}
+	}
+
+	RemoveDestroyedGameObjects();
+	DispatchCollisionEvents();
 }
 
 void Scene::Render()
@@ -129,6 +148,17 @@ void Scene::Render()
 
 		renderer.Flush();
 	}
+
+	renderer.ResetViewport();
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	{
+		if (gameObject->IsActive())
+		{
+			gameObject->RenderUI();
+		}
+	}
+
+	renderer.FlushUIObjects();
 }
 
 void Scene::Unload()
@@ -139,6 +169,7 @@ void Scene::Unload()
 	}
 
 	OnUnload();
+	activeCollisionPairs.clear();
 	isLoaded = false;
 }
 
@@ -241,4 +272,277 @@ void Scene::PickAtMouse()
 	{
 		Logger::Info("Picked: none");
 	}
+}
+
+void Scene::DispatchCollisionEvents()
+{
+	constexpr float GridCellSize{ 4.0f };
+
+	const bool hasCollisionListeners
+	{
+		std::ranges::any_of(gameObjects, [](const std::unique_ptr<GameObject>& object)
+			{
+				return object->IsActive() && object->HasCollisionListeners();
+			})
+	};
+
+	if (!hasCollisionListeners)
+	{
+		activeCollisionPairs.clear();
+		return;
+	}
+
+	struct ColliderEntry
+	{
+		GameObject* object{ nullptr };
+		Collider* collider{ nullptr };
+		const CubeCollider* cubeCollider{ nullptr };
+		DirectX::BoundingOrientedBox box{};
+		DirectX::BoundingSphere broadSphere{};
+	};
+
+	struct CellCoord
+	{
+		int x{ 0 };
+		int y{ 0 };
+		int z{ 0 };
+
+		bool operator==(const CellCoord& other_) const noexcept
+		{
+			return x == other_.x && y == other_.y && z == other_.z;
+		}
+	};
+
+	struct CellCoordHash
+	{
+		std::size_t operator()(const CellCoord& coord_) const noexcept
+		{
+			const std::size_t hx{ static_cast<std::size_t>(coord_.x) * 73856093u };
+			const std::size_t hy{ static_cast<std::size_t>(coord_.y) * 19349663u };
+			const std::size_t hz{ static_cast<std::size_t>(coord_.z) * 83492791u };
+			return hx ^ hy ^ hz;
+		}
+	};
+
+	std::vector<ColliderEntry> colliders;
+	colliders.reserve(gameObjects.size());
+
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	{
+		GameObject* object{ gameObject.get() };
+		if (nullptr == object || !object->IsActive())
+		{
+			continue;
+		}
+
+		Collider* collider{ object->GetComponentInDerived<Collider>() };
+		if (nullptr != collider)
+		{
+			ColliderEntry entry{};
+			entry.object = object;
+			entry.collider = collider;
+			entry.cubeCollider = dynamic_cast<const CubeCollider*>(collider);
+			if (nullptr != entry.cubeCollider)
+			{
+				entry.box = entry.cubeCollider->GetWorldOrientedBox();
+				const DirectX::XMVECTOR extents{
+					DirectX::XMVectorSet(entry.box.Extents.x, entry.box.Extents.y, entry.box.Extents.z, 0.0f)
+				};
+				const float radius{ DirectX::XMVectorGetX(DirectX::XMVector3Length(extents)) };
+				entry.broadSphere.Center = entry.box.Center;
+				entry.broadSphere.Radius = radius;
+			}
+
+			colliders.push_back(entry);
+		}
+	}
+	std::unordered_set<CollisionPair, CollisionPairHash> currentPairs;
+	currentPairs.reserve(activeCollisionPairs.size());
+	std::unordered_set<CollisionPair, CollisionPairHash> testedPairs;
+	testedPairs.reserve(colliders.size() * 2u);
+	std::unordered_map<CellCoord, std::vector<std::size_t>, CellCoordHash> grid;
+	grid.reserve(colliders.size() * 2u);
+	std::vector<std::size_t> nonCubeIndices;
+	nonCubeIndices.reserve(colliders.size());
+
+	const auto buildCollisionPair = [](const GameObject* a_, const GameObject* b_) noexcept
+		{
+			return a_ < b_ ? CollisionPair{ a_, b_ } : CollisionPair{ b_, a_ };
+		};
+
+	const auto toCell = [](float value_) noexcept
+		{
+			return static_cast<int>(std::floor(value_ / GridCellSize));
+		};
+
+	for (std::size_t i{ 0 }; i < colliders.size(); ++i)
+	{
+		const ColliderEntry& entry{ colliders[i] };
+		if (nullptr == entry.cubeCollider)
+		{
+			nonCubeIndices.push_back(i);
+			continue;
+		}
+
+		const DirectX::XMFLOAT3& center{ entry.broadSphere.Center };
+		const float radius{ std::max(0.0f, entry.broadSphere.Radius) };
+
+		const int minX{ toCell(center.x - radius) };
+		const int minY{ toCell(center.y - radius) };
+		const int minZ{ toCell(center.z - radius) };
+		const int maxX{ toCell(center.x + radius) };
+		const int maxY{ toCell(center.y + radius) };
+		const int maxZ{ toCell(center.z + radius) };
+
+		for (int z{ minZ }; z <= maxZ; ++z)
+		{
+			for (int y{ minY }; y <= maxY; ++y)
+			{
+				for (int x{ minX }; x <= maxX; ++x)
+				{
+					grid[CellCoord{ x, y, z }].push_back(i);
+				}
+			}
+		}
+	}
+
+	const auto testPair = [&](std::size_t lhsIndex_, std::size_t rhsIndex_)
+	{
+		ColliderEntry& lhs{ colliders[lhsIndex_] };
+		ColliderEntry& rhs{ colliders[rhsIndex_] };
+		CollisionPair pair{ buildCollisionPair(lhs.object, rhs.object) };
+		if (testedPairs.contains(pair))
+		{
+			return;
+		}
+		testedPairs.insert(pair);
+
+		const CubeCollider* lhsCube{ lhs.cubeCollider };
+		const CubeCollider* rhsCube{ rhs.cubeCollider };
+		if (nullptr != lhsCube && nullptr != rhsCube)
+		{
+			if (!lhs.broadSphere.Intersects(rhs.broadSphere))
+			{
+				return;
+			}
+
+			if (!lhs.box.Intersects(rhs.box))
+			{
+				return;
+			}
+		}
+		else if (!lhs.collider->Intersects(*rhs.collider))
+		{
+			return;
+		}
+
+		if (!lhs.object->HasCollisionListeners() && !rhs.object->HasCollisionListeners())
+		{
+			return;
+		}
+
+		currentPairs.insert(pair);
+
+		const bool isNewPair{ !activeCollisionPairs.contains(pair) };
+		if (isNewPair)
+		{
+			lhs.object->NotifyCollisionEnter(*rhs.object);
+			rhs.object->NotifyCollisionEnter(*lhs.object);
+		}
+		else
+		{
+			lhs.object->NotifyCollisionStay(*rhs.object);
+			rhs.object->NotifyCollisionStay(*lhs.object);
+		}
+	};
+
+	for (const auto& [cell, indices] : grid)
+	{
+		(void)cell;
+		for (std::size_t i{ 0 }; i < indices.size(); ++i)
+		{
+			for (std::size_t j{ i + 1u }; j < indices.size(); ++j)
+			{
+				testPair(indices[i], indices[j]);
+			}
+		}
+	}
+
+	for (std::size_t i{ 0 }; i < nonCubeIndices.size(); ++i)
+	{
+		for (std::size_t j{ i + 1u }; j < nonCubeIndices.size(); ++j)
+		{
+			testPair(nonCubeIndices[i], nonCubeIndices[j]);
+		}
+	}
+
+	for (const std::size_t nonCubeIndex : nonCubeIndices)
+	{
+		for (std::size_t cubeIndex{ 0 }; cubeIndex < colliders.size(); ++cubeIndex)
+		{
+			if (nullptr == colliders[cubeIndex].cubeCollider)
+			{
+				continue;
+			}
+
+			testPair(nonCubeIndex, cubeIndex);
+		}
+	}
+
+	for (const CollisionPair& pair : activeCollisionPairs)
+	{
+		if (currentPairs.contains(pair))
+		{
+			continue;
+		}
+
+		GameObject* lhsObject{ const_cast<GameObject*>(pair.first) };
+		GameObject* rhsObject{ const_cast<GameObject*>(pair.second) };
+		lhsObject->NotifyCollisionExit(*rhsObject);
+		rhsObject->NotifyCollisionExit(*lhsObject);
+	}
+
+	activeCollisionPairs = std::move(currentPairs);
+}
+
+void Scene::RemoveDestroyedGameObjects()
+{
+	const bool hasDestroyedObject
+	{
+		std::ranges::any_of(gameObjects, [](const std::unique_ptr<GameObject>& object)
+			{
+				return object->IsDestroyed();
+			})
+	};
+
+	if (!hasDestroyedObject)
+	{
+		return;
+	}
+
+	std::vector<const GameObject*> destroyedObjects;
+	destroyedObjects.reserve(gameObjects.size());
+
+	for (const std::unique_ptr<GameObject>& object : gameObjects)
+	{
+		if (object->IsDestroyed())
+		{
+			destroyedObjects.push_back(object.get());
+		}
+	}
+
+	const auto isDestroyed = [&destroyedObjects](const GameObject* object_) noexcept
+		{
+			return destroyedObjects.end() != std::find(destroyedObjects.begin(), destroyedObjects.end(), object_);
+		};
+
+	std::erase_if(activeCollisionPairs, [&isDestroyed](const CollisionPair& pair)
+		{
+			return isDestroyed(pair.first) || isDestroyed(pair.second);
+		});
+
+	std::erase_if(gameObjects, [](const auto& object)
+		{
+			return object->IsDestroyed();
+		});
 }

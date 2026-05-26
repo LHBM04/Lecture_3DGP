@@ -2,12 +2,13 @@
 
 #include "ColorRGBA.h"
 #include "Component.h"
+#include "RenderableUI.h"
 
 class Material;
 class Mesh;
 class MeshRenderer;
 
-class ImageView final : public Component
+class ImageView final : public Component, public RenderableUI
 {
 public:
 	ImageView() = default;
@@ -24,7 +25,7 @@ public:
 
 protected:
 	void OnAttach() override;
-	void OnRender() override;
+	void OnRenderUI() override;
 
 private:
 	Mesh* mesh{ nullptr };

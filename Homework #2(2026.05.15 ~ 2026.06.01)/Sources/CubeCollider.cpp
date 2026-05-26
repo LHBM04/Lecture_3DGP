@@ -32,6 +32,22 @@ bool CubeCollider::Intersects(const DirectX::BoundingFrustum& frustum_) const
 	return frustum_.Intersects(BuildWorldOrientedBox());
 }
 
+bool CubeCollider::Intersects(const Collider& other_) const
+{
+	const CubeCollider* otherBox{ dynamic_cast<const CubeCollider*>(&other_) };
+	if (nullptr == otherBox)
+	{
+		return false;
+	}
+
+	return BuildWorldOrientedBox().Intersects(otherBox->BuildWorldOrientedBox());
+}
+
+DirectX::BoundingOrientedBox CubeCollider::GetWorldOrientedBox() const
+{
+	return BuildWorldOrientedBox();
+}
+
 DirectX::BoundingOrientedBox CubeCollider::BuildWorldOrientedBox() const
 {
 	DirectX::BoundingOrientedBox box{};

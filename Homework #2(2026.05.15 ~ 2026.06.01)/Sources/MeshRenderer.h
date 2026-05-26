@@ -1,11 +1,12 @@
-﻿#pragma once
+#pragma once
 
 #include "Component.h"
+#include "Renderable.h"
 
 class Material;
 class Mesh;
 
-class MeshRenderer : public Component
+class MeshRenderer : public Component, public Renderable
 {
 public:
 	virtual ~MeshRenderer() = default;

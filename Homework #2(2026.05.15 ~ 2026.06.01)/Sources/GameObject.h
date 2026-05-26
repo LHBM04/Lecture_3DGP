@@ -1,7 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include "Component.h"
+#include "Collidable.h"
 #include "Matrix4x4.h"
+#include "Renderable.h"
+#include "RenderableUI.h"
+#include "Updatable.h"
 
 class Scene;
 
@@ -52,7 +56,13 @@ public:
 	const TComponent* GetComponentInDerived() const noexcept;
 
 	void Update();
+	void FixedUpdate();
 	void Render();
+	void RenderUI();
+	void NotifyCollisionEnter(GameObject& other_);
+	void NotifyCollisionStay(GameObject& other_);
+	void NotifyCollisionExit(GameObject& other_);
+	[[nodiscard]] bool HasCollisionListeners() const noexcept;
 
 private:
 	Scene* currentScene{ nullptr };
@@ -64,6 +74,10 @@ private:
 	bool isDestroyed{ false };
 
 	std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
+	std::vector<Collidable*> collidables;
+	std::vector<Updatable*> updatables;
+	std::vector<Renderable*> renderables;
+	std::vector<RenderableUI*> uiRenderables;
 };
 
 template <std::derived_from<Component> TComponent>
@@ -72,13 +86,32 @@ inline TComponent* GameObject::AddComponent() noexcept
 	auto [iterator, inserted] =
 		components.try_emplace(typeid(TComponent), std::make_unique<TComponent>());
 
-	TComponent* component = static_cast<TComponent*>(iterator->second.get());
 	if (inserted)
 	{
+		TComponent* component = static_cast<TComponent*>(iterator->second.get());
 		component->NotifyAttach(this);
+
+		if constexpr (std::derived_from<TComponent, Collidable>)
+		{
+			collidables.push_back(static_cast<Collidable*>(component));
+		}
+		if constexpr (std::derived_from<TComponent, Updatable>)
+		{
+			updatables.push_back(static_cast<Updatable*>(component));
+		}
+		if constexpr (std::derived_from<TComponent, Renderable>)
+		{
+			renderables.push_back(static_cast<Renderable*>(component));
+		}
+		if constexpr (std::derived_from<TComponent, RenderableUI>)
+		{
+			uiRenderables.push_back(static_cast<RenderableUI*>(component));
+		}
+
+		return component;
 	}
 
-	return component;
+	return nullptr;
 }
 
 template <std::derived_from<Component> TComponent>

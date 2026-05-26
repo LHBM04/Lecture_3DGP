@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Event.h"
-#include "System.h"
 
 struct WindowOptions final
 {
@@ -14,13 +13,14 @@ struct WindowOptions final
 	DWORD styleEx;
 };
 
-class Window final : public System<WindowOptions>
-{
-public:
-	~Window() noexcept override;
+class WindowSystem;
 
-	bool Initialize(const WindowOptions& options_) override;
-	void Release() override;
+class Window final
+{
+	friend class WindowSystem;
+
+public:
+	~Window() noexcept;
 
 	bool PollEvent(Event& event_);
 
@@ -71,4 +71,7 @@ private:
 	WindowOptions options;
 	HWND handle{ nullptr };
 	std::queue<Event> eventQueue;
+
+	bool Initialize(const WindowOptions& options_);
+	void Release();
 };

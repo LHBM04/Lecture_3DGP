@@ -13,12 +13,15 @@
 
 namespace
 {
+	constexpr int MaxFixedUpdatesPerFrame{ 5 };
+
 	bool isRunning;
 	bool isInitialized;
 
-	Window window;
-	Renderer renderer;
+	WindowSystem windowSystem;
+	RenderSystem renderSystem;
 	SceneSystem sceneSystem;
+	RenderTargetHandle mainRenderTarget{};
 
 	void ShutdownSystems() noexcept
 	{
@@ -28,10 +31,19 @@ namespace
 		}
 
 		// GPU가 커맨드를 끝내기 전에 씬/리소스를 파기하면 ComPtr 해제 시점 충돌이 날 수 있다.
-		renderer.WaitForFrames();
+		if (Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
+		{
+			renderer->WaitForFrames();
+		}
+
 		sceneSystem.Release();
-		renderer.Release();
-		window.Release();
+		if (mainRenderTarget.IsValid())
+		{
+			renderSystem.DestroyRenderer(mainRenderTarget);
+			mainRenderTarget = {};
+		}
+		renderSystem.Release();
+		windowSystem.Release();
 
 		isInitialized = false;
 	}
@@ -65,27 +77,34 @@ bool Application::Initialize(const ApplicationOptions& options_)
 		options.style = style;
 		options.styleEx = WS_EX_APPWINDOW;
 
-		if (!window.Initialize(options))
+		if (!windowSystem.Initialize(options))
 		{
 			ShutdownSystems();
 			return false;
 		}
 
-		window.Show();
+		windowSystem.GetMainWindow().Show();
 	}
 
 	// 렌더러 생성 및 초기화.
 	{
 		RendererOptions options{};
-		options.window = window.GetHandle();
-		options.width = window.GetWidth();
-		options.height = window.GetHeight();
+		options.window = windowSystem.GetMainWindow().GetHandle();
+		options.width = windowSystem.GetMainWindow().GetWidth();
+		options.height = windowSystem.GetMainWindow().GetHeight();
 		options.msaa4xEnable = false;
 		options.enableTripleBuffering = false;
 		options.vSync = true;
 		options.fullscreen = options_.fullscreen;
 
-		if (!renderer.Initialize(options))
+		if (!renderSystem.Initialize(options))
+		{
+			ShutdownSystems();
+			return false;
+		}
+
+		mainRenderTarget = renderSystem.CreateRenderer(windowSystem.GetMainWindow(), options);
+		if (!mainRenderTarget.IsValid())
 		{
 			ShutdownSystems();
 			return false;
@@ -93,7 +112,7 @@ bool Application::Initialize(const ApplicationOptions& options_)
 	}
 
 	InputManager::Reset();
-	InputManager::SetScreenSize(window.GetWidth(), window.GetHeight());
+	InputManager::SetScreenSize(windowSystem.GetMainWindow().GetWidth(), windowSystem.GetMainWindow().GetHeight());
 	Timer::Reset();
 
 	SceneOptions options{
@@ -116,6 +135,7 @@ bool Application::Initialize(const ApplicationOptions& options_)
 int Application::Run()
 {
 	isRunning = true;
+	float fixedUpdateAccumulator{ 0.0f };
 
 	Event event;
 	while (isRunning)
@@ -123,16 +143,20 @@ int Application::Run()
 		Timer::Tick();
 		InputManager::Update();
 
-		while (window.PollEvent(event))
+		while (windowSystem.GetMainWindow().PollEvent(event))
 		{
 			switch (event.type)
 			{
 			case Event::Type::WindowResize:
+				renderSystem.OnWindowResize(event.windowHandle, event.resize.width, event.resize.height);
 				InputManager::SetScreenSize(event.resize.width, event.resize.height);
 				break;
 			case Event::Type::WindowFullscreenToggle:
-				renderer.ToggleFullscreen();
-				InputManager::SetScreenSize(renderer.GetWidth(), renderer.GetHeight());
+				renderSystem.OnWindowFullscreenToggle(event.windowHandle);
+				if (Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
+				{
+					InputManager::SetScreenSize(renderer->GetWidth(), renderer->GetHeight());
+				}
 				break;
 			case Event::Type::WindowClose:
 				isRunning = false;
@@ -146,9 +170,31 @@ int Application::Run()
 
 		sceneSystem.Update();
 
-		renderer.BeginRender();
+		fixedUpdateAccumulator += Timer::GetUnscaledDeltaTime();
+		const float fixedStep{ Timer::GetUnscaledFixedDeltaTime() };
+		int fixedUpdateCount{ 0 };
+
+		while (fixedStep > 0.0f && fixedUpdateAccumulator >= fixedStep && fixedUpdateCount < MaxFixedUpdatesPerFrame)
+		{
+			sceneSystem.FixedUpdate();
+			fixedUpdateAccumulator -= fixedStep;
+			++fixedUpdateCount;
+		}
+
+		if (fixedUpdateCount == MaxFixedUpdatesPerFrame)
+		{
+			fixedUpdateAccumulator = 0.0f;
+		}
+
+		Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
+		if (nullptr == renderer)
+		{
+			break;
+		}
+
+		renderer->BeginRender();
 		sceneSystem.Render();
-		renderer.EndRender();
+		renderer->EndRender();
 	}
 
 	ShutdownSystems();
@@ -164,12 +210,14 @@ void Application::Quit()
 
 Window& Application::GetWindow()
 {
-	return window;
+	return windowSystem.GetMainWindow();
 }
 
 Renderer& Application::GetRenderer()
 {
-	return renderer;
+	Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
+	assert(nullptr != renderer);
+	return *renderer;
 }
 
 SceneSystem& Application::GetSceneSystem()

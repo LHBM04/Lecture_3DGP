@@ -276,6 +276,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::WindowClose;
+			event.windowHandle = handle;
 			eventQueue.push(event);
 			return 0;
 		}
@@ -289,6 +290,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 
 			Event event{};
 			event.type = Event::Type::WindowResize;
+			event.windowHandle = handle;
 			event.resize.width = width;
 			event.resize.height = height;
 			eventQueue.push(event);
@@ -298,6 +300,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::KeyDown;
+			event.windowHandle = handle;
 			event.key.keyCode = (KeyCode)wParam_;
 			eventQueue.push(event);
 			return 0;
@@ -306,6 +309,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::KeyUp;
+			event.windowHandle = handle;
 			event.key.keyCode = (KeyCode)wParam_;
 			eventQueue.push(event);
 			return 0;
@@ -317,6 +321,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 			{
 				Event event{};
 				event.type = Event::Type::WindowFullscreenToggle;
+				event.windowHandle = handle;
 				eventQueue.push(event);
 				return 0;
 			}
@@ -326,6 +331,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::MouseMove;
+			event.windowHandle = handle;
 			event.mouseMove.x = GET_X_LPARAM(lParam_);
 			event.mouseMove.y = GET_Y_LPARAM(lParam_);
 			eventQueue.push(event);
@@ -337,6 +343,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::MouseButtonDown;
+			event.windowHandle = handle;
 			event.mouseButton.button =
 				WM_LBUTTONDOWN == message_ ? ButtonCode::Left :
 				WM_RBUTTONDOWN == message_ ? ButtonCode::Right :
@@ -352,6 +359,7 @@ LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		{
 			Event event{};
 			event.type = Event::Type::MouseButtonUp;
+			event.windowHandle = handle;
 			event.mouseButton.button =
 				WM_LBUTTONUP == message_ ? ButtonCode::Left :
 				WM_RBUTTONUP == message_ ? ButtonCode::Right :

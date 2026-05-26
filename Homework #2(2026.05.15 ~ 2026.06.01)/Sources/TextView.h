@@ -2,19 +2,17 @@
 
 #include "ColorRGBA.h"
 #include "Component.h"
-
-#include <string>
+#include "RenderableUI.h"
+#include "Vector2D.h"
 
 class RectTransform;
 class Font;
 class Material;
 class Mesh;
 
-class TextView final : public Component
+class TextView final : public Component, public RenderableUI
 {
 public:
-	~TextView() override = default;
-
 	[[nodiscard]] const std::wstring& GetText() const noexcept;
 	void SetText(const std::wstring& text_) noexcept;
 
@@ -32,13 +30,24 @@ public:
 
 protected:
 	void OnAttach() override;
-	void OnRender() override;
+	void OnRenderUI() override;
 
 private:
+	void MarkDirty() noexcept;
+	void RebuildMeshIfDirty(RectTransform& rectTransform_);
+
 	std::wstring text{ L"TextView" };
 	Font* font{ nullptr };
 	Mesh* mesh{ nullptr };
+	std::unique_ptr<Mesh> cachedMesh;
 	Material* material{ nullptr };
 	ColorRGBA color{ ColorRGBA::GetWhite() };
 	bool hasLoggedMissingFont{ false };
+	bool isDirty{ true };
+	Vector2D cachedAnchoredPosition{ 0.0f, 0.0f };
+	Vector2D cachedSize{ 0.0f, 0.0f };
+	Vector2D cachedPivot{ 0.0f, 0.0f };
+	int cachedScreenWidth{ 0 };
+	int cachedScreenHeight{ 0 };
+	int cachedFontSize{ 0 };
 };

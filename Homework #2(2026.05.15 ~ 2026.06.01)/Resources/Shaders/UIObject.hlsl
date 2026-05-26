@@ -25,6 +25,7 @@ cbuffer CameraConstants : register(b0)
 cbuffer ObjectConstants : register(b1)
 {
 	matrix World;
+	matrix InverseWorld;
 };
 
 cbuffer MaterialConstants : register(b2)

@@ -73,7 +73,7 @@ void ImageView::OnAttach()
 	}
 }
 
-void ImageView::OnRender()
+void ImageView::OnRenderUI()
 {
 	GameObject* owner{ GetOwner() };
 	if (nullptr == owner)
@@ -121,11 +121,11 @@ void ImageView::OnRender()
 		renderer.SetModelMatrix(worldTransform);
 		if (mesh->HasIndexBuffer())
 		{
-			renderer.DrawElements();
+			renderer.DrawUIElements();
 		}
 		else
 		{
-			renderer.DrawArrays();
+			renderer.DrawUIArrays();
 		}
 
 		return;
