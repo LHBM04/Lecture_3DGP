@@ -9,7 +9,15 @@ RenderSystem::~RenderSystem() noexcept
 bool RenderSystem::Initialize(const RendererOptions& options_)
 {
 	(void)options_;
-	return true;
+	CreateDevice();
+	CreateCommandQueue();
+	CreateFence();
+
+	return nullptr != factory &&
+		nullptr != device &&
+		nullptr != commandQueue &&
+		nullptr != fence &&
+		nullptr != fenceEvent;
 }
 
 void RenderSystem::Release()
@@ -24,6 +32,23 @@ void RenderSystem::Release()
 	}
 
 	renderTargets.clear();
+
+	fence.Reset();
+	commandQueue.Reset();
+	device.Reset();
+	factory.Reset();
+
+	if (nullptr != fenceEvent)
+	{
+		::CloseHandle(fenceEvent);
+		fenceEvent = nullptr;
+	}
+
+#if defined(_DEBUG)
+	debugController.Reset();
+#endif
+
+	nextFenceValue = 1;
 }
 
 RenderTargetHandle RenderSystem::CreateRenderer(Window& window_, const RendererOptions& options_)
@@ -41,7 +66,7 @@ RenderTargetHandle RenderSystem::CreateRenderer(Window& window_, const RendererO
 	}
 
 	std::unique_ptr<Renderer> renderer{ std::make_unique<Renderer>() };
-	if (!renderer->Initialize(options_))
+	if (!renderer->Initialize(*this, options_))
 	{
 		return {};
 	}
@@ -85,6 +110,11 @@ const Renderer* RenderSystem::GetRenderTarget(RenderTargetHandle handle_) const 
 {
 	const RenderTargetSlot* slot{ TryGetSlot(handle_) };
 	return nullptr != slot ? slot->renderer.get() : nullptr;
+}
+
+ID3D12Device* RenderSystem::GetDevice() const noexcept
+{
+	return device.Get();
 }
 
 RenderTargetHandle RenderSystem::FindRenderTarget(HWND windowHandle_) const noexcept
@@ -155,4 +185,81 @@ const RenderSystem::RenderTargetSlot* RenderSystem::TryGetSlot(RenderTargetHandl
 	}
 
 	return &slot;
+}
+
+void RenderSystem::CreateDevice()
+{
+	UINT factoryFlags{ 0 };
+
+#if defined(_DEBUG)
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
+	{
+		debugController->EnableDebugLayer();
+		factoryFlags = DXGI_CREATE_FACTORY_DEBUG;
+	}
+#endif
+
+	assert(SUCCEEDED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&factory))));
+	CreateWarpDevice();
+}
+
+void RenderSystem::CreateWarpDevice()
+{
+	assert(nullptr != factory);
+
+	Microsoft::WRL::ComPtr<IDXGIAdapter> warpAdapter;
+	assert(SUCCEEDED(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter))));
+	assert(SUCCEEDED(D3D12CreateDevice(
+		warpAdapter.Get(),
+		D3D_FEATURE_LEVEL_11_0,
+		IID_PPV_ARGS(&device))));
+}
+
+void RenderSystem::CreateCommandQueue()
+{
+	assert(nullptr != device);
+
+	D3D12_COMMAND_QUEUE_DESC desc{};
+	desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	assert(SUCCEEDED(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue))));
+}
+
+void RenderSystem::CreateFence()
+{
+	assert(nullptr != device);
+	assert(SUCCEEDED(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence))));
+
+	fenceEvent = ::CreateEventExW(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+	assert(nullptr != fenceEvent);
+	nextFenceValue = 1;
+}
+
+void RenderSystem::WaitForFence(UINT64 fenceValue_)
+{
+	if (nullptr == fence || nullptr == fenceEvent || 0 == fenceValue_)
+	{
+		return;
+	}
+
+	if (fence->GetCompletedValue() >= fenceValue_)
+	{
+		return;
+	}
+
+	if (SUCCEEDED(fence->SetEventOnCompletion(fenceValue_, fenceEvent)))
+	{
+		::WaitForSingleObjectEx(fenceEvent, INFINITE, FALSE);
+	}
+}
+
+UINT64 RenderSystem::SignalFence()
+{
+	const UINT64 fenceValue{ nextFenceValue++ };
+	if (FAILED(commandQueue->Signal(fence.Get(), fenceValue)))
+	{
+		return 0;
+	}
+
+	return fenceValue;
 }

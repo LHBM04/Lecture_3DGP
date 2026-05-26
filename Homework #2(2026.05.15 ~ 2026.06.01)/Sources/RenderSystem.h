@@ -4,6 +4,9 @@
 #include "System.h"
 #include "Window.h"
 
+#include <dxgi1_6.h>
+#include <wrl.h>
+
 struct RenderTargetHandle final
 {
 	uint32_t id{ UINT32_MAX };
@@ -17,6 +20,8 @@ struct RenderTargetHandle final
 
 class RenderSystem final : public System<RendererOptions>
 {
+	friend class Renderer;
+
 public:
 	~RenderSystem() noexcept override;
 
@@ -30,6 +35,7 @@ public:
 	[[nodiscard]] Renderer* GetRenderTarget(RenderTargetHandle handle_) noexcept;
 	[[nodiscard]] const Renderer* GetRenderTarget(RenderTargetHandle handle_) const noexcept;
 	[[nodiscard]] RenderTargetHandle FindRenderTarget(HWND windowHandle_) const noexcept;
+	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
 
 	void OnWindowResize(HWND windowHandle_, int width_, int height_);
 	void OnWindowFullscreenToggle(HWND windowHandle_);
@@ -45,5 +51,23 @@ private:
 	[[nodiscard]] RenderTargetSlot* TryGetSlot(RenderTargetHandle handle_) noexcept;
 	[[nodiscard]] const RenderTargetSlot* TryGetSlot(RenderTargetHandle handle_) const noexcept;
 
+	void CreateDevice();
+	void CreateWarpDevice();
+	void CreateCommandQueue();
+	void CreateFence();
+	void WaitForFence(UINT64 fenceValue_);
+	UINT64 SignalFence();
+
 	std::vector<RenderTargetSlot> renderTargets;
+
+#if defined(_DEBUG)
+	Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+#endif
+
+	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
+	Microsoft::WRL::ComPtr<ID3D12Device> device;
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
+	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
+	HANDLE fenceEvent{ nullptr };
+	UINT64 nextFenceValue{ 1 };
 };

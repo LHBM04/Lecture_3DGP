@@ -26,15 +26,12 @@ class RenderSystem;
 
 struct RendererOptions final
 {
-	HWND window;
-	int x;
-	int y;
-	int width;
-	int height;
-	bool msaa4xEnable;
-	bool enableTripleBuffering;
-	bool vSync;
-	bool fullscreen;
+	HWND window{ nullptr };
+	int width{ 0 };
+	int height{ 0 };
+	bool vSync{ true };
+	bool fullscreen{ false };
+	bool enableTripleBuffering{ false };
 };
 
 class Renderer final
@@ -139,17 +136,12 @@ private:
 		std::vector<Matrix4x4> instances;
 	};
 
-	void CreateDevice();
-	void CreateHardwareDevice();
-	void CreateWarpDevice();
-	void CreateCommandQueue();
 	void CreateSwapChain();
 	void CreateDescriptorHeaps();
 	void CreateBackBuffers();
 	void CreateDepthStencilBuffer();
 	void CreateFrameResources();
 	void CreateCommandList();
-	void CreateFence();
 
 	void ReleaseBackBuffers();
 	void ReleaseDepthStencilBuffer();
@@ -180,26 +172,19 @@ private:
 	[[nodiscard]] D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, std::size_t sizeInBytes_);
 	[[nodiscard]] D3D12_VERTEX_BUFFER_VIEW UploadInstanceData(std::span<const Matrix4x4> instances_);
 
-	UINT64 SignalFence();
 	void WaitForFrame(FrameResource& frame_);
 
 	static constexpr std::size_t FrameCount{ 2 };
 	static constexpr std::size_t UploadBufferSize{ 4u * 1024u * 1024u };
 
 	RendererOptions options;
+	RenderSystem* renderSystem{ nullptr };
 	bool isFullscreen;
 	int windowedWidth;
 	int windowedHeight;
 
-#if defined(_DEBUG)
-	Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
-#endif
-
-	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
-	Microsoft::WRL::ComPtr<ID3D12Device> device;
 	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
 
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
 	std::array<BackBuffer, FrameCount> backBuffers;
@@ -214,10 +199,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 	UINT dsvDescriptorOffset;
-
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-	UINT64 nextFenceValue;
-	HANDLE fenceEvent;
 
 	struct CameraConstants final
 	{
@@ -253,6 +234,6 @@ private:
 	GameObjectCommand drawState{};
 	std::unique_ptr<RenderContext> context;
 
-	bool Initialize(const RendererOptions& options_);
+	bool Initialize(RenderSystem& renderSystem_, const RendererOptions& options_);
 	void Release();
 };

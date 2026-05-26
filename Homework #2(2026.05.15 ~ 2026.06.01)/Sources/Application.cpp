@@ -127,7 +127,6 @@ bool Application::Initialize(const ApplicationOptions& options_)
 		options.window = mainWindow.GetHandle();
 		options.width = mainWindow.GetWidth();
 		options.height = mainWindow.GetHeight();
-		options.msaa4xEnable = false;
 		options.enableTripleBuffering = false;
 		options.vSync = true;
 		options.fullscreen = options_.fullscreen;

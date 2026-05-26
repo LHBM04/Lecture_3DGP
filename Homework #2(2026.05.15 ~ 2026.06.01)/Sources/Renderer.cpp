@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 #include "RenderContext.h"
+#include "RenderSystem.h"
 #include "RendererOptions.h"
 
 namespace
@@ -17,9 +18,10 @@ Renderer::~Renderer() noexcept
 	Renderer::Release();
 }
 
-bool Renderer::Initialize(const RendererOptions& options_)
+bool Renderer::Initialize(RenderSystem& renderSystem_, const RendererOptions& options_)
 {
 	const bool requestedFullscreen{ options_.fullscreen };
+	renderSystem = &renderSystem_;
 	options = options_;
 	options.fullscreen = false;
 	isFullscreen = false;
@@ -47,38 +49,32 @@ bool Renderer::Initialize(const RendererOptions& options_)
 	currentFrameResourceIndex = 0;
 	rtvDescriptorOffset = 0;
 	dsvDescriptorOffset = 0;
-	nextFenceValue = 1;
-	fenceEvent = nullptr;
 	currentLightDirection = Vector3D::GetForward();
 	currentLightColor = ColorRGB::GetWhite();
 	currentLightIntensity = 1.0f;
 	currentCameraClearMode = CameraClearMode::SolidColor;
 	currentCameraClearColor = ColorRGBA::GetBlue();
 
-	CreateDevice();
-	CreateCommandQueue();
 	CreateFrameResources();
 	CreateCommandList();
 	CreateSwapChain();
 	CreateDescriptorHeaps();
 	CreateBackBuffers();
 	CreateDepthStencilBuffer();
-	CreateFence();
 	context = std::unique_ptr<RenderContext>(new RenderContext(*this));
 	if (requestedFullscreen)
 	{
 		SetFullscreen(true);
 	}
 
-	return nullptr != device &&
-		nullptr != commandQueue &&
+	return nullptr != renderSystem &&
+		nullptr != renderSystem->device &&
+		nullptr != renderSystem->commandQueue &&
 		nullptr != commandList &&
 		nullptr != swapChain &&
 		nullptr != rtvDescriptorHeap &&
 		nullptr != dsvDescriptorHeap &&
-		nullptr != depthStencilBuffer &&
-		nullptr != fence &&
-		nullptr != fenceEvent;
+		nullptr != depthStencilBuffer;
 }
 
 void Renderer::Release()
@@ -112,16 +108,6 @@ void Renderer::Release()
 	rtvDescriptorHeap.Reset();
 	swapChain.Reset();
 	commandList.Reset();
-	commandQueue.Reset();
-	fence.Reset();
-	factory.Reset();
-	device.Reset();
-
-	if (nullptr != fenceEvent)
-	{
-		::CloseHandle(fenceEvent);
-		fenceEvent = nullptr;
-	}
 
 	gameObjectCommands.clear();
 	visibleGameObjectCommands.clear();
@@ -173,11 +159,11 @@ void Renderer::EndRender()
 	assert(SUCCEEDED(commandList->Close()));
 
 	ID3D12CommandList* commandLists[]{ commandList.Get() };
-	commandQueue->ExecuteCommandLists(1, commandLists);
+	renderSystem->commandQueue->ExecuteCommandLists(1, commandLists);
 	assert(SUCCEEDED(swapChain->Present(options.vSync ? 1u : 0u, 0)));
 
 	FrameResource& frameResource{ frameResources[currentFrameResourceIndex] };
-	frameResource.fenceValue = SignalFence();
+	frameResource.fenceValue = renderSystem->SignalFence();
 }
 
 void Renderer::Flush()
@@ -229,7 +215,7 @@ void Renderer::FlushUIObjects()
 
 ID3D12Device* Renderer::GetDevice() const noexcept
 {
-	return device.Get();
+	return nullptr != renderSystem ? renderSystem->GetDevice() : nullptr;
 }
 
 bool Renderer::IsFullscreen() const noexcept
@@ -338,7 +324,7 @@ void Renderer::SetFullscreen(bool fullscreen_)
 			desiredMode.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 			DXGI_MODE_DESC closestMode{};
-			if (SUCCEEDED(output->FindClosestMatchingMode(&desiredMode, &closestMode, device.Get())))
+			if (SUCCEEDED(output->FindClosestMatchingMode(&desiredMode, &closestMode, renderSystem->device.Get())))
 			{
 				(void)swapChain->ResizeTarget(&closestMode);
 				targetWidth = static_cast<int>(closestMode.Width);
@@ -390,84 +376,14 @@ void Renderer::ToggleFullscreen()
 	SetFullscreen(!isFullscreen);
 }
 
-void Renderer::CreateDevice()
-{
-	UINT factoryFlags{ 0 };
-
-#if defined(_DEBUG)
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-	{
-		debugController->EnableDebugLayer();
-		factoryFlags = DXGI_CREATE_FACTORY_DEBUG;
-	}
-#endif
-
-	assert(SUCCEEDED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&factory))));
-
-	CreateHardwareDevice();
-
-	if (nullptr == device)
-	{
-		CreateWarpDevice();
-	}
-}
-
-void Renderer::CreateHardwareDevice()
-{
-	assert(nullptr != factory);
-
-	for (UINT adapterIndex{ 0 };; ++adapterIndex)
-	{
-		Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
-		if (DXGI_ERROR_NOT_FOUND == factory->EnumAdapters1(adapterIndex, &adapter))
-		{
-			break;
-		}
-
-		DXGI_ADAPTER_DESC1 description{};
-		if (FAILED(adapter->GetDesc1(&description)))
-		{
-			continue;
-		}
-
-		if (0 != (description.Flags & DXGI_ADAPTER_FLAG_SOFTWARE))
-		{
-			continue;
-		}
-
-		if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))))
-		{
-			break;
-		}
-	}
-}
-
-void Renderer::CreateWarpDevice()
-{
-	assert(nullptr != factory);
-
-	Microsoft::WRL::ComPtr<IDXGIAdapter> warpAdapter;
-	assert(SUCCEEDED(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter))));
-	assert(SUCCEEDED(D3D12CreateDevice(warpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device))));
-}
-
-void Renderer::CreateCommandQueue()
-{
-	assert(nullptr != device);
-
-	D3D12_COMMAND_QUEUE_DESC desc{};
-	desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-	desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	assert(SUCCEEDED(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue))));
-}
-
 void Renderer::CreateFrameResources()
 {
-	assert(nullptr != device);
+	assert(nullptr != renderSystem);
+	assert(nullptr != renderSystem->device);
 
 	for (FrameResource& frameResource : frameResources)
 	{
-		assert(SUCCEEDED(device->CreateCommandAllocator(
+		assert(SUCCEEDED(renderSystem->device->CreateCommandAllocator(
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(&frameResource.commandAllocator))));
 
@@ -483,7 +399,7 @@ void Renderer::CreateFrameResources()
 		resourceDescription.SampleDesc.Count = 1;
 		resourceDescription.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-		assert(SUCCEEDED(device->CreateCommittedResource(
+		assert(SUCCEEDED(renderSystem->device->CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDescription,
@@ -501,10 +417,11 @@ void Renderer::CreateFrameResources()
 
 void Renderer::CreateCommandList()
 {
-	assert(nullptr != device);
+	assert(nullptr != renderSystem);
+	assert(nullptr != renderSystem->device);
 	assert(nullptr != frameResources[0].commandAllocator);
 
-	assert(SUCCEEDED(device->CreateCommandList(
+	assert(SUCCEEDED(renderSystem->device->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		frameResources[0].commandAllocator.Get(),
@@ -526,37 +443,48 @@ void Renderer::CreateSwapChain()
 	desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
-	assert(SUCCEEDED(factory->CreateSwapChainForHwnd(commandQueue.Get(), options.window, &desc, nullptr, nullptr, &swapChain1)));
+	assert(nullptr != renderSystem);
+	assert(nullptr != renderSystem->factory);
+	assert(nullptr != renderSystem->commandQueue);
+	assert(SUCCEEDED(renderSystem->factory->CreateSwapChainForHwnd(
+		renderSystem->commandQueue.Get(),
+		options.window,
+		&desc,
+		nullptr,
+		nullptr,
+		&swapChain1)));
 	assert(SUCCEEDED(swapChain1.As(&swapChain)));
 
-	assert(SUCCEEDED(factory->MakeWindowAssociation(options.window, DXGI_MWA_NO_ALT_ENTER)));
+	assert(SUCCEEDED(renderSystem->factory->MakeWindowAssociation(options.window, DXGI_MWA_NO_ALT_ENTER)));
 
 	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
 }
 
 void Renderer::CreateDescriptorHeaps()
 {
-	assert(nullptr != device);
+	assert(nullptr != renderSystem);
+	assert(nullptr != renderSystem->device);
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDesc{};
 	rtvDesc.NumDescriptors = FrameCount;
 	rtvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	assert(SUCCEEDED(device->CreateDescriptorHeap(&rtvDesc, IID_PPV_ARGS(&rtvDescriptorHeap))));
+	assert(SUCCEEDED(renderSystem->device->CreateDescriptorHeap(&rtvDesc, IID_PPV_ARGS(&rtvDescriptorHeap))));
 
-	rtvDescriptorOffset = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvDescriptorOffset = renderSystem->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvDesc{};
 	dsvDesc.NumDescriptors = 1;
 	dsvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	assert(SUCCEEDED(device->CreateDescriptorHeap(&dsvDesc, IID_PPV_ARGS(&dsvDescriptorHeap))));
-	dsvDescriptorOffset = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	assert(SUCCEEDED(renderSystem->device->CreateDescriptorHeap(&dsvDesc, IID_PPV_ARGS(&dsvDescriptorHeap))));
+	dsvDescriptorOffset = renderSystem->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
 void Renderer::CreateBackBuffers()
 {
-	assert(nullptr != device);
+	assert(nullptr != renderSystem);
+	assert(nullptr != renderSystem->device);
 	assert(nullptr != swapChain);
 	assert(nullptr != rtvDescriptorHeap);
 
@@ -567,14 +495,15 @@ void Renderer::CreateBackBuffers()
 
 		backBuffers[index].rtv = rtv;
 		backBuffers[index].state = D3D12_RESOURCE_STATE_PRESENT;
-		device->CreateRenderTargetView(backBuffers[index].resource.Get(), nullptr, rtv);
+		renderSystem->device->CreateRenderTargetView(backBuffers[index].resource.Get(), nullptr, rtv);
 		rtv.ptr += rtvDescriptorOffset;
 	}
 }
 
 void Renderer::CreateDepthStencilBuffer()
 {
-	assert(nullptr != device);
+	assert(nullptr != renderSystem);
+	assert(nullptr != renderSystem->device);
 	assert(nullptr != dsvDescriptorHeap);
 
 	D3D12_RESOURCE_DESC desc{};
@@ -596,7 +525,7 @@ void Renderer::CreateDepthStencilBuffer()
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
-	assert(SUCCEEDED(device->CreateCommittedResource(
+	assert(SUCCEEDED(renderSystem->device->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&desc,
@@ -604,7 +533,7 @@ void Renderer::CreateDepthStencilBuffer()
 		&clearValue,
 		IID_PPV_ARGS(&depthStencilBuffer))));
 
-	device->CreateDepthStencilView(
+	renderSystem->device->CreateDepthStencilView(
 		depthStencilBuffer.Get(),
 		nullptr,
 		dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
@@ -623,16 +552,6 @@ void Renderer::ReleaseBackBuffers()
 void Renderer::ReleaseDepthStencilBuffer()
 {
 	depthStencilBuffer.Reset();
-}
-
-void Renderer::CreateFence()
-{
-	assert(nullptr != device);
-	assert(SUCCEEDED(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence))));
-
-	fenceEvent = ::CreateEventExW(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
-	assert(nullptr != fenceEvent);
-	nextFenceValue = 1;
 }
 
 void Renderer::ApplyFullscreenState()
@@ -1084,34 +1003,13 @@ D3D12_VERTEX_BUFFER_VIEW Renderer::UploadInstanceData(std::span<const Matrix4x4>
 	return view;
 }
 
-UINT64 Renderer::SignalFence()
-{
-	const UINT64 fenceValue{ nextFenceValue++ };
-	if (FAILED(commandQueue->Signal(fence.Get(), fenceValue)))
-	{
-		return 0;
-	}
-
-	return fenceValue;
-}
-
 void Renderer::WaitForFrame(FrameResource& frame_)
 {
-	if (nullptr == fence || nullptr == fenceEvent || 0 == frame_.fenceValue)
+	if (nullptr == renderSystem || 0 == frame_.fenceValue)
 	{
 		return;
 	}
 
-	if (fence->GetCompletedValue() >= frame_.fenceValue)
-	{
-		frame_.fenceValue = 0;
-		return;
-	}
-
-	if (SUCCEEDED(fence->SetEventOnCompletion(frame_.fenceValue, fenceEvent)))
-	{
-		::WaitForSingleObjectEx(fenceEvent, INFINITE, FALSE);
-	}
-
+	renderSystem->WaitForFence(frame_.fenceValue);
 	frame_.fenceValue = 0;
 }
