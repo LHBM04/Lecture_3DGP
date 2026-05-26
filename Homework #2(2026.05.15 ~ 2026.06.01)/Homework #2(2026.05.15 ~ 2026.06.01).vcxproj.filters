@@ -76,9 +76,6 @@
     <ClCompile Include="Sources\PlayerController.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\PlayerInputMapper.cpp">
-      <Filter>Sources Files\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\CameraProjection_Orthographic.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -248,13 +245,13 @@
     <ClInclude Include="Sources\PlayerController.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PlayerInput.h">
+    <ClInclude Include="Sources\InputContext.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PlayerInputMapper.h">
+    <ClInclude Include="Sources\InputHandler.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PlayerInputReceiver.h">
+    <ClInclude Include="Sources\InputPhase.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\ResourceManager.h">

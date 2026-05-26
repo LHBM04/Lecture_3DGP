@@ -110,3 +110,8 @@ void Timer::SetTimeScale(float timeScale_) noexcept
 {
 	timeScale = std::max(timeScale_, 0.0f);
 }
+
+int Timer::GetFps() noexcept
+{
+	return currentFps;
+}

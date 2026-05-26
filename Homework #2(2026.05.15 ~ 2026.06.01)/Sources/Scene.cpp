@@ -1,7 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "Scene.h"
 
-#include "Application.h"
 #include "Camera.h"
 #include "Collider.h"
 #include "CubeCollider.h"
@@ -10,9 +9,8 @@
 #include "Light.h"
 #include "Logger.h"
 #include "MeshRenderer.h"
-#include "PlayerInput.h"
+#include "InputContext.h"
 #include "RenderContext.h"
-#include "Renderer.h"
 #include "ResourceManager.h"
 #include "SceneContext.h"
 #include "Transform.h"
@@ -70,20 +68,20 @@ void Scene::Load(SceneContext& context_)
 	OnLoad();
 }
 
-void Scene::Update()
+void Scene::Update(const TimeContext& context_)
 {
 	if (!isLoaded)
 	{
 		return;
 	}
 
-	OnUpdate();
+	OnUpdate(context_);
 
 	for (const std::unique_ptr<GameObject>& object : gameObjects)
 	{
 		if (object->IsActive())
 		{
-			object->Update();
+			object->Update(context_);
 		}
 	}
 
@@ -93,20 +91,20 @@ void Scene::Update()
 	PickAtMouse();
 }
 
-void Scene::FixedUpdate()
+void Scene::FixedUpdate(const TimeContext& context_)
 {
 	if (!isLoaded)
 	{
 		return;
 	}
 
-	OnFixedUpdate();
+	OnFixedUpdate(context_);
 
 	for (const std::unique_ptr<GameObject>& object : gameObjects)
 	{
 		if (object->IsActive())
 		{
-			object->FixedUpdate();
+			object->FixedUpdate(context_);
 		}
 	}
 
@@ -116,19 +114,18 @@ void Scene::FixedUpdate()
 
 void Scene::Render(RenderContext& context_)
 {
-	Renderer& renderer{ Application::GetRenderer() };
-
 	for (Camera* camera : cameras)
 	{
-		renderer.SetCamera(camera);
-		renderer.Clear();
+		context_.SetCamera(camera);
+		context_.Clear();
 		if (!lights.empty())
 		{
-			renderer.SetLight(lights.front());
+			context_.SetLight(lights.front());
 		}
 
-		const int renderWidth{ std::max(1, renderer.GetWidth()) };
-		const int renderHeight{ std::max(1, renderer.GetHeight()) };
+		const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
+		const int renderWidth{ std::max(1, screenWidth) };
+		const int renderHeight{ std::max(1, screenHeight) };
 		const float aspectRatio{ static_cast<float>(renderWidth) / static_cast<float>(renderHeight) };
 		DirectX::BoundingFrustum cameraFrustum{};
 		camera->GetWorldFrustum(aspectRatio, cameraFrustum);
@@ -150,13 +147,9 @@ void Scene::Render(RenderContext& context_)
 
 			gameObject->Render(context_);
 		}
-
-		renderer.Render(context_);
-		context_.Clear();
-		renderer.Flush();
 	}
 
-	renderer.ResetViewport();
+	context_.ResetViewport();
 	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 	{
 		if (gameObject->IsActive())
@@ -164,13 +157,9 @@ void Scene::Render(RenderContext& context_)
 			gameObject->RenderUI(context_);
 		}
 	}
-
-	renderer.Render(context_);
-	context_.Clear();
-	renderer.FlushUIObjects();
 }
 
-void Scene::HandlePlayerInput(const PlayerInput& input_)
+void Scene::DispatchInput(const InputContext& context_)
 {
 	if (!isLoaded)
 	{
@@ -181,7 +170,7 @@ void Scene::HandlePlayerInput(const PlayerInput& input_)
 	{
 		if (object->IsActive())
 		{
-			object->HandlePlayerInput(input_);
+			object->DispatchInput(context_);
 		}
 	}
 }
@@ -256,9 +245,9 @@ void Scene::PickAtMouse()
 		return;
 	}
 
-	Renderer& renderer{ Application::GetRenderer() };
-	const int screenWidth{ std::max(1, renderer.GetWidth()) };
-	const int screenHeight{ std::max(1, renderer.GetHeight()) };
+	const auto [inputWidth, inputHeight]{ InputManager::GetScreenSize() };
+	const int screenWidth{ std::max(1, inputWidth) };
+	const int screenHeight{ std::max(1, inputHeight) };
 	const auto [mouseX, mouseY]{ InputManager::GetMousePosition() };
 
 	const float px{ (static_cast<float>(mouseX) / static_cast<float>(screenWidth)) * 2.0f - 1.0f };

@@ -1,13 +1,14 @@
 ﻿#include "Precompiled.h"
 #include "Application.h"
 
+#include "InputContext.h"
+#include "InputPhase.h"
 #include "InputManager.h"
-#include "PlayerInputMapper.h"
-#include "RenderContext.h"
 #include "Scene_Test.h"
 #include "Scene_Title.h"
 #include "SceneManager.h"
 #include "SceneSystem.h"
+#include "TimeContext.h"
 #include "Timer.h"
 
 #define SCENE_ENTRY(SceneType, SceneName) \
@@ -24,8 +25,44 @@ namespace
 	RenderSystem renderSystem;
 	SceneSystem sceneSystem;
 	RenderTargetHandle mainRenderTarget{};
-	PlayerInputMapper playerInputMapper;
-	RenderContext renderContext;
+
+	float fixedUpdateAccumulator{ 0.0f };
+
+	void DispatchKeyboardInput(SceneSystem& sceneSystem_)
+	{
+		const auto dispatchKey =
+			[&sceneSystem_](KeyCode key_)
+			{
+				if (InputManager::IsKeyPressed(key_))
+				{
+					sceneSystem_.DispatchInput(InputContext{ key_, InputPhase::Started });
+				}
+
+				if (InputManager::IsKeyDown(key_))
+				{
+					sceneSystem_.DispatchInput(InputContext{ key_, InputPhase::Performed });
+				}
+
+				if (InputManager::IsKeyReleased(key_))
+				{
+					sceneSystem_.DispatchInput(InputContext{ key_, InputPhase::Canceled });
+				}
+			};
+
+		dispatchKey(KeyCode::W);
+		dispatchKey(KeyCode::A);
+		dispatchKey(KeyCode::S);
+		dispatchKey(KeyCode::D);
+
+		dispatchKey(KeyCode::Up);
+		dispatchKey(KeyCode::Left);
+		dispatchKey(KeyCode::Down);
+		dispatchKey(KeyCode::Right);
+
+		dispatchKey(KeyCode::Space);
+		dispatchKey(KeyCode::Shift);
+		dispatchKey(KeyCode::Escape);
+	}
 
 	void ShutdownSystems() noexcept
 	{
@@ -34,19 +71,16 @@ namespace
 			return;
 		}
 
-		// GPU가 커맨드를 끝내기 전에 씬/리소스를 파기하면 ComPtr 해제 시점 충돌이 날 수 있다.
 		if (Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
 		{
 			renderer->WaitForFrames();
 		}
 
 		sceneSystem.Release();
-		if (mainRenderTarget.IsValid())
-		{
-			renderSystem.DestroyRenderer(mainRenderTarget);
-			mainRenderTarget = {};
-		}
+		renderSystem.DestroyRenderer(mainRenderTarget);
+		mainRenderTarget = {};
 		renderSystem.Release();
+
 		windowSystem.Release();
 
 		isInitialized = false;
@@ -67,17 +101,12 @@ bool Application::Initialize(const ApplicationOptions& options_)
 			style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
 		}
 
-		int windowX{ 0 };
-		int windowY{ 0 };
-		int windowWidth{ options_.width };
-		int windowHeight{ options_.height };
-
 		WindowOptions options{};
 		options.title = options_.title;
-		options.x = windowX;
-		options.y = windowY;
-		options.width = windowWidth;
-		options.height = windowHeight;
+		options.x = 0;
+		options.y = 0;
+		options.width = options_.width;
+		options.height = options_.height;
 		options.style = style;
 		options.styleEx = WS_EX_APPWINDOW;
 
@@ -92,10 +121,12 @@ bool Application::Initialize(const ApplicationOptions& options_)
 
 	// 렌더러 생성 및 초기화.
 	{
+		Window& mainWindow{ windowSystem.GetMainWindow() };
+
 		RendererOptions options{};
-		options.window = windowSystem.GetMainWindow().GetHandle();
-		options.width = windowSystem.GetMainWindow().GetWidth();
-		options.height = windowSystem.GetMainWindow().GetHeight();
+		options.window = mainWindow.GetHandle();
+		options.width = mainWindow.GetWidth();
+		options.height = mainWindow.GetHeight();
 		options.msaa4xEnable = false;
 		options.enableTripleBuffering = false;
 		options.vSync = true;
@@ -107,7 +138,7 @@ bool Application::Initialize(const ApplicationOptions& options_)
 			return false;
 		}
 
-		mainRenderTarget = renderSystem.CreateRenderer(windowSystem.GetMainWindow(), options);
+		mainRenderTarget = renderSystem.CreateRenderer(mainWindow, options);
 		if (!mainRenderTarget.IsValid())
 		{
 			ShutdownSystems();
@@ -116,7 +147,8 @@ bool Application::Initialize(const ApplicationOptions& options_)
 	}
 
 	InputManager::Reset();
-	InputManager::SetScreenSize(windowSystem.GetMainWindow().GetWidth(), windowSystem.GetMainWindow().GetHeight());
+	Window& mainWindow{ windowSystem.GetMainWindow() };
+	InputManager::SetScreenSize(mainWindow.GetWidth(), mainWindow.GetHeight());
 	Timer::Reset();
 
 	SceneOptions options{
@@ -139,7 +171,8 @@ bool Application::Initialize(const ApplicationOptions& options_)
 int Application::Run()
 {
 	isRunning = true;
-	float fixedUpdateAccumulator{ 0.0f };
+	fixedUpdateAccumulator = 0.0f;
+	Window& mainWindow{ windowSystem.GetMainWindow() };
 
 	Event event;
 	while (isRunning)
@@ -147,16 +180,16 @@ int Application::Run()
 		Timer::Tick();
 		InputManager::Update();
 
-		while (windowSystem.GetMainWindow().PollEvent(event))
+		while (mainWindow.PollEvent(event))
 		{
 			switch (event.type)
 			{
 			case Event::Type::WindowResize:
-				renderSystem.OnWindowResize(event.windowHandle, event.resize.width, event.resize.height);
+				renderSystem.OnWindowResize(mainWindow.GetHandle(), event.resize.width, event.resize.height);
 				InputManager::SetScreenSize(event.resize.width, event.resize.height);
 				break;
 			case Event::Type::WindowFullscreenToggle:
-				renderSystem.OnWindowFullscreenToggle(event.windowHandle);
+				renderSystem.OnWindowFullscreenToggle(mainWindow.GetHandle());
 				if (Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
 				{
 					InputManager::SetScreenSize(renderer->GetWidth(), renderer->GetHeight());
@@ -172,18 +205,26 @@ int Application::Run()
 			InputManager::ProcessEvent(event);
 		}
 
-		const PlayerInput playerInput{ playerInputMapper.Build() };
-		sceneSystem.HandlePlayerInput(playerInput);
+		TimeContext timeContext{};
+		timeContext.timeScale = Timer::GetTimeScale();
+		timeContext.deltaTime = Timer::GetDeltaTime();
+		timeContext.fixedDeltaTime = Timer::GetFixedDeltaTime();
+		timeContext.unscaledDeltaTime = Timer::GetUnscaledDeltaTime();
+		timeContext.unscaledFixedDeltaTime = Timer::GetUnscaledFixedDeltaTime();
+		timeContext.totalTime = Timer::GetTotalTime();
+		timeContext.unscaledTotalTime = Timer::GetUnscaledTime();
+		timeContext.fps = Timer::GetFps();
+		DispatchKeyboardInput(sceneSystem);
 
-		sceneSystem.Update();
+		sceneSystem.Update(timeContext);
 
-		fixedUpdateAccumulator += Timer::GetUnscaledDeltaTime();
-		const float fixedStep{ Timer::GetUnscaledFixedDeltaTime() };
+		fixedUpdateAccumulator += timeContext.unscaledDeltaTime;
+		const float fixedStep{ timeContext.unscaledFixedDeltaTime };
 		int fixedUpdateCount{ 0 };
 
 		while (fixedStep > 0.0f && fixedUpdateAccumulator >= fixedStep && fixedUpdateCount < MaxFixedUpdatesPerFrame)
 		{
-			sceneSystem.FixedUpdate();
+			sceneSystem.FixedUpdate(timeContext);
 			fixedUpdateAccumulator -= fixedStep;
 			++fixedUpdateCount;
 		}
@@ -200,15 +241,15 @@ int Application::Run()
 		}
 
 		renderer->BeginRender();
-		renderContext.Clear();
-		sceneSystem.Render(renderContext);
+		RenderContext& context{ renderer->GetContext() };
+		sceneSystem.Render(context);
+		renderer->Flush();
 		renderer->EndRender();
 	}
 
 	ShutdownSystems();
 
 	return 0;
-	// return event.quit.quitCode;
 }
 
 void Application::Quit()
@@ -224,7 +265,7 @@ Window& Application::GetWindow()
 Renderer& Application::GetRenderer()
 {
 	Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
-	assert(nullptr != renderer);
+	assert(renderer);
 	return *renderer;
 }
 

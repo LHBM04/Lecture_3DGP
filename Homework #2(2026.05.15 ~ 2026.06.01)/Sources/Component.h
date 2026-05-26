@@ -1,6 +1,7 @@
 #pragma once
 
 class GameObject;
+struct TimeContext;
 
 class Component
 {
@@ -41,8 +42,8 @@ protected:
 
 	// Legacy hooks. Keep for compatibility with existing components.
 	virtual void OnAttach() {}
-	virtual void OnUpdate() {}
-	virtual void OnFixedUpdate() {}
+	virtual void OnUpdate(const TimeContext& context_) {}
+	virtual void OnFixedUpdate(const TimeContext& context_) {}
 	virtual void OnRender() {}
 	virtual void OnCollisionEnter(GameObject& other_) {}
 	virtual void OnCollisionStay(GameObject& other_) {}
@@ -50,8 +51,8 @@ protected:
 	virtual void OnDetach() {}
 
 private:
-	void TickUpdate();
-	void TickFixedUpdate();
+	void TickUpdate(const TimeContext& context_);
+	void TickFixedUpdate(const TimeContext& context_);
 	void TickRender();
 	void TryAwake();
 	void TryEnable();

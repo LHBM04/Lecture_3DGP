@@ -1,13 +1,8 @@
 #include "Precompiled.h"
 #include "Renderer.h"
 
-#include "Camera.h"
-#include "Light.h"
-#include "Material.h"
-#include "Mesh.h"
 #include "RenderContext.h"
 #include "RendererOptions.h"
-#include "Shader.h"
 
 namespace
 {
@@ -69,6 +64,7 @@ bool Renderer::Initialize(const RendererOptions& options_)
 	CreateBackBuffers();
 	CreateDepthStencilBuffer();
 	CreateFence();
+	context = std::unique_ptr<RenderContext>(new RenderContext(*this));
 	if (requestedFullscreen)
 	{
 		SetFullscreen(true);
@@ -133,6 +129,7 @@ void Renderer::Release()
 	gameObjectBatches.clear();
 	uiObjectBatches.clear();
 	drawState = {};
+	context.reset();
 	isFullscreen = false;
 }
 
@@ -163,52 +160,10 @@ void Renderer::BeginRender()
 	D3D12_CPU_DESCRIPTOR_HANDLE dsv{ dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
 	commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
 
-	ResetViewport();
-}
-
-void Renderer::Clear()
-{
-	if (CameraClearMode::None == currentCameraClearMode)
+	if (context)
 	{
-		return;
+		context->ResetViewport();
 	}
-
-	BackBuffer& backBuffer{ backBuffers[currentBackBufferIndex] };
-	D3D12_CPU_DESCRIPTOR_HANDLE rtv{ backBuffer.rtv };
-	D3D12_CPU_DESCRIPTOR_HANDLE dsv{ dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart() };
-
-	if (CameraClearMode::SolidColor == currentCameraClearMode)
-	{
-		const FLOAT color[4]
-		{
-			currentCameraClearColor.x,
-			currentCameraClearColor.y,
-			currentCameraClearColor.z,
-			currentCameraClearColor.w
-		};
-		commandList->ClearRenderTargetView(rtv, color, 0, nullptr);
-	}
-
-	commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-}
-
-void Renderer::ResetViewport()
-{
-	D3D12_VIEWPORT viewport{};
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.Width = static_cast<float>(options.width);
-	viewport.Height = static_cast<float>(options.height);
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	commandList->RSSetViewports(1, &viewport);
-
-	D3D12_RECT scissorRect{};
-	scissorRect.left = 0;
-	scissorRect.top = 0;
-	scissorRect.right = options.width;
-	scissorRect.bottom = options.height;
-	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
 void Renderer::EndRender()
@@ -225,196 +180,22 @@ void Renderer::EndRender()
 	frameResource.fenceValue = SignalFence();
 }
 
-void Renderer::SetCamera(const Camera* camera_)
-{
-	if (nullptr == camera_)
-	{
-		return;
-	}
-
-	currentCameraConstants = {};
-
-	const Vector4D& viewportRect{ camera_->GetViewport() };
-	const float targetWidth{ static_cast<float>(std::max(1, options.width)) };
-	const float targetHeight{ static_cast<float>(std::max(1, options.height)) };
-
-	D3D12_VIEWPORT viewport{};
-	viewport.TopLeftX = viewportRect.x * targetWidth;
-	viewport.TopLeftY = viewportRect.y * targetHeight;
-	viewport.Width = std::max(1.0f, viewportRect.z * targetWidth);
-	viewport.Height = std::max(1.0f, viewportRect.w * targetHeight);
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	commandList->RSSetViewports(1, &viewport);
-
-	D3D12_RECT scissorRect{};
-	scissorRect.left = static_cast<LONG>(viewport.TopLeftX);
-	scissorRect.top = static_cast<LONG>(viewport.TopLeftY);
-	scissorRect.right = static_cast<LONG>(viewport.TopLeftX + viewport.Width);
-	scissorRect.bottom = static_cast<LONG>(viewport.TopLeftY + viewport.Height);
-	commandList->RSSetScissorRects(1, &scissorRect);
-
-	const float aspect{ viewport.Width / viewport.Height };
-
-	currentCameraConstants.view = camera_->GetViewMatrix();
-	currentCameraConstants.projection = camera_->GetProjectionMatrix(aspect);
-	currentCameraConstants.viewProjection = camera_->GetViewProjectionMatrix(aspect);
-	currentCameraClearMode = camera_->GetClearMode();
-	currentCameraClearColor = camera_->GetClearColor();
-}
-
-void Renderer::SetLight(const Light* light_)
-{
-	if (nullptr == light_)
-	{
-		return;
-	}
-
-	currentLightDirection = light_->GetDirection();
-	currentLightColor = light_->GetColor();
-	currentLightIntensity = light_->GetIntensity();
-}
-
-void Renderer::UseProgram(const Shader* shader_)
-{
-	if (nullptr == shader_)
-	{
-		return;
-	}
-
-	drawState.pipelineState = const_cast<ID3D12PipelineState*>(shader_->GetPipelineState());
-	drawState.graphicsRootSignature = const_cast<ID3D12RootSignature*>(shader_->GetGraphicsRootSignature());
-	drawState.pipelineId = shader_->GetPipelineId();
-
-	drawState.cameraSlot = UINT_MAX;
-	drawState.objectSlot = UINT_MAX;
-	drawState.materialSlot = UINT_MAX;
-	drawState.lightSlot = UINT_MAX;
-	(void)shader_->TryGetRootParameterIndex("Camera", drawState.cameraSlot);
-	(void)shader_->TryGetRootParameterIndex("Object", drawState.objectSlot);
-	(void)shader_->TryGetRootParameterIndex("Material", drawState.materialSlot);
-	(void)shader_->TryGetRootParameterIndex("Light", drawState.lightSlot);
-}
-
-void Renderer::BindVertexBuffer(
-	const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView_,
-	UINT vertexCount_,
-	uint64_t meshId_,
-	D3D12_PRIMITIVE_TOPOLOGY primitiveTopology_,
-	UINT firstVertex_)
-{
-	drawState.primitiveTopology = primitiveTopology_;
-	drawState.vertexBufferView = vertexBufferView_;
-	drawState.vertexCount = vertexCount_;
-	drawState.startVertexLocation = firstVertex_;
-	drawState.instanceCount = 1;
-	drawState.startInstanceLocation = 0;
-	drawState.meshId = meshId_;
-}
-
-void Renderer::BindElementBuffer(
-	const D3D12_INDEX_BUFFER_VIEW& indexBufferView_,
-	UINT indexCount_,
-	UINT firstIndex_,
-	INT baseVertexLocation_)
-{
-	drawState.indexBufferView = indexBufferView_;
-	drawState.indexCount = indexCount_;
-	drawState.startIndexLocation = firstIndex_;
-	drawState.baseVertexLocation = baseVertexLocation_;
-	drawState.hasIndexBuffer = 0 != indexBufferView_.BufferLocation;
-}
-
-void Renderer::BindMaterial(const Material* material_, const ColorRGBA* overrideColor_)
-{
-	if (nullptr == material_)
-	{
-		return;
-	}
-
-	drawState.materialDescriptorTable = material_->GetDescriptorTable();
-	drawState.materialColor = nullptr != overrideColor_ ? *overrideColor_ : material_->GetColor();
-	drawState.materialId = material_->GetId();
-}
-
-void Renderer::SetModelMatrix(const Matrix4x4& modelMatrix_)
-{
-	drawState.worldTransform = modelMatrix_;
-}
-
-void Renderer::DrawArrays()
-{
-	GameObjectCommand command{ drawState };
-	command.indexed = false;
-	command.hasIndexBuffer = false;
-	command.indexCount = 0;
-	command.startIndexLocation = 0;
-	command.baseVertexLocation = 0;
-	command.sortKey = BuildSortKey(command);
-	if (!IsValidCommand(command))
-	{
-		return;
-	}
-
-	gameObjectCommands.push_back(command);
-}
-
-void Renderer::DrawElements()
-{
-	GameObjectCommand command{ drawState };
-	command.indexed = command.hasIndexBuffer && command.indexCount > 0;
-	command.sortKey = BuildSortKey(command);
-	if (!IsValidCommand(command))
-	{
-		return;
-	}
-
-	gameObjectCommands.push_back(command);
-}
-
-void Renderer::DrawUIArrays()
-{
-	UIObjectCommand command{};
-	static_cast<GameObjectCommand&>(command) = drawState;
-	command.indexed = false;
-	command.hasIndexBuffer = false;
-	command.indexCount = 0;
-	command.startIndexLocation = 0;
-	command.baseVertexLocation = 0;
-	command.sortKey = BuildSortKey(command);
-	if (!IsValidCommand(command))
-	{
-		return;
-	}
-
-	uiObjectCommands.push_back(command);
-}
-
-void Renderer::DrawUIElements()
-{
-	UIObjectCommand command{};
-	static_cast<GameObjectCommand&>(command) = drawState;
-	command.indexed = command.hasIndexBuffer && command.indexCount > 0;
-	command.sortKey = BuildSortKey(command);
-	if (!IsValidCommand(command))
-	{
-		return;
-	}
-
-	uiObjectCommands.push_back(command);
-}
-
-void Renderer::Render(const RenderContext& context_)
-{
-	for (const DrawMeshCommand& command : context_.GetDrawMeshCommands())
-	{
-		DrawMeshNow(command);
-	}
-}
-
 void Renderer::Flush()
 {
-	FlushGameObjects();
+	BuildVisibleGameObjectCommands();
+	SortGameObjectCommands();
+	SortUIObjectCommands();
+	BuildGameObjectBatches();
+	BuildUIObjectBatches();
+	ExecuteGameObjectBatches();
+	ExecuteUIObjectBatches();
+
+	gameObjectCommands.clear();
+	visibleGameObjectCommands.clear();
+	uiObjectCommands.clear();
+	gameObjectBatches.clear();
+	uiObjectBatches.clear();
+	drawState = {};
 }
 
 void Renderer::FlushGameObjects()
@@ -446,54 +227,6 @@ void Renderer::FlushUIObjects()
 	drawState = {};
 }
 
-void Renderer::DrawMeshNow(const DrawMeshCommand& command_)
-{
-	if (nullptr == command_.mesh || nullptr == command_.material)
-	{
-		return;
-	}
-
-	const Shader* shader{ command_.material->GetShader() };
-	if (nullptr == shader)
-	{
-		return;
-	}
-
-	const Mesh& mesh{ *command_.mesh };
-	UseProgram(shader);
-	BindVertexBuffer(mesh.GetVertexBufferView(), mesh.GetVertexCount(), mesh.GetId());
-	if (mesh.HasIndexBuffer())
-	{
-		BindElementBuffer(mesh.GetIndexBufferView(), mesh.GetIndexCount());
-	}
-
-	const ColorRGBA* colorOverride{ command_.hasColorOverride ? &command_.colorOverride : nullptr };
-	BindMaterial(command_.material, colorOverride);
-	SetModelMatrix(command_.worldMatrix);
-
-	if (command_.isUI)
-	{
-		if (mesh.HasIndexBuffer())
-		{
-			DrawUIElements();
-		}
-		else
-		{
-			DrawUIArrays();
-		}
-		return;
-	}
-
-	if (mesh.HasIndexBuffer())
-	{
-		DrawElements();
-	}
-	else
-	{
-		DrawArrays();
-	}
-}
-
 ID3D12Device* Renderer::GetDevice() const noexcept
 {
 	return device.Get();
@@ -512,6 +245,12 @@ int Renderer::GetWidth() const noexcept
 int Renderer::GetHeight() const noexcept
 {
 	return options.height;
+}
+
+RenderContext& Renderer::GetContext() noexcept
+{
+	assert(context);
+	return *context;
 }
 
 void Renderer::WaitForFrames()

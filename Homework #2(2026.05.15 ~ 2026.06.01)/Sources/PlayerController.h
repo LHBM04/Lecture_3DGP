@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Component.h"
-#include "PlayerInputReceiver.h"
+#include "InputHandler.h"
 #include "Updatable.h"
 #include <algorithm>
 
-class PlayerController final : public Component, public Updatable, public PlayerInputReceiver
+struct TimeContext;
+
+class PlayerController final : public Component, public Updatable, public InputHandler
 {
 public:
 	PlayerController() = default;
@@ -18,13 +20,18 @@ public:
 	void SetRotationSpeed(float degreesPerSecond_) noexcept;
 
 protected:
-	virtual void OnUpdate() override;
-	void OnPlayerInput(const PlayerInput& input_) override;
+	virtual void OnUpdate(const TimeContext& context_) override;
+	void OnInputStarted(const InputContext& context_) override;
+	void OnInputPerformed(const InputContext& context_) override;
+	void OnInputCanceled(const InputContext& context_) override;
 
 private:
 	float moveSpeed{ 10.0f };
 	float rotationSpeed{ 90.0f };
-	PlayerInput currentInput{};
+	float yawInput{ 0.0f };
+	float moveInput{ 0.0f };
+	bool jumpRequested{ false };
+	bool dodgeRequested{ false };
 };
 
 inline float PlayerController::GetMoveSpeed() const noexcept

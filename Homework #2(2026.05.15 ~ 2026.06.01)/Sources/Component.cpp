@@ -74,7 +74,7 @@ const GameObject* Component::GetOwner() const
 	return owner;
 }
 
-void Component::TickUpdate()
+void Component::TickUpdate(const TimeContext& context_)
 {
 	if (isDestroyed || !isEnabled)
 	{
@@ -89,10 +89,10 @@ void Component::TickUpdate()
 		isStarted = true;
 	}
 
-	OnUpdate();
+	OnUpdate(context_);
 }
 
-void Component::TickFixedUpdate()
+void Component::TickFixedUpdate(const TimeContext& context_)
 {
 	if (isDestroyed || !isEnabled)
 	{
@@ -107,7 +107,7 @@ void Component::TickFixedUpdate()
 		isStarted = true;
 	}
 
-	OnFixedUpdate();
+	OnFixedUpdate(context_);
 }
 
 void Component::TickRender()

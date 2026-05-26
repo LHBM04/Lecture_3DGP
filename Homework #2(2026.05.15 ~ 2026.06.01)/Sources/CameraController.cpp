@@ -3,11 +3,11 @@
 
 #include "GameObject.h"
 #include "Quaternion.h"
-#include "Timer.h"
+#include "TimeContext.h"
 #include "Transform.h"
 #include <limits>
 
-void CameraController::OnUpdate()
+void CameraController::OnUpdate(const TimeContext& context_)
 {
 	if (nullptr == target)
 	{
@@ -36,7 +36,7 @@ void CameraController::OnUpdate()
 		followVelocity,
 		followSmoothTime,
 		std::numeric_limits<float>::infinity(),
-		Timer::GetDeltaTime()) };
+		context_.deltaTime) };
 
 	transform->SetWorldPosition(smoothedPosition);
 

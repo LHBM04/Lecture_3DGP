@@ -21,7 +21,7 @@ namespace
 	}
 }
 
-void GameObject::Update()
+void GameObject::Update(const TimeContext& context_)
 {
 	for (Updatable* updatable : updatables)
 	{
@@ -30,15 +30,15 @@ void GameObject::Update()
 			continue;
 		}
 
-		updatable->OnUpdate();
+		updatable->OnUpdate(context_);
 	}
 }
 
-void GameObject::FixedUpdate()
+void GameObject::FixedUpdate(const TimeContext& context_)
 {
 	for (const std::unique_ptr<Component>& component : components | std::views::values)
 	{
-		component->TickFixedUpdate();
+		component->TickFixedUpdate(context_);
 	}
 }
 
@@ -68,16 +68,35 @@ void GameObject::RenderUI(RenderContext& context_)
 	}
 }
 
-void GameObject::HandlePlayerInput(const PlayerInput& input_)
+void GameObject::DispatchInput(const InputContext& context_)
 {
-	for (PlayerInputReceiver* receiver : playerInputReceivers)
+	for (InputHandler* handler : inputHandlers)
 	{
-		if (nullptr == TryGetActiveComponent(receiver))
+		if (nullptr == handler)
 		{
 			continue;
 		}
 
-		receiver->OnPlayerInput(input_);
+		Component* component{ dynamic_cast<Component*>(handler) };
+		if (nullptr == component || component->IsDestroyed() || !component->IsEnabled())
+		{
+			continue;
+		}
+
+		switch (context_.GetPhase())
+		{
+		case InputPhase::Started:
+			handler->OnInputStarted(context_);
+			break;
+
+		case InputPhase::Performed:
+			handler->OnInputPerformed(context_);
+			break;
+
+		case InputPhase::Canceled:
+			handler->OnInputCanceled(context_);
+			break;
+		}
 	}
 }
 

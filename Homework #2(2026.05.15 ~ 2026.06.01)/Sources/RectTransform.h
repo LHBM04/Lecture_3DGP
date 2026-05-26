@@ -4,6 +4,8 @@
 #include "Updatable.h"
 #include "Vector2D.h"
 
+struct TimeContext;
+
 class RectTransform final : public Component, public Updatable
 {
 public:
@@ -22,7 +24,7 @@ public:
 	[[nodiscard]] bool ContainsScreenPoint(int x_, int y_) const noexcept;
 
 protected:
-	void OnUpdate() override;
+	void OnUpdate(const TimeContext& context_) override;
 
 private:
 	Vector2D anchoredPosition{ 0.0f, 0.0f };

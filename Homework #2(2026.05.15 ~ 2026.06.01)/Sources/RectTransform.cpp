@@ -2,6 +2,7 @@
 #include "RectTransform.h"
 
 #include "InputManager.h"
+#include "TimeContext.h"
 
 const Vector2D& RectTransform::GetAnchoredPosition() const noexcept
 {
@@ -53,6 +54,7 @@ bool RectTransform::ContainsScreenPoint(int x_, int y_) const noexcept
 		y_ <= static_cast<int>(maxY);
 }
 
-void RectTransform::OnUpdate()
+void RectTransform::OnUpdate(const TimeContext& context_)
 {
+	(void)context_;
 }

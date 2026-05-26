@@ -74,8 +74,9 @@ void Button::OnAttach()
 	}
 }
 
-void Button::OnUpdate()
+void Button::OnUpdate(const TimeContext& context_)
 {
+	(void)context_;
 	GameObject* owner{ GetOwner() };
 	if (nullptr == owner)
 	{
@@ -115,6 +116,11 @@ void Button::OnUpdate()
 	else
 	{
 		ChangeState(State::Normal);
+	}
+
+	if (hovered && InputManager::IsButtonReleased(ButtonCode::Left))
+	{
+		Invoke(State::Pressed);
 	}
 }
 

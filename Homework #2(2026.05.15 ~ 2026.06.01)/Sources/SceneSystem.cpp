@@ -1,8 +1,8 @@
 #include "Precompiled.h"
 #include "SceneSystem.h"
 
+#include "InputContext.h"
 #include "Logger.h"
-#include "PlayerInput.h"
 #include "RenderContext.h"
 
 SceneSystem::~SceneSystem() noexcept
@@ -57,7 +57,7 @@ void SceneSystem::Release()
 	scenes.clear();
 }
 
-void SceneSystem::Update()
+void SceneSystem::Update(const TimeContext& context_)
 {
 	if (nullptr != nextScene)
 	{
@@ -78,7 +78,7 @@ void SceneSystem::Update()
 	}
 
 	sceneContext.ClearSceneChangeRequest();
-	currentScene->Update();
+	currentScene->Update(context_);
 
 	if (sceneContext.HasSceneChangeRequest())
 	{
@@ -87,14 +87,14 @@ void SceneSystem::Update()
 	}
 }
 
-void SceneSystem::FixedUpdate()
+void SceneSystem::FixedUpdate(const TimeContext& context_)
 {
 	if (nullptr == currentScene)
 	{
 		return;
 	}
 
-	currentScene->FixedUpdate();
+	currentScene->FixedUpdate(context_);
 }
 
 void SceneSystem::Render(RenderContext& context_)
@@ -108,11 +108,11 @@ void SceneSystem::Render(RenderContext& context_)
 	currentScene->Render(context_);
 }
 
-void SceneSystem::HandlePlayerInput(const PlayerInput& input_)
+void SceneSystem::DispatchInput(const InputContext& context_)
 {
 	if (nullptr != currentScene)
 	{
-		currentScene->HandlePlayerInput(input_);
+		currentScene->DispatchInput(context_);
 	}
 }
 

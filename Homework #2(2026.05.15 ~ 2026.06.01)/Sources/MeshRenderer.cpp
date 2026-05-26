@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "RenderContext.h"
+#include "Shader.h"
 #include "Transform.h"
 
 Mesh* MeshRenderer::GetMesh() noexcept
@@ -51,5 +52,27 @@ void MeshRenderer::OnRender(RenderContext& context_)
 		return;
 	}
 
-	context_.DrawMesh(*mesh, *material, transform->GetWorldMatrix());
+	Shader* shader{ material->GetShader() };
+	if (nullptr == shader)
+	{
+		return;
+	}
+
+	context_.UseProgram(shader);
+	context_.BindVertexBuffer(mesh->GetVertexBufferView(), mesh->GetVertexCount(), mesh->GetId());
+	if (mesh->HasIndexBuffer())
+	{
+		context_.BindElementBuffer(mesh->GetIndexBufferView(), mesh->GetIndexCount());
+	}
+	context_.BindMaterial(material);
+	context_.SetModelMatrix(transform->GetWorldMatrix());
+
+	if (mesh->HasIndexBuffer())
+	{
+		context_.DrawElements();
+	}
+	else
+	{
+		context_.DrawArrays();
+	}
 }

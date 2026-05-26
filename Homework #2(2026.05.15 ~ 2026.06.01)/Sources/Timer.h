@@ -20,4 +20,6 @@ namespace Timer
 
 	[[nodiscard]] float GetTimeScale() noexcept;
 	void SetTimeScale(float timeScale_) noexcept;
+
+	[[nodiscard]] int GetFps() noexcept;
 }

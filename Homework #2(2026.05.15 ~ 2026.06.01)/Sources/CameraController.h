@@ -3,9 +3,9 @@
 #include "Component.h"
 #include "Updatable.h"
 #include "Vector3D.h"
-#include <algorithm>
 
 class Transform;
+struct TimeContext;
 
 class CameraController final : public Component, public Updatable
 {
@@ -13,52 +13,16 @@ public:
 	CameraController() = default;
 	~CameraController() override = default;
 
-	[[nodiscard]] Transform* GetTarget() const noexcept;
-	void SetTarget(Transform* target_) noexcept;
-
-	[[nodiscard]] const Vector3D& GetOffset() const noexcept;
-	void SetOffset(const Vector3D& offset_) noexcept;
-
-	[[nodiscard]] float GetFollowSmoothTime() const noexcept;
-	void SetFollowSmoothTime(float smoothTime_) noexcept;
+	void SetTarget(Transform* target_) { target = target_; }
+	void SetOffset(const Vector3D& offset_) { offset = offset_; }
+	void SetSmoothTime(float smoothTime_) { followSmoothTime = smoothTime_; }
 
 protected:
-	void OnUpdate() override;
+	void OnUpdate(const TimeContext& context_) override;
 
 private:
 	Transform* target{ nullptr };
-	Vector3D offset{ 0.0f, 3.0f, -7.0f };
+	Vector3D offset{ 0.0f, 5.0f, -10.0f };
 	Vector3D followVelocity{ 0.0f, 0.0f, 0.0f };
-	float followSmoothTime{ 0.125f };
+	float followSmoothTime{ 0.1f };
 };
-
-inline Transform* CameraController::GetTarget() const noexcept
-{
-	return target;
-}
-
-inline void CameraController::SetTarget(Transform* target_) noexcept
-{
-	target = target_;
-	followVelocity = Vector3D::GetZero();
-}
-
-inline const Vector3D& CameraController::GetOffset() const noexcept
-{
-	return offset;
-}
-
-inline void CameraController::SetOffset(const Vector3D& offset_) noexcept
-{
-	offset = offset_;
-}
-
-inline float CameraController::GetFollowSmoothTime() const noexcept
-{
-	return followSmoothTime;
-}
-
-inline void CameraController::SetFollowSmoothTime(float smoothTime_) noexcept
-{
-	followSmoothTime = std::max(0.01f, smoothTime_);
-}

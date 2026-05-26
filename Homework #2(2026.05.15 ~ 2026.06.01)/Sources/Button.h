@@ -6,6 +6,7 @@
 #include <functional>
 
 class RectTransform;
+struct TimeContext;
 
 class Button final : public Component, public Updatable
 {
@@ -31,7 +32,7 @@ public:
 
 protected:
 	void OnAttach() override;
-	void OnUpdate() override;
+	void OnUpdate(const TimeContext& context_) override;
 
 private:
 	enum class State : unsigned char

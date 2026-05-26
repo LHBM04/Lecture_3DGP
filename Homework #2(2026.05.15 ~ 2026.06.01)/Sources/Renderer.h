@@ -5,11 +5,13 @@
 #include "ColorRGB.h"
 #include "ColorRGBA.h"
 #include "Matrix4x4.h"
+#include "RenderContext.h"
 #include "Vector3D.h"
 
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <array>
+#include <memory>
 #include <vector>
 #include <span>
 #include <string>
@@ -20,9 +22,7 @@ class Mesh;
 class Camera;
 class GameObject;
 class Light;
-class RenderContext;
 class RenderSystem;
-struct DrawMeshCommand;
 
 struct RendererOptions final
 {
@@ -40,38 +40,13 @@ struct RendererOptions final
 class Renderer final
 {
 	friend class RenderSystem;
+	friend class RenderContext;
 
 public:
 	~Renderer() noexcept;
-
-	void Clear();
-	void ResetViewport();
 	
 	void BeginRender();
 	void EndRender();
-
-	void SetCamera(const Camera* camera_);
-	void SetLight(const Light* light_);
-
-	void UseProgram(const Shader* shader_);
-	void BindVertexBuffer(
-		const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView_,
-		UINT vertexCount_,
-		uint64_t meshId_,
-		D3D12_PRIMITIVE_TOPOLOGY primitiveTopology_ = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-		UINT firstVertex_ = 0);
-	void BindElementBuffer(
-		const D3D12_INDEX_BUFFER_VIEW& indexBufferView_,
-		UINT indexCount_,
-		UINT firstIndex_ = 0,
-		INT baseVertexLocation_ = 0);
-	void BindMaterial(const Material* material_, const ColorRGBA* overrideColor_ = nullptr);
-	void SetModelMatrix(const Matrix4x4& modelMatrix_);
-	void DrawArrays();
-	void DrawElements();
-	void DrawUIArrays();
-	void DrawUIElements();
-	void Render(const RenderContext& context_);
 
 	void Flush();
 	void FlushGameObjects();
@@ -85,6 +60,7 @@ public:
 	[[nodiscard]] bool IsFullscreen() const noexcept;
 	[[nodiscard]] int GetWidth() const noexcept;
 	[[nodiscard]] int GetHeight() const noexcept;
+	[[nodiscard]] RenderContext& GetContext() noexcept;
 
 private:
 	struct GameObjectCommand
@@ -195,7 +171,6 @@ private:
 	void ExecuteUIObjectBatches();
 	void ExecuteBatch(const GameObjectBatch& batch_);
 	void ExecuteBatch(const UIObjectBatch& batch_);
-	void DrawMeshNow(const DrawMeshCommand& command_);
 
 	[[nodiscard]] bool IsValidCommand(const GameObjectCommand& command_) const noexcept;
 	[[nodiscard]] uint64_t BuildSortKey(const GameObjectCommand& command_) const noexcept;
@@ -276,6 +251,7 @@ private:
 	std::vector<GameObjectBatch> gameObjectBatches;
 	std::vector<UIObjectBatch> uiObjectBatches;
 	GameObjectCommand drawState{};
+	std::unique_ptr<RenderContext> context;
 
 	bool Initialize(const RendererOptions& options_);
 	void Release();

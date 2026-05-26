@@ -1,11 +1,12 @@
-﻿#pragma once
+#pragma once
 
 #include "SceneContext.h"
 #include "Scene.h"
 #include "System.h"
 
-struct PlayerInput;
+class InputContext;
 class RenderContext;
+struct TimeContext;
 
 struct SceneBuildEntry final
 {
@@ -27,10 +28,10 @@ public:
 	bool Initialize(const SceneOptions& options_) override;
 	void Release() override;
 
-	void Update();
-	void FixedUpdate();
+	void Update(const TimeContext& context_);
+	void FixedUpdate(const TimeContext& context_);
 	void Render(RenderContext& context_);
-	void HandlePlayerInput(const PlayerInput& input_);
+	void DispatchInput(const InputContext& context_);
 
 	template <std::derived_from<Scene> TScene>
 	void AddScene(std::wstring name_);

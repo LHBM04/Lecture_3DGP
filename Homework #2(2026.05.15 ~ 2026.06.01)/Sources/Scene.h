@@ -4,9 +4,10 @@
 
 class Camera;
 class Light;
-struct PlayerInput;
+class InputContext;
 class RenderContext;
 class SceneContext;
+struct TimeContext;
 
 class Scene
 {
@@ -30,10 +31,10 @@ public:
 	GameObject& CreateGameObject(const std::string& name_ = "GameObject");
 
 	void Load(SceneContext& context_);
-	void Update();
-	void FixedUpdate();
+	void Update(const TimeContext& context_);
+	void FixedUpdate(const TimeContext& context_);
 	void Render(RenderContext& context_);
-	void HandlePlayerInput(const PlayerInput& input_);
+	void DispatchInput(const InputContext& context_);
 	void Unload();
 
 protected:
@@ -41,8 +42,8 @@ protected:
 	[[nodiscard]] const SceneContext* GetSceneContext() const noexcept;
 
 	virtual void OnLoad() {};
-	virtual void OnUpdate() {};
-	virtual void OnFixedUpdate() {};
+	virtual void OnUpdate(const TimeContext& context_) {};
+	virtual void OnFixedUpdate(const TimeContext& context_) {};
 	virtual void OnRender() {};
 	virtual void OnUnload() {};
 

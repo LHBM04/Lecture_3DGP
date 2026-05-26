@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "RectTransform.h"
 #include "RenderContext.h"
+#include "Shader.h"
 
 namespace
 {
@@ -177,7 +178,29 @@ void TextView::OnRenderUI(RenderContext& context_)
 		return;
 	}
 
-	context_.DrawMesh(*cachedMesh, *material, Matrix4x4::GetIdentity(), color, true);
+	Shader* shader{ material->GetShader() };
+	if (nullptr == shader)
+	{
+		return;
+	}
+
+	context_.UseProgram(shader);
+	context_.BindVertexBuffer(cachedMesh->GetVertexBufferView(), cachedMesh->GetVertexCount(), cachedMesh->GetId());
+	if (cachedMesh->HasIndexBuffer())
+	{
+		context_.BindElementBuffer(cachedMesh->GetIndexBufferView(), cachedMesh->GetIndexCount());
+	}
+	context_.BindMaterial(material, &color);
+	context_.SetModelMatrix(Matrix4x4::GetIdentity());
+
+	if (cachedMesh->HasIndexBuffer())
+	{
+		context_.DrawUIElements();
+	}
+	else
+	{
+		context_.DrawUIArrays();
+	}
 }
 
 void TextView::MarkDirty() noexcept

@@ -9,6 +9,7 @@
 #include "RectTransform.h"
 #include "InputManager.h"
 #include "RenderContext.h"
+#include "Shader.h"
 #include "Vector2D.h"
 
 namespace
@@ -102,8 +103,29 @@ void ImageView::OnRenderUI(RenderContext& context_)
 			static_cast<int>(rectSize.y),
 			std::max(1, screenWidth),
 			std::max(1, screenHeight));
+		Shader* shader{ material->GetShader() };
+		if (nullptr == shader)
+		{
+			return;
+		}
 
-		context_.DrawMesh(*mesh, *material, worldTransform, color, true);
+		context_.UseProgram(shader);
+		context_.BindVertexBuffer(mesh->GetVertexBufferView(), mesh->GetVertexCount(), mesh->GetId());
+		if (mesh->HasIndexBuffer())
+		{
+			context_.BindElementBuffer(mesh->GetIndexBufferView(), mesh->GetIndexCount());
+		}
+		context_.BindMaterial(material, &color);
+		context_.SetModelMatrix(worldTransform);
+
+		if (mesh->HasIndexBuffer())
+		{
+			context_.DrawUIElements();
+		}
+		else
+		{
+			context_.DrawUIArrays();
+		}
 
 		return;
 	}
