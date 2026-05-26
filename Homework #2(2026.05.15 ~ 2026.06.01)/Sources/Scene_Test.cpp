@@ -5,6 +5,7 @@
 #include "Button.h"
 #include "Camera.h"
 #include "CameraController.h"
+#include "CubeCollider.h"
 #include "Font.h"
 #include "ImageView.h"
 #include "Light.h"
@@ -203,6 +204,7 @@ void Scene_Test::OnLoad()
 		MeshRenderer* meshRenderer{ meshObject.AddComponent<MeshRenderer>() };
 		meshRenderer->SetMesh(testMesh.get());
 		meshRenderer->SetMaterial(cubeMaterial.get());
+		meshObject.AddComponent<CubeCollider>();
 
 		PlayerController* playerController{ meshObject.AddComponent<PlayerController>() };
 		playerController->SetRotationSpeed(90.0f);
@@ -296,6 +298,7 @@ void Scene_Test::OnLoad()
 		GameObject& gameObject{ CreateGameObject(objectName.empty() ? "GameObject" : objectName) };
 		Transform* transform{ gameObject.AddComponent<Transform>() };
 		MeshRenderer* meshRenderer{ gameObject.AddComponent<MeshRenderer>() };
+		gameObject.AddComponent<CubeCollider>();
 
 		Mesh* selectedMesh{ testMesh.get() };
 		Material* selectedMaterial{ cubeMaterial.get() };
@@ -316,6 +319,7 @@ void Scene_Test::OnLoad()
 	GameObject& playerObject{ CreateGameObject("Player") };
 	Transform* playerTransform{ playerObject.AddComponent<Transform>() };
 	MeshRenderer* playerMeshRenderer{ playerObject.AddComponent<MeshRenderer>() };
+	playerObject.AddComponent<CubeCollider>();
 
 	playerMeshRenderer->SetMesh(playerMesh.get());
 	playerMeshRenderer->SetMaterial(playerMaterial.get());

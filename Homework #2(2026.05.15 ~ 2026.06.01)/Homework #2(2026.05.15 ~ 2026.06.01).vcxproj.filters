@@ -22,6 +22,9 @@
     <ClCompile Include="Sources\Camera.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Collider.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Transform.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -100,6 +103,9 @@
     <ClCompile Include="Sources\Button.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\CubeCollider.cpp">
+      <Filter>Sources Files\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Font.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -165,6 +171,9 @@
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Camera.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Collider.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\CameraClearMode.h">
@@ -242,9 +251,6 @@
     <ClInclude Include="Sources\CameraConstants.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\DrawCall.h">
-      <Filter>Sources Files\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Event.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
@@ -270,6 +276,9 @@
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Button.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CubeCollider.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Font.h">

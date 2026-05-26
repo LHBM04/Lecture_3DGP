@@ -4,8 +4,11 @@
 #include "Camera.h"
 #include "CameraConstants.h"
 #include "Light.h"
+#include "Material.h"
+#include "Mesh.h"
 #include "RendererOptions.h"
 #include "RootParameterSlot.h"
+#include "Shader.h"
 
 namespace
 {
@@ -128,6 +131,7 @@ void Renderer::Release()
 	drawCalls.clear();
 	visibleDrawCalls.clear();
 	batches.clear();
+	drawState = {};
 	isFullscreen = false;
 }
 
@@ -136,6 +140,7 @@ void Renderer::BeginRender()
 	drawCalls.clear();
 	visibleDrawCalls.clear();
 	batches.clear();
+	drawState = {};
 
 	currentBackBufferIndex = swapChain->GetCurrentBackBufferIndex();
 	currentFrameResourceIndex = currentBackBufferIndex;
@@ -267,14 +272,92 @@ void Renderer::SetLight(const Light* light_)
 	currentLightIntensity = light_->GetIntensity();
 }
 
-void Renderer::SubmitDrawCall(const DrawCall& drawCall_)
+void Renderer::UseProgram(Shader* shader_)
 {
-	if (!IsValidDrawCall(drawCall_))
+	if (nullptr == shader_)
 	{
 		return;
 	}
 
-	drawCalls.push_back(drawCall_);
+	drawState.pipelineState = shader_->GetPipelineState();
+	drawState.graphicsRootSignature = shader_->GetGraphicsRootSignature();
+	drawState.pipelineId = shader_->GetPipelineId();
+}
+
+void Renderer::BindVertexBuffer(
+	const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView_,
+	UINT vertexCount_,
+	uint64_t meshId_,
+	D3D12_PRIMITIVE_TOPOLOGY primitiveTopology_,
+	UINT firstVertex_)
+{
+	drawState.primitiveTopology = primitiveTopology_;
+	drawState.vertexBufferView = vertexBufferView_;
+	drawState.vertexCount = vertexCount_;
+	drawState.startVertexLocation = firstVertex_;
+	drawState.instanceCount = 1;
+	drawState.startInstanceLocation = 0;
+	drawState.meshId = meshId_;
+}
+
+void Renderer::BindElementBuffer(
+	const D3D12_INDEX_BUFFER_VIEW& indexBufferView_,
+	UINT indexCount_,
+	UINT firstIndex_,
+	INT baseVertexLocation_)
+{
+	drawState.indexBufferView = indexBufferView_;
+	drawState.indexCount = indexCount_;
+	drawState.startIndexLocation = firstIndex_;
+	drawState.baseVertexLocation = baseVertexLocation_;
+	drawState.hasIndexBuffer = 0 != indexBufferView_.BufferLocation;
+}
+
+void Renderer::BindMaterial(const Material* material_, const ColorRGBA* overrideColor_)
+{
+	if (nullptr == material_)
+	{
+		return;
+	}
+
+	drawState.materialDescriptorTable = material_->GetDescriptorTable();
+	drawState.materialColor = nullptr != overrideColor_ ? *overrideColor_ : material_->GetColor();
+	drawState.materialId = material_->GetId();
+}
+
+void Renderer::SetModelMatrix(const Matrix4x4& modelMatrix_)
+{
+	drawState.worldTransform = modelMatrix_;
+}
+
+void Renderer::DrawArrays()
+{
+	DrawCall drawCall{ drawState };
+	drawCall.indexed = false;
+	drawCall.hasIndexBuffer = false;
+	drawCall.indexCount = 0;
+	drawCall.startIndexLocation = 0;
+	drawCall.baseVertexLocation = 0;
+	drawCall.sortKey = BuildSortKey(drawCall);
+	if (!IsValidDrawCall(drawCall))
+	{
+		return;
+	}
+
+	drawCalls.push_back(drawCall);
+}
+
+void Renderer::DrawElements()
+{
+	DrawCall drawCall{ drawState };
+	drawCall.indexed = drawCall.hasIndexBuffer && drawCall.indexCount > 0;
+	drawCall.sortKey = BuildSortKey(drawCall);
+	if (!IsValidDrawCall(drawCall))
+	{
+		return;
+	}
+
+	drawCalls.push_back(drawCall);
 }
 
 void Renderer::Flush()
@@ -290,6 +373,7 @@ void Renderer::Flush()
 	drawCalls.clear();
 	visibleDrawCalls.clear();
 	batches.clear();
+	drawState = {};
 }
 
 ID3D12Device* Renderer::GetDevice() const noexcept
@@ -760,26 +844,26 @@ void Renderer::BuildBatches()
 	}
 }
 
-bool Renderer::CanBatchTogether(const DrawCall& a_, const DrawCall& b_) const noexcept
+bool Renderer::CanBatchTogether(const DrawCall& lhs_, const DrawCall& rhs_) const noexcept
 {
-	return a_.pipelineState == b_.pipelineState &&
-		a_.graphicsRootSignature == b_.graphicsRootSignature &&
-		a_.primitiveTopology == b_.primitiveTopology &&
-		a_.meshId == b_.meshId &&
-		a_.materialId == b_.materialId &&
-		a_.pipelineId == b_.pipelineId &&
-		a_.materialDescriptorTable.ptr == b_.materialDescriptorTable.ptr &&
-		a_.materialColor.x == b_.materialColor.x &&
-		a_.materialColor.y == b_.materialColor.y &&
-		a_.materialColor.z == b_.materialColor.z &&
-		a_.materialColor.w == b_.materialColor.w &&
-		a_.indexed == b_.indexed &&
-		a_.hasIndexBuffer == b_.hasIndexBuffer &&
-		a_.vertexCount == b_.vertexCount &&
-		a_.startVertexLocation == b_.startVertexLocation &&
-		a_.indexCount == b_.indexCount &&
-		a_.startIndexLocation == b_.startIndexLocation &&
-		a_.baseVertexLocation == b_.baseVertexLocation;
+	return lhs_.pipelineState == rhs_.pipelineState &&
+		   lhs_.graphicsRootSignature == rhs_.graphicsRootSignature &&
+		   lhs_.primitiveTopology == rhs_.primitiveTopology &&
+		   lhs_.meshId == rhs_.meshId &&
+		   lhs_.materialId == rhs_.materialId &&
+		   lhs_.pipelineId == rhs_.pipelineId &&
+		   lhs_.materialDescriptorTable.ptr == rhs_.materialDescriptorTable.ptr &&
+		   lhs_.materialColor.x == rhs_.materialColor.x &&
+		   lhs_.materialColor.y == rhs_.materialColor.y &&
+		   lhs_.materialColor.z == rhs_.materialColor.z &&
+		   lhs_.materialColor.w == rhs_.materialColor.w &&
+		   lhs_.indexed == rhs_.indexed &&
+		   lhs_.hasIndexBuffer == rhs_.hasIndexBuffer &&
+		   lhs_.vertexCount == rhs_.vertexCount &&
+		   lhs_.startVertexLocation == rhs_.startVertexLocation &&
+		   lhs_.indexCount == rhs_.indexCount &&
+		   lhs_.startIndexLocation == rhs_.startIndexLocation &&
+		   lhs_.baseVertexLocation == rhs_.baseVertexLocation;
 }
 
 void Renderer::ExecuteBatches()
@@ -820,10 +904,7 @@ void Renderer::ExecuteBatches()
 		}
 		else
 		{
-			if (drawCall.materialColor.x != currentMaterialColor.x ||
-				drawCall.materialColor.y != currentMaterialColor.y ||
-				drawCall.materialColor.z != currentMaterialColor.z ||
-				drawCall.materialColor.w != currentMaterialColor.w)
+			if (drawCall.materialColor != currentMaterialColor)
 			{
 				const D3D12_GPU_VIRTUAL_ADDRESS materialAddress{ UploadConstantData(&drawCall.materialColor, sizeof(ColorRGBA)) };
 				if (0 != materialAddress)

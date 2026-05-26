@@ -11,7 +11,10 @@
 #include "Vector2D.h"
 #include "Vector3D.h"
 
-Camera::Camera() noexcept = default;
+Camera::Camera() noexcept
+{
+	SetProjection(Projection::Persprective);
+}
 Camera::~Camera() noexcept = default;
 
 CameraProjection* Camera::GetProjection() noexcept
@@ -122,7 +125,23 @@ Matrix4x4 Camera::GetViewProjectionMatrix(float aspectRatio_) const
 
 Matrix4x4 Camera::GetProjectionMatrix(float aspectRatio_) const
 {
+	if (nullptr == projection)
+	{
+		return Matrix4x4::GetIdentity();
+	}
+
 	return projection->GetProjectionMatrix(aspectRatio_, nearPlane, farPlane);
+}
+
+void Camera::GetWorldFrustum(float aspectRatio_, DirectX::BoundingFrustum& outFrustum_) const
+{
+	const Matrix4x4 projectionMatrix{ GetProjectionMatrix(aspectRatio_) };
+
+	DirectX::BoundingFrustum localFrustum{};
+	DirectX::BoundingFrustum::CreateFromMatrix(localFrustum, Matrix4x4::Load(projectionMatrix), false);
+
+	const Matrix4x4 worldMatrix{ GetViewMatrix().GetInverse() };
+	localFrustum.Transform(outFrustum_, Matrix4x4::Load(worldMatrix));
 }
 
 void Camera::OnAttach()

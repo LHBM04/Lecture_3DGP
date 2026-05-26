@@ -10,7 +10,6 @@
 #include "Mesh.h"
 #include "RectTransform.h"
 #include "Renderer.h"
-#include "DrawCall.h"
 #include "Shader.h"
 
 namespace
@@ -73,12 +72,6 @@ namespace
 			left, top, 0.0f, 1.0f);
 	}
 
-	uint64_t BuildSortKey(uint64_t pipelineId_, uint64_t materialId_, uint64_t meshId_) noexcept
-	{
-		return ((pipelineId_ & 0xFFFFull) << 48) |
-			((materialId_ & 0xFFFFFFull) << 24) |
-			(meshId_ & 0xFFFFFFull);
-	}
 }
 
 const std::wstring& TextView::GetText() const noexcept
@@ -240,36 +233,30 @@ void TextView::OnRender()
 					continue;
 				}
 
-				DrawCall drawCall{};
-				drawCall.pipelineState = shader->GetPipelineState();
-				drawCall.graphicsRootSignature = shader->GetGraphicsRootSignature();
-				drawCall.primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-				drawCall.vertexBufferView = mesh->GetVertexBufferView();
-				drawCall.indexBufferView = mesh->GetIndexBufferView();
-				drawCall.hasIndexBuffer = mesh->HasIndexBuffer();
-				drawCall.indexed = mesh->HasIndexBuffer();
-				drawCall.materialDescriptorTable = material->GetDescriptorTable();
-				drawCall.materialColor = color;
-				drawCall.vertexCount = mesh->GetVertexCount();
-				drawCall.startVertexLocation = 0;
-				drawCall.indexCount = mesh->GetIndexCount();
-				drawCall.startIndexLocation = 0;
-				drawCall.baseVertexLocation = 0;
-				drawCall.instanceCount = 1;
-				drawCall.startInstanceLocation = 0;
-				drawCall.pipelineId = shader->GetPipelineId();
-				drawCall.materialId = material->GetId();
-				drawCall.meshId = mesh->GetId();
-				drawCall.worldTransform = BuildClipSpaceRectMatrix(
+				const Matrix4x4 worldTransform = BuildClipSpaceRectMatrix(
 					cursorX + (column * pixelScale),
 					cursorY + (row * pixelScale),
 					pixelScale,
 					pixelScale,
 					std::max(1, screenWidth),
 					std::max(1, screenHeight));
-				drawCall.sortKey = BuildSortKey(drawCall.pipelineId, drawCall.materialId, drawCall.meshId);
 
-				renderer.SubmitDrawCall(drawCall);
+				renderer.UseProgram(shader);
+				renderer.BindVertexBuffer(mesh->GetVertexBufferView(), mesh->GetVertexCount(), mesh->GetId());
+				if (mesh->HasIndexBuffer())
+				{
+					renderer.BindElementBuffer(mesh->GetIndexBufferView(), mesh->GetIndexCount());
+				}
+				renderer.BindMaterial(material, &color);
+				renderer.SetModelMatrix(worldTransform);
+				if (mesh->HasIndexBuffer())
+				{
+					renderer.DrawElements();
+				}
+				else
+				{
+					renderer.DrawArrays();
+				}
 			}
 		}
 

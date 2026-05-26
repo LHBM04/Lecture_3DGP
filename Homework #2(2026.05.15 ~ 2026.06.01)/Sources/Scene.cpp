@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Camera.h"
+#include "Collider.h"
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Light.h"
@@ -102,12 +103,28 @@ void Scene::Render()
 			renderer.SetLight(lights.front());
 		}
 
+		const int renderWidth{ std::max(1, renderer.GetWidth()) };
+		const int renderHeight{ std::max(1, renderer.GetHeight()) };
+		const float aspectRatio{ static_cast<float>(renderWidth) / static_cast<float>(renderHeight) };
+		DirectX::BoundingFrustum cameraFrustum{};
+		camera->GetWorldFrustum(aspectRatio, cameraFrustum);
+
 		for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 		{
-			if (gameObject->IsActive())
+			if (!gameObject->IsActive())
 			{
-				gameObject->Render();
+				continue;
 			}
+
+			if (const Collider* collider{ gameObject->GetComponentInDerived<Collider>() })
+			{
+				if (!collider->Intersects(cameraFrustum))
+				{
+					continue;
+				}
+			}
+
+			gameObject->Render();
 		}
 
 		renderer.Flush();

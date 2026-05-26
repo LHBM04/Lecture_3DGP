@@ -22,12 +22,14 @@
     <ClCompile Include="Sources\Application.cpp" />
     <ClCompile Include="Sources\CameraController.cpp" />
     <ClCompile Include="Sources\Camera.cpp" />
+    <ClCompile Include="Sources\Collider.cpp" />
     <ClCompile Include="Sources\CameraProjection_Orthographic.cpp" />
     <ClCompile Include="Sources\CameraProjection_Perspective.cpp" />
     <ClCompile Include="Sources\ColorRGB.cpp" />
     <ClCompile Include="Sources\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Component.cpp" />
     <ClCompile Include="Sources\Button.cpp" />
+    <ClCompile Include="Sources\CubeCollider.cpp" />
     <ClCompile Include="Sources\Font.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\ImageView.cpp" />
@@ -76,10 +78,11 @@
     <ClInclude Include="Sources\CameraProjection_Perspective.h" />
     <ClInclude Include="Sources\ColorRGB.h" />
     <ClInclude Include="Sources\ColorRGBA.h" />
+    <ClInclude Include="Sources\Collider.h" />
     <ClInclude Include="Sources\Component.h" />
     <ClInclude Include="Sources\Button.h" />
+    <ClInclude Include="Sources\CubeCollider.h" />
     <ClInclude Include="Sources\Font.h" />
-    <ClInclude Include="Sources\DrawCall.h" />
     <ClInclude Include="Sources\Event.h" />
     <ClInclude Include="Sources\GameObject.h" />
     <ClInclude Include="Sources\ImageView.h" />

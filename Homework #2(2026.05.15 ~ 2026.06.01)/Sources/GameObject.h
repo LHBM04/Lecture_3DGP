@@ -45,6 +45,12 @@ public:
 	template <std::derived_from<Component> TComponent>
 	const TComponent* GetComponent() const noexcept;
 
+	template <std::derived_from<Component> TComponent>
+	TComponent* GetComponentInDerived() noexcept;
+
+	template <std::derived_from<Component> TComponent>
+	const TComponent* GetComponentInDerived() const noexcept;
+
 	void Update();
 	void Render();
 
@@ -88,5 +94,33 @@ inline const TComponent* GameObject::GetComponent() const noexcept
 {
 	const std::type_index index{ typeid(TComponent) };
 	const auto iterator{ components.find(index) };
-	return iterator != components.end() ? static_cast<TComponent*>(iterator->second.get()) : nullptr;
+	return iterator != components.end() ? static_cast<const TComponent*>(iterator->second.get()) : nullptr;
+}
+
+template <std::derived_from<Component> TComponent>
+inline TComponent* GameObject::GetComponentInDerived() noexcept
+{
+	for (const std::unique_ptr<Component>& component : components | std::views::values)
+	{
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) })
+		{
+			return casted;
+		}
+	}
+
+	return nullptr;
+}
+
+template <std::derived_from<Component> TComponent>
+inline const TComponent* GameObject::GetComponentInDerived() const noexcept
+{
+	for (const std::unique_ptr<Component>& component : components | std::views::values)
+	{
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) })
+		{
+			return casted;
+		}
+	}
+
+	return nullptr;
 }

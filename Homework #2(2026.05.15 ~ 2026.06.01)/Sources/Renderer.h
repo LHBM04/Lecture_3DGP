@@ -5,7 +5,7 @@
 #include "CameraClearMode.h"
 #include "ColorRGB.h"
 #include "ColorRGBA.h"
-#include "DrawCall.h"
+#include "Matrix4x4.h"
 #include "System.h"
 #include "Vector3D.h"
 
@@ -53,7 +53,22 @@ public:
 	void SetCamera(const Camera* camera_);
 	void SetLight(const Light* light_);
 
-	void SubmitDrawCall(const DrawCall& drawCall_);
+	void UseProgram(Shader* shader_);
+	void BindVertexBuffer(
+		const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView_,
+		UINT vertexCount_,
+		uint64_t meshId_,
+		D3D12_PRIMITIVE_TOPOLOGY primitiveTopology_ = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		UINT firstVertex_ = 0);
+	void BindElementBuffer(
+		const D3D12_INDEX_BUFFER_VIEW& indexBufferView_,
+		UINT indexCount_,
+		UINT firstIndex_ = 0,
+		INT baseVertexLocation_ = 0);
+	void BindMaterial(const Material* material_, const ColorRGBA* overrideColor_ = nullptr);
+	void SetModelMatrix(const Matrix4x4& modelMatrix_);
+	void DrawArrays();
+	void DrawElements();
 
 	void Flush();
 	void WaitForFrames();
@@ -66,6 +81,41 @@ public:
 	[[nodiscard]] int GetHeight() const noexcept;
 
 private:
+	struct DrawCall final
+	{
+		ID3D12PipelineState* pipelineState{ nullptr };
+		ID3D12RootSignature* graphicsRootSignature{ nullptr };
+
+		D3D12_PRIMITIVE_TOPOLOGY primitiveTopology{ D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST };
+
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+
+		bool hasIndexBuffer{ false };
+		bool indexed{ false };
+
+		D3D12_GPU_DESCRIPTOR_HANDLE materialDescriptorTable{};
+		ColorRGBA materialColor{ ColorRGBA::GetWhite() };
+
+		UINT vertexCount{ 0 };
+		UINT startVertexLocation{ 0 };
+
+		UINT indexCount{ 0 };
+		UINT startIndexLocation{ 0 };
+		INT baseVertexLocation{ 0 };
+
+		UINT instanceCount{ 1 };
+		UINT startInstanceLocation{ 0 };
+
+		uint64_t pipelineId{ 0 };
+		uint64_t materialId{ 0 };
+		uint64_t meshId{ 0 };
+
+		Matrix4x4 worldTransform{ Matrix4x4::GetIdentity() };
+
+		uint64_t sortKey{ 0 };
+	};
+
 	struct BackBuffer final
 	{
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
@@ -189,4 +239,5 @@ private:
 	std::vector<DrawCall> drawCalls;
 	std::vector<DrawCall> visibleDrawCalls;
 	std::vector<Batch> batches;
+	DrawCall drawState{};
 };

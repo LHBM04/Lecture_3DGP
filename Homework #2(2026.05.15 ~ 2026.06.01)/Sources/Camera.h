@@ -9,6 +9,10 @@
 #include <memory>
 
 class CameraProjection;
+namespace DirectX
+{
+	struct BoundingFrustum;
+}
 
 class Camera : public Component
 {
@@ -45,6 +49,7 @@ public:
 	[[nodiscard]] Matrix4x4 GetViewProjectionMatrix(float aspectRatio_) const;
 
 	[[nodiscard]] Matrix4x4 GetProjectionMatrix(float aspectRatio_) const;
+	void GetWorldFrustum(float aspectRatio_, DirectX::BoundingFrustum& outFrustum_) const;
 
 protected:
 	virtual void OnAttach() override;
