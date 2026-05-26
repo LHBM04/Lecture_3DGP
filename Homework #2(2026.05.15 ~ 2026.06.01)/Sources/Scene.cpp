@@ -5,13 +5,13 @@
 #include "Collider.h"
 #include "CubeCollider.h"
 #include "GameObject.h"
-#include "InputManager.h"
+#include "InputSystem.h"
 #include "Light.h"
 #include "Logger.h"
 #include "MeshRenderer.h"
 #include "InputContext.h"
 #include "RenderContext.h"
-#include "ResourceManager.h"
+#include "ResourceSystem.h"
 #include "SceneContext.h"
 #include "Transform.h"
 
@@ -114,6 +114,8 @@ void Scene::FixedUpdate(const TimeContext& context_)
 
 void Scene::Render(RenderContext& context_)
 {
+	InputSystem* inputSystem{ nullptr != context ? context->GetInputSystem() : nullptr };
+
 	for (Camera* camera : cameras)
 	{
 		context_.SetCamera(camera);
@@ -123,7 +125,11 @@ void Scene::Render(RenderContext& context_)
 			context_.SetLight(lights.front());
 		}
 
-		const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
+		if (nullptr == inputSystem)
+		{
+			continue;
+		}
+		const auto [screenWidth, screenHeight]{ inputSystem->GetScreenSize() };
 		const int renderWidth{ std::max(1, screenWidth) };
 		const int renderHeight{ std::max(1, screenHeight) };
 		const float aspectRatio{ static_cast<float>(renderWidth) / static_cast<float>(renderHeight) };
@@ -228,7 +234,8 @@ void Scene::CollectSceneTransitionRequests()
 
 void Scene::PickAtMouse()
 {
-	if (cameras.empty() || !InputManager::IsButtonPressed(ButtonCode::Left))
+	InputSystem* inputSystem{ nullptr != context ? context->GetInputSystem() : nullptr };
+	if (nullptr == inputSystem || cameras.empty() || !inputSystem->IsButtonPressed(ButtonCode::Left))
 	{
 		return;
 	}
@@ -245,10 +252,10 @@ void Scene::PickAtMouse()
 		return;
 	}
 
-	const auto [inputWidth, inputHeight]{ InputManager::GetScreenSize() };
+	const auto [inputWidth, inputHeight]{ inputSystem->GetScreenSize() };
 	const int screenWidth{ std::max(1, inputWidth) };
 	const int screenHeight{ std::max(1, inputHeight) };
-	const auto [mouseX, mouseY]{ InputManager::GetMousePosition() };
+	const auto [mouseX, mouseY]{ inputSystem->GetMousePosition() };
 
 	const float px{ (static_cast<float>(mouseX) / static_cast<float>(screenWidth)) * 2.0f - 1.0f };
 	const float py{ 1.0f - (static_cast<float>(mouseY) / static_cast<float>(screenHeight)) * 2.0f };

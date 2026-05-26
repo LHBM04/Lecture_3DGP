@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputManager.h"
+#include "InputSystem.h"
 #include "InputPhase.h"
 
 class InputContext final

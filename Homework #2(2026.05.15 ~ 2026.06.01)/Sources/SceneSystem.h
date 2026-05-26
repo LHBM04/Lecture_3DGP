@@ -5,7 +5,9 @@
 #include "System.h"
 
 class InputContext;
+class InputSystem;
 class RenderContext;
+struct ID3D12Device;
 struct TimeContext;
 
 struct SceneBuildEntry final
@@ -20,18 +22,19 @@ struct SceneOptions final
 	std::size_t startIndex{ 0 };
 };
 
-class SceneSystem : public System<SceneOptions>
+class SceneSystem : public System
 {
 public:
 	~SceneSystem() noexcept override;
 
-	bool Initialize(const SceneOptions& options_) override;
+	bool Initialize(const SceneOptions& options_);
 	void Release() override;
 
 	void Update(const TimeContext& context_);
 	void FixedUpdate(const TimeContext& context_);
 	void Render(RenderContext& context_);
 	void DispatchInput(const InputContext& context_);
+	void ConfigureContext(InputSystem* inputSystem_, ID3D12Device* device_) noexcept;
 
 	template <std::derived_from<Scene> TScene>
 	void AddScene(std::wstring name_);

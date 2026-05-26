@@ -6,9 +6,8 @@ RenderSystem::~RenderSystem() noexcept
 	Release();
 }
 
-bool RenderSystem::Initialize(const RendererOptions& options_)
+bool RenderSystem::Initialize()
 {
-	(void)options_;
 	CreateDevice();
 	CreateCommandQueue();
 	CreateFence();

@@ -1,12 +1,21 @@
 #include "Precompiled.h"
 #include "Shader.h"
 
-#include "Application.h"
-#include "Renderer.h"
+ID3D12Device* Shader::defaultDevice{ nullptr };
+
+void Shader::SetDefaultDevice(ID3D12Device* device_) noexcept
+{
+	defaultDevice = device_;
+}
+
+ID3D12Device* Shader::GetDefaultDevice() noexcept
+{
+	return defaultDevice;
+}
 
 bool Shader::Load(const std::filesystem::path& path_)
 {
-	return LoadFromFile(Application::GetRenderer().GetDevice(), path_);
+	return LoadFromFile(defaultDevice, path_);
 }
 
 void Shader::Unload()

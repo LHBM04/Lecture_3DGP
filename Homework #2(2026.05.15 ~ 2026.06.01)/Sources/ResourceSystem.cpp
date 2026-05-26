@@ -1,17 +1,18 @@
 #include "Precompiled.h"
-#include "ResourceManager.h"
+#include "ResourceSystem.h"
 
-namespace
+bool ResourceSystem::Initialize(const ResourceOptions& options_)
 {
-	ResourceManager::ResourceStorage resources;
+	(void)options_;
+	return true;
 }
 
-ResourceManager::ResourceStorage& ResourceManager::GetStorage() noexcept
+void ResourceSystem::Release()
 {
-	return resources;
+	Clear();
 }
 
-Resource* ResourceManager::GetResource(const std::filesystem::path& path_)
+Resource* ResourceSystem::GetResource(const std::filesystem::path& path_) const
 {
 	auto iterator{ resources.find(path_) };
 	if (resources.end() == iterator)
@@ -22,7 +23,7 @@ Resource* ResourceManager::GetResource(const std::filesystem::path& path_)
 	return iterator->second.get();
 }
 
-void ResourceManager::UnloadResource(const std::filesystem::path& path_)
+void ResourceSystem::UnloadResource(const std::filesystem::path& path_)
 {
 	auto iterator{ resources.find(path_) };
 	if (resources.end() == iterator)
@@ -38,7 +39,7 @@ void ResourceManager::UnloadResource(const std::filesystem::path& path_)
 	resources.erase(iterator);
 }
 
-void ResourceManager::Clear()
+void ResourceSystem::Clear()
 {
 	for (auto& [path, resource] : resources)
 	{

@@ -21,3 +21,23 @@ void SceneContext::ClearSceneChangeRequest() noexcept
 {
 	requestedSceneName.reset();
 }
+
+void SceneContext::SetInputSystem(InputSystem* inputSystem_) noexcept
+{
+	inputSystem = inputSystem_;
+}
+
+InputSystem* SceneContext::GetInputSystem() const noexcept
+{
+	return inputSystem;
+}
+
+void SceneContext::SetDevice(ID3D12Device* device_) noexcept
+{
+	device = device_;
+}
+
+ID3D12Device* SceneContext::GetDevice() const noexcept
+{
+	return device;
+}

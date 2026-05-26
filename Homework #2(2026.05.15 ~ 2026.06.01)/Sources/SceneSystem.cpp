@@ -116,6 +116,12 @@ void SceneSystem::DispatchInput(const InputContext& context_)
 	}
 }
 
+void SceneSystem::ConfigureContext(InputSystem* inputSystem_, ID3D12Device* device_) noexcept
+{
+	sceneContext.SetInputSystem(inputSystem_);
+	sceneContext.SetDevice(device_);
+}
+
 void SceneSystem::LoadScene(std::size_t index_)
 {
 	if (index_ >= scenes.size())

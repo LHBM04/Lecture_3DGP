@@ -3,12 +3,14 @@
 
 #include "GameObject.h"
 #include "Font.h"
-#include "InputManager.h"
+#include "InputSystem.h"
 #include "Logger.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "RectTransform.h"
 #include "RenderContext.h"
+#include "Scene.h"
+#include "SceneContext.h"
 #include "Shader.h"
 
 namespace
@@ -215,7 +217,16 @@ void TextView::RebuildMeshIfDirty(RectTransform& rectTransform_)
 		return;
 	}
 
-	const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
+	GameObject* owner{ GetOwner() };
+	Scene* scene{ nullptr != owner ? owner->GetCurrentScene() : nullptr };
+	SceneContext* sceneContext{ nullptr != scene ? scene->GetSceneContext() : nullptr };
+	InputSystem* inputSystem{ nullptr != sceneContext ? sceneContext->GetInputSystem() : nullptr };
+	if (nullptr == inputSystem)
+	{
+		return;
+	}
+
+	const auto [screenWidth, screenHeight]{ inputSystem->GetScreenSize() };
 	const Vector2D anchoredPosition{ rectTransform_.GetAnchoredPosition() };
 	const Vector2D pivot{ rectTransform_.GetPivot() };
 	const Vector2D size{ rectTransform_.GetSize() };

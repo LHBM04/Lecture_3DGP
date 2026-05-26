@@ -29,10 +29,11 @@ INT APIENTRY WinMain(
 	options.borderless = false;
 	options.resizable = false;
 
-	if (!Application::Initialize(options))
+	Application app{};
+	if (!app.Initialize(options))
 	{
 		return -1;
 	}
 
-	return Application::Run();
+	return app.Run();
 }

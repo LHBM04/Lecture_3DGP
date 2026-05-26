@@ -1,7 +1,10 @@
 #include "Precompiled.h"
 #include "RectTransform.h"
 
-#include "InputManager.h"
+#include "GameObject.h"
+#include "InputSystem.h"
+#include "Scene.h"
+#include "SceneContext.h"
 #include "TimeContext.h"
 
 const Vector2D& RectTransform::GetAnchoredPosition() const noexcept
@@ -38,7 +41,16 @@ void RectTransform::SetPivot(const Vector2D& pivot_) noexcept
 
 bool RectTransform::ContainsScreenPoint(int x_, int y_) const noexcept
 {
-	const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
+	const GameObject* owner{ GetOwner() };
+	const Scene* scene{ nullptr != owner ? owner->GetCurrentScene() : nullptr };
+	const SceneContext* sceneContext{ nullptr != scene ? scene->GetSceneContext() : nullptr };
+	const InputSystem* inputSystem{ nullptr != sceneContext ? sceneContext->GetInputSystem() : nullptr };
+	if (nullptr == inputSystem)
+	{
+		return false;
+	}
+
+	const auto [screenWidth, screenHeight]{ inputSystem->GetScreenSize() };
 
 	const float centerX{ screenWidth * 0.5f + anchoredPosition.x };
 	const float centerY{ screenHeight * 0.5f - anchoredPosition.y };

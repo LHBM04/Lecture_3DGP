@@ -33,7 +33,7 @@
     <ClCompile Include="Sources\Font.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\ImageView.cpp" />
-    <ClCompile Include="Sources\InputManager.cpp" />
+    <ClCompile Include="Sources\InputSystem.cpp" />
     <ClCompile Include="Sources\Light.cpp" />
     <ClCompile Include="Sources\Logger.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
@@ -54,10 +54,9 @@
     <ClCompile Include="Sources\RenderSystem.cpp" />
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\Resource.cpp" />
-    <ClCompile Include="Sources\ResourceManager.cpp" />
+    <ClCompile Include="Sources\ResourceSystem.cpp" />
     <ClCompile Include="Sources\SceneContext.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
-    <ClCompile Include="Sources\SceneManager.cpp" />
     <ClCompile Include="Sources\SceneSystem.cpp" />
     <ClCompile Include="Sources\ScenePortal.cpp" />
     <ClCompile Include="Sources\Scene_Test.cpp" />
@@ -91,7 +90,7 @@
     <ClInclude Include="Sources\Event.h" />
     <ClInclude Include="Sources\GameObject.h" />
     <ClInclude Include="Sources\ImageView.h" />
-    <ClInclude Include="Sources\InputManager.h" />
+    <ClInclude Include="Sources\InputSystem.h" />
     <ClInclude Include="Sources\Light.h" />
     <ClInclude Include="Sources\Logger.h" />
     <ClInclude Include="Sources\Material.h" />
@@ -112,7 +111,7 @@
     <ClInclude Include="Sources\Renderable.h" />
     <ClInclude Include="Sources\RenderableUI.h" />
     <ClInclude Include="Sources\Resource.h" />
-    <ClInclude Include="Sources\ResourceManager.h" />
+    <ClInclude Include="Sources\ResourceSystem.h" />
     <ClInclude Include="Sources\RootParameterSlot.h" />
     <ClInclude Include="Sources\RendererOptions.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
@@ -122,11 +121,11 @@
     <ClInclude Include="Sources\Scene_Title.h" />
     <ClInclude Include="Sources\System.h" />
     <ClInclude Include="Sources\Scene.h" />
-    <ClInclude Include="Sources\SceneManager.h" />
     <ClInclude Include="Sources\Scene_Test.h" />
     <ClInclude Include="Sources\Shader.h" />
     <ClInclude Include="Sources\Singleton.h" />
     <ClInclude Include="Sources\TextView.h" />
+    <ClInclude Include="Sources\TimeContext.h" />
     <ClInclude Include="Sources\Timer.h" />
     <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\Updatable.h" />

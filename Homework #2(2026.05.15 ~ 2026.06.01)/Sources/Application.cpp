@@ -1,156 +1,119 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Application.h"
 
 #include "InputContext.h"
 #include "InputPhase.h"
-#include "InputManager.h"
+#include "Mesh.h"
 #include "Scene_Test.h"
 #include "Scene_Title.h"
-#include "SceneManager.h"
-#include "SceneSystem.h"
+#include "Shader.h"
 #include "TimeContext.h"
 #include "Timer.h"
 
 #define SCENE_ENTRY(SceneType, SceneName) \
-    SceneBuildEntry{ SceneName, []() -> std::unique_ptr<Scene> { return std::make_unique<SceneType>(); } }
+	SceneBuildEntry{ SceneName, []() -> std::unique_ptr<Scene> { return std::make_unique<SceneType>(); } }
 
 namespace
 {
 	constexpr int MaxFixedUpdatesPerFrame{ 5 };
+}
 
-	bool isRunning;
-	bool isInitialized;
+Application::Application() noexcept
+	: isRunning{ false }
+	, isInitialized{ false }
+	, fixedUpdateAccumulator{ 0.0f }
+	, mainRenderTarget{}
+{
+}
 
-	WindowSystem windowSystem;
-	RenderSystem renderSystem;
-	SceneSystem sceneSystem;
-	RenderTargetHandle mainRenderTarget{};
-
-	float fixedUpdateAccumulator{ 0.0f };
-
-	void DispatchKeyboardInput(SceneSystem& sceneSystem_)
-	{
-		const auto dispatchKey =
-			[&sceneSystem_](KeyCode key_)
-			{
-				if (InputManager::IsKeyPressed(key_))
-				{
-					sceneSystem_.DispatchInput(InputContext{ key_, InputPhase::Started });
-				}
-
-				if (InputManager::IsKeyDown(key_))
-				{
-					sceneSystem_.DispatchInput(InputContext{ key_, InputPhase::Performed });
-				}
-
-				if (InputManager::IsKeyReleased(key_))
-				{
-					sceneSystem_.DispatchInput(InputContext{ key_, InputPhase::Canceled });
-				}
-			};
-
-		dispatchKey(KeyCode::W);
-		dispatchKey(KeyCode::A);
-		dispatchKey(KeyCode::S);
-		dispatchKey(KeyCode::D);
-
-		dispatchKey(KeyCode::Up);
-		dispatchKey(KeyCode::Left);
-		dispatchKey(KeyCode::Down);
-		dispatchKey(KeyCode::Right);
-
-		dispatchKey(KeyCode::Space);
-		dispatchKey(KeyCode::Shift);
-		dispatchKey(KeyCode::Escape);
-	}
-
-	void ShutdownSystems() noexcept
-	{
-		if (!isInitialized)
-		{
-			return;
-		}
-
-		if (Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
-		{
-			renderer->WaitForFrames();
-		}
-
-		sceneSystem.Release();
-		renderSystem.DestroyRenderer(mainRenderTarget);
-		mainRenderTarget = {};
-		renderSystem.Release();
-
-		windowSystem.Release();
-
-		isInitialized = false;
-	}
+Application::~Application() noexcept
+{
+	ShutdownSystems();
 }
 
 bool Application::Initialize(const ApplicationOptions& options_)
 {
-	// 창 생성 및 초기화.
+	WindowSystem& windowSystem{ AddSystem<WindowSystem>() };
+	RenderSystem& renderSystem{ AddSystem<RenderSystem>() };
+	SceneSystem& sceneSystem{ AddSystem<SceneSystem>() };
+	InputSystem& inputSystem{ AddSystem<InputSystem>() };
+	ResourceSystem& resourceSystem{ AddSystem<ResourceSystem>() };
+
+	DWORD style{ WS_OVERLAPPEDWINDOW };
+	if (options_.borderless)
 	{
-		DWORD style{ WS_OVERLAPPEDWINDOW };
-		if (options_.borderless)
-		{
-			style = WS_POPUP;
-		}
-		else if (!options_.resizable)
-		{
-			style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-		}
-
-		WindowOptions options{};
-		options.title = options_.title;
-		options.x = 0;
-		options.y = 0;
-		options.width = options_.width;
-		options.height = options_.height;
-		options.style = style;
-		options.styleEx = WS_EX_APPWINDOW;
-
-		if (!windowSystem.Initialize(options))
-		{
-			ShutdownSystems();
-			return false;
-		}
-
-		windowSystem.GetMainWindow().Show();
+		style = WS_POPUP;
+	}
+	else if (!options_.resizable)
+	{
+		style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
 	}
 
-	// 렌더러 생성 및 초기화.
+	WindowOptions windowOptions{};
+	windowOptions.title = options_.title;
+	windowOptions.x = 0;
+	windowOptions.y = 0;
+	windowOptions.width = options_.width;
+	windowOptions.height = options_.height;
+	windowOptions.style = style;
+	windowOptions.styleEx = WS_EX_APPWINDOW;
+
+	if (!windowSystem.Initialize(windowOptions))
 	{
-		Window& mainWindow{ windowSystem.GetMainWindow() };
+		ShutdownSystems();
+		return false;
+	}
+	windowSystem.GetMainWindow().Show();
 
-		RendererOptions options{};
-		options.window = mainWindow.GetHandle();
-		options.width = mainWindow.GetWidth();
-		options.height = mainWindow.GetHeight();
-		options.enableTripleBuffering = false;
-		options.vSync = true;
-		options.fullscreen = options_.fullscreen;
+	RendererOptions rendererOptions{};
+	rendererOptions.window = windowSystem.GetMainWindow().GetHandle();
+	rendererOptions.width = windowSystem.GetMainWindow().GetWidth();
+	rendererOptions.height = windowSystem.GetMainWindow().GetHeight();
+	rendererOptions.enableTripleBuffering = false;
+	rendererOptions.vSync = true;
+	rendererOptions.fullscreen = options_.fullscreen;
 
-		if (!renderSystem.Initialize(options))
-		{
-			ShutdownSystems();
-			return false;
-		}
-
-		mainRenderTarget = renderSystem.CreateRenderer(mainWindow, options);
-		if (!mainRenderTarget.IsValid())
-		{
-			ShutdownSystems();
-			return false;
-		}
+	if (!renderSystem.Initialize())
+	{
+		ShutdownSystems();
+		return false;
 	}
 
-	InputManager::Reset();
-	Window& mainWindow{ windowSystem.GetMainWindow() };
-	InputManager::SetScreenSize(mainWindow.GetWidth(), mainWindow.GetHeight());
+	mainRenderTarget = renderSystem.CreateRenderer(windowSystem.GetMainWindow(), rendererOptions);
+	if (!mainRenderTarget.IsValid())
+	{
+		ShutdownSystems();
+		return false;
+	}
+
+	Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
+	if (nullptr == renderer)
+	{
+		ShutdownSystems();
+		return false;
+	}
+	Mesh::SetDefaultDevice(renderer->GetDevice());
+	Shader::SetDefaultDevice(renderer->GetDevice());
+
+	InputOptions inputOptions{};
+	inputOptions.screenWidth = windowSystem.GetMainWindow().GetWidth();
+	inputOptions.screenHeight = windowSystem.GetMainWindow().GetHeight();
+	if (!inputSystem.Initialize(inputOptions))
+	{
+		ShutdownSystems();
+		return false;
+	}
+
+	ResourceOptions resourceOptions{};
+	if (!resourceSystem.Initialize(resourceOptions))
+	{
+		ShutdownSystems();
+		return false;
+	}
+
 	Timer::Reset();
 
-	SceneOptions options{
+	SceneOptions sceneOptions{
 		.scenes =
 		{
 			SCENE_ENTRY(Scene_Test,  L"Title"),
@@ -158,41 +121,52 @@ bool Application::Initialize(const ApplicationOptions& options_)
 		},
 		.startIndex = 0
 	};
-
-	sceneSystem.Initialize(options);
+	if (!sceneSystem.Initialize(sceneOptions))
+	{
+		ShutdownSystems();
+		return false;
+	}
+	sceneSystem.ConfigureContext(&inputSystem, renderer->GetDevice());
 
 	isInitialized = true;
 	isRunning = false;
-	
 	return true;
 }
 
 int Application::Run()
 {
+	WindowSystem& windowSystem{ GetSystemRef<WindowSystem>() };
+	RenderSystem& renderSystem{ GetSystemRef<RenderSystem>() };
+	SceneSystem& sceneSystem{ GetSystemRef<SceneSystem>() };
+	InputSystem& inputSystem{ GetSystemRef<InputSystem>() };
+
 	isRunning = true;
 	fixedUpdateAccumulator = 0.0f;
-	Window& mainWindow{ windowSystem.GetMainWindow() };
 
-	Event event;
+	Event event{};
 	while (isRunning)
 	{
 		Timer::Tick();
-		InputManager::Update();
+		inputSystem.Update();
+
+		Window& mainWindow{ windowSystem.GetMainWindow() };
+		Renderer* mainRenderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
+		if (nullptr == mainRenderer)
+		{
+			break;
+		}
 
 		while (mainWindow.PollEvent(event))
 		{
 			switch (event.type)
 			{
 			case Event::Type::WindowResize:
-				renderSystem.OnWindowResize(mainWindow.GetHandle(), event.resize.width, event.resize.height);
-				InputManager::SetScreenSize(event.resize.width, event.resize.height);
+				mainRenderer->Resize(event.resize.width, event.resize.height);
+				inputSystem.SetScreenSize(event.resize.width, event.resize.height);
 				break;
 			case Event::Type::WindowFullscreenToggle:
-				renderSystem.OnWindowFullscreenToggle(mainWindow.GetHandle());
-				if (Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
-				{
-					InputManager::SetScreenSize(renderer->GetWidth(), renderer->GetHeight());
-				}
+				mainRenderer->ToggleFullscreen();
+				inputSystem.SetScreenSize(mainRenderer->GetWidth(), mainRenderer->GetHeight());
 				break;
 			case Event::Type::WindowClose:
 				isRunning = false;
@@ -201,8 +175,10 @@ int Application::Run()
 				break;
 			}
 
-			InputManager::ProcessEvent(event);
+			inputSystem.ProcessEvent(event);
 		}
+
+		DispatchKeyboardInput();
 
 		TimeContext timeContext{};
 		timeContext.timeScale = Timer::GetTimeScale();
@@ -213,7 +189,6 @@ int Application::Run()
 		timeContext.totalTime = Timer::GetTotalTime();
 		timeContext.unscaledTotalTime = Timer::GetUnscaledTime();
 		timeContext.fps = Timer::GetFps();
-		DispatchKeyboardInput(sceneSystem);
 
 		sceneSystem.Update(timeContext);
 
@@ -221,7 +196,9 @@ int Application::Run()
 		const float fixedStep{ timeContext.unscaledFixedDeltaTime };
 		int fixedUpdateCount{ 0 };
 
-		while (fixedStep > 0.0f && fixedUpdateAccumulator >= fixedStep && fixedUpdateCount < MaxFixedUpdatesPerFrame)
+		while (fixedStep > 0.0f &&
+			fixedUpdateAccumulator >= fixedStep &&
+			fixedUpdateCount < MaxFixedUpdatesPerFrame)
 		{
 			sceneSystem.FixedUpdate(timeContext);
 			fixedUpdateAccumulator -= fixedStep;
@@ -233,42 +210,95 @@ int Application::Run()
 			fixedUpdateAccumulator = 0.0f;
 		}
 
-		Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
-		if (nullptr == renderer)
-		{
-			break;
-		}
-
-		renderer->BeginRender();
-		RenderContext& context{ renderer->GetContext() };
-		sceneSystem.Render(context);
-		renderer->Flush();
-		renderer->EndRender();
+		mainRenderer->BeginRender();
+		RenderContext& renderContext{ mainRenderer->GetContext() };
+		renderContext.Clear();
+		sceneSystem.Render(renderContext);
+		mainRenderer->Flush();
+		mainRenderer->EndRender();
 	}
 
 	ShutdownSystems();
-
 	return 0;
 }
 
-void Application::Quit()
+void Application::Quit() noexcept
 {
 	isRunning = false;
 }
 
-Window& Application::GetWindow()
+void Application::ShutdownSystems() noexcept
 {
-	return windowSystem.GetMainWindow();
+	if (!isInitialized)
+	{
+		return;
+	}
+
+	RenderSystem& renderSystem{ GetSystemRef<RenderSystem>() };
+	if (Renderer* mainRenderer{ renderSystem.GetRenderTarget(mainRenderTarget) })
+	{
+		mainRenderer->WaitForFrames();
+	}
+
+	ReleaseSystemsInReverseOrder();
+	Mesh::SetDefaultDevice(nullptr);
+	Shader::SetDefaultDevice(nullptr);
+
+	mainRenderTarget = {};
+	isInitialized = false;
+	isRunning = false;
 }
 
-Renderer& Application::GetRenderer()
+void Application::DispatchKeyboardInput() noexcept
 {
-	Renderer* renderer{ renderSystem.GetRenderTarget(mainRenderTarget) };
-	assert(renderer);
-	return *renderer;
+	SceneSystem& sceneSystem{ GetSystemRef<SceneSystem>() };
+	InputSystem& inputSystem{ GetSystemRef<InputSystem>() };
+
+	const auto dispatchKey =
+		[&sceneSystem, &inputSystem](const KeyCode key_)
+		{
+			if (inputSystem.IsKeyPressed(key_))
+			{
+				sceneSystem.DispatchInput(InputContext{ key_, InputPhase::Started });
+			}
+
+			if (inputSystem.IsKeyDown(key_))
+			{
+				sceneSystem.DispatchInput(InputContext{ key_, InputPhase::Performed });
+			}
+
+			if (inputSystem.IsKeyReleased(key_))
+			{
+				sceneSystem.DispatchInput(InputContext{ key_, InputPhase::Canceled });
+			}
+		};
+
+	dispatchKey(KeyCode::W);
+	dispatchKey(KeyCode::A);
+	dispatchKey(KeyCode::S);
+	dispatchKey(KeyCode::D);
+	dispatchKey(KeyCode::Up);
+	dispatchKey(KeyCode::Left);
+	dispatchKey(KeyCode::Down);
+	dispatchKey(KeyCode::Right);
+	dispatchKey(KeyCode::Space);
+	dispatchKey(KeyCode::Shift);
+	dispatchKey(KeyCode::Escape);
 }
 
-SceneSystem& Application::GetSceneSystem()
+void Application::ReleaseSystemsInReverseOrder() noexcept
 {
-	return sceneSystem;
+	for (auto iter{ systemOrder.rbegin() }; iter != systemOrder.rend(); ++iter)
+	{
+		auto found{ systems.find(*iter) };
+		if (found == systems.end() || !found->second)
+		{
+			continue;
+		}
+
+		found->second->Release();
+	}
+
+	systems.clear();
+	systemOrder.clear();
 }

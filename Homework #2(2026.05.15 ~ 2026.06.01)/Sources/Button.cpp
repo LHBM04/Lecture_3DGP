@@ -2,8 +2,10 @@
 #include "Button.h"
 
 #include "GameObject.h"
-#include "InputManager.h"
+#include "InputSystem.h"
 #include "RectTransform.h"
+#include "Scene.h"
+#include "SceneContext.h"
 
 bool Button::IsInteractable() const noexcept
 {
@@ -89,6 +91,14 @@ void Button::OnUpdate(const TimeContext& context_)
 		return;
 	}
 
+	Scene* scene{ owner->GetCurrentScene() };
+	SceneContext* sceneContext{ nullptr != scene ? scene->GetSceneContext() : nullptr };
+	InputSystem* inputSystem{ nullptr != sceneContext ? sceneContext->GetInputSystem() : nullptr };
+	if (nullptr == inputSystem)
+	{
+		return;
+	}
+
 	if (!interactable)
 	{
 		hovered = false;
@@ -97,9 +107,9 @@ void Button::OnUpdate(const TimeContext& context_)
 		return;
 	}
 
-	const auto [mouseX, mouseY]{ InputManager::GetMousePosition() };
+	const auto [mouseX, mouseY]{ inputSystem->GetMousePosition() };
 	hovered = rectTransform->ContainsScreenPoint(mouseX, mouseY);
-	pressed = hovered && InputManager::IsButtonDown(ButtonCode::Left);
+	pressed = hovered && inputSystem->IsButtonDown(ButtonCode::Left);
 
 	if (pressed)
 	{
@@ -118,7 +128,7 @@ void Button::OnUpdate(const TimeContext& context_)
 		ChangeState(State::Normal);
 	}
 
-	if (hovered && InputManager::IsButtonReleased(ButtonCode::Left))
+	if (hovered && inputSystem->IsButtonReleased(ButtonCode::Left))
 	{
 		Invoke(State::Pressed);
 	}

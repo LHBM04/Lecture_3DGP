@@ -18,14 +18,14 @@ struct RenderTargetHandle final
 	}
 };
 
-class RenderSystem final : public System<RendererOptions>
+class RenderSystem final : public System
 {
 	friend class Renderer;
 
 public:
 	~RenderSystem() noexcept override;
 
-	bool Initialize(const RendererOptions& options_) override;
+	bool Initialize();
 	void Release() override;
 
 	// SDL-like: Window로부터 Renderer를 생성한다.

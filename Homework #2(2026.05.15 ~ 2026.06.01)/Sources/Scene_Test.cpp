@@ -1,7 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "Scene_Test.h"
 
-#include "Application.h"
 #include "Button.h"
 #include "Camera.h"
 #include "CameraController.h"
@@ -12,8 +11,7 @@
 #include "MeshRenderer.h"
 #include "PlayerController.h"
 #include "RectTransform.h"
-#include "Renderer.h"
-#include "SceneManager.h"
+#include "SceneContext.h"
 #include "TextView.h"
 #include "Transform.h"
 #include "Vector2D.h"
@@ -176,7 +174,13 @@ bool Scene_Test::LoadResources(ID3D12Device* device_)
 
 void Scene_Test::OnLoad()
 {
-	LoadResources(Application::GetRenderer().GetDevice());
+	SceneContext* sceneContext{ GetSceneContext() };
+	if (nullptr == sceneContext)
+	{
+		return;
+	}
+
+	LoadResources(sceneContext->GetDevice());
 
 	GameObject& cameraObject{ CreateGameObject("Main Camera") };
 	Transform* cameraTransform{ cameraObject.AddComponent<Transform>() };
@@ -360,10 +364,13 @@ void Scene_Test::OnLoad()
 			buttonImage->SetColor(ColorRGBA(ColorRGB(0.35f, 0.35f, 0.35f), 1.0f));
 		});
 	button->SetOnPressed(
-		[buttonImage](Button&)
+		[buttonImage, sceneContext](Button&)
 		{
 			buttonImage->SetColor(ColorRGBA(ColorRGB(0.12f, 0.12f, 0.12f), 1.0f));
-			SceneManager::LoadScene(L"Title");
+			if (nullptr != sceneContext)
+			{
+				sceneContext->RequestSceneChange(L"Title");
+			}
 		});
 	button->SetOnSelected(
 		[buttonImage](Button&)

@@ -36,11 +36,10 @@ public:
 	void Render(RenderContext& context_);
 	void DispatchInput(const InputContext& context_);
 	void Unload();
-
-protected:
 	[[nodiscard]] SceneContext* GetSceneContext() noexcept;
 	[[nodiscard]] const SceneContext* GetSceneContext() const noexcept;
 
+protected:
 	virtual void OnLoad() {};
 	virtual void OnUpdate(const TimeContext& context_) {};
 	virtual void OnFixedUpdate(const TimeContext& context_) {};

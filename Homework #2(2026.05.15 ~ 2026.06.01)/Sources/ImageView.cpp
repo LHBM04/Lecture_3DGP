@@ -1,14 +1,15 @@
 #include "Precompiled.h"
 #include "ImageView.h"
 
-#include "Application.h"
 #include "GameObject.h"
+#include "InputSystem.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include "RectTransform.h"
-#include "InputManager.h"
 #include "RenderContext.h"
+#include "Scene.h"
+#include "SceneContext.h"
 #include "Shader.h"
 #include "Vector2D.h"
 
@@ -88,7 +89,15 @@ void ImageView::OnRenderUI(RenderContext& context_)
 			return;
 		}
 
-		const auto [screenWidth, screenHeight]{ InputManager::GetScreenSize() };
+		Scene* scene{ owner->GetCurrentScene() };
+		SceneContext* sceneContext{ nullptr != scene ? scene->GetSceneContext() : nullptr };
+		InputSystem* inputSystem{ nullptr != sceneContext ? sceneContext->GetInputSystem() : nullptr };
+		if (nullptr == inputSystem)
+		{
+			return;
+		}
+
+		const auto [screenWidth, screenHeight]{ inputSystem->GetScreenSize() };
 		const Vector2D& anchoredPosition{ rectTransform->GetAnchoredPosition() };
 		const Vector2D& pivot{ rectTransform->GetPivot() };
 		const Vector2D& rectSize{ rectTransform->GetSize() };

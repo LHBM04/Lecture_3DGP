@@ -1,7 +1,16 @@
 ﻿#include "Precompiled.h"
 #include "Mesh.h"
+ID3D12Device* Mesh::defaultDevice{ nullptr };
 
-#include "Application.h"
+void Mesh::SetDefaultDevice(ID3D12Device* device_) noexcept
+{
+	defaultDevice = device_;
+}
+
+ID3D12Device* Mesh::GetDefaultDevice() noexcept
+{
+	return defaultDevice;
+}
 
 namespace
 {
@@ -129,7 +138,7 @@ bool Mesh::BuildFromRaw(
 	std::span<const Vertex> vertices_,
 	std::span<const std::uint32_t> indices_)
 {
-	return BuildFromRaw(Application::GetRenderer().GetDevice(), vertices_, indices_);
+	return BuildFromRaw(defaultDevice, vertices_, indices_);
 }
 
 bool Mesh::Load(const std::filesystem::path& path_)
@@ -260,7 +269,7 @@ bool Mesh::Load(const std::filesystem::path& path_)
 		}
 	}
 
-	auto device{ Application::GetRenderer().GetDevice() };
+	auto device{ defaultDevice };
 
 	const std::size_t vertexByteSize{ vertices.size() * sizeof(Vertex) };
 	if (!CreateUploadBuffer(device, vertices.data(), vertexByteSize, vertexBuffer))

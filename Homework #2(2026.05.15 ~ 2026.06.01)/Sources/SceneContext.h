@@ -3,6 +3,9 @@
 #include <optional>
 #include <string>
 
+class InputSystem;
+struct ID3D12Device;
+
 class SceneContext final
 {
 public:
@@ -12,6 +15,14 @@ public:
 	[[nodiscard]] const std::wstring& GetRequestedSceneName() const;
 	void ClearSceneChangeRequest() noexcept;
 
+	void SetInputSystem(InputSystem* inputSystem_) noexcept;
+	[[nodiscard]] InputSystem* GetInputSystem() const noexcept;
+
+	void SetDevice(ID3D12Device* device_) noexcept;
+	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
+
 private:
 	std::optional<std::wstring> requestedSceneName;
+	InputSystem* inputSystem{ nullptr };
+	ID3D12Device* device{ nullptr };
 };

@@ -1,6 +1,6 @@
-﻿#pragma once
+#pragma once
 
-#include "InputManager.h"
+#include "InputSystem.h"
 
 struct Event
 {

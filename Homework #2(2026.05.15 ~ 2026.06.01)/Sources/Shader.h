@@ -15,6 +15,9 @@ public:
 	Shader() = default;
 	virtual ~Shader() = default;
 
+	static void SetDefaultDevice(ID3D12Device* device_) noexcept;
+	[[nodiscard]] static ID3D12Device* GetDefaultDevice() noexcept;
+
 	bool Load(const std::filesystem::path& path_) override;
 	void Unload() override;
 
@@ -33,6 +36,8 @@ public:
 	[[nodiscard]] bool LoadFromFile(ID3D12Device* device_, const std::filesystem::path& path_);
 
 private:
+	static ID3D12Device* defaultDevice;
+
 	std::unordered_map<std::string, UINT> rootParameterIndices;
 	uint64_t pipelineId{ 0 };
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;

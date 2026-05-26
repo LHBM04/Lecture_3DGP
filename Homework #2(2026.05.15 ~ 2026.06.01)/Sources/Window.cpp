@@ -1,7 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "Window.h"
 
-#include "InputManager.h"
+#include "Application.h"
+#include "InputSystem.h"
 
 Window::~Window() noexcept
 {

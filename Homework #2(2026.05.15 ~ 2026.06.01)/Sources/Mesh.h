@@ -12,6 +12,9 @@
 class Mesh final : public Resource
 {
 public:
+	static void SetDefaultDevice(ID3D12Device* device_) noexcept;
+	[[nodiscard]] static ID3D12Device* GetDefaultDevice() noexcept;
+
 	struct Vertex final
 	{
 		float position[3];
@@ -52,6 +55,8 @@ public:
 		std::span<const std::uint32_t> indices_);
 
 private:
+	static ID3D12Device* defaultDevice;
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer;
 	uint64_t id{ 0 };

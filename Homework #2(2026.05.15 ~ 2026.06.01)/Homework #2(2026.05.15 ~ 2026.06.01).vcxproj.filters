@@ -70,9 +70,6 @@
     <ClCompile Include="Sources\Scene_Test.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SceneManager.cpp">
-      <Filter>Sources Files\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\PlayerController.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
@@ -82,7 +79,7 @@
     <ClCompile Include="Sources\CameraProjection_Perspective.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\InputManager.cpp">
+    <ClCompile Include="Sources\InputSystem.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Light.cpp">
@@ -94,7 +91,7 @@
     <ClCompile Include="Sources\CameraController.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ResourceManager.cpp">
+    <ClCompile Include="Sources\ResourceSystem.cpp">
       <Filter>Sources Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Logger.cpp">
@@ -224,6 +221,9 @@
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\ResourceSystem.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Mesh.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
@@ -239,13 +239,14 @@
     <ClInclude Include="Sources\Scene_Test.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\SceneManager.h">
-      <Filter>Sources Files\Headers</Filter>
-    </ClInclude>
+
     <ClInclude Include="Sources\PlayerController.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\InputContext.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\InputSystem.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\InputHandler.h">
@@ -254,13 +255,14 @@
     <ClInclude Include="Sources\InputPhase.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ResourceManager.h">
-      <Filter>Sources Files\Headers</Filter>
-    </ClInclude>
+
     <ClInclude Include="Sources\Singleton.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Timer.h">
+      <Filter>Sources Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TimeContext.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sources\CameraProjection_Perspective.h">
@@ -284,9 +286,7 @@
     <ClInclude Include="Sources\WindowSystem.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\InputManager.h">
-      <Filter>Sources Files\Headers</Filter>
-    </ClInclude>
+
     <ClInclude Include="Sources\Light.h">
       <Filter>Sources Files\Headers</Filter>
     </ClInclude>
