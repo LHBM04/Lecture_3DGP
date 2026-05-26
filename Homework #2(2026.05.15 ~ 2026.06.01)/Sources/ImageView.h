@@ -13,12 +13,6 @@ public:
 	ImageView() = default;
 	~ImageView() override = default;
 
-	ImageView(const ImageView&) = delete;
-	ImageView& operator=(const ImageView&) = delete;
-
-	ImageView(ImageView&&) = delete;
-	ImageView& operator=(ImageView&&) = delete;
-
 	[[nodiscard]] Mesh* GetMesh() const noexcept;
 	void SetMesh(Mesh* mesh_) noexcept;
 

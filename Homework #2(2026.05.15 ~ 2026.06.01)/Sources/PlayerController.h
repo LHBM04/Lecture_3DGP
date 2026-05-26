@@ -9,12 +9,6 @@ public:
 	PlayerController() = default;
 	virtual ~PlayerController() = default;
 
-	PlayerController(const PlayerController&) = delete;
-	PlayerController& operator=(const PlayerController&) = delete;
-
-	PlayerController(PlayerController&&) = delete;
-	PlayerController& operator=(PlayerController&&) = delete;
-
 	[[nodiscard]] float GetMoveSpeed() const noexcept;
 	void SetMoveSpeed(float unitsPerSecond_) noexcept;
 

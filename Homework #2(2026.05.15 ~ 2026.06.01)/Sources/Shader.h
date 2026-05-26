@@ -13,12 +13,6 @@ public:
 	Shader() = default;
 	virtual ~Shader() = default;
 
-	Shader(const Shader&) = delete;
-	Shader& operator=(const Shader&) = delete;
-
-	Shader(Shader&&) = delete;
-	Shader& operator=(Shader&&) = delete;
-
 	bool Load(const std::filesystem::path& path_) override;
 	void Unload() override;
 

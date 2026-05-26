@@ -12,12 +12,6 @@ public:
 	CameraController() = default;
 	~CameraController() override = default;
 
-	CameraController(const CameraController&) = delete;
-	CameraController& operator=(const CameraController&) = delete;
-
-	CameraController(CameraController&&) = delete;
-	CameraController& operator=(CameraController&&) = delete;
-
 	[[nodiscard]] Transform* GetTarget() const noexcept;
 	void SetTarget(Transform* target_) noexcept;
 

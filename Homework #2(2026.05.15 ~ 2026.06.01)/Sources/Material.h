@@ -14,12 +14,6 @@ public:
 	Material() = default;
 	virtual ~Material() = default;
 
-	Material(const Material&) = delete;
-	Material& operator=(const Material&) = delete;
-
-	Material(Material&&) = delete;
-	Material& operator=(Material&&) = delete;
-
 	bool Load(const std::filesystem::path& path_) override;
 	void Unload() override;
 

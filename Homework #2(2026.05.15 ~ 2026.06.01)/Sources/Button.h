@@ -14,12 +14,6 @@ public:
 	Button() = default;
 	~Button() override = default;
 
-	Button(const Button&) = delete;
-	Button& operator=(const Button&) = delete;
-
-	Button(Button&&) = delete;
-	Button& operator=(Button&&) = delete;
-
 	[[nodiscard]] bool IsInteractable() const noexcept;
 	void SetInteractable(bool interactable_) noexcept;
 

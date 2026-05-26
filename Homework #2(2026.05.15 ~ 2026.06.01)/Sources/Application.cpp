@@ -14,10 +14,27 @@
 namespace
 {
 	bool isRunning;
+	bool isInitialized;
 
 	Window window;
 	Renderer renderer;
 	SceneSystem sceneSystem;
+
+	void ShutdownSystems() noexcept
+	{
+		if (!isInitialized)
+		{
+			return;
+		}
+
+		// GPU가 커맨드를 끝내기 전에 씬/리소스를 파기하면 ComPtr 해제 시점 충돌이 날 수 있다.
+		renderer.WaitForFrames();
+		sceneSystem.Release();
+		renderer.Release();
+		window.Release();
+
+		isInitialized = false;
+	}
 }
 
 bool Application::Initialize(const ApplicationOptions& options_)
@@ -50,6 +67,7 @@ bool Application::Initialize(const ApplicationOptions& options_)
 
 		if (!window.Initialize(options))
 		{
+			ShutdownSystems();
 			return false;
 		}
 
@@ -69,6 +87,7 @@ bool Application::Initialize(const ApplicationOptions& options_)
 
 		if (!renderer.Initialize(options))
 		{
+			ShutdownSystems();
 			return false;
 		}
 	}
@@ -88,6 +107,7 @@ bool Application::Initialize(const ApplicationOptions& options_)
 
 	sceneSystem.Initialize(options);
 
+	isInitialized = true;
 	isRunning = false;
 	
 	return true;
@@ -131,9 +151,7 @@ int Application::Run()
 		renderer.EndRender();
 	}
 
-	sceneSystem.Release();
-	renderer.Release();
-	window.Release();
+	ShutdownSystems();
 
 	return 0;
 	// return event.quit.quitCode;

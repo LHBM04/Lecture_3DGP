@@ -9,12 +9,6 @@ public:
 	RectTransform() = default;
 	~RectTransform() override = default;
 
-	RectTransform(const RectTransform&) = delete;
-	RectTransform& operator=(const RectTransform&) = delete;
-
-	RectTransform(RectTransform&&) = delete;
-	RectTransform& operator=(RectTransform&&) = delete;
-
 	[[nodiscard]] const Vector2D& GetAnchoredPosition() const noexcept;
 	void SetAnchoredPosition(const Vector2D& anchoredPosition_) noexcept;
 
