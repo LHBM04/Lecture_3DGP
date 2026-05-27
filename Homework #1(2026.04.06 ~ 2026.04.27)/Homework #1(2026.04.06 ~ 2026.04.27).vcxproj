@@ -18,6 +18,96 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Bullet.cpp" />
+    <ClCompile Include="Sources\Camera.cpp" />
+    <ClCompile Include="Sources\CameraController.cpp" />
+    <ClCompile Include="Sources\Collider.cpp" />
+    <ClCompile Include="Sources\CollisionBox.cpp" />
+    <ClCompile Include="Sources\CollisionFrustum.cpp" />
+    <ClCompile Include="Sources\CollisionSphere.cpp" />
+    <ClCompile Include="Sources\ColorRGB.cpp" />
+    <ClCompile Include="Sources\ColorRGBA.cpp" />
+    <ClCompile Include="Sources\Component.cpp" />
+    <ClCompile Include="Sources\Input.cpp" />
+    <ClCompile Include="Sources\Logger.cpp" />
+    <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Matrix4x4.cpp" />
+    <ClCompile Include="Sources\Mesh.cpp" />
+    <ClCompile Include="Sources\MeshRenderer.cpp" />
+    <ClCompile Include="Sources\Object.cpp" />
+    <ClCompile Include="Sources\ObstacleSpawner.cpp" />
+    <ClCompile Include="Sources\OrthographicsCamera.cpp" />
+    <ClCompile Include="Sources\Particle.cpp" />
+    <ClCompile Include="Sources\PerspectiveCamera.cpp" />
+    <ClCompile Include="Sources\PlayerMovement.cpp" />
+    <ClCompile Include="Sources\Precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Sources\Quaternion.cpp" />
+    <ClCompile Include="Sources\Renderer.cpp" />
+    <ClCompile Include="Sources\RotatingObstacle.cpp" />
+    <ClCompile Include="Sources\Scene.cpp" />
+    <ClCompile Include="Sources\Scene_Game.cpp" />
+    <ClCompile Include="Sources\TextView.cpp" />
+    <ClCompile Include="Sources\Timer.cpp" />
+    <ClCompile Include="Sources\Transform.cpp" />
+    <ClCompile Include="Sources\Vector2D.cpp" />
+    <ClCompile Include="Sources\Vector3D.cpp" />
+    <ClCompile Include="Sources\Vector4D.cpp" />
+    <ClCompile Include="Sources\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Bullet.hpp" />
+    <ClInclude Include="Sources\Camera.hpp" />
+    <ClInclude Include="Sources\CameraController.hpp" />
+    <ClInclude Include="Sources\Collider.hpp" />
+    <ClInclude Include="Sources\CollisionBox.hpp" />
+    <ClInclude Include="Sources\CollisionFrustum.hpp" />
+    <ClInclude Include="Sources\CollisionSphere.hpp" />
+    <ClInclude Include="Sources\ColorRGB.hpp" />
+    <ClInclude Include="Sources\ColorRGBA.hpp" />
+    <ClInclude Include="Sources\Component.hpp" />
+    <ClInclude Include="Sources\Input.hpp" />
+    <ClInclude Include="Sources\Logger.hpp" />
+    <ClInclude Include="Sources\Math.hpp" />
+    <ClInclude Include="Sources\Matrix4x4.hpp" />
+    <ClInclude Include="Sources\Mesh.hpp" />
+    <ClInclude Include="Sources\MeshRenderer.hpp" />
+    <ClInclude Include="Sources\Object.hpp" />
+    <ClInclude Include="Sources\ObstacleSpawner.hpp" />
+    <ClInclude Include="Sources\OrthographicsCamera.hpp" />
+    <ClInclude Include="Sources\Particle.hpp" />
+    <ClInclude Include="Sources\PerspectiveCamera.hpp" />
+    <ClInclude Include="Sources\PlayerMovement.hpp" />
+    <ClInclude Include="Sources\Precompiled.hpp" />
+    <ClInclude Include="Sources\Quaternion.hpp" />
+    <ClInclude Include="Sources\Renderer.hpp" />
+    <ClInclude Include="Sources\RotatingObstacle.hpp" />
+    <ClInclude Include="Sources\Scene.hpp" />
+    <ClInclude Include="Sources\Scene_Game.hpp" />
+    <ClInclude Include="Sources\TextView.hpp" />
+    <ClInclude Include="Sources\Timer.hpp" />
+    <ClInclude Include="Sources\Transform.hpp" />
+    <ClInclude Include="Sources\Vector2D.hpp" />
+    <ClInclude Include="Sources\Vector3D.hpp" />
+    <ClInclude Include="Sources\Vector4D.hpp" />
+    <ClInclude Include="Sources\Window.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Airplane.obj">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="Resources\Cube.obj">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="Resources\Sphere.obj">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -72,7 +162,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Build\Binaries\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\Cashes\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)Build\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Build\Binaries\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)Build\Binaries\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Build\Binaries\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -84,6 +186,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -102,6 +205,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,6 +222,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,106 +241,13 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CameraController.cpp" />
-    <ClCompile Include="ColorRGB.cpp" />
-    <ClCompile Include="ColorRGBA.cpp" />
-    <ClCompile Include="CollisionBox.cpp" />
-    <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="CollisionFrustum.cpp" />
-    <ClCompile Include="CollisionSphere.cpp" />
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Matrix4x4.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshRenderer.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="ObstacleSpawner.cpp" />
-    <ClCompile Include="OrthographicsCamera.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="PlayerMovement.cpp" />
-    <ClCompile Include="Precompiled.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Precompiled.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Precompiled.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Precompiled.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Precompiled.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="PerspectiveCamera.cpp" />
-    <ClCompile Include="Quaternion.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RotatingObstacle.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Scene_Game.cpp" />
-    <ClCompile Include="TextView.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Vector2D.cpp" />
-    <ClCompile Include="Vector3D.cpp" />
-    <ClCompile Include="Vector4D.cpp" />
-    <ClCompile Include="Window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Bullet.hpp" />
-    <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="CameraController.hpp" />
-    <ClInclude Include="ColorRGB.hpp" />
-    <ClInclude Include="ColorRGBA.hpp" />
-    <ClInclude Include="CollisionBox.hpp" />
-    <ClInclude Include="Collider.hpp" />
-    <ClInclude Include="CollisionFrustum.hpp" />
-    <ClInclude Include="CollisionSphere.hpp" />
-    <ClInclude Include="Component.hpp" />
-    <ClInclude Include="Input.hpp" />
-    <ClInclude Include="Logger.hpp" />
-    <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Matrix4x4.hpp" />
-    <ClInclude Include="Mesh.hpp" />
-    <ClInclude Include="MeshRenderer.hpp" />
-    <ClInclude Include="Object.hpp" />
-    <ClInclude Include="ObstacleSpawner.hpp" />
-    <ClInclude Include="OrthographicsCamera.hpp" />
-    <ClInclude Include="Particle.hpp" />
-    <ClInclude Include="PerspectiveCamera.hpp" />
-    <ClInclude Include="PlayerMovement.hpp" />
-    <ClInclude Include="Precompiled.hpp" />
-    <ClInclude Include="Quaternion.hpp" />
-    <ClInclude Include="Renderer.hpp" />
-    <ClInclude Include="RotatingObstacle.hpp" />
-    <ClInclude Include="Scene.hpp" />
-    <ClInclude Include="Scene_Game.hpp" />
-    <ClInclude Include="TextView.hpp" />
-    <ClInclude Include="Timer.hpp" />
-    <ClInclude Include="Transform.hpp" />
-    <ClInclude Include="Vector2D.hpp" />
-    <ClInclude Include="Vector3D.hpp" />
-    <ClInclude Include="Vector4D.hpp" />
-    <ClInclude Include="Window.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Assets\Airplane.obj">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="Assets\Cube.obj">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="Assets\Sphere.obj">
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

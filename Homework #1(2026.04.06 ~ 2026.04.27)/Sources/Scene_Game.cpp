@@ -44,7 +44,7 @@ void Scene_Game::OnLoad()
 
 	MeshRenderer* meshRenderer = playerObject->AddComponent<MeshRenderer>();
 	meshRenderer->SetColor(ColorRGBA::GetWhite());
-	meshRenderer->SetMesh(Mesh::LoadFromFile("./Assets/Airplane.obj"));
+	meshRenderer->SetMesh(Mesh::LoadFromFile("./Resources/Airplane.obj"));
 
 	cameraObject = AddObject();
 	cameraObject->SetName("Main Camera");

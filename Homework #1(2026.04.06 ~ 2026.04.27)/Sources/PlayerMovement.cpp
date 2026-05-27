@@ -106,7 +106,7 @@ void PlayerMovement::OnUpdate()
 		bulletTransform->SetWorldScale(Vector3D(0.1f, 0.1f, 0.1f));
 
 		MeshRenderer* bulletRenderer = bulletObject->AddComponent<MeshRenderer>();
-		bulletRenderer->SetMesh(Mesh::LoadFromFile("./Assets/Sphere.obj"));
+		bulletRenderer->SetMesh(Mesh::LoadFromFile("./Resources/Sphere.obj"));
 		
 		CollisionSphere* collisionSphere = bulletObject->AddComponent<CollisionSphere>();
 		if (collisionSphere)
