@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Renderer.h"
 
 void Renderer::Clear()
@@ -9,7 +9,7 @@ void Renderer::Clear()
 
 void Renderer::SubmitContext(const RenderContext& context_)
 {
-	const std::span<const RenderCommand> contextCommands{ context_.GetCommands() };
+	const std::span<const DrawCall> contextCommands{ context_.GetCommands() };
 	masterCommands.insert(masterCommands.end(), contextCommands.begin(), contextCommands.end());
 }
 
@@ -20,9 +20,9 @@ void Renderer::Execute(ID3D12GraphicsCommandList* cmdList_, RenderPassType targe
 		return;
 	}
 
-	std::vector<RenderCommand> passCommands;
-	for (const RenderCommand& command : masterCommands
-		| std::views::filter([targetPassType_](const RenderCommand& command_)
+	std::vector<DrawCall> passCommands;
+	for (const DrawCall& command : masterCommands
+		| std::views::filter([targetPassType_](const DrawCall& command_)
 			{
 				return GetRenderPassType(command_.sortKey) == targetPassType_;
 			}))
@@ -30,10 +30,10 @@ void Renderer::Execute(ID3D12GraphicsCommandList* cmdList_, RenderPassType targe
 		passCommands.push_back(command);
 	}
 
-	std::ranges::sort(passCommands, {}, &RenderCommand::sortKey);
+	std::ranges::sort(passCommands, {}, &DrawCall::sortKey);
 
 	batches.clear();
-	for (const RenderCommand& command : passCommands)
+	for (const DrawCall& command : passCommands)
 	{
 		if (batches.empty() || batches.back().sortKey != command.sortKey)
 		{
@@ -52,7 +52,7 @@ void Renderer::Execute(ID3D12GraphicsCommandList* cmdList_, RenderPassType targe
 
 	for (const RenderBatch& batch : batches)
 	{
-		const RenderCommand& command{ batch.baseCommand };
+		const DrawCall& command{ batch.baseCommand };
 		if (command.vertexBufferViewPtr == nullptr || command.indexBufferViewPtr == nullptr)
 		{
 			continue;
@@ -72,7 +72,7 @@ void Renderer::Execute(ID3D12GraphicsCommandList* cmdList_, RenderPassType targe
 	}
 }
 
-std::span<const RenderCommand> Renderer::GetMasterCommands() const noexcept
+std::span<const DrawCall> Renderer::GetMasterCommands() const noexcept
 {
 	return masterCommands;
 }

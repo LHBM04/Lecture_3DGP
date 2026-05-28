@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <array>
 #include <cstdint>
@@ -29,7 +29,7 @@ struct CameraViewport final
 	float maxDepth{ 1.0f };
 };
 
-struct CameraRenderDescription final
+struct CameraConstants final
 {
 	RenderPassType passType{ RenderPassType::Opaque3D };
 	CameraClearFlags clearFlags{ CameraClearFlags::SolidColor };

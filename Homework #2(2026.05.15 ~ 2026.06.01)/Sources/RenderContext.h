@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstdint>
 #include <span>
@@ -23,7 +23,7 @@ public:
 
 	void Reset();
 
-	void AddCamera(const CameraRenderDescription& cameraDesc_);
+	void AddCamera(const CameraConstants& cameraDesc_);
 
 	void BindShader(uint32_t shaderId_) noexcept;
 	void BindMaterial(uint32_t materialId_) noexcept;
@@ -37,12 +37,12 @@ public:
 		uint32_t startIndexLocation_ = 0,
 		int32_t baseVertexLocation_ = 0);
 
-	[[nodiscard]] std::span<const CameraRenderDescription> GetCameraDescriptions() const noexcept;
-	[[nodiscard]] std::span<const RenderCommand> GetCommands() const noexcept;
+	[[nodiscard]] std::span<const CameraConstants> GetCameraDescriptions() const noexcept;
+	[[nodiscard]] std::span<const DrawCall> GetCommands() const noexcept;
 
 private:
-	std::vector<CameraRenderDescription> cameraDescs;
-	std::vector<RenderCommand> commands;
+	std::vector<CameraConstants> cameraDescs;
+	std::vector<DrawCall> commands;
 
 	uint32_t currentShaderId{ 0 };
 	uint32_t currentMaterialId{ 0 };

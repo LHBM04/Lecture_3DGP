@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "RenderSystem.h"
 
 #include "Window.h"
@@ -190,7 +190,7 @@ void RenderSystem::ExecuteRenderer(Window* window_, Renderer* renderer_, const R
 	activeWindow = window_;
 	RenderTarget& renderTarget{ pair->target };
 
-	for (const CameraRenderDescription& cameraDesc : context_.GetCameraDescriptions())
+	for (const CameraConstants& cameraDesc : context_.GetCameraDescriptions())
 	{
 		renderTarget.currentBackBufferIndex = renderTarget.swapChain->GetCurrentBackBufferIndex();
 		ID3D12Resource* backBuffer{ renderTarget.backBuffers[renderTarget.currentBackBufferIndex].Get() };

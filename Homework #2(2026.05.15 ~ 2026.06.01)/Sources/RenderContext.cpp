@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "RenderContext.h"
 
 namespace
@@ -23,7 +23,7 @@ void RenderContext::Reset()
 	currentIndexBufferViewPtr = nullptr;
 }
 
-void RenderContext::AddCamera(const CameraRenderDescription& cameraDesc_)
+void RenderContext::AddCamera(const CameraConstants& cameraDesc_)
 {
 	cameraDescs.push_back(cameraDesc_);
 }
@@ -59,7 +59,7 @@ void RenderContext::DrawIndexed(
 	uint32_t startIndexLocation_,
 	int32_t baseVertexLocation_)
 {
-	commands.push_back(RenderCommand{
+	commands.push_back(DrawCall{
 		.sortKey = MakeRenderSortKey(passType_, currentShaderId, currentMaterialId),
 		.worldMatrix = currentWorld,
 		.vertexBufferViewPtr = currentVertexBufferViewPtr,
@@ -70,12 +70,12 @@ void RenderContext::DrawIndexed(
 	});
 }
 
-std::span<const CameraRenderDescription> RenderContext::GetCameraDescriptions() const noexcept
+std::span<const CameraConstants> RenderContext::GetCameraDescriptions() const noexcept
 {
 	return cameraDescs;
 }
 
-std::span<const RenderCommand> RenderContext::GetCommands() const noexcept
+std::span<const DrawCall> RenderContext::GetCommands() const noexcept
 {
 	return commands;
 }

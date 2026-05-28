@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <span>
 #include <vector>
@@ -26,16 +26,16 @@ public:
 	void SubmitContext(const RenderContext& context_);
 	void Execute(ID3D12GraphicsCommandList* cmdList_, RenderPassType targetPassType_);
 
-	[[nodiscard]] std::span<const RenderCommand> GetMasterCommands() const noexcept;
+	[[nodiscard]] std::span<const DrawCall> GetMasterCommands() const noexcept;
 
 private:
 	struct RenderBatch final
 	{
 		uint64_t sortKey{ 0 };
-		RenderCommand baseCommand{};
+		DrawCall baseCommand{};
 		std::vector<DirectX::XMFLOAT4X4> instanceTransforms;
 	};
 
-	std::vector<RenderCommand> masterCommands;
+	std::vector<DrawCall> masterCommands;
 	std::vector<RenderBatch> batches;
 };

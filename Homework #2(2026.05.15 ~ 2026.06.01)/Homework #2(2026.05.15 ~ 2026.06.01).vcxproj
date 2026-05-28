@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Sources\ButtonCode.h" />
+    <ClInclude Include="Sources\Camera.h" />
     <ClInclude Include="Sources\CameraConstants.h" />
     <ClInclude Include="Sources\Collidable.h" />
     <ClInclude Include="Sources\Component.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Sources\System.h" />
     <ClInclude Include="Sources\TimeContext.h" />
     <ClInclude Include="Sources\TimeSystem.h" />
+    <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\UIObjectCommand.h" />
     <ClInclude Include="Sources\Updatable.h" />
     <ClInclude Include="Sources\Window.h" />

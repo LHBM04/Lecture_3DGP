@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstdint>
 
@@ -6,7 +6,7 @@
 
 #include "CameraConstants.h"
 
-struct RenderCommand final
+struct DrawCall final
 {
 	uint64_t sortKey{ 0 };
 	DirectX::XMFLOAT4X4 worldMatrix{};
