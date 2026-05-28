@@ -1,12 +1,12 @@
-﻿#pragma once
+#pragma once
 
-#include "Event.h"
+#include "EventBase.h"
 
-class WindowCloseEvent final : public Event
+class WindowCloseEvent : public EventBase
 {
 public:
-    explicit WindowCloseEvent(Window* window_) noexcept
-        : Event{ window_ }
+    explicit WindowCloseEvent(Window& window_) noexcept
+        : EventBase{ window_ }
     {
     }
 };

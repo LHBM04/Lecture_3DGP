@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Event.h"
+#include "EventBase.h"
 
-class WindowMaximizeEvent final : public Event
+class WindowMaximizeEvent  final : public EventBase
 {
 public:
-    explicit WindowMaximizeEvent(Window* window_) noexcept
-        : Event{ window_ }
+    explicit WindowMaximizeEvent(Window& window_) noexcept
+        : EventBase{ window_ }
     {
     }
 };

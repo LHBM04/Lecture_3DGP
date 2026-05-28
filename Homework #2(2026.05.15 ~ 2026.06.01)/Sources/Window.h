@@ -1,23 +1,30 @@
 #pragma once
 
-#include "EventQueue.h"
+#include <expected>
+#include <string>
+#include <utility>
+
+#include <windows.h>
+
 #include "WindowOptions.h"
+
+class EventQueue;
 
 class Window
 {
 	friend class WindowSystem;
 
 public:
-	Window() = default;
-	~Window() = default;
+    Window() = default;
+    ~Window() = default;
 
-	Window(const Window&) = delete;
-	Window operator=(const Window&) = delete;
+    Window(const Window&) = delete;
+    Window& operator=(const Window&) = delete;
 
-	Window(Window&&) = delete;
-	Window operator=(Window&&) = delete;
+    Window(Window&&) = delete;
+    Window& operator=(Window&&) = delete;
 
-	bool Initialize(const WindowOptions& options_);
+	std::expected<void, std::wstring> Initialize(const WindowOptions& options_);
 	void Release();
 
 	void Show() const noexcept;
@@ -59,6 +66,5 @@ public:
 private:
 	WindowOptions options;
 	HWND handle{ nullptr };
-	EventQueue* currentEventQueue{ nullptr };
+	EventQueue& eventQueue;
 };
-

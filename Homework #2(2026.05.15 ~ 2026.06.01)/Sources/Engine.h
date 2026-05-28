@@ -1,91 +1,82 @@
-﻿#pragma once
+#pragma once
 
-#include "EngineOptions.h"
-#include "EventQueue.h"
-#include "System.h"
+#include <concepts>
+#include <expected>
+#include <memory>
+#include <string>
+#include <typeindex>
+#include <unordered_map>
 
-class Event;
-class InputSystem;
-class RenderContext;
-class Renderer;
-class RenderSystem;
-class SceneSystem;
-class TimeSystem;
-class WindowSystem;
-class WindowCloseEvent;
-class WindowMaximizeEvent;
-class WindowMinimizeEvent;
-class WindowMoveEvent;
-class WindowResizeEvent;
+#include "SystemBase.h"
+
+struct EngineOptions;
 
 class Engine
 {
 public:
 	Engine() = default;
-	~Engine() = default;
+	virtual ~Engine() = default;
 
 	Engine(const Engine&) = delete;
-	Engine operator=(const Engine&) = delete;
+	Engine& operator=(const Engine&) = delete;
 
 	Engine(Engine&&) = delete;
-	Engine operator=(Engine&&) = delete;
+	Engine& operator=(Engine&&) = delete;
 
-	bool Initialize(const EngineOptions& options_);
+	std::expected<void, std::wstring> Initialize(const EngineOptions& options_);
 	void Release();
-	
+
 	int Run();
 
-	template <std::derived_from<ISystem> TSystem>
-	TSystem* AddSystem();
+	template <std::derived_from<SystemBase> TSystem>
+	auto* AddSystem(this auto& self_);
 
-	template <std::derived_from<ISystem> TSystem>
-	TSystem* GetSystem() const noexcept;
-
-private:
-	bool OnEvent(Event& event);
-	bool OnWindowClose(WindowCloseEvent& event);
-	bool OnWindowMaximize(WindowMaximizeEvent& event);
-	bool OnWindowMinimize(WindowMinimizeEvent& event);
-	bool OnWindowMove(WindowMoveEvent& event);
-	bool OnWindowResize(WindowResizeEvent& event);
+	template <std::derived_from<SystemBase> TSystem>
+	auto* GetSystem(this auto& self_);
 
 private:
-	std::unordered_map<std::type_index, std::unique_ptr<ISystem>> systems;
-
-	bool isRunning{ false };
-	EventQueue eventQueue;
-
-	WindowSystem* windowSystem{ nullptr };
-	RenderSystem* renderSystem{ nullptr };
-	Renderer* renderer{ nullptr };
-	RenderContext* renderContext{ nullptr };
-	TimeSystem* timeSystem{ nullptr };
-	InputSystem* inputSystem{ nullptr };
-	SceneSystem* sceneSystem{ nullptr };
+	std::unordered_map<std::type_index, std::unique_ptr<SystemBase>> systems;
 };
 
-template <std::derived_from<ISystem> TSystem>
-inline TSystem* Engine::AddSystem()
+template <std::derived_from<SystemBase> TSystem>
+auto* Engine::AddSystem(this auto& self_)
 {
 	std::type_index index{ typeid(TSystem) };
 
-	if (const auto it = systems.find(index); it != systems.end())
+	if (const auto it{ self_.systems.find(index) }; it != self_.systems.end())
 	{
 		return static_cast<TSystem*>(it->second.get());
 	}
 
-	auto [it, inserted] = systems.emplace(index, std::make_unique<TSystem>());
+	auto [it, inserted] = self_.systems.emplace(index, std::make_unique<TSystem>());
 	return static_cast<TSystem*>(it->second.get());
 }
 
-template <std::derived_from<ISystem> TSystem>
-inline TSystem* Engine::GetSystem() const noexcept
+template <std::derived_from<SystemBase> TSystem>
+auto* Engine::GetSystem(this auto& self_)
 {
-	std::type_index index{ typeid(TSystem) };
-	if (systems.contains(index))
+	const std::type_index index{ typeid(TSystem) };
+
+	if (auto result{ self_.systems.find(index) }; result != self_.systems.end())
 	{
-		return static_cast<TSystem*>(systems[index].get());
+		TSystem* system{ static_cast<TSystem*>(result->second.get()) };
+
+		if constexpr (std::is_const_v<std::remove_reference_t<decltype(self_)>>)
+		{
+			return static_cast<const TSystem*>(system);
+		}
+		else
+		{
+			return system;
+		}
 	}
 
-	return nullptr;
+	if constexpr (std::is_const_v<std::remove_reference_t<decltype(self_)>>)
+	{
+		return static_cast<const TSystem*>(nullptr);
+	}
+	else
+	{
+		return static_cast<TSystem*>(nullptr);
+	}
 }

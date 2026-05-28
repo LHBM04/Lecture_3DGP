@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 
 #include "Engine.h"
 #include "EngineOptions.h"
@@ -21,9 +21,9 @@ INT APIENTRY wWinMain(
 	options.fixedTime = 60.0f;
 
 	Engine engine;
-	if (!engine.Initialize(options))
+	if (auto result{ engine.Initialize(options)}; !result)
 	{
-		::MessageBoxW(nullptr, L"Cannot intialize the engine!", L"Oops!", NULL);
+		::MessageBoxW(nullptr, result.error().c_str(), L"Oops!", NULL);
 		return -1;
 	}
 

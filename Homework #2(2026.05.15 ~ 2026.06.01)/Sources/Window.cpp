@@ -1,17 +1,18 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Window.h"
 
+#include "EventQueue.h"
 #include "WindowCloseEvent.h"
 #include "WindowMaximizeEvent.h"
 #include "WindowMinimizeEvent.h"
 #include "WindowMoveEvent.h"
 #include "WindowResizeEvent.h"
 
-bool Window::Initialize(const WindowOptions& options_)
+std::expected<void, std::wstring> Window::Initialize(const WindowOptions& options_)
 {
 	if (nullptr != handle)
 	{
-		return true;
+		return std::unexpected{ L"Initialized already!!" };
 	}
 
 	options = options_;
@@ -30,7 +31,7 @@ bool Window::Initialize(const WindowOptions& options_)
 
 	const int screenWidth{ ::GetSystemMetrics(SM_CXSCREEN) };
 	const int screenHeight{ ::GetSystemMetrics(SM_CYSCREEN) };
-	
+
 	const int windowX{ (screenWidth - windowWidth) / 2 + options.x };
 	const int windowY{ (screenHeight - windowHeight) / 2 + options.y };
 
@@ -48,7 +49,11 @@ bool Window::Initialize(const WindowOptions& options_)
 		::GetModuleHandleW(nullptr),
 		this);
 
-	return nullptr != handle;
+	if (handle == nullptr)
+	{
+		// ::GetErr
+		return std::unexpected{ L"" };
+	}
 }
 
 void Window::Release()
@@ -211,10 +216,7 @@ LRESULT Window::ProceedEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 	{
 	case WM_CLOSE:
 	{
-		if (currentEventQueue != nullptr)
-		{
-			currentEventQueue->Push<WindowCloseEvent>(this);
-		}
+		eventQueue.Push<WindowCloseEvent>(*this);
 
 		return 0;
 	}
@@ -227,18 +229,15 @@ LRESULT Window::ProceedEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		options.width = width;
 		options.height = height;
 
-		if (currentEventQueue != nullptr)
-		{
-			currentEventQueue->Push<WindowResizeEvent>(this, width, height);
+		eventQueue.Push<WindowResizeEvent>(*this, width, height);
 
-			if (sizeType == SIZE_MINIMIZED)
-			{
-				currentEventQueue->Push<WindowMinimizeEvent>(this);
-			}
-			else if (sizeType == SIZE_MAXIMIZED)
-			{
-				currentEventQueue->Push<WindowMaximizeEvent>(this);
-			}
+		if (sizeType == SIZE_MINIMIZED)
+		{
+			eventQueue.Push<WindowMinimizeEvent>(*this);
+		}
+		else if (sizeType == SIZE_MAXIMIZED)
+		{
+			eventQueue.Push<WindowMaximizeEvent>(*this);
 		}
 
 		return 0;
@@ -251,18 +250,13 @@ LRESULT Window::ProceedEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 		options.x = x;
 		options.y = y;
 
-		if (currentEventQueue != nullptr)
-		{
-			currentEventQueue->Push<WindowMoveEvent>(this, x, y);
-		}
+		eventQueue.Push<WindowMoveEvent>(*this, x, y);
 
 		return 0;
 	}
-	default:;
+	default:
+		::DefWindowProcW(handle, message_, wParam_, lParam_);
 	}
 
-	// TODO: KeyDownEvent, KeyUpEvent, MouseMoveEvent,
-	// MouseButtonDownEvent, MouseButtonUpEvent 추가 후 Push<TEvent>()로 교체.
-
-	return ::DefWindowProcW(handle, message_, wParam_, lParam_);
+	std::unreachable();
 }

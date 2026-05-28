@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{8cd84caf-24a8-46ff-84b0-592b4e3df19e}</ProjectGuid>
+    <ProjectGuid>{27c09634-fa24-45ec-80af-90a17d913e40}</ProjectGuid>
     <RootNamespace>Homework22026051520260601</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -92,8 +92,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp23</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -111,8 +113,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp23</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -128,8 +132,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp23</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -147,8 +153,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp23</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -159,71 +167,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\ButtonCode.h" />
-    <ClInclude Include="Sources\Camera.h" />
-    <ClInclude Include="Sources\CameraConstants.h" />
-    <ClInclude Include="Sources\Collidable.h" />
-    <ClInclude Include="Sources\Component.h" />
     <ClInclude Include="Sources\Engine.h" />
+    <ClInclude Include="Sources\EngineContext.h" />
     <ClInclude Include="Sources\EngineOptions.h" />
-    <ClInclude Include="Sources\Event.h" />
+    <ClInclude Include="Sources\EventBase.h" />
     <ClInclude Include="Sources\EventDispatcher.h" />
     <ClInclude Include="Sources\EventQueue.h" />
-    <ClInclude Include="Sources\GameObject.h" />
-    <ClInclude Include="Sources\GameObjectCommand.h" />
-    <ClInclude Include="Sources\InputSystem.h" />
-    <ClInclude Include="Sources\KeyCode.h" />
-    <ClInclude Include="Sources\LightConstants.h" />
-    <ClInclude Include="Sources\LoadContext.h" />
-    <ClInclude Include="Sources\MeshRenderer.h" />
-    <ClInclude Include="Sources\ObjectConstants.h" />
     <ClInclude Include="Sources\Precompiled.h" />
-    <ClInclude Include="Sources\Renderable.h" />
-    <ClInclude Include="Sources\RenderContext.h" />
-    <ClInclude Include="Sources\RenderCommand.h" />
-    <ClInclude Include="Sources\Renderer.h" />
-    <ClInclude Include="Sources\RendererOptions.h" />
-    <ClInclude Include="Sources\RenderSystem.h" />
-    <ClInclude Include="Sources\Scene.h" />
-    <ClInclude Include="Sources\SceneSystem.h" />
-    <ClInclude Include="Sources\System.h" />
-    <ClInclude Include="Sources\TimeContext.h" />
-    <ClInclude Include="Sources\TimeSystem.h" />
-    <ClInclude Include="Sources\Transform.h" />
-    <ClInclude Include="Sources\UIObjectCommand.h" />
-    <ClInclude Include="Sources\Updatable.h" />
+    <ClInclude Include="Sources\SystemBase.h" />
     <ClInclude Include="Sources\Window.h" />
     <ClInclude Include="Sources\WindowCloseEvent.h" />
+    <ClInclude Include="Sources\WindowMaximizeEvent.h" />
+    <ClInclude Include="Sources\WindowMinimizeEvent.h" />
+    <ClInclude Include="Sources\WindowMoveEvent.h" />
     <ClInclude Include="Sources\WindowOptions.h" />
-    <ClInclude Include="Sources\WindowSystem.h" />
     <ClInclude Include="Sources\WindowResizeEvent.h" />
+    <ClInclude Include="Sources\WindowSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Component.cpp" />
     <ClCompile Include="Sources\Engine.cpp" />
-    <ClCompile Include="Sources\EventQueue.cpp" />
-    <ClCompile Include="Sources\GameObject.cpp" />
-    <ClCompile Include="Sources\InputSystem.cpp" />
-    <ClCompile Include="Sources\LoadContext.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
-    <ClCompile Include="Sources\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Sources\RenderContext.cpp" />
-    <ClCompile Include="Sources\Renderer.cpp" />
-    <ClCompile Include="Sources\RenderSystem.cpp" />
-    <ClCompile Include="Sources\Scene.cpp" />
-    <ClCompile Include="Sources\SceneSystem.cpp" />
-    <ClCompile Include="Sources\TimeContext.cpp" />
-    <ClCompile Include="Sources\TimeSystem.cpp" />
     <ClCompile Include="Sources\Window.cpp" />
     <ClCompile Include="Sources\WindowSystem.cpp" />
   </ItemGroup>
