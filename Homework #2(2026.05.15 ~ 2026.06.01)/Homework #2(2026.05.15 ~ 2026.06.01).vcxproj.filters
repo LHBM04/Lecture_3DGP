@@ -21,12 +21,6 @@
     <ClInclude Include="Sources\System.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\WindowSystem.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Window.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\RenderSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
@@ -51,12 +45,6 @@
     <ClInclude Include="Sources\ButtonCode.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\WindowResizeEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowCloseEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\EventQueue.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
@@ -66,12 +54,50 @@
     <ClInclude Include="Sources\RendererOptions.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\WindowOptions.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\EngineOptions.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\RenderContext.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Window.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowCloseEvent.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowOptions.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowResizeEvent.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Collidable.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Component.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\GameObject.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Renderable.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Updatable.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MeshRenderer.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TimeContext.h" />
+    <ClInclude Include="Sources\LoadContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Precompiled.cpp">
@@ -104,5 +130,22 @@
     <ClCompile Include="Sources\EventQueue.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Scene.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\RenderContext.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Component.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\GameObject.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\MeshRenderer.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TimeContext.cpp" />
+    <ClCompile Include="Sources\LoadContext.cpp" />
   </ItemGroup>
 </Project>
