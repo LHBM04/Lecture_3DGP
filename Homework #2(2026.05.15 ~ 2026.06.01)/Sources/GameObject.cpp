@@ -20,7 +20,7 @@ void GameObject::Update(const TimeContext& context_)
 	}
 }
 
-void GameObject::Render(const RenderContext& context_)
+void GameObject::Render(RenderContext& context_)
 {
 	if (!isActive || isDestroyed)
 	{

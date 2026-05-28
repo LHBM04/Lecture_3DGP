@@ -133,7 +133,7 @@ void Renderer::Terminate()
 	}
 }
 
-void Renderer::Clear()
+void Renderer::Reset()
 {
 	const unsigned int clearColor = ToPackedColor(options.clearColor);
 	std::fill(colorBuffer.begin(), colorBuffer.end(), clearColor);

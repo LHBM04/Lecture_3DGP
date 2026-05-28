@@ -19,7 +19,7 @@ void Scene::Update(const TimeContext& context_)
 	}
 }
 
-void Scene::Render(const RenderContext& context_)
+void Scene::Render(RenderContext& context_)
 {
 	OnRender(context_);
 

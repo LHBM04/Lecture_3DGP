@@ -96,8 +96,33 @@
     <ClInclude Include="Sources\MeshRenderer.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\TimeContext.h" />
-    <ClInclude Include="Sources\LoadContext.h" />
+    <ClInclude Include="Sources\TimeContext.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\LoadContext.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CameraConstants.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\LightConstants.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ObjectConstants.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SceneSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\GameObjectCommand.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\UIObjectCommand.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderCommand.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Precompiled.cpp">
@@ -145,7 +170,14 @@
     <ClCompile Include="Sources\MeshRenderer.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\TimeContext.cpp" />
-    <ClCompile Include="Sources\LoadContext.cpp" />
+    <ClCompile Include="Sources\LoadContext.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TimeContext.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SceneSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

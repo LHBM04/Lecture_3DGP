@@ -22,7 +22,7 @@ public:
 	GameObject& operator=(GameObject&&) = delete;
 
 	void Update(const TimeContext& context_);
-	void Render(const RenderContext& context_);
+	void Render(RenderContext& context_);
 
 	[[nodiscard]] const std::wstring& GetName() const;
 	void SetName(const std::wstring& name_);

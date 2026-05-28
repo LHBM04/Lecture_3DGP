@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Sources\ButtonCode.h" />
+    <ClInclude Include="Sources\CameraConstants.h" />
     <ClInclude Include="Sources\Collidable.h" />
     <ClInclude Include="Sources\Component.h" />
     <ClInclude Include="Sources\Engine.h" />
@@ -168,20 +169,26 @@
     <ClInclude Include="Sources\EventDispatcher.h" />
     <ClInclude Include="Sources\EventQueue.h" />
     <ClInclude Include="Sources\GameObject.h" />
+    <ClInclude Include="Sources\GameObjectCommand.h" />
     <ClInclude Include="Sources\InputSystem.h" />
     <ClInclude Include="Sources\KeyCode.h" />
+    <ClInclude Include="Sources\LightConstants.h" />
     <ClInclude Include="Sources\LoadContext.h" />
     <ClInclude Include="Sources\MeshRenderer.h" />
+    <ClInclude Include="Sources\ObjectConstants.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Renderable.h" />
     <ClInclude Include="Sources\RenderContext.h" />
+    <ClInclude Include="Sources\RenderCommand.h" />
     <ClInclude Include="Sources\Renderer.h" />
     <ClInclude Include="Sources\RendererOptions.h" />
     <ClInclude Include="Sources\RenderSystem.h" />
     <ClInclude Include="Sources\Scene.h" />
+    <ClInclude Include="Sources\SceneSystem.h" />
     <ClInclude Include="Sources\System.h" />
     <ClInclude Include="Sources\TimeContext.h" />
     <ClInclude Include="Sources\TimeSystem.h" />
+    <ClInclude Include="Sources\UIObjectCommand.h" />
     <ClInclude Include="Sources\Updatable.h" />
     <ClInclude Include="Sources\Window.h" />
     <ClInclude Include="Sources\WindowCloseEvent.h" />
@@ -212,6 +219,7 @@
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\RenderSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
+    <ClCompile Include="Sources\SceneSystem.cpp" />
     <ClCompile Include="Sources\TimeContext.cpp" />
     <ClCompile Include="Sources\TimeSystem.cpp" />
     <ClCompile Include="Sources\Window.cpp" />

@@ -7,9 +7,9 @@ class MeshRenderer : public Component,
 					 public IRenderable
 {
 public:
-	void OnPreRender(const RenderContext& context_) override;
-	void OnRender(const RenderContext& context_) override;
-	void OnPostRender(const RenderContext& context_) override;
+	void OnPreRender(RenderContext& context_) override;
+	void OnRender(RenderContext& context_) override;
+	void OnPostRender(RenderContext& context_) override;
 
 private:
 };

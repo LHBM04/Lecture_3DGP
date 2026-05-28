@@ -83,7 +83,7 @@ public:
 	static bool Initialize(const Options& options_);
 	static void Terminate();
 
-	static void Clear();
+	static void Reset();
 	static void QueueMesh(Mesh* mesh_, const ColorRGBA& color_);
 	static void QueueText(const TextCommand& textCommand_);
 	static void Present();

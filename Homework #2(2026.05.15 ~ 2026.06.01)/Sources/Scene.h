@@ -25,13 +25,13 @@ public:
 
 	void Load(const LoadContext& context_);
 	void Update(const TimeContext&  context_);
-	void Render(const RenderContext& context_);
+	void Render(RenderContext& context_);
 	void Unload(const LoadContext& context_);
 
 protected:
 	virtual void OnLoad(const LoadContext& context_) {}
 	virtual void OnUpdate(const TimeContext& context_) {}
-	virtual void OnRender(const RenderContext& context_) {}
+	virtual void OnRender(RenderContext& context_) {}
 	virtual void OnUnload(const LoadContext& context_) {}
 	
 private:

@@ -7,7 +7,7 @@ class IRenderable
 public:
 	virtual ~IRenderable() = default;
 
-	virtual void OnPreRender(const RenderContext& context_) = 0;
-	virtual void OnRender(const RenderContext& context_) = 0;
-	virtual void OnPostRender(const RenderContext& context_) = 0;
+	virtual void OnPreRender(RenderContext& context_) = 0;
+	virtual void OnRender(RenderContext& context_) = 0;
+	virtual void OnPostRender(RenderContext& context_) = 0;
 };

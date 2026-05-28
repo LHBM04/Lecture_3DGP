@@ -112,7 +112,7 @@ INT APIENTRY WinMain(
 #endif
 
 		scene.Update();
-		Renderer::Clear();
+		Renderer::Reset();
 		scene.Render();
 		Renderer::Present();
 	}

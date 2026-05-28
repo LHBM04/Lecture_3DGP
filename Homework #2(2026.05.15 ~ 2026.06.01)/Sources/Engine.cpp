@@ -3,9 +3,12 @@
 
 #include "EventDispatcher.h"
 #include "InputSystem.h"
+#include "RenderContext.h"
 #include "Renderer.h"
-#include "RenderSystem.h"
 #include "RendererOptions.h"
+#include "RenderSystem.h"
+#include "SceneSystem.h"
+#include "TimeContext.h"
 #include "TimeSystem.h"
 #include "Window.h"
 #include "WindowCloseEvent.h"
@@ -60,7 +63,34 @@ bool Engine::Initialize(const EngineOptions& options_)
 			return false;
 		}
 
-		RendererOptions rendererOptions{};
+		Window* mainWindow = windowSystem->GetWindows().front().get();
+		if (!renderSystem->CreateRenderTarget(mainWindow, mainWindow->GetWidth(), mainWindow->GetHeight()))
+		{
+			return false;
+		}
+
+		auto rendererResult = renderSystem->CreateRenderer();
+		if (!rendererResult)
+		{
+			return false;
+		}
+		renderer = rendererResult.value();
+
+		auto contextResult = renderSystem->CreateRenderContext();
+		if (!contextResult)
+		{
+			return false;
+		}
+		renderContext = contextResult.value();
+	}
+
+	// 씬 시스템 초기화.
+	{
+		sceneSystem = static_cast<SceneSystem*>(AddSystem<SceneSystem>());
+		if (!sceneSystem->Initialize())
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -91,13 +121,21 @@ int Engine::Run()
 			OnEvent(*event);
 		}
 
-		
+		TimeContext timeContext;
+		sceneSystem->Update(timeContext);
 
-		// TODO:
-		// timeSystem->Update();
-		// inputSystem->Update();
-		// sceneSystem->Update();
-		// renderSystem->Render();
+		renderSystem->BeginRender();
+
+		renderContext->Reset();
+		sceneSystem->Render(*renderContext);
+
+		renderer->Clear();
+		renderer->SubmitContext(*renderContext);
+
+		Window* mainWindow = windowSystem->GetWindows().front().get();
+		renderSystem->ExecuteRenderer(mainWindow, renderer, *renderContext);
+
+		renderSystem->EndRender();
 	}
 
 	return 0;

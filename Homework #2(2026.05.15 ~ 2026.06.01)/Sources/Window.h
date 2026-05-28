@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "EventQueue.h"
 #include "WindowOptions.h"
@@ -24,7 +24,6 @@ public:
 	void Hide() const noexcept;
 
 	[[nodiscard]] HWND GetHandle() const noexcept;
-
 	[[nodiscard]] const std::wstring& GetTitle() const noexcept;
 	void SetTitle(const std::wstring& title_) noexcept;
 
@@ -62,3 +61,4 @@ private:
 	HWND handle{ nullptr };
 	EventQueue* currentEventQueue{ nullptr };
 };
+

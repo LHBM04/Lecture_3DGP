@@ -6,7 +6,10 @@
 
 class Event;
 class InputSystem;
+class RenderContext;
+class Renderer;
 class RenderSystem;
+class SceneSystem;
 class TimeSystem;
 class WindowSystem;
 class WindowCloseEvent;
@@ -54,8 +57,11 @@ private:
 
 	WindowSystem* windowSystem{ nullptr };
 	RenderSystem* renderSystem{ nullptr };
+	Renderer* renderer{ nullptr };
+	RenderContext* renderContext{ nullptr };
 	TimeSystem* timeSystem{ nullptr };
 	InputSystem* inputSystem{ nullptr };
+	SceneSystem* sceneSystem{ nullptr };
 };
 
 template <std::derived_from<ISystem> TSystem>

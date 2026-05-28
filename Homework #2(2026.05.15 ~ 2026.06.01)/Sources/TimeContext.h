@@ -5,6 +5,9 @@ class TimeSystem;
 class TimeContext
 {
 public:
+	TimeContext() = default;
+	explicit TimeContext(const TimeSystem* timeSystem_) noexcept;
+
 	[[nodiscard]] float GetTotalTime() const;
 
 	[[nodiscard]] float GetTimeScale() const;
@@ -18,5 +21,5 @@ public:
 	[[nodiscard]] float GetFrameCount() const;
 
 private:
-	TimeSystem& timeSystem;
+	const TimeSystem* timeSystem{ nullptr };
 };
