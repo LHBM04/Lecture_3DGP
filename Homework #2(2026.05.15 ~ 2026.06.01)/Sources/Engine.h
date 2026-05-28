@@ -1,28 +1,23 @@
-#pragma once
+﻿#pragma once
 
+#include "EngineOptions.h"
+#include "EventQueue.h"
 #include "System.h"
 
+class Event;
 class InputSystem;
 class RenderSystem;
 class TimeSystem;
 class WindowSystem;
+class WindowCloseEvent;
+class WindowMaximizeEvent;
+class WindowMinimizeEvent;
+class WindowMoveEvent;
+class WindowResizeEvent;
 
 class Engine
 {
 public:
-	struct Options final
-	{
-		std::wstring title;
-		int x;
-		int y;
-		int width;
-		int height;
-		bool fullscreen;
-		bool resizable;
-		bool borderless;
-		float fixedTime;
-	};
-
 	Engine() = default;
 	~Engine() = default;
 
@@ -32,7 +27,7 @@ public:
 	Engine(Engine&&) = delete;
 	Engine operator=(Engine&&) = delete;
 
-	bool Initialize(const Options& options_);
+	bool Initialize(const EngineOptions& options_);
 	void Release();
 	
 	int Run();
@@ -44,12 +39,23 @@ public:
 	TSystem* GetSystem() const noexcept;
 
 private:
+	bool OnEvent(Event& event);
+	bool OnWindowClose(WindowCloseEvent& event);
+	bool OnWindowMaximize(WindowMaximizeEvent& event);
+	bool OnWindowMinimize(WindowMinimizeEvent& event);
+	bool OnWindowMove(WindowMoveEvent& event);
+	bool OnWindowResize(WindowResizeEvent& event);
+
+private:
 	std::unordered_map<std::type_index, std::unique_ptr<ISystem>> systems;
 
-	WindowSystem* windowSystem;
-	RenderSystem* renderSystem;
-	TimeSystem* timeSystem;
-	InputSystem* inputSystem;
+	bool isRunning{ false };
+	EventQueue eventQueue;
+
+	WindowSystem* windowSystem{ nullptr };
+	RenderSystem* renderSystem{ nullptr };
+	TimeSystem* timeSystem{ nullptr };
+	InputSystem* inputSystem{ nullptr };
 };
 
 template <std::derived_from<ISystem> TSystem>

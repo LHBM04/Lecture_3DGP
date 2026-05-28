@@ -1,18 +1,8 @@
-#pragma once
+﻿#pragma once
 
 class Renderer
 {
 public:
-	struct Options final
-	{
-		HWND window{ nullptr };
-		int width{ 0 };
-		int height{ 0 };
-		bool vSync{ true };
-		bool fullscreen{ false };
-		bool enableTripleBuffering{ false };
-	};
-
 	Renderer() = default;
 	~Renderer() = default;
 
@@ -24,5 +14,4 @@ public:
 
 	void BeginRender();
 	void EndRender();
-
 };

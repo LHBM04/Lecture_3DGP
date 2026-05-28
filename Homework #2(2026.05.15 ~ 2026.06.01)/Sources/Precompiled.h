@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ---- Standard ----
 #include <algorithm>
@@ -15,6 +15,7 @@
 #include <cstring>
 #include <deque>
 #include <exception>
+#include <expected>
 #include <filesystem>
 #include <format>
 #include <forward_list>
@@ -22,10 +23,14 @@
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <list>
+#include <locale>
 #include <map>
+#include <memory>
 #include <numbers>
 #include <numeric>
+#include <print>
 #include <queue>
 #include <ranges>
 #include <set>

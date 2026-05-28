@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "WindowSystem.h"
 
 bool WindowSystem::Initialize()
@@ -31,12 +31,12 @@ void WindowSystem::Release()
 	::UnregisterClassW(L"Engine", ::GetModuleHandleW(nullptr));
 }
 
-Window* WindowSystem::CreateWindow(const Window::Options& options_)
+std::expected<Window*, std::wstring> WindowSystem::CreateWindow(const WindowOptions& options_)
 {
 	std::unique_ptr<Window> newWindow{ std::make_unique<Window>() };
 	if (!newWindow->Initialize(options_))
 	{
-		return nullptr;
+		return std::unexpected{ L"좆됨" };
 	}
 
 	windows.push_back(std::move(newWindow));
@@ -46,6 +46,42 @@ Window* WindowSystem::CreateWindow(const Window::Options& options_)
 void WindowSystem::DestroyWindow(Window* window_)
 {
 
+}
+
+void WindowSystem::PollEvents(EventQueue& eventQueue_)
+{
+	for (const std::unique_ptr<Window>& window : windows)
+	{
+		if (window != nullptr)
+		{
+			window->currentEventQueue = &eventQueue_;
+		}
+	}
+
+	MSG message{};
+	while (::PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
+	{
+		::TranslateMessage(&message);
+		::DispatchMessageW(&message);
+	}
+
+	for (const std::unique_ptr<Window>& window : windows)
+	{
+		if (window != nullptr)
+		{
+			window->currentEventQueue = nullptr;
+		}
+	}
+}
+
+std::span<std::unique_ptr<Window>> WindowSystem::GetWindows()
+{
+	return windows;
+}
+
+std::span<const std::unique_ptr<Window>> WindowSystem::GetWindows() const
+{
+	return windows;
 }
 
 LRESULT WindowSystem::WindowProc(
@@ -71,7 +107,7 @@ LRESULT WindowSystem::WindowProc(
 
 	if (window != nullptr)
 	{
-		return window->OnEvent(uMsg, wParam, lParam);
+		return window->ProceedEvent(uMsg, wParam, lParam);
 	}
 
 	return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);

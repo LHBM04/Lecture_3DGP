@@ -1,52 +1,60 @@
-#pragma once
+﻿#pragma once
 
-#include "InputSystem.h"
+#include <cassert>
+#include <type_traits>
 
-struct Event
+class Window;
+
+class Event
 {
-    enum class Type : unsigned char
+public:
+    explicit Event(Window* window_) noexcept
+        : window{ window_ }
     {
-        None,
+    }
 
-        WindowClose,
-        WindowResize,
-        WindowFullscreenToggle,
+    virtual ~Event() noexcept = default;
 
-        KeyDown,
-        KeyUp,
-
-        MouseMove,
-        MouseButtonDown,
-        MouseButtonUp,
-    };
-
-    Type type{ Type::None };
-    HWND window{ nullptr };
-
-    union
+    [[nodiscard]]
+    Window* GetWindow() const noexcept
     {
-        struct
-        {
-            int width;
-            int height;
-        } resize;
+        return window;
+    }
 
-        struct
-        {
-            KeyCode keyCode;
-        } key;
+    template <typename TEvent>
+    bool Is() const noexcept;
 
-        struct
-        {
-            int x;
-            int y;
-        } mouseMove;
+    template <typename TEvent>
+    TEvent& As() noexcept;
 
-        struct
-        {
-            ButtonCode button;
-            int x;
-            int y;
-        } mouseButton;
-    };
+    template <typename TEvent>
+    const TEvent& As() const noexcept;
+
+private:
+    Window* window{};
 };
+
+template <typename TEvent>
+inline bool Event::Is() const noexcept
+{
+    static_assert(std::is_base_of_v<Event, TEvent>);
+    return dynamic_cast<const TEvent*>(this) != nullptr;
+}
+
+template <typename TEvent>
+inline TEvent& Event::As() noexcept
+{
+    static_assert(std::is_base_of_v<Event, TEvent>);
+
+    assert(Is<TEvent>());
+    return static_cast<TEvent&>(*this);
+}
+
+template <typename TEvent>
+inline const TEvent& Event::As() const noexcept
+{
+    static_assert(std::is_base_of_v<Event, TEvent>);
+
+    assert(Is<TEvent>());
+    return static_cast<const TEvent&>(*this);
+}

@@ -1,23 +1,13 @@
-#pragma once
+﻿#pragma once
 
-#include "Event.h"
+#include "EventQueue.h"
+#include "WindowOptions.h"
 
 class Window
 {
 	friend class WindowSystem;
 
 public:
-	struct Options final
-	{
-		std::wstring title;
-		int x;
-		int y;
-		int width;
-		int height;
-		DWORD style;
-		DWORD styleEx;
-	};
-
 	Window() = default;
 	~Window() = default;
 
@@ -27,10 +17,8 @@ public:
 	Window(Window&&) = delete;
 	Window operator=(Window&&) = delete;
 
-	bool Initialize(const Options& options_);
+	bool Initialize(const WindowOptions& options_);
 	void Release();
-
-	bool PollEvent(Event& event_);
 
 	void Show() const noexcept;
 	void Hide() const noexcept;
@@ -64,13 +52,13 @@ public:
 	[[nodiscard]] DWORD GetStyleEx() const noexcept;
 	void SetStyleEx(DWORD styleEx_) noexcept;
 
-private:
-	LRESULT OnEvent(
+	LRESULT ProceedEvent(
 		UINT message_,
 		WPARAM wParam_,
 		LPARAM lParam_);
 
-	Options options;
+private:
+	WindowOptions options;
 	HWND handle{ nullptr };
-	std::queue<Event> eventQueue;
+	EventQueue* currentEventQueue{ nullptr };
 };

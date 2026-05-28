@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -159,19 +159,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\ButtonCode.h" />
     <ClInclude Include="Sources\Engine.h" />
+    <ClInclude Include="Sources\EngineOptions.h" />
     <ClInclude Include="Sources\Event.h" />
+    <ClInclude Include="Sources\EventDispatcher.h" />
+    <ClInclude Include="Sources\EventQueue.h" />
     <ClInclude Include="Sources\InputSystem.h" />
+    <ClInclude Include="Sources\KeyCode.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Renderer.h" />
+    <ClInclude Include="Sources\RendererOptions.h" />
     <ClInclude Include="Sources\RenderSystem.h" />
     <ClInclude Include="Sources\System.h" />
     <ClInclude Include="Sources\TimeSystem.h" />
     <ClInclude Include="Sources\Window.h" />
+    <ClInclude Include="Sources\WindowCloseEvent.h" />
+    <ClInclude Include="Sources\WindowOptions.h" />
     <ClInclude Include="Sources\WindowSystem.h" />
+    <ClInclude Include="Sources\WindowResizeEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Engine.cpp" />
+    <ClCompile Include="Sources\EventQueue.cpp" />
     <ClCompile Include="Sources\InputSystem.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">

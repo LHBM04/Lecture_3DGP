@@ -1,5 +1,6 @@
-#pragma once
+﻿#pragma once
 
+#include "EventQueue.h"
 #include "System.h"
 #include "Window.h"
 
@@ -13,13 +14,12 @@ public:
 	bool Initialize();
 	void Release() override;
 
-	[[nodiscard]] Window* CreateWindow(const Window::Options& options_);
+	[[nodiscard]] std::expected<Window*, std::wstring> CreateWindow(const WindowOptions& options_);
 	void DestroyWindow(Window* window_);
+	void PollEvents(EventQueue& eventQueue_);
 
-	std::span<std::unique_ptr<Window>> GetWindows()
-	{
-		return windows;
-	}
+	[[nodiscard]] std::span<std::unique_ptr<Window>> GetWindows();
+	[[nodiscard]] std::span<const std::unique_ptr<Window>> GetWindows() const;
 
 private:
 	static LRESULT CALLBACK WindowProc(
@@ -29,4 +29,5 @@ private:
 		LPARAM lParam);
 
 	std::vector<std::unique_ptr<Window>> windows;
+	mutable std::vector<Window*> activeWindows;
 };

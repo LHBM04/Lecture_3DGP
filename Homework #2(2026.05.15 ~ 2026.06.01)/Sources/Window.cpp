@@ -1,9 +1,13 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Window.h"
 
-#include "InputSystem.h"
+#include "WindowCloseEvent.h"
+#include "WindowMaximizeEvent.h"
+#include "WindowMinimizeEvent.h"
+#include "WindowMoveEvent.h"
+#include "WindowResizeEvent.h"
 
-bool Window::Initialize(const Options& options_)
+bool Window::Initialize(const WindowOptions& options_)
 {
 	if (nullptr != handle)
 	{
@@ -201,131 +205,64 @@ void Window::Hide() const noexcept
 	}
 }
 
-bool Window::PollEvent(Event& event_)
-{
-	if (eventQueue.empty())
-	{
-		MSG message{};
-		while (::PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
-		{
-			::TranslateMessage(&message);
-			::DispatchMessageW(&message);
-		}
-	}
-
-	if (eventQueue.empty())
-	{
-		return false;
-	}
-
-	event_ = eventQueue.front();
-	eventQueue.pop();
-	return true;
-}
-
-LRESULT Window::OnEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
+LRESULT Window::ProceedEvent(UINT message_, WPARAM wParam_, LPARAM lParam_)
 {
 	switch (message_)
 	{
 	case WM_CLOSE:
 	{
-		Event event{};
-		event.type = Event::Type::WindowClose;
-		event.window = handle;
-		eventQueue.push(event);
+		if (currentEventQueue != nullptr)
+		{
+			currentEventQueue->Push<WindowCloseEvent>(this);
+		}
+
 		return 0;
 	}
 	case WM_SIZE:
 	{
+		const UINT sizeType{ static_cast<UINT>(wParam_) };
 		const int width{ LOWORD(lParam_) };
 		const int height{ HIWORD(lParam_) };
 
 		options.width = width;
 		options.height = height;
 
-		Event event{};
-		event.type = Event::Type::WindowResize;
-		event.window = handle;
-		event.resize.width = width;
-		event.resize.height = height;
-		eventQueue.push(event);
-		return 0;
-	}
-	case WM_KEYDOWN:
-	{
-		Event event{};
-		event.type = Event::Type::KeyDown;
-		event.window = handle;
-		event.key.keyCode = (KeyCode)wParam_;
-		eventQueue.push(event);
-		return 0;
-	}
-	case WM_KEYUP:
-	{
-		Event event{};
-		event.type = Event::Type::KeyUp;
-		event.window = handle;
-		event.key.keyCode = (KeyCode)wParam_;
-		eventQueue.push(event);
-		return 0;
-	}
-	case WM_SYSKEYDOWN:
-	{
-		const bool isAltDown{ 0 != (lParam_ & (1 << 29)) };
-		if (isAltDown && VK_RETURN == wParam_)
+		if (currentEventQueue != nullptr)
 		{
-			Event event{};
-			event.type = Event::Type::WindowFullscreenToggle;
-			event.window = handle;
-			eventQueue.push(event);
-			return 0;
+			currentEventQueue->Push<WindowResizeEvent>(this, width, height);
+
+			if (sizeType == SIZE_MINIMIZED)
+			{
+				currentEventQueue->Push<WindowMinimizeEvent>(this);
+			}
+			else if (sizeType == SIZE_MAXIMIZED)
+			{
+				currentEventQueue->Push<WindowMaximizeEvent>(this);
+			}
 		}
-		break;
-	}
-	case WM_MOUSEMOVE:
-	{
-		Event event{};
-		event.type = Event::Type::MouseMove;
-		event.window = handle;
-		event.mouseMove.x = GET_X_LPARAM(lParam_);
-		event.mouseMove.y = GET_Y_LPARAM(lParam_);
-		eventQueue.push(event);
+
 		return 0;
 	}
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
+	case WM_MOVE:
 	{
-		Event event{};
-		event.type = Event::Type::MouseButtonDown;
-		event.window = handle;
-		event.mouseButton.button =
-			WM_LBUTTONDOWN == message_ ? ButtonCode::Left :
-			WM_RBUTTONDOWN == message_ ? ButtonCode::Right :
-			ButtonCode::Middle;
-		event.mouseButton.x = GET_X_LPARAM(lParam_);
-		event.mouseButton.y = GET_Y_LPARAM(lParam_);
-		eventQueue.push(event);
-		return 0;
-	}
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	{
-		Event event{};
-		event.type = Event::Type::MouseButtonUp;
-		event.window = handle;
-		event.mouseButton.button =
-			WM_LBUTTONUP == message_ ? ButtonCode::Left :
-			WM_RBUTTONUP == message_ ? ButtonCode::Right :
-			ButtonCode::Middle;
-		event.mouseButton.x = GET_X_LPARAM(lParam_);
-		event.mouseButton.y = GET_Y_LPARAM(lParam_);
-		eventQueue.push(event);
+		const int x{ static_cast<int>(static_cast<short>(LOWORD(lParam_))) };
+		const int y{ static_cast<int>(static_cast<short>(HIWORD(lParam_))) };
+
+		options.x = x;
+		options.y = y;
+
+		if (currentEventQueue != nullptr)
+		{
+			currentEventQueue->Push<WindowMoveEvent>(this, x, y);
+		}
+
 		return 0;
 	}
 	default:;
 	}
+
+	// TODO: KeyDownEvent, KeyUpEvent, MouseMoveEvent,
+	// MouseButtonDownEvent, MouseButtonUpEvent 추가 후 Push<TEvent>()로 교체.
 
 	return ::DefWindowProcW(handle, message_, wParam_, lParam_);
 }

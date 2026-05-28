@@ -1,5 +1,7 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
+
 #include "Engine.h"
+#include "EngineOptions.h"
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -7,7 +9,7 @@ INT APIENTRY wWinMain(
 	_In_ PWSTR lpCmdLine,
 	_In_ INT nCmdShow)
 {
-	Engine::Options options{};
+	EngineOptions options{};
 	options.title = L"Homework #2(2026.05.15 ~ 2026.06.01)";
 	options.x = 0;
 	options.y = 0;
