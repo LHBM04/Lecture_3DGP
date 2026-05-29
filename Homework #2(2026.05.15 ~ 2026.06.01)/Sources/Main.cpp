@@ -1,7 +1,20 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
-#include "Engine.h"
-#include "EngineOptions.h"
+#include "RenderSystem.h"
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	default:
+		return DefWindowProcW(hWnd, message, wParam, lParam);
+	}
+}
+
+bool isRunning{ false };
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -9,23 +22,57 @@ INT APIENTRY wWinMain(
 	_In_ PWSTR lpCmdLine,
 	_In_ INT nCmdShow)
 {
-	EngineOptions options{};
-	options.title = L"Homework #2(2026.05.15 ~ 2026.06.01)";
-	options.x = 0;
-	options.y = 0;
-	options.width = 800;
-	options.height = 600;
-	options.fullscreen = false;
-	options.resizable = false;
-	options.borderless = false;
-	options.fixedTime = 60.0f;
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	Engine engine;
-	if (auto result{ engine.Initialize(options)}; !result)
+	WNDCLASSEXW wndClass;
+	wndClass.cbSize = sizeof(WNDCLASSEXW);
+	wndClass.hInstance = hInstance;
+	wndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wndClass.lpszClassName = L"Homework #2 Class";
+	RegisterClassExW(&wndClass);
+
+	HWND mainWindow = CreateWindowExW(
+		0,
+		wndClass.lpszClassName,
+		L"Homework #2(2026.05.15 ~ 2026.06.01)",
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		nullptr, nullptr, hInstance, nullptr);
+
+	if (mainWindow == nullptr)
 	{
-		::MessageBoxW(nullptr, result.error().c_str(), L"Oops!", NULL);
 		return -1;
 	}
 
-	return engine.Run();
+	ShowWindow(mainWindow, nCmdShow);
+	UpdateWindow(mainWindow);
+
+	if (!RenderSystem::GetInstance().Initialize(mainWindow))
+	{
+		return -1;
+	}
+
+	isRunning = true;
+
+	MSG msg;
+	while (isRunning)
+	{
+		while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+			{
+				isRunning = false;
+				break;
+			}
+
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+		}
+
+		RenderSystem::GetInstance().Clear();
+		RenderSystem::GetInstance().Present();
+	}
+
+	return (INT)msg.wParam;
 }
