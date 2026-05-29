@@ -167,8 +167,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Camera.cpp" />
     <ClCompile Include="Sources\ColorRGB.cpp" />
     <ClCompile Include="Sources\ColorRGBA.cpp" />
+    <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\InputSystem.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
@@ -180,20 +182,32 @@
     </ClCompile>
     <ClCompile Include="Sources\Quaternion.cpp" />
     <ClCompile Include="Sources\RenderSystem.cpp" />
+    <ClCompile Include="Sources\Scene.cpp" />
+    <ClCompile Include="Sources\SceneManager.cpp" />
+    <ClCompile Include="Sources\Scene_Title.cpp" />
+    <ClCompile Include="Sources\Transform.cpp" />
     <ClCompile Include="Sources\Vector2D.cpp" />
     <ClCompile Include="Sources\Vector3D.cpp" />
     <ClCompile Include="Sources\Vector4D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Camera.h" />
     <ClInclude Include="Sources\ColorRGB.h" />
     <ClInclude Include="Sources\ColorRGBA.h" />
+    <ClInclude Include="Sources\Component.h" />
+    <ClInclude Include="Sources\GameObject.h" />
     <ClInclude Include="Sources\InputSystem.h" />
+    <ClInclude Include="Sources\Logger.h" />
     <ClInclude Include="Sources\MathF.h" />
     <ClInclude Include="Sources\Matrix4x4.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Quaternion.h" />
     <ClInclude Include="Sources\RenderSystem.h" />
+    <ClInclude Include="Sources\Scene.h" />
+    <ClInclude Include="Sources\SceneManager.h" />
+    <ClInclude Include="Sources\Scene_Title.h" />
     <ClInclude Include="Sources\Singleton.h" />
+    <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\Vector2D.h" />
     <ClInclude Include="Sources\Vector3D.h" />
     <ClInclude Include="Sources\Vector4D.h" />

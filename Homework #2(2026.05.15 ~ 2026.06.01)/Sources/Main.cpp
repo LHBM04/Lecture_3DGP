@@ -1,6 +1,7 @@
 ﻿#include "Precompiled.h"
 
 #include "RenderSystem.h"
+#include "SceneManager.h"
 #include "InputSystem.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -23,6 +24,12 @@ constexpr LPCWSTR WindowTitle{ L"Homework #2(2026.05.15 ~ 2026.06.01)" };
 constexpr int WindowWidth{ 800 };
 constexpr int WindowHeight{ 600 };
 
+LARGE_INTEGER frequency;
+LARGE_INTEGER lastTime;
+
+float fixedStep{ 1.0f / 60.0f };
+float fixedTime{ 0.0f };
+
 bool isRunning{ false };
 
 INT APIENTRY wWinMain(
@@ -33,6 +40,16 @@ INT APIENTRY wWinMain(
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+#if defined(_DEBUG)
+	assert(AllocConsole());
+	
+	FILE* consoleStream{ nullptr };
+	freopen_s(&consoleStream, "CONOUT$", "w", stdout);
+	freopen_s(&consoleStream, "CONOUT$", "w", stderr);
+
+	// Logger::Info("Console allocated for debugging.");
+#endif
 
 	WNDCLASSEXW wndClass;
 	wndClass.cbSize = sizeof(WNDCLASSEXW);
@@ -59,18 +76,26 @@ INT APIENTRY wWinMain(
 
 	if (mainWindow == nullptr)
 	{
+		// Logger::Critical("Failed to create main window.");
+		return -1;
+	}
+	
+	if (!RenderSystem::GetInstance().Initialize(mainWindow))
+	{
+		// Logger::Critical("Failed to initialize RenderSystem.");
 		return -1;
 	}
 
-	ShowWindow(mainWindow, nCmdShow);
-	UpdateWindow(mainWindow);
-
-	if (!RenderSystem::GetInstance().Initialize(mainWindow))
+	if (!IsWindowVisible(mainWindow))
 	{
-		return -1;
+		ShowWindow(mainWindow, nCmdShow);
+		UpdateWindow(mainWindow);
 	}
 
 	InputSystem::GetInstance().Reset();
+
+	QueryPerformanceFrequency(&frequency);
+	QueryPerformanceCounter(&lastTime);
 
 	isRunning = true;
 
@@ -91,10 +116,38 @@ INT APIENTRY wWinMain(
 			DispatchMessageW(&msg);
 		}
 
-		RenderSystem::GetInstance().BeginFrame();
-		RenderSystem::GetInstance().Clear();
-		RenderSystem::GetInstance().EndFrame();
-		RenderSystem::GetInstance().Present();
+		// 게임 업데이트.
+		{
+			LARGE_INTEGER nowTime;
+			QueryPerformanceCounter(&nowTime);
+
+			LARGE_INTEGER elapsedTicks{ nowTime.QuadPart - lastTime.QuadPart };
+			float deltaTime{ static_cast<float>(elapsedTicks.QuadPart) / static_cast<float>(frequency.QuadPart) };
+
+			if ((fixedTime += deltaTime) >= 2.0f)
+			{
+				fixedTime = 2.0f;
+			}
+
+			while (fixedTime >= fixedStep)
+			{
+				fixedTime -= fixedStep;
+				SceneManager::GetInstance().FixedUpdate(fixedStep);
+			}
+
+			SceneManager::GetInstance().Update(deltaTime);
+			lastTime = nowTime;
+		}
+		// 게임 렌더.
+		{
+			RenderSystem::GetInstance().BeginFrame();
+			RenderSystem::GetInstance().Clear();
+
+			SceneManager::GetInstance().Render();
+			
+			RenderSystem::GetInstance().EndFrame();
+			RenderSystem::GetInstance().Present();
+		}
 	}
 
 	RenderSystem::GetInstance().Release();

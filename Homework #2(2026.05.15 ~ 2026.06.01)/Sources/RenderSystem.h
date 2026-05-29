@@ -39,17 +39,7 @@ private:
 	void WaitForGpu();
 	void MoveToNextFrame();
 
-	void CreateRootSignature();
-	void CreatePipelineState();
-	void CreateMesh();
-
 private:
-	struct Vertex final
-	{
-		Vector3D position;
-		ColorRGBA color;
-	};
-
 	struct CameraConstants final
 	{
 	};

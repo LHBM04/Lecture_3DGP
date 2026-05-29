@@ -51,6 +51,24 @@
     <ClCompile Include="Sources\ColorRGB.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\SceneManager.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\GameObject.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Title.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Camera.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Transform.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Precompiled.h">
@@ -87,6 +105,30 @@
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\MathF.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SceneManager.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Logger.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\GameObject.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Component.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Title.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Transform.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <DirectXMath.h>
+#include <algorithm>
+#include <cmath>
 #include <limits>
 #include <numbers>
 #include <numeric>

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ---- Standard ----
 #include <algorithm>
@@ -6,6 +6,7 @@
 #include <bit>
 #include <bitset>
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <concepts>
 #include <cstddef>

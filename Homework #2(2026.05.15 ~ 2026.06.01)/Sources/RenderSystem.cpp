@@ -32,7 +32,7 @@ bool RenderSystem::Initialize(HWND window_)
 	}
 
 	RECT rect;
-	GetClientRect(window_, &rect);
+	::GetClientRect(window_, &rect);
 	const UINT width{ static_cast<UINT>(rect.right - rect.left) };
 	const UINT height{ static_cast<UINT>(rect.bottom - rect.top) };
 
@@ -61,6 +61,7 @@ bool RenderSystem::Initialize(HWND window_)
 
 	frameIndex = swapChain->GetCurrentBackBufferIndex();
 
+	// Render Target View 초기화.
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
 		rtvHeapDesc.NumDescriptors = FrameCount;
@@ -86,6 +87,7 @@ bool RenderSystem::Initialize(HWND window_)
 		}
 	}
 
+	// Depth Stencil View 초기화.
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
 		dsvHeapDesc.NumDescriptors = 1;
@@ -138,9 +140,9 @@ bool RenderSystem::Initialize(HWND window_)
 		device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
 	}
 
-	for (UINT n = 0; n < FrameCount; n++)
+	for (std::size_t count{ 0 }; count < FrameCount; count++)
 	{
-		if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocators[n]))))
+		if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocators[count]))))
 		{
 			return false;
 		}
@@ -167,10 +169,6 @@ bool RenderSystem::Initialize(HWND window_)
 	{
 		return false;
 	}
-
-	CreateRootSignature();
-	CreatePipelineState();
-	CreateMesh();
 
 	WaitForGpu();
 
@@ -243,6 +241,8 @@ void RenderSystem::EndFrame()
 
 void RenderSystem::Clear()
 {
+	assert(true); // TODO: assert 걸어라.
+
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
 	rtvHandle.ptr += static_cast<SIZE_T>(frameIndex) * rtvDescriptorSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{ dsvHeap->GetCPUDescriptorHandleForHeapStart() };
@@ -258,6 +258,8 @@ void RenderSystem::Clear()
 
 void RenderSystem::Present()
 {
+	assert(swapChain != nullptr);
+
 	if (FAILED(swapChain->Present(1, 0)))
 	{
 		return;
@@ -276,6 +278,9 @@ void RenderSystem::SetObject(GameObject* object_)
 
 void RenderSystem::WaitForGpu()
 {
+	assert(commandQueue != nullptr);
+	assert(fence != nullptr);
+
 	if (FAILED(commandQueue->Signal(fence.Get(), fenceValues[frameIndex])))
 	{
 		return;
@@ -310,110 +315,4 @@ void RenderSystem::MoveToNextFrame()
 	}
 
 	fenceValues[frameIndex] = currentFenceValue + 1;
-}
-
-void RenderSystem::CreateRootSignature()
-{
-	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
-	rootSignatureDesc.NumParameters = 0;
-	rootSignatureDesc.pParameters = nullptr;
-	rootSignatureDesc.NumStaticSamplers = 0;
-	rootSignatureDesc.pStaticSamplers = nullptr;
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-	Microsoft::WRL::ComPtr<ID3DBlob> signature;
-	Microsoft::WRL::ComPtr<ID3DBlob> error;
-	if (FAILED(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error)))
-	{
-		return;
-	}
-
-	device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-}
-
-void RenderSystem::CreatePipelineState()
-{
-	Microsoft::WRL::ComPtr<ID3DBlob> vertexShader;
-	Microsoft::WRL::ComPtr<ID3DBlob> pixelShader;
-
-#if defined(_DEBUG)
-	UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-	UINT compileFlags = 0;
-#endif
-
-	D3DCompileFromFile(L"Shaders/Default.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr);
-	D3DCompileFromFile(L"Shaders/Default.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr);
-
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
-	psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
-	psoDesc.pRootSignature = rootSignature.Get();
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader.Get());
-	psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader.Get());
-	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	psoDesc.DepthStencilState.DepthEnable = TRUE;
-	psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-	psoDesc.DepthStencilState.StencilEnable = FALSE;
-	psoDesc.SampleMask = UINT_MAX;
-	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	psoDesc.SampleDesc.Count = 1;
-
-	device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState));
-}
-
-void RenderSystem::CreateMesh()
-{
-	Vertex triangleVertices[] =
-	{
-		{ { 0.0f, 0.25f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-		{ { 0.25f, -0.25f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-		{ { -0.25f, -0.25f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
-	};
-
-	const UINT vertexBufferSize = sizeof(triangleVertices);
-
-	D3D12_HEAP_PROPERTIES heapProps{};
-	heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Alignment = 0;
-	resourceDesc.Width = vertexBufferSize;
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.Format = DXGI_FORMAT_UNKNOWN;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.SampleDesc.Quality = 0;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
-	device->CreateCommittedResource(
-		&heapProps,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer));
-
-	UINT8* pVertexDataBegin;
-	D3D12_RANGE readRange{ 0, 0 };
-	vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
-	memcpy(pVertexDataBegin, triangleVertices, sizeof(triangleVertices));
-	vertexBuffer->Unmap(0, nullptr);
-
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
-	vertexBufferView.SizeInBytes = vertexBufferSize;
 }
