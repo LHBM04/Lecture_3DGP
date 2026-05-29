@@ -1,11 +1,13 @@
 #pragma once
 
+#include <iostream>
 #include "MathF.h"
 
-struct Vector3D;
+class Vector3D;
 
-struct Quaternion : public DirectX::XMFLOAT4
+class Quaternion : public DirectX::XMFLOAT4
 {
+public:
 	Quaternion() noexcept;
 	explicit Quaternion(float value_) noexcept;
 	Quaternion(float x_, float y_, float z_, float w_) noexcept;

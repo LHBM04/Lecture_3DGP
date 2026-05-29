@@ -1,25 +1,15 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Light.h"
 
 #include "GameObject.h"
 #include "Scene.h"
 
-void Light::OnPreRender()
+void Light::OnEnable()
 {
-	if (!IsActive())
-	{
-		return;
-	}
-
 	GetOwner()->GetScene()->AddLight(this);
 }
 
-void Light::OnPostRender()
+void Light::OnDisable()
 {
-	if (!IsActive())
-	{
-		return;
-	}
-
 	GetOwner()->GetScene()->RemoveLight(this);
 }

@@ -1,9 +1,9 @@
-﻿#include "Precompiled.h"
-#include "SceneManager.h"
+#include "Precompiled.h"
+#include "SceneSystem.h"
 
 #include "RenderSystem.h"
 
-void SceneManager::Update(float deltaTime_)
+void SceneSystem::Update(float deltaTime_)
 {
 	if (nextScene)
 	{
@@ -24,7 +24,7 @@ void SceneManager::Update(float deltaTime_)
 	}
 }
 
-void SceneManager::FixedUpdate(float fixedDeltaTime_)
+void SceneSystem::FixedUpdate(float fixedDeltaTime_)
 {
 	if (!currentScene)
 	{
@@ -32,7 +32,7 @@ void SceneManager::FixedUpdate(float fixedDeltaTime_)
 	}
 }
 
-void SceneManager::Render()
+void SceneSystem::Render()
 {
 	if (!currentScene)
 	{
@@ -42,12 +42,12 @@ void SceneManager::Render()
 	currentScene->Render();
 }
 
-void SceneManager::AddScene(std::wstring_view sceneName_, std::unique_ptr<Scene> scene_)
+void SceneSystem::AddScene(std::wstring_view sceneName_, std::unique_ptr<Scene> scene_)
 {
 	scenes.emplace(sceneName_, std::move(scene_));
 }
 
-void SceneManager::RemoveScene(std::wstring_view sceneName_)
+void SceneSystem::RemoveScene(std::wstring_view sceneName_)
 {
 	const auto it = scenes.find(std::wstring(sceneName_));
 	if (it != scenes.end())
@@ -67,7 +67,7 @@ void SceneManager::RemoveScene(std::wstring_view sceneName_)
 	}
 }
 
-void SceneManager::LoadScene(std::wstring_view sceneName_)
+void SceneSystem::LoadScene(std::wstring_view sceneName_)
 {
 	const auto it = scenes.find(std::wstring(sceneName_));
 	if (it != scenes.end())
@@ -76,7 +76,7 @@ void SceneManager::LoadScene(std::wstring_view sceneName_)
 	}
 }
 
-void SceneManager::UnloadScene(std::wstring_view sceneName_)
+void SceneSystem::UnloadScene(std::wstring_view sceneName_)
 {
 	const auto it = scenes.find(std::wstring(sceneName_));
 	if (it != scenes.end())

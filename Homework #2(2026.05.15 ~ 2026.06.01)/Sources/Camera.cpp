@@ -1,12 +1,194 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Camera.h"
+#include "SphereCollider.h"
+#include "CubeCollider.h"
+#include "Scene.h"
+#include "RenderSystem.h"
+#include "GameObject.h"
+#include "Transform.h"
+#include "Matrix4x4.h"
+#include "Vector2D.h"
+#include "Vector3D.h"
 
-void Camera::OnPreRender()
+float Camera::GetNearClipPlane() const
+{
+	return nearPlane;
+}
+
+void Camera::SetNearClipPlane(float nearClipPlane_)
+{
+	nearPlane = nearClipPlane_;
+}
+
+float Camera::GetFarClipPlane() const
+{
+	return farPlane;
+}
+
+void Camera::SetFarClipPlane(float farClipPlane_)
+{
+	farPlane = farClipPlane_;
+}
+
+const Vector4D& Camera::GetViewport() const
+{
+	return viewportRect;
+}
+
+void Camera::SetViewport(const Vector4D& viewport_)
+{
+	viewportRect = viewport_;
+}
+
+Camera::ProjectionType Camera::GetProjectionType() const
+{
+	return projectionType;
+}
+
+void Camera::SetProjectionType(ProjectionType projectionType_)
+{
+	projectionType = projectionType_;
+}
+
+float Camera::GetFOV() const
+{
+	return fov;
+}
+
+void Camera::SetFOV(float fov_)
+{
+	fov = fov_;
+}
+
+float Camera::GetOrthographicSize() const
+{
+	return orthographicSize;
+}
+
+void Camera::SetOrthographicSize(float orthographicSize_)
+{
+	orthographicSize = orthographicSize_;
+}
+
+Camera::ClearType Camera::GetClearMode() const
+{
+	return clearType;
+}
+
+void Camera::SetClearMode(ClearType clearMode_)
+{
+	clearType = clearMode_;
+}
+
+const ColorRGBA& Camera::GetClearColor() const
+{
+	return clearColor;
+}
+
+void Camera::SetClearColor(const ColorRGBA& clearColor_)
+{
+	clearColor = clearColor_;
+}
+
+Matrix4x4 Camera::GetViewMatrix() const
+{
+	const Transform* transform{ GetOwner()->GetComponent<Transform>() };
+
+	if (nullptr == transform)
+	{
+		return Matrix4x4::GetIdentity();
+	}
+
+	return transform->GetWorldMatrix().GetInverse();
+}
+
+Matrix4x4 Camera::GetProjectionMatrix() const
+{
+	const float aspectRatio{ viewportRect.z / viewportRect.w };
+
+	switch (projectionType)
+	{
+	case ProjectionType::Perspective:
+	{
+		return Matrix4x4::Perspective(fov, aspectRatio, nearPlane, farPlane);
+	}
+	case ProjectionType::Orthographic:
+	{
+		const float halfHeight{ orthographicSize };
+		const float halfWidth{ halfHeight * aspectRatio };
+
+		return Matrix4x4::Ortho(
+			-halfWidth, halfWidth,
+			-halfHeight, halfHeight,
+			GetNearClipPlane(), GetFarClipPlane());
+	}
+	}
+
+	std::unreachable();
+}
+
+Matrix4x4 Camera::GetViewProjectionMatrix() const
+{
+	return GetViewMatrix() * GetProjectionMatrix();
+}
+
+void Camera::OnEnable()
 {
 	GetOwner()->GetScene()->AddCamera(this);
 }
 
-void Camera::OnPostRender()
+void Camera::OnDisable()
 {
 	GetOwner()->GetScene()->RemoveCamera(this);
+}
+
+void Camera::UpdateFrustum()
+{
+	DirectX::BoundingFrustum::CreateFromMatrix(frustum, Matrix4x4::Load(GetProjectionMatrix()));
+	
+	auto* transform = GetOwner()->GetComponent<Transform>();
+	if (transform)
+	{
+		frustum.Transform(frustum, Matrix4x4::Load(transform->GetWorldMatrix()));
+	}
+}
+
+bool Camera::IsInFrustum(const SphereCollider* collider_) const
+{
+	if (!collider_) return true;
+	return frustum.Intersects(collider_->GetWorldSphere());
+}
+
+bool Camera::IsInFrustum(const CubeCollider* collider_) const
+{
+	if (!collider_) return true;
+	return frustum.Intersects(collider_->GetWorldBox());
+}
+
+void Camera::ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const
+{
+	auto& rs = RenderSystem::GetInstance();
+	float sw = 800.0f;
+	float sh = 600.0f;
+
+	float vx = viewportRect.x * sw; 
+	float vy = viewportRect.y * sh;
+	float vw = viewportRect.z * sw;
+	float vh = viewportRect.w * sh;
+
+	float x = (((screenPoint_.x - vx) / vw) * 2.0f) - 1.0f;
+	float y = -((((screenPoint_.y - vy) / vh) * 2.0f) - 1.0f);
+
+	Matrix4x4 invVP = GetViewProjectionMatrix().GetInverse();
+	
+	DirectX::XMVECTOR rayNear = DirectX::XMVectorSet(x, y, 0.0f, 1.0f);
+	DirectX::XMVECTOR rayFar = DirectX::XMVectorSet(x, y, 1.0f, 1.0f);
+
+	DirectX::XMVECTOR worldNear = DirectX::XMVector3TransformCoord(rayNear, Matrix4x4::Load(invVP));
+	DirectX::XMVECTOR worldFar = DirectX::XMVector3TransformCoord(rayFar, Matrix4x4::Load(invVP));
+
+	DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(worldFar, worldNear));
+
+	rayOrigin_ = Vector3D(worldNear);
+	rayDir_ = Vector3D(dir);
 }

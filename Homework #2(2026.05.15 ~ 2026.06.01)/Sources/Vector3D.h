@@ -1,12 +1,14 @@
 #pragma once
 
+#include <iostream>
 #include "MathF.h"
 
-struct Vector2D;
-struct Vector4D;
+class Vector2D;
+class Vector4D;
 
-struct Vector3D : public DirectX::XMFLOAT3
+class Vector3D : public DirectX::XMFLOAT3
 {
+public:
     Vector3D() noexcept;
     explicit Vector3D(float value_) noexcept;
     explicit Vector3D(float x_, float y_, float z_) noexcept;

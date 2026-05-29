@@ -51,7 +51,7 @@
     <ClCompile Include="Sources\ColorRGB.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SceneManager.cpp">
+    <ClCompile Include="Sources\SceneSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Scene.cpp">

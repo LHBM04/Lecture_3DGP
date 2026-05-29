@@ -1,45 +1,43 @@
-﻿#pragma once
-
+#pragma once
 #include "Component.h"
 #include "ColorRGBA.h"
 
-class Light : public Component
+class Light final : public Component<Light>
 {
 public:
 	Light() = default;
-	~Light() override = default;
+	~Light() = default;
 
-	[[nodiscard]] float GetIntensity() const noexcept;
-	void SetIntensity(float intensity_) noexcept;
+	[[nodiscard]] float GetIntensity() const;
+	void SetIntensity(float intensity_);
 
-	[[nodiscard]] ColorRGBA GetColor() const noexcept;
-	void SetColor(const ColorRGBA& color_) noexcept;
+	[[nodiscard]] ColorRGBA GetColor() const;
+	void SetColor(const ColorRGBA& color_);
 
-protected:
-	void OnPreRender() override;
-	void OnPostRender() override;
+	void OnEnable();
+	void OnDisable();
 
 private:
 	float intensity{ 1.0f };
-	ColorRGBA color{ ColorRGBA::GetWhite()};
+	ColorRGBA color{ ColorRGBA::GetWhite() };
 };
 
-inline float Light::GetIntensity() const noexcept
+inline float Light::GetIntensity() const
 {
 	return intensity;
 }
 
-inline void Light::SetIntensity(float intensity_) noexcept
+inline void Light::SetIntensity(float intensity_)
 {
 	intensity = intensity_;
 }
 
-inline ColorRGBA Light::GetColor() const noexcept
+inline ColorRGBA Light::GetColor() const
 {
 	return color;
 }
 
-inline void Light::SetColor(const ColorRGBA& color_) noexcept
+inline void Light::SetColor(const ColorRGBA& color_)
 {
 	color = color_;
 }

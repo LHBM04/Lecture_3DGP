@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -9,11 +9,11 @@
 #include "Scene.h"
 #include "Singleton.h"
 
-class SceneManager final : public Singleton<SceneManager>
+class SceneSystem final : public Singleton<SceneSystem>
 {
 public:
-	SceneManager() = default;
-	~SceneManager() override = default;
+	SceneSystem() = default;
+	~SceneSystem() override = default;
 
 	void Update(float deltaTime_);
 	void FixedUpdate(float fixedDeltaTime_);

@@ -1,11 +1,9 @@
-﻿#include "Precompiled.h"
-
-#include <memory>
+#include "Precompiled.h"
 
 #include "InputSystem.h"
 #include "RenderSystem.h"
 #include "Scene_Title.h"
-#include "SceneManager.h"
+#include "SceneSystem.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -54,7 +52,7 @@ INT APIENTRY wWinMain(
 	// Logger::Info("Console allocated for debugging.");
 #endif
 
-	WNDCLASSEXW wndClass;
+	WNDCLASSEXW wndClass{};
 	wndClass.cbSize = sizeof(WNDCLASSEXW);
 	wndClass.style = CS_HREDRAW | CS_VREDRAW;
 	wndClass.lpfnWndProc = WndProc;
@@ -63,7 +61,7 @@ INT APIENTRY wWinMain(
 	wndClass.hInstance = hInstance;
 	wndClass.hIcon = LoadIconW(nullptr, IDI_APPLICATION);
 	wndClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-	wndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wndClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
 	wndClass.lpszMenuName = nullptr;
 	wndClass.lpszClassName = WindowClassName;
 	wndClass.hIconSm = LoadIconW(nullptr, IDI_APPLICATION);
@@ -83,9 +81,9 @@ INT APIENTRY wWinMain(
 		return -1;
 	}
 	
-	if (!RenderSystem::GetInstance().Initialize(mainWindow))
+	if (auto result = RenderSystem::GetInstance().Initialize(mainWindow); !result)
 	{
-		// Logger::Critical("Failed to initialize RenderSystem.");
+		// Logger::Critical(result.error());
 		return -1;
 	}
 
@@ -97,15 +95,15 @@ INT APIENTRY wWinMain(
 
 	InputSystem::GetInstance().Reset();
 
-	SceneManager::GetInstance().AddScene(L"Title Scene", std::make_unique<Scene_Title>());
-	SceneManager::GetInstance().LoadScene(L"Title Scene");
+	SceneSystem::GetInstance().AddScene(L"Title Scene", std::make_unique<Scene_Title>());
+	SceneSystem::GetInstance().LoadScene(L"Title Scene");
 	
 	QueryPerformanceFrequency(&frequency);
 	QueryPerformanceCounter(&lastTime);
 
 	isRunning = true;
 
-	MSG msg;
+	MSG msg{};
 	while (isRunning)
 	{
 		InputSystem::GetInstance().Update();
@@ -124,10 +122,11 @@ INT APIENTRY wWinMain(
 
 		// 게임 업데이트.
 		{
-			LARGE_INTEGER nowTime;
+			LARGE_INTEGER nowTime{};
 			QueryPerformanceCounter(&nowTime);
 
-			LARGE_INTEGER elapsedTicks{ nowTime.QuadPart - lastTime.QuadPart };
+			LARGE_INTEGER elapsedTicks{};
+			elapsedTicks.QuadPart = nowTime.QuadPart - lastTime.QuadPart;
 			float deltaTime{ static_cast<float>(elapsedTicks.QuadPart) / static_cast<float>(frequency.QuadPart) };
 
 			if ((fixedTime += deltaTime) >= 2.0f)
@@ -138,17 +137,18 @@ INT APIENTRY wWinMain(
 			while (fixedTime >= fixedStep)
 			{
 				fixedTime -= fixedStep;
-				SceneManager::GetInstance().FixedUpdate(fixedStep);
+				SceneSystem::GetInstance().FixedUpdate(fixedStep);
 			}
 
-			SceneManager::GetInstance().Update(deltaTime);
+			SceneSystem::GetInstance().Update(deltaTime);
 			lastTime = nowTime;
 		}
 		// 게임 렌더.
 		{
 			RenderSystem::GetInstance().BeginFrame();
-			SceneManager::GetInstance().Render();
+			SceneSystem::GetInstance().Render();
 			RenderSystem::GetInstance().EndFrame();
+			RenderSystem::GetInstance().Present();
 		}
 	}
 
@@ -162,5 +162,5 @@ INT APIENTRY wWinMain(
 
 	UnregisterClassW(wndClass.lpszClassName, wndClass.hInstance);
 
-	return (INT)msg.wParam;
+	return static_cast<INT>(msg.wParam);
 }

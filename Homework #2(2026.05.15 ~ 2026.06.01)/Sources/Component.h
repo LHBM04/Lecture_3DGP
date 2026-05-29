@@ -1,118 +1,219 @@
-﻿#pragma once
+#pragma once
 
 class GameObject;
 
+template <class TDerived>
 class Component
 {
-	friend class Scene;
-	friend class GameObject;
-
 public:
 	Component() = default;
-	virtual ~Component() = default;
+	~Component() = default;
 
-	// 복사 금지.
 	Component(const Component&) = delete;
 	Component& operator=(const Component&) = delete;
 	
-	// 이동 금지.
 	Component(Component&&) = delete;
 	Component& operator=(Component&&) = delete;
 
-	[[nodiscard]] GameObject* GetOwner() noexcept;
-	[[nodiscard]] const GameObject* GetOwner() const noexcept;
+	[[nodiscard]] GameObject* GetOwner() const noexcept;
+	void SetOwner(GameObject* owner_) noexcept;
 
 	[[nodiscard]] bool IsStarted() const noexcept;
 	
 	[[nodiscard]] bool IsActive() const noexcept;
-	void Enable();
+	[[nodiscard]] bool IsEnabled() const noexcept;
+	void SetEnabled(bool isEnabled_) noexcept;
 
-protected:
-	virtual void OnAwake() {};
-	virtual void OnEnable() {};
-	virtual void OnStart() {};
-
-	virtual void OnUpdate(float deltaTime_) {};
-	virtual void OnFixedUpdate(float fixedDeltaTime_) {};
-	virtual void OnLateUpdate(float deltaTime_) {};
-
-	// virtual void OnCollisionEnter() {};
-	// virtual void OnCollisionStay() {};
-	// virtual void OnCollisionExit() {};
-
-	// virtual void OnTriggerEnter() {};
-	// virtual void OnTriggerStay() {};
-	// virtual void OnTriggerExit() {};
-
-	virtual void OnPreRender() {};
-	virtual void OnRender() {};
-	virtual void OnPostRender() {};
-
-	virtual void OnDisable() {};
-	virtual void OnDestroy() {};
+	void Awake() noexcept;
+	void Enable() noexcept;
+	void Start() noexcept;
+	
+	void Update(float deltaTime_) noexcept;
+	void FixedUpdate(float fixedDeltaTime_) noexcept;
+	void LateUpdate(float deltaTime_) noexcept;
+	
+	void Render() noexcept;
+	
+	void Disable() noexcept;
+	void Destroy() noexcept;
 
 private:
-	void Awake();
-
-	void SetOwner(GameObject* owner_) noexcept;
-
 	GameObject* owner{ nullptr };
-
 	bool isStarted{ false };
 	bool isEnabled{ true };
 };
 
-inline GameObject* Component::GetOwner() noexcept
+// ============================================================================
+// Inline Implementations
+// ============================================================================
+
+template <class TDerived>
+inline GameObject* Component<TDerived>::GetOwner() const noexcept
 {
 	return owner;
 }
 
-inline const GameObject* Component::GetOwner() const noexcept
-{
-	return owner;
-}
-
-inline bool Component::IsStarted() const noexcept
-{
-	return isStarted;
-}
-
-inline bool Component::IsActive() const noexcept
-{
-	return isEnabled;
-}
-
-inline void Component::Awake()
-{
-
-}
-
-inline void Component::Enable()
-{
-
-}
-
-inline void Component::SetOwner(GameObject* owner_) noexcept
+template <class TDerived>
+inline void Component<TDerived>::SetOwner(GameObject* owner_) noexcept
 {
 	owner = owner_;
 }
 
-inline void Scene::Update()
+template <class TDerived>
+inline bool Component<TDerived>::IsStarted() const noexcept
 {
-	if (!gameObject->IsActive())
-	{
-		return;
-	}
-
-	gameObject->Update(deltaTime_);
+	return isStarted;
 }
 
-inline void GameObject::Update(float deltaTime_)
+template <class TDerived>
+inline bool Component<TDerived>::IsEnabled() const noexcept
 {
-	if (!IsActive())
+	return isEnabled;
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Awake() noexcept
+{
+	if constexpr (requires(TDerived d) { d.OnAwake(); })
+	{
+		static_cast<TDerived*>(this)->OnAwake();
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Enable() noexcept
+{
+	if constexpr (requires(TDerived d) { d.OnEnable(); })
+	{
+		static_cast<TDerived*>(this)->OnEnable();
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Start() noexcept
+{
+	if constexpr (requires(TDerived d) { d.OnStart(); })
+	{
+		static_cast<TDerived*>(this)->OnStart();
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Update(float deltaTime_) noexcept
+{
+	if (!isEnabled)
 	{
 		return;
 	}
 
-	// 컴포넌트 업데이트.
+	if (!isStarted)
+	{
+		Start();
+		isStarted = true;
+	}
+
+	if constexpr (requires(TDerived d, float dt) { d.OnUpdate(dt); })
+	{
+		static_cast<TDerived*>(this)->OnUpdate(deltaTime_);
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::FixedUpdate(float fixedDeltaTime_) noexcept
+{
+	if (!isEnabled)
+	{
+		return;
+	}
+
+	if constexpr (requires(TDerived d, float dt) { d.OnFixedUpdate(dt); })
+	{
+		static_cast<TDerived*>(this)->OnFixedUpdate(fixedDeltaTime_);
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::LateUpdate(float deltaTime_) noexcept
+{
+	if (!isEnabled)
+	{
+		return;
+	}
+
+	if constexpr (requires(TDerived d, float dt) { d.OnLateUpdate(dt); })
+	{
+		static_cast<TDerived*>(this)->OnLateUpdate(deltaTime_);
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Render() noexcept
+{
+	if (!isEnabled)
+	{
+		return;
+	}
+
+	if constexpr (requires(TDerived d) { d.OnPreRender(); })
+	{
+		static_cast<TDerived*>(this)->OnPreRender();
+	}
+
+	if constexpr (requires(TDerived d) { d.OnRender(); })
+	{
+		static_cast<TDerived*>(this)->OnRender();
+	}
+
+	if constexpr (requires(TDerived d) { d.OnPostRender(); })
+	{
+		static_cast<TDerived*>(this)->OnPostRender();
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Disable() noexcept
+{
+	if constexpr (requires(TDerived d) { d.OnDisable(); })
+	{
+		static_cast<TDerived*>(this)->OnDisable();
+	}
+}
+
+template <class TDerived>
+inline void Component<TDerived>::Destroy() noexcept
+{
+	if constexpr (requires(TDerived d) { d.OnDestroy(); })
+	{
+		static_cast<TDerived*>(this)->OnDestroy();
+	}
+}
+
+#include "GameObject.h"
+
+template <class TDerived>
+inline bool Component<TDerived>::IsActive() const noexcept
+{
+	return isEnabled && owner && owner->IsActive();
+}
+
+template <class TDerived>
+inline void Component<TDerived>::SetEnabled(bool isEnabled_) noexcept
+{
+	if (isEnabled == isEnabled_)
+	{
+		return;
+	}
+	isEnabled = isEnabled_;
+
+	if (owner && owner->IsActive())
+	{
+		if (isEnabled)
+		{
+			Enable();
+		}
+		else
+		{
+			Disable();
+		}
+	}
 }

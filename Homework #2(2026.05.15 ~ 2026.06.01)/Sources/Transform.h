@@ -1,15 +1,16 @@
-﻿#pragma once
+#pragma once
 
+#include <vector>
 #include "Component.h"
 #include "Vector3D.h"
 #include "Quaternion.h"
 #include "Matrix4x4.h"
 
-class Transform : public Component
+class Transform final : public Component<Transform>
 {
 public:
 	Transform() = default;
-	~Transform() override = default;
+	~Transform();
 
 	[[nodiscard]] const Vector3D& GetLocalPosition() const;
 	void SetLocalPosition(const Vector3D& position_);
@@ -31,12 +32,14 @@ public:
 	[[nodiscard]] Vector3D GetWorldScale() const;
 	void SetWorldScale(const Vector3D& scale_);
 
-	[[nodiscard]] Matrix4x4 GetWorldMatrix() const;
+	[[nodiscard]] const Matrix4x4& GetWorldMatrix() const;
 
 	[[nodiscard]] Transform* GetParent();
 	[[nodiscard]] const Transform* GetParent() const;
 	void SetParent(Transform* const parent_);
 
+private:
+	void SetDirty();
 
 private:
 	Vector3D position{ Vector3D::GetZero() };
@@ -44,6 +47,10 @@ private:
 	Vector3D scale{ Vector3D::GetOne() };
 
 	Transform* parent{ nullptr };
+	std::vector<Transform*> children;
+
+	mutable Matrix4x4 cachedWorldMatrix{ Matrix4x4::GetIdentity() };
+	mutable bool isDirty{ true };
 };
 
 inline const Vector3D& Transform::GetLocalPosition() const
@@ -54,6 +61,7 @@ inline const Vector3D& Transform::GetLocalPosition() const
 inline void Transform::SetLocalPosition(const Vector3D& position_)
 {
 	position = position_;
+	SetDirty();
 }
 
 inline const Quaternion& Transform::GetLocalRotation() const
@@ -64,6 +72,7 @@ inline const Quaternion& Transform::GetLocalRotation() const
 inline void Transform::SetLocalRotation(const Quaternion& rotation_)
 {
 	rotation = rotation_;
+	SetDirty();
 }
 
 inline const Vector3D& Transform::GetLocalScale() const
@@ -74,33 +83,12 @@ inline const Vector3D& Transform::GetLocalScale() const
 inline void Transform::SetLocalScale(const Vector3D& scale_)
 {
 	scale = scale_;
-}
-
-inline Matrix4x4 Transform::GetLocalMatrix() const
-{
-	Matrix4x4 result;
-	result.SetTRS(position, rotation, scale);
-	return result;
+	SetDirty();
 }
 
 inline Vector3D Transform::GetWorldPosition() const
 {
 	return GetWorldMatrix().GetWorldPosition();
-}
-
-inline void Transform::SetWorldPosition(const Vector3D& position_)
-{
-	if (parent)
-	{
-		const Matrix4x4 parentWorldMatrix{ parent->GetWorldMatrix() };
-		const Matrix4x4 parentWorldInverse{ parentWorldMatrix.GetInverse() };
-		const Vector3D localPosition{ parentWorldInverse.MultiplyPoint(position_) };
-		SetLocalPosition(localPosition);
-	}
-	else
-	{
-		SetLocalPosition(position_);
-	}
 }
 
 inline Quaternion Transform::GetWorldRotation() const
@@ -112,21 +100,6 @@ inline Quaternion Transform::GetWorldRotation() const
 	else
 	{
 		return GetLocalRotation();
-	}
-}
-
-inline void Transform::SetWorldRotation(const Quaternion& rotation_)
-{
-	if (parent)
-	{
-		const Quaternion parentWorldRotation{ parent->GetWorldRotation() };
-		const Quaternion parentWorldInverse{ Quaternion::Inverse(parentWorldRotation) };
-		const Quaternion localRotation{ parentWorldInverse * rotation_ };
-		SetLocalRotation(localRotation);
-	}
-	else
-	{
-		SetLocalRotation(rotation_);
 	}
 }
 
@@ -146,32 +119,6 @@ inline Vector3D Transform::GetWorldScale() const
 	}
 }
 
-inline void Transform::SetWorldScale(const Vector3D& scale_)
-{
-	if (parent)
-	{
-		const Vector3D parentWorldScale{ parent->GetWorldScale() };
-		const Vector3D localScale{ scale_.x / parentWorldScale.x, scale_.y / parentWorldScale.y, scale_.z / parentWorldScale.z };
-		SetLocalScale(localScale);
-	}
-	else
-	{
-		SetLocalScale(scale_);
-	}
-}
-
-inline Matrix4x4 Transform::GetWorldMatrix() const
-{
-	if (parent)
-	{
-		return parent->GetWorldMatrix() * GetLocalMatrix();
-	}
-	else
-	{
-		return GetLocalMatrix();
-	}
-}
-
 inline Transform* Transform::GetParent()
 {
 	return parent;
@@ -180,9 +127,4 @@ inline Transform* Transform::GetParent()
 inline const Transform* Transform::GetParent() const
 {
 	return parent;
-}
-
-inline void Transform::SetParent(Transform* const parent_)
-{
-	parent = parent_;
 }

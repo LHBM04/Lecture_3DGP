@@ -1,15 +1,18 @@
-﻿#pragma once
+#pragma once
 
-#include "ColorRGBA.h"
+#include <DirectXCollision.h>
+
 #include "Component.h"
-#include "GameObject.h"
-#include "MathF.h"
-#include "Matrix4x4.h"
-#include "Scene.h"
-#include "Transform.h"
+#include "ColorRGBA.h"
 #include "Vector4D.h"
 
-class Camera : public Component
+class CubeCollider;
+class Matrix4x4;
+class SphereCollider;
+class Vector2D;
+class Vector3D;
+
+class Camera final : public Component<Camera>
 {
 public:
 	enum class ProjectionType
@@ -26,39 +29,46 @@ public:
 	};
 
 	Camera() = default;
-	~Camera() override = default;
+	~Camera() = default;
 
-	[[nodiscard]] float GetNearClipPlane() const noexcept;
-	void SetNearClipPlane(float nearClipPlane_) noexcept;
+	[[nodiscard]] float GetNearClipPlane() const;
+	void SetNearClipPlane(float nearClipPlane_);
 
-	[[nodiscard]] float GetFarClipPlane() const noexcept;
-	void SetFarClipPlane(float farClipPlane_) noexcept;
+	[[nodiscard]] float GetFarClipPlane() const;
+	void SetFarClipPlane(float farClipPlane_);
 
-	[[nodiscard]] const Vector4D& GetViewport() const noexcept;
-	void SetViewport(const Vector4D& viewport_) noexcept;
+	[[nodiscard]] const Vector4D& GetViewport() const;
+	void SetViewport(const Vector4D& viewport_);
 
-	[[nodiscard]] ProjectionType GetProjectionType() const noexcept;
-	void SetProjectionType(ProjectionType projectionType_) noexcept;
+	[[nodiscard]] ProjectionType GetProjectionType() const;
+	void SetProjectionType(ProjectionType projectionType_);
 
-	[[nodiscard]] float GetFOV() const noexcept;
-	void SetFOV(float fov_) noexcept;
+	[[nodiscard]] float GetFOV() const;
+	void SetFOV(float fov_);
 
-	[[nodiscard]] float GetOrthographicSize() const noexcept;
-	void SetOrthographicSize(float orthographicSize_) noexcept;
+	[[nodiscard]] float GetOrthographicSize() const;
+	void SetOrthographicSize(float orthographicSize_);
 
-	[[nodiscard]] ClearType GetClearMode() const noexcept;
-	void SetClearMode(ClearType clearMode_) noexcept;
+	[[nodiscard]] ClearType GetClearMode() const;
+	void SetClearMode(ClearType clearMode_);
 
-	[[nodiscard]] const ColorRGBA& GetClearColor() const noexcept;
-	void SetClearColor(const ColorRGBA& clearColor_) noexcept;
+	[[nodiscard]] const ColorRGBA& GetClearColor() const;
+	void SetClearColor(const ColorRGBA& clearColor_);
 
 	[[nodiscard]] Matrix4x4 GetViewMatrix() const;
 	[[nodiscard]] Matrix4x4 GetProjectionMatrix() const;
 	[[nodiscard]] Matrix4x4 GetViewProjectionMatrix() const;
 
-protected:
-	void OnPreRender() override;
-	void OnPostRender() override;
+	[[nodiscard]] const DirectX::BoundingFrustum& GetFrustum() const;
+	void UpdateFrustum();
+
+	[[nodiscard]] bool IsInFrustum(const SphereCollider* collider_) const;
+	[[nodiscard]] bool IsInFrustum(const CubeCollider* collider_) const;
+
+	void ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const;
+
+	void OnEnable();
+	void OnDisable();
 
 private:
 	float nearPlane{ 0.1f };
@@ -72,126 +82,11 @@ private:
 	
 	ClearType clearType{ ClearType::SolidColor };
 	ColorRGBA clearColor{ ColorRGBA::GetBlue() };
+
+	DirectX::BoundingFrustum frustum;
 };
 
-inline float Camera::GetNearClipPlane() const noexcept
+inline const DirectX::BoundingFrustum& Camera::GetFrustum() const
 {
-	return nearPlane;
-}
-
-inline void Camera::SetNearClipPlane(float nearClipPlane_) noexcept
-{
-	nearPlane = nearClipPlane_;
-}
-
-inline float Camera::GetFarClipPlane() const noexcept
-{
-	return farPlane;
-}
-
-inline void Camera::SetFarClipPlane(float farClipPlane_) noexcept
-{
-	farPlane = farClipPlane_;
-}
-
-inline const Vector4D& Camera::GetViewport() const noexcept
-{
-	return viewportRect;
-}
-
-inline void Camera::SetViewport(const Vector4D& viewport_) noexcept
-{
-	viewportRect = viewport_;
-}
-
-inline Camera::ProjectionType Camera::GetProjectionType() const noexcept
-{
-	return projectionType;
-}
-
-inline void Camera::SetProjectionType(ProjectionType projectionType_) noexcept
-{
-	projectionType = projectionType_;
-}
-
-inline float Camera::GetFOV() const noexcept
-{
-	return fov;
-}
-
-inline void Camera::SetFOV(float fov_) noexcept
-{
-	fov = fov_;
-}
-
-inline float Camera::GetOrthographicSize() const noexcept
-{
-	return orthographicSize;
-}
-
-inline void Camera::SetOrthographicSize(float orthographicSize_) noexcept
-{
-	orthographicSize = orthographicSize_;
-}
-
-inline Camera::ClearType Camera::GetClearMode() const noexcept
-{
-	return clearType;
-}
-
-inline void Camera::SetClearMode(ClearType clearMode_) noexcept
-{
-	clearType = clearMode_;
-}
-
-inline const ColorRGBA& Camera::GetClearColor() const noexcept
-{
-	return clearColor;
-}
-
-inline void Camera::SetClearColor(const ColorRGBA& clearColor_) noexcept
-{
-	clearColor = clearColor_;
-}
-
-inline Matrix4x4 Camera::GetViewMatrix() const
-{
-	const Transform* transform{ GetOwner()->GetComponent<Transform>() };
-
-	if (nullptr == transform)
-	{
-		return Matrix4x4::GetIdentity();
-	}
-
-	return transform->GetWorldMatrix().GetInverse();
-}
-
-inline Matrix4x4 Camera::GetProjectionMatrix() const
-{
-	const float aspectRatio{ viewportRect.z / viewportRect.w };
-
-	switch (projectionType)
-	{
-	case ProjectionType::Perspective:
-	{
-		return Matrix4x4::Perspective(fov, aspectRatio, nearPlane, farPlane);
-	}
-	case ProjectionType::Orthographic:
-	{
-		const float halfHeight{ orthographicSize };
-		const float halfWidth{ halfHeight * aspectRatio };
-
-		return Matrix4x4::Ortho(
-			-halfWidth, halfWidth, 
-			-halfHeight, halfHeight, 
-			GetNearClipPlane(), GetFarClipPlane());
-	}
-	}
-
-	std::unreachable();
-}
-
-inline Matrix4x4 Camera::GetViewProjectionMatrix() const
-{
-	return GetViewMatrix() * GetProjectionMatrix();
+	return frustum;
 }

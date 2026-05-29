@@ -1,12 +1,15 @@
-﻿#pragma once
+#pragma once
 
 #include <memory>
+#include <set>
 #include <span>
+#include <utility>
 #include <vector>
 
-#include "GameObject.h"
+#include "Vector3D.h"
 
 class Camera;
+class GameObject;
 class Light;
 
 class Scene
@@ -15,11 +18,9 @@ public:
 	Scene() = default;
 	virtual ~Scene() = default;
 
-	// 복사 금지.
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
 
-	// 이동 금지.
 	Scene(Scene&&) = delete;
 	Scene& operator=(Scene&&) = delete;
 
@@ -39,60 +40,46 @@ public:
 	void AddLight(Light* light_);
 	void RemoveLight(Light* light_);
 
-	[[nodiscard]] std::span<Camera* const> GetCameras() noexcept;
-	[[nodiscard]] std::span<const Camera* const> GetCameras() const noexcept;
+	[[nodiscard]] GameObject* Pick(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_ = nullptr);
+
+	[[nodiscard]] std::span<Camera* const> GetCameras();
+	[[nodiscard]] std::span<const Camera* const> GetCameras() const;
 	
-	[[nodiscard]] std::span<Light* const> GetLights() noexcept;
-	[[nodiscard]] std::span<const Light* const> GetLights() const noexcept;
+	[[nodiscard]] std::span<Light* const> GetLights();
+	[[nodiscard]] std::span<const Light* const> GetLights() const;
 
 protected:
 	virtual void OnLoad() = 0;
 	virtual void OnUnload() = 0;
 	
 private:
+	void ProcessPhysics(float fixedDeltaTime_);
+
+private:
 	bool isLoaded{ false };
 
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
+	
 	std::vector<Camera*> cameras;
 	std::vector<Light*> lights;
 };
 
-inline void Scene::AddCamera(Camera* camera_)
-{
-	cameras.push_back(camera_);
-}
-
-inline void Scene::RemoveCamera(Camera* camera_)
-{
-	cameras.erase(std::remove(cameras.begin(), cameras.end(), camera_), cameras.end());
-}
-
-inline void Scene::AddLight(Light* light_)
-{
-	lights.push_back(light_);
-}
-
-inline void Scene::RemoveLight(Light* light_)
-{
-	lights.erase(std::remove(lights.begin(), lights.end(), light_), lights.end());
-}
-
-inline std::span<Camera* const> Scene::GetCameras() noexcept
+inline std::span<Camera* const> Scene::GetCameras()
 {
 	return cameras;
 }
 
-inline std::span<const Camera* const> Scene::GetCameras() const noexcept
+inline std::span<const Camera* const> Scene::GetCameras() const
 {
 	return cameras;
 }
 
-inline std::span<Light* const> Scene::GetLights() noexcept
+inline std::span<Light* const> Scene::GetLights()
 {
 	return lights;
 }
 
-inline std::span<const Light* const> Scene::GetLights() const noexcept
+inline std::span<const Light* const> Scene::GetLights() const
 {
 	return lights;
 }

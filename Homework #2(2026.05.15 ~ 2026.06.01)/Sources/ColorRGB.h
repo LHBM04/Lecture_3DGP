@@ -2,12 +2,13 @@
 
 #include "MathF.h"
 
-struct Vector3D;
-struct Vector4D;
-struct ColorRGBA;
+class Vector3D;
+class Vector4D;
+class ColorRGBA;
 
-struct ColorRGB : public DirectX::XMFLOAT3
+class ColorRGB : public DirectX::XMFLOAT3
 {
+public:
     ColorRGB() noexcept;
     explicit ColorRGB(float value_) noexcept;
     ColorRGB(float r_, float g_, float b_) noexcept;

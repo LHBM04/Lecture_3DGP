@@ -1,10 +1,12 @@
-﻿#pragma once
+#pragma once
 
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <utility>
 
 #include "Singleton.h"
+#include "Vector2D.h"
 
 enum class KeyCode : std::uint8_t
 {
@@ -89,6 +91,8 @@ public:
 	[[nodiscard]] bool IsButtonDown(ButtonCode button_) const;
 	[[nodiscard]] bool IsButtonUp(ButtonCode button_) const;
 
+	[[nodiscard]] const Vector2D& GetMousePosition() const;
+
 private:
 	static constexpr std::size_t KeyCount{ 256 };
 	static constexpr std::size_t ButtonCount{ 5 };
@@ -98,6 +102,8 @@ private:
 
 	std::array<bool, ButtonCount> buttonStates;
 	std::array<bool, ButtonCount> prevButtonStates;
+
+	Vector2D mousePosition{ 0, 0 };
 };
 
 inline bool InputSystem::IsKeyPressed(KeyCode key_) const
@@ -134,4 +140,9 @@ inline bool InputSystem::IsButtonUp(ButtonCode button_) const
 {
 	const auto index{ std::to_underlying(button_) };
 	return !buttonStates[index] && prevButtonStates[index];
+}
+
+inline const Vector2D& InputSystem::GetMousePosition() const
+{
+	return mousePosition;
 }

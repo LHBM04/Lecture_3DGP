@@ -1,60 +1,69 @@
 #pragma once
 
+#include <concepts>
 #include <memory>
 #include <string>
 #include <string_view>
-#include <typeindex>
-#include <unordered_map>
-#include <utility>
+#include <tuple>
 
-#include "Component.h"
+#include "Camera.h"
+#include "CubeCollider.h"
+#include "Light.h"
+#include "MeshComponent.h"
+#include "SphereCollider.h"
+#include "Transform.h"
 
 class Scene;
 
-class GameObject
+using ComponentTuple = std::tuple<
+	std::unique_ptr<Transform>,
+	std::unique_ptr<Camera>,
+	std::unique_ptr<Light>,
+	std::unique_ptr<MeshComponent>,
+	std::unique_ptr<SphereCollider>,
+	std::unique_ptr<CubeCollider>
+>;
+
+class GameObject final
 {
-	friend class Component;
 	friend class Scene;
 
 public:
 	GameObject() = default;
 	~GameObject() = default;
 
-	// 복사 금지.
 	GameObject(const GameObject&) = delete;
 	GameObject& operator=(const GameObject&) = delete;
 
-	// 이동 금지.
 	GameObject(GameObject&&) = delete;
 	GameObject& operator=(GameObject&&) = delete;
 
-	void Update(float deltaTime_);
-	void FixedUpdate(float fixedDeltaTime_);
+	void Update(float deltaTime_) noexcept;
+	void FixedUpdate(float fixedDeltaTime_) noexcept;
+	void LateUpdate(float deltaTime_) noexcept;
+	void Render() noexcept;
 
-	void Render();
+	[[nodiscard]] std::wstring_view GetName() const noexcept;
+	void SetName(std::wstring_view name_);
 
-	[[nodiscard]] const std::wstring& GetName() const noexcept;
-	void SetName(const std::wstring& name_) noexcept;
-
-	[[nodiscard]] const std::wstring& GetTag() noexcept;
-	void SetTag(const std::wstring& tag_) noexcept;
+	[[nodiscard]] std::wstring_view GetTag() const noexcept;
+	void SetTag(std::wstring_view tag_);
 
 	[[nodiscard]] bool IsActive() const noexcept;
-	void SetActive(bool isActive_) noexcept;
+	void SetActive(bool isActive_);
 
 	[[nodiscard]] bool IsDestroyed() const noexcept;
-	void Destroy() noexcept;
+	void Destroy();
 
-	template <class TSelf>
-	[[nodiscard]] auto GetScene(this TSelf& self_) noexcept;
+	[[nodiscard]] Scene* GetScene() const noexcept;
 
-	template <std::derived_from<Component> TComponent>
+	template <class TComponent>
 	TComponent* AddComponent() noexcept;
 
-	template <std::derived_from<Component> TComponent>
+	template <class TComponent>
 	[[nodiscard]] TComponent* GetComponent() noexcept;
 
-	template <std::derived_from<Component> TComponent>
+	template <class TComponent>
 	[[nodiscard]] const TComponent* GetComponent() const noexcept;
 
 private:
@@ -66,123 +75,34 @@ private:
 
 	Scene* scene{ nullptr };
 
-	std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
+	ComponentTuple components;
 };
 
-inline const std::wstring& GameObject::GetName() const noexcept
+template <class TComponent>
+inline TComponent* GameObject::AddComponent() noexcept
 {
-	return name;
-}
-
-inline void GameObject::SetName(const std::wstring& name_) noexcept
-{
-	name = name_;
-}
-
-inline const std::wstring& GameObject::GetTag() noexcept
-{
-	return tag;
-}
-
-inline void GameObject::SetTag(const std::wstring& tag_) noexcept
-{
-	tag = tag_;
-}
-
-inline bool GameObject::IsActive() const noexcept
-{
-	return isActive;
-}
-
-inline void GameObject::SetActive(bool isActive_) noexcept
-{
-	if (isActive == isActive_) return;
-	isActive = isActive_;
-
-	if (isActive)
+	auto& ptr = std::get<std::unique_ptr<TComponent>>(components);
+	if (!ptr)
 	{
-		for (auto& [type, component] : components)
+		ptr = std::make_unique<TComponent>();
+		ptr->SetOwner(this);
+		ptr->Awake();
+		if (isActive)
 		{
-			component->OnEnable();
+			ptr->Enable();
 		}
 	}
-	else
-	{
-		for (auto& [type, component] : components)
-		{
-			component->OnDisable();
-		}
-	}
+	return ptr.get();
 }
 
-inline bool GameObject::IsDestroyed() const noexcept
+template <class TComponent>
+inline TComponent* GameObject::GetComponent() noexcept
 {
-	return isDestroyed;
+	return std::get<std::unique_ptr<TComponent>>(components).get();
 }
 
-inline void GameObject::Destroy() noexcept
+template <class TComponent>
+inline const TComponent* GameObject::GetComponent() const noexcept
 {
-	if (isDestroyed) return;
-	isDestroyed = true;
-
-	for (auto& [type, component] : components)
-	{
-		component->OnDestroy();
-	}
-}
-
-template <class TSelf>
-[[nodiscard]] auto GameObject::GetScene(this TSelf& self_) noexcept
-{
-	return self_.scene;
-}
-
-template <std::derived_from<Component> TComponent>
-TComponent* GameObject::AddComponent() noexcept
-{
-	const auto type{ std::type_index(typeid(TComponent)) };
-
-	if (auto it = components.find(type); it != components.end())
-	{
-		return static_cast<TComponent*>(it->second.get());
-	}
-
-	auto component = std::make_unique<TComponent>();
-	component->SetOwner(this);
-
-	TComponent* result = component.get();
-	Component* basePtr = result;
-	components.emplace(type, std::move(component));
-
-	basePtr->OnAwake();
-	if (isActive)
-	{
-		basePtr->OnEnable();
-	}
-
-	return result;
-}
-
-template <std::derived_from<Component> TComponent>
-[[nodiscard]] TComponent* GameObject::GetComponent() noexcept
-{
-	const auto it = components.find(std::type_index(typeid(TComponent)));
-	if (it != components.end())
-	{
-		return static_cast<TComponent*>(it->second.get());
-	}
-
-	return nullptr;
-}
-
-template <std::derived_from<Component> TComponent>
-[[nodiscard]] const TComponent* GameObject::GetComponent() const noexcept
-{
-	const auto it = components.find(std::type_index(typeid(TComponent)));
-	if (it != components.end())
-	{
-		return static_cast<const TComponent*>(it->second.get());
-	}
-
-	return nullptr;
+	return std::get<std::unique_ptr<TComponent>>(components).get();
 }

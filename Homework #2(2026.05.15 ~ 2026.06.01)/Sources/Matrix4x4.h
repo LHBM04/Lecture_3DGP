@@ -1,12 +1,16 @@
 #pragma once
 
+#include <cstddef>
+#include <iostream>
 #include "MathF.h"
 
-struct Quaternion;
-struct Vector3D;
-struct Vector4D;
-struct Matrix4x4 : public DirectX::XMFLOAT4X4
+class Quaternion;
+class Vector3D;
+class Vector4D;
+
+class Matrix4x4 : public DirectX::XMFLOAT4X4
 {
+public:
     Matrix4x4() noexcept;
     explicit Matrix4x4(float value_) noexcept;
     explicit Matrix4x4(const float values_[16]) noexcept;
@@ -49,6 +53,10 @@ struct Matrix4x4 : public DirectX::XMFLOAT4X4
     [[nodiscard]] Vector3D GetWorldPosition() const noexcept;
     [[nodiscard]] Vector3D GetScale() const noexcept;
     [[nodiscard]] Vector3D GetLossyScale() const noexcept;
+
+    [[nodiscard]] Vector3D GetForward() const noexcept;
+    [[nodiscard]] Vector3D GetUp() const noexcept;
+    [[nodiscard]] Vector3D GetRight() const noexcept;
 
     [[nodiscard]] Vector4D GetRow(std::size_t index_) const noexcept;
     [[nodiscard]] Vector4D GetColumn(std::size_t index_) const noexcept;
@@ -305,6 +313,21 @@ inline void Matrix4x4::Store(Matrix4x4& destination_, DirectX::XMMATRIX source_)
 #include "Vector3D.h"
 #include "Vector4D.h"
 #include "Quaternion.h"
+
+inline Vector3D Matrix4x4::GetForward() const noexcept
+{
+	return Vector3D(_31, _32, _33).GetNormalized();
+}
+
+inline Vector3D Matrix4x4::GetUp() const noexcept
+{
+	return Vector3D(_21, _22, _23).GetNormalized();
+}
+
+inline Vector3D Matrix4x4::GetRight() const noexcept
+{
+	return Vector3D(_11, _12, _13).GetNormalized();
+}
 
 inline Vector3D Matrix4x4::MultiplyPoint3x4(const Vector3D& point_) const noexcept
 {
