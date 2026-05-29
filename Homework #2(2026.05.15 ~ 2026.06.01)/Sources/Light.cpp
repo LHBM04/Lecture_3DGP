@@ -6,10 +6,20 @@
 
 void Light::OnPreRender()
 {
+	if (!IsActive())
+	{
+		return;
+	}
+
 	GetOwner()->GetScene()->AddLight(this);
 }
 
 void Light::OnPostRender()
 {
+	if (!IsActive())
+	{
+		return;
+	}
+
 	GetOwner()->GetScene()->RemoveLight(this);
 }
