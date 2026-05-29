@@ -167,34 +167,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Engine.h" />
-    <ClInclude Include="Sources\EngineContext.h" />
-    <ClInclude Include="Sources\EngineOptions.h" />
-    <ClInclude Include="Sources\EventBase.h" />
-    <ClInclude Include="Sources\EventDispatcher.h" />
-    <ClInclude Include="Sources\EventQueue.h" />
-    <ClInclude Include="Sources\Precompiled.h" />
-    <ClInclude Include="Sources\SystemBase.h" />
-    <ClInclude Include="Sources\Window.h" />
-    <ClInclude Include="Sources\WindowCloseEvent.h" />
-    <ClInclude Include="Sources\WindowMaximizeEvent.h" />
-    <ClInclude Include="Sources\WindowMinimizeEvent.h" />
-    <ClInclude Include="Sources\WindowMoveEvent.h" />
-    <ClInclude Include="Sources\WindowOptions.h" />
-    <ClInclude Include="Sources\WindowResizeEvent.h" />
-    <ClInclude Include="Sources\WindowSystem.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Sources\Engine.cpp" />
+    <ClCompile Include="Sources\ColorRGB.cpp" />
+    <ClCompile Include="Sources\ColorRGBA.cpp" />
+    <ClCompile Include="Sources\InputSystem.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Sources\Window.cpp" />
-    <ClCompile Include="Sources\WindowSystem.cpp" />
+    <ClCompile Include="Sources\Quaternion.cpp" />
+    <ClCompile Include="Sources\RenderSystem.cpp" />
+    <ClCompile Include="Sources\Vector2D.cpp" />
+    <ClCompile Include="Sources\Vector3D.cpp" />
+    <ClCompile Include="Sources\Vector4D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\ColorRGB.h" />
+    <ClInclude Include="Sources\ColorRGBA.h" />
+    <ClInclude Include="Sources\InputSystem.h" />
+    <ClInclude Include="Sources\MathF.h" />
+    <ClInclude Include="Sources\Matrix4x4.h" />
+    <ClInclude Include="Sources\Precompiled.h" />
+    <ClInclude Include="Sources\Quaternion.h" />
+    <ClInclude Include="Sources\RenderSystem.h" />
+    <ClInclude Include="Sources\Singleton.h" />
+    <ClInclude Include="Sources\Vector2D.h" />
+    <ClInclude Include="Sources\Vector3D.h" />
+    <ClInclude Include="Sources\Vector4D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Shaders\Default.hlsl">
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

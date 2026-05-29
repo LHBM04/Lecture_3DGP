@@ -13,56 +13,9 @@
     <Filter Include="Sources\Source Files">
       <UniqueIdentifier>{8a3775ec-04de-40ad-a7f8-9ef65761f71e}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Sources\Precompiled.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Engine.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\EventBase.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\EventQueue.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\EventDispatcher.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\SystemBase.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\EngineOptions.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Window.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowSystem.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\EngineContext.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowOptions.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowCloseEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowResizeEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowMinimizeEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowMaximizeEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\WindowMoveEvent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{eab1ef25-5d60-4cc9-afa3-d58cf10048c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Precompiled.cpp">
@@ -71,14 +24,75 @@
     <ClCompile Include="Sources\Main.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Engine.cpp">
+    <ClCompile Include="Sources\RenderSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Window.cpp">
+    <ClCompile Include="Sources\InputSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\WindowSystem.cpp">
+    <ClCompile Include="Sources\Vector4D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Vector3D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Vector2D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Quaternion.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Matrix4x4.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ColorRGBA.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ColorRGB.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Precompiled.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Singleton.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\InputSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vector4D.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vector3D.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vector2D.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Quaternion.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Matrix4x4.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ColorRGBA.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ColorRGB.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MathF.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Shaders\Default.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>
