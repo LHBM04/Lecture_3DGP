@@ -172,6 +172,7 @@
     <ClCompile Include="Sources\ColorRGBA.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\InputSystem.cpp" />
+    <ClCompile Include="Sources\Light.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
@@ -197,6 +198,7 @@
     <ClInclude Include="Sources\Component.h" />
     <ClInclude Include="Sources\GameObject.h" />
     <ClInclude Include="Sources\InputSystem.h" />
+    <ClInclude Include="Sources\Light.h" />
     <ClInclude Include="Sources\Logger.h" />
     <ClInclude Include="Sources\MathF.h" />
     <ClInclude Include="Sources\Matrix4x4.h" />

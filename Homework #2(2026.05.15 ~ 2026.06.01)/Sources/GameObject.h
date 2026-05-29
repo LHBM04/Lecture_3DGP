@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <memory>
 #include <string>
@@ -13,6 +13,9 @@ class Scene;
 
 class GameObject
 {
+	friend class Component;
+	friend class Scene;
+
 public:
 	GameObject() = default;
 	~GameObject() = default;
@@ -47,9 +50,6 @@ public:
 
 	template <std::derived_from<Component> TComponent>
 	TComponent* AddComponent() noexcept;
-
-	template <std::derived_from<Component> TComponent>
-	const TComponent* AddComponent() const noexcept;
 
 	template <std::derived_from<Component> TComponent>
 	[[nodiscard]] TComponent* GetComponent() noexcept;
@@ -96,7 +96,23 @@ inline bool GameObject::IsActive() const noexcept
 
 inline void GameObject::SetActive(bool isActive_) noexcept
 {
+	if (isActive == isActive_) return;
 	isActive = isActive_;
+
+	if (isActive)
+	{
+		for (auto& [type, component] : components)
+		{
+			component->OnEnable();
+		}
+	}
+	else
+	{
+		for (auto& [type, component] : components)
+		{
+			component->OnDisable();
+		}
+	}
 }
 
 inline bool GameObject::IsDestroyed() const noexcept
@@ -106,7 +122,13 @@ inline bool GameObject::IsDestroyed() const noexcept
 
 inline void GameObject::Destroy() noexcept
 {
+	if (isDestroyed) return;
 	isDestroyed = true;
+
+	for (auto& [type, component] : components)
+	{
+		component->OnDestroy();
+	}
 }
 
 template <class TSelf>
@@ -118,47 +140,45 @@ template <class TSelf>
 template <std::derived_from<Component> TComponent>
 TComponent* GameObject::AddComponent() noexcept
 {
-	const auto type{ typeid(TComponent) };
-	if (components.contains(type))
+	const auto type{ std::type_index(typeid(TComponent)) };
+
+	if (auto it = components.find(type); it != components.end())
 	{
-		return static_cast<TComponent*>(components[type].get());
+		return static_cast<TComponent*>(it->second.get());
 	}
-	auto component{ std::make_unique<TComponent>() };
-	const auto ptr{ component.get() };
+
+	auto component = std::make_unique<TComponent>();
+	component->SetOwner(this);
+
+	TComponent* result = component.get();
+	Component* basePtr = result;
 	components.emplace(type, std::move(component));
 
-	return ptr;
-}
-
-template <std::derived_from<Component> TComponent>
-const TComponent* GameObject::AddComponent() const noexcept
-{
-	const auto type{ typeid(TComponent) };
-	if (components.contains(type))
+	basePtr->OnAwake();
+	if (isActive)
 	{
-		return static_cast<TComponent*>(components[type].get());
+		basePtr->OnEnable();
 	}
-	auto [iter, inserted] = components.emplace(type, std::make_unique<TComponent>());
-	return iter.get();
+
+	return result;
 }
 
 template <std::derived_from<Component> TComponent>
 [[nodiscard]] TComponent* GameObject::GetComponent() noexcept
 {
-	const auto type{ typeid(TComponent) };
-	if (components.contains(type))
+	const auto it = components.find(std::type_index(typeid(TComponent)));
+	if (it != components.end())
 	{
-		return static_cast<TComponent*>(components[type].get());
+		return static_cast<TComponent*>(it->second.get());
 	}
 
-	auto [iter, inserted] = components.emplace(type, std::make_unique<TComponent>());
-	return iter.get();
+	return nullptr;
 }
 
 template <std::derived_from<Component> TComponent>
 [[nodiscard]] const TComponent* GameObject::GetComponent() const noexcept
 {
-	const auto it{ components.find(typeid(TComponent)) };
+	const auto it = components.find(std::type_index(typeid(TComponent)));
 	if (it != components.end())
 	{
 		return static_cast<const TComponent*>(it->second.get());

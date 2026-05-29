@@ -19,13 +19,11 @@ public:
 	void FixedUpdate(float fixedDeltaTime_);
 	void Render();
 
-	template <std::derived_from<Scene> TScene>
-	void AddScene();
-
+	void AddScene(std::wstring_view sceneName_, std::unique_ptr<Scene> scene_);
 	void RemoveScene(std::wstring_view sceneName_);
 
-	void LoadScene();
-	void UnloadScene();
+	void LoadScene(std::wstring_view sceneName_);
+	void UnloadScene(std::wstring_view sceneName_);
 
 private:
 	std::unordered_map<std::wstring, std::unique_ptr<Scene>> scenes;
@@ -33,15 +31,3 @@ private:
 	Scene* nextScene{ nullptr };
 	Scene* currentScene{ nullptr };
 };
-
-template <std::derived_from<Scene> TScene>
-inline void SceneManager::AddScene()
-{
-	const std::wstring sceneName{ typeid(TScene).name() };
-	if (scenes.contains(sceneName))
-	{
-		return;
-	}
-
-	scenes.emplace(sceneName, std::make_unique<TScene>());
-}

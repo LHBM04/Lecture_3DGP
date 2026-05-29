@@ -1,8 +1,11 @@
 ﻿#include "Precompiled.h"
 
-#include "RenderSystem.h"
-#include "SceneManager.h"
+#include <memory>
+
 #include "InputSystem.h"
+#include "RenderSystem.h"
+#include "Scene_Title.h"
+#include "SceneManager.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -94,6 +97,9 @@ INT APIENTRY wWinMain(
 
 	InputSystem::GetInstance().Reset();
 
+	SceneManager::GetInstance().AddScene(L"Title Scene", std::make_unique<Scene_Title>());
+	SceneManager::GetInstance().LoadScene(L"Title Scene");
+	
 	QueryPerformanceFrequency(&frequency);
 	QueryPerformanceCounter(&lastTime);
 
@@ -141,12 +147,8 @@ INT APIENTRY wWinMain(
 		// 게임 렌더.
 		{
 			RenderSystem::GetInstance().BeginFrame();
-			RenderSystem::GetInstance().Clear();
-
 			SceneManager::GetInstance().Render();
-			
 			RenderSystem::GetInstance().EndFrame();
-			RenderSystem::GetInstance().Present();
 		}
 	}
 

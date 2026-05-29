@@ -88,4 +88,6 @@ private:
 
 	D3D12_VIEWPORT viewport{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 	D3D12_RECT scissorRect{ 0, 0, 0, 0 };
+
+	Camera* camera{ nullptr };
 };

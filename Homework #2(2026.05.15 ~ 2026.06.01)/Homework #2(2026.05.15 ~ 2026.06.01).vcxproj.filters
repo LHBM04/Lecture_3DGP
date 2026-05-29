@@ -69,6 +69,7 @@
     <ClCompile Include="Sources\Transform.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Precompiled.h">
@@ -131,6 +132,7 @@
     <ClInclude Include="Sources\Transform.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Light.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\Shaders\Default.hlsl">

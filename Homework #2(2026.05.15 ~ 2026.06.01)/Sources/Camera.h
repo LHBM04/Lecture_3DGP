@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "MathF.h"
 #include "Matrix4x4.h"
+#include "Scene.h"
 #include "Transform.h"
 #include "Vector4D.h"
 
@@ -54,6 +55,10 @@ public:
 	[[nodiscard]] Matrix4x4 GetViewMatrix() const;
 	[[nodiscard]] Matrix4x4 GetProjectionMatrix() const;
 	[[nodiscard]] Matrix4x4 GetViewProjectionMatrix() const;
+
+protected:
+	void OnPreRender() override;
+	void OnPostRender() override;
 
 private:
 	float nearPlane{ 0.1f };

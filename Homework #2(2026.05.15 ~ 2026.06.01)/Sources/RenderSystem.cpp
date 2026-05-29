@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "RenderSystem.h"
 
+#include "Camera.h"
+
 bool RenderSystem::Initialize(HWND window_)
 {
 	UINT factoryFlags{ 0 };
@@ -241,19 +243,21 @@ void RenderSystem::EndFrame()
 
 void RenderSystem::Clear()
 {
-	assert(true); // TODO: assert 걸어라.
+	assert(camera != nullptr); // TODO: assert 걸어라.
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
 	rtvHandle.ptr += static_cast<SIZE_T>(frameIndex) * rtvDescriptorSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{ dsvHeap->GetCPUDescriptorHandleForHeapStart() };
 
-	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+	const float clearColor[4]{
+		camera->GetClearColor().x,
+		camera->GetClearColor().y,
+		camera->GetClearColor().z,
+		camera->GetClearColor().w
+	};
+
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	commandList->DrawInstanced(3, 1, 0, 0);
 }
 
 void RenderSystem::Present()
@@ -270,6 +274,7 @@ void RenderSystem::Present()
 
 void RenderSystem::SetCamera(Camera* camera_)
 {
+	camera = camera_;
 }
 
 void RenderSystem::SetObject(GameObject* object_)

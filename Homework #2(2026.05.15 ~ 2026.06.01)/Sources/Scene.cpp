@@ -1,15 +1,21 @@
 ﻿#include "Precompiled.h"
 #include "Scene.h"
 
+#include "Camera.h"
+#include "RenderSystem.h"
 #include "Transform.h"
 
 void Scene::Load()
 {
+	if (isLoaded) return;
+	OnLoad();
 	isLoaded = true;
 }
 
 void Scene::Unload()
 {
+	if (!isLoaded) return;
+	OnUnload();
 	isLoaded = false;
 }
 
@@ -37,7 +43,7 @@ void Scene::Render()
 {
 	assert(isLoaded);
 
-	for (const auto& gameObject : gameObjects)
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 	{
 		gameObject->Render();
 	}
@@ -46,6 +52,7 @@ void Scene::Render()
 GameObject* Scene::CreateGameObject()
 {
 	std::unique_ptr<GameObject> newObject{ std::make_unique<GameObject>() };
+	newObject->scene = this;
 	newObject->SetName(L"New GameObject");
 	newObject->SetTag(L"Untagged");
 
@@ -56,7 +63,6 @@ GameObject* Scene::CreateGameObject()
 	transform->SetParent(nullptr);
 
 	GameObject* newObjectPtr{ newObject.get() };
-
 	gameObjects.push_back(std::move(newObject));
 
 	return newObjectPtr;
