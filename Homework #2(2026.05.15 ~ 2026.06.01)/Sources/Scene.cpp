@@ -23,6 +23,7 @@ void Scene::Load()
 		return;
 	}
 	OnLoad();
+	PhysicsSystem::GetInstance().RegisterStaticObjectsToGrid();
 	isLoaded = true;
 }
 

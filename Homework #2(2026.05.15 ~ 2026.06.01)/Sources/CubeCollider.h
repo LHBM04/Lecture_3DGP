@@ -12,6 +12,7 @@ public:
 	~CubeCollider() override = default;
 
 	[[nodiscard]] const DirectX::BoundingOrientedBox& GetVolume() const noexcept;
+	[[nodiscard]] Vector3D GetSize() const noexcept;
 	void SetCenter(const Vector3D& center_) noexcept;
 	void SetSize(const Vector3D& size_) noexcept;
 

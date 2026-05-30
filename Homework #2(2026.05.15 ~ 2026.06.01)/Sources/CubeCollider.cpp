@@ -15,6 +15,11 @@ void CubeCollider::SetSize(const Vector3D& size_) noexcept
 	localBox.Extents = { size_.x * 0.5f, size_.y * 0.5f, size_.z * 0.5f };
 }
 
+Vector3D CubeCollider::GetSize() const noexcept
+{
+	return Vector3D{ localBox.Extents.x * 2.0f, localBox.Extents.y * 2.0f, localBox.Extents.z * 2.0f };
+}
+
 const DirectX::BoundingOrientedBox& CubeCollider::GetVolume() const noexcept
 {
 	return worldBox;

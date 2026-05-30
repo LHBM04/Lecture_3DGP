@@ -1,13 +1,14 @@
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include <set>
 #include <string_view>
 #include <vector>
 
+#include <DirectXCollision.h>
+
 #include "Singleton.h"
 #include "Vector3D.h"
-#include <DirectXCollision.h>
 
 class Collider;
 class GameObject;
@@ -28,12 +29,13 @@ public:
 	[[nodiscard]] bool IsCollidingWithStatic(Collider* collider_) const;
 	[[nodiscard]] GameObject* Raycast(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_ = nullptr) const;
 
+	void RegisterStaticObjectsToGrid();
+
 	void Clear();
 
 private:
 	void ProcessPhysics(float fixedDeltaTime_);
 	void CreateGrid();
-	void RegisterStaticObjectsToGrid();
 
 private:
 	struct ColliderPair

@@ -1,9 +1,11 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "PlayerController.h"
 
 #include "Collider.h"
+#include "CubeCollider.h"
 #include "GameObject.h"
 #include "InputSystem.h"
+#include "MathF.h"
 #include "PhysicsSystem.h"
 #include "Quaternion.h"
 #include "Scene.h"
@@ -26,7 +28,7 @@ void PlayerController::OnUpdate(float deltaTime_)
 	Transform* transform{ owner->GetComponent<Transform>() };
 	if (transform == nullptr) return;
 
-	Collider* collider{ owner->GetComponent<Collider>() };
+	CubeCollider* collider{ owner->GetComponent<CubeCollider>() };
 	if (collider == nullptr) return;
 
 	Scene* scene{ owner->GetScene() };
@@ -47,7 +49,6 @@ void PlayerController::OnUpdate(float deltaTime_)
 	// 2. Calculate Move Delta
 	Vector3D moveDelta{ Vector3D::GetZero() };
 	Vector3D forward{ rotation * Vector3D::GetForward() };
-	Vector3D right{ rotation * Vector3D::GetRight() };
 
 	if (InputSystem::GetInstance().IsKeyDown(KeyCode::W))
 	{
@@ -57,16 +58,18 @@ void PlayerController::OnUpdate(float deltaTime_)
 	{
 		moveDelta -= forward * (moveSpeed * deltaTime_);
 	}
-	// (Q/E or standard Strafe if needed, but keeping it simple as per user request for A/D rotate)
 
 	if (moveDelta.IsZero()) return;
 
-	// 3. Axis-Separated Move & Revert
+	// 3. Axis-Separated Move & Revert (with Narrow-Test for smooth sliding)
+	const Vector3D originalSize{ collider->GetSize() };
+	const float skinWidth{ 0.02f };
 	Vector3D currentPos{ transform->GetWorldPosition() };
 
 	// --- X Axis ---
-	if (std::abs(moveDelta.x) > 0.0001f)
+	if (std::abs(moveDelta.x) > Mathf::Epsilon)
 	{
+		collider->SetSize(Vector3D{ originalSize.x, originalSize.y - skinWidth, originalSize.z - skinWidth });
 		transform->SetWorldPosition(Vector3D{ currentPos.x + moveDelta.x, currentPos.y, currentPos.z });
 		collider->UpdateVolume();
 		if (PhysicsSystem::GetInstance().IsCollidingWithStatic(collider))
@@ -80,8 +83,9 @@ void PlayerController::OnUpdate(float deltaTime_)
 	}
 
 	// --- Y Axis ---
-	if (std::abs(moveDelta.y) > 0.0001f)
+	if (std::abs(moveDelta.y) > Mathf::Epsilon)
 	{
+		collider->SetSize(Vector3D{ originalSize.x - skinWidth, originalSize.y, originalSize.z - skinWidth });
 		transform->SetWorldPosition(Vector3D{ currentPos.x, currentPos.y + moveDelta.y, currentPos.z });
 		collider->UpdateVolume();
 		if (PhysicsSystem::GetInstance().IsCollidingWithStatic(collider))
@@ -95,8 +99,9 @@ void PlayerController::OnUpdate(float deltaTime_)
 	}
 
 	// --- Z Axis ---
-	if (std::abs(moveDelta.z) > 0.0001f)
+	if (std::abs(moveDelta.z) > Mathf::Epsilon)
 	{
+		collider->SetSize(Vector3D{ originalSize.x - skinWidth, originalSize.y - skinWidth, originalSize.z });
 		transform->SetWorldPosition(Vector3D{ currentPos.x, currentPos.y, currentPos.z + moveDelta.z });
 		collider->UpdateVolume();
 		if (PhysicsSystem::GetInstance().IsCollidingWithStatic(collider))
@@ -108,4 +113,7 @@ void PlayerController::OnUpdate(float deltaTime_)
 			currentPos.z += moveDelta.z;
 		}
 	}
+
+	collider->SetSize(originalSize);
+	collider->UpdateVolume();
 }
