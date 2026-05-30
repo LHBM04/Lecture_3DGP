@@ -1,10 +1,6 @@
 #include "Precompiled.h"
-#include "Scene.h"
 
-#include <algorithm>
-#include <cassert>
-#include <limits>
-#include <ranges>
+#include "Scene.h"
 
 #include "Camera.h"
 #include "Collider.h"

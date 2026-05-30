@@ -1,7 +1,9 @@
 #include "Precompiled.h"
+
 #include "Quaternion.h"
-#include "Vector3D.h"
+
 #include "Matrix4x4.h"
+#include "Vector3D.h"
 
 Quaternion::Quaternion() noexcept
 	: DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)

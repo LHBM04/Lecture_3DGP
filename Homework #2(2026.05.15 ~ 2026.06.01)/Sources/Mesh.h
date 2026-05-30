@@ -1,10 +1,9 @@
 #pragma once
 
-#include <d3d12.h>
-#include <wrl.h>
-
-#include <vector>
 #include <cstdint>
+#include <d3d12.h>
+#include <vector>
+#include <wrl.h>
 
 #include "Resource.h"
 #include "Vector3D.h"

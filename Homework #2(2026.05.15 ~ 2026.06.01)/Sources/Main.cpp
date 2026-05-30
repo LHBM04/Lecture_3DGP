@@ -1,9 +1,9 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 
 #include "InputSystem.h"
 #include "RenderSystem.h"
-#include "Scene_Title.h"
 #include "Scene_Stage1.h"
+#include "Scene_Title.h"
 #include "SceneSystem.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -170,4 +170,3 @@ INT APIENTRY wWinMain(
 
 	return static_cast<INT>(msg.wParam);
 }
-

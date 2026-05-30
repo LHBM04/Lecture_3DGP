@@ -1,6 +1,6 @@
-﻿#pragma once
-#include "Component.h"
+#pragma once
 #include "ColorRGBA.h"
+#include "Component.h"
 
 class Light final : public Component
 {
@@ -21,4 +21,3 @@ private:
 	float intensity{ 1.0f };
 	ColorRGBA color{ ColorRGBA::GetWhite() };
 };
-

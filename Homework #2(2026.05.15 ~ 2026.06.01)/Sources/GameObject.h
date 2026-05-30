@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -116,4 +116,3 @@ inline const TComponent* GameObject::GetComponent() const
 	}
 	return nullptr;
 }
-

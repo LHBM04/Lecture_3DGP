@@ -3,8 +3,6 @@
 #include "ColorRGB.h"
 #include "Vector3D.h"
 #include "Vector4D.h"
-#include <cmath>
-#include <algorithm>
 
 ColorRGBA::ColorRGBA() noexcept
     : DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)

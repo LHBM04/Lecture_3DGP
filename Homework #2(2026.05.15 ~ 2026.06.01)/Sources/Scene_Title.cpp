@@ -1,14 +1,15 @@
 #include "Precompiled.h"
+
 #include "Scene_Title.h"
 
 #include "Camera.h"
 #include "GameObject.h"
-#include "Transform.h"
+#include "Light.h"
+#include "Material.h"
+#include "Mesh.h"
 #include "MeshRenderer.h"
 #include "ResourceSystem.h"
-#include "Mesh.h"
-#include "Material.h"
-#include "Light.h"
+#include "Transform.h"
 
 void Scene_Title::OnLoad()
 {

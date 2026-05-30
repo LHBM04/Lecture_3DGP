@@ -1,16 +1,15 @@
-﻿#include "Precompiled.h"
-#include "RenderSystem.h"
+#include "Precompiled.h"
 
-#include <algorithm>
+#include "RenderSystem.h"
 
 #include "Camera.h"
 #include "GameObject.h"
 #include "Light.h"
-#include "Mesh.h"
 #include "Material.h"
+#include "Mesh.h"
+#include "ResourceSystem.h"
 #include "Shader.h"
 #include "Transform.h"
-#include "ResourceSystem.h"
 
 std::expected<void, std::wstring> RenderSystem::Initialize(HWND window_)
 {

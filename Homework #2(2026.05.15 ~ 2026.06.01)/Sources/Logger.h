@@ -1,9 +1,9 @@
-﻿#pragma once
+#pragma once
 
+#include <chrono>
 #include <format>
 #include <print>
 #include <string_view>
-#include <chrono>
 
 namespace Logger
 {
@@ -58,4 +58,3 @@ namespace Logger
 		Log(Level::Critical, format_, std::forward<Args>(args_)...);
 	}
 }
-

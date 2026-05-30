@@ -1,9 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include <DirectXCollision.h>
 
-#include "Component.h"
 #include "ColorRGBA.h"
+#include "Component.h"
 #include "Vector4D.h"
 
 class CubeCollider;
@@ -85,4 +85,3 @@ private:
 
 	DirectX::BoundingFrustum frustum;
 };
-

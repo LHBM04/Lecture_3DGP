@@ -1,19 +1,16 @@
-﻿#pragma once
+#pragma once
 
 #include <memory>
-#include <ranges>
-#include <set>
 #include <span>
 #include <string_view>
-#include <utility>
 #include <vector>
 
 #include "Vector3D.h"
 
 class Camera;
+class Collider;
 class GameObject;
 class Light;
-class Collider;
 
 class Scene
 {

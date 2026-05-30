@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Scene.h"
+#include <fstream>
 #include <string>
 #include <string_view>
-#include <fstream>
+
+#include "Scene.h"
 
 class Scene_Stage : public Scene
 {

@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-#include <iostream>
-
 #include <DirectXMath.h>
+#include <iostream>
 
 #include "MathF.h"
 

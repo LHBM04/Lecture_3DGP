@@ -1,9 +1,8 @@
 #include "Precompiled.h"
+
 #include "Mesh.h"
+
 #include "RenderSystem.h"
-#include <fstream>
-#include <functional>
-#include <string>
 
 Mesh::~Mesh()
 {

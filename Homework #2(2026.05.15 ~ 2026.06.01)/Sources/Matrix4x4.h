@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <iostream>
+
 #include "MathF.h"
 
 class Quaternion;

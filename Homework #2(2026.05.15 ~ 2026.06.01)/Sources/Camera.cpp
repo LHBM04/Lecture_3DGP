@@ -1,12 +1,14 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
+
 #include "Camera.h"
-#include "SphereCollider.h"
+
 #include "CubeCollider.h"
-#include "Scene.h"
-#include "RenderSystem.h"
 #include "GameObject.h"
-#include "Transform.h"
 #include "Matrix4x4.h"
+#include "RenderSystem.h"
+#include "Scene.h"
+#include "SphereCollider.h"
+#include "Transform.h"
 #include "Vector2D.h"
 #include "Vector3D.h"
 
@@ -209,4 +211,3 @@ void Camera::ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_
 	rayOrigin_ = Vector3D(worldNear);
 	rayDir_ = Vector3D(dir);
 }
-

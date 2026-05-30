@@ -1,8 +1,5 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "InputSystem.h"
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 
 void InputSystem::Reset()
 {
@@ -48,4 +45,3 @@ void InputSystem::Update()
 		mousePosition.y = static_cast<float>(pt.y);
 	}
 }
-

@@ -1,6 +1,9 @@
 #include "Precompiled.h"
+
 #include "Transform.h"
+
 #include <algorithm>
+
 #include "Matrix4x4.h"
 
 void Transform::OnDestroy()

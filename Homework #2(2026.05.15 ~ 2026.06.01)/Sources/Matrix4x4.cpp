@@ -1,8 +1,10 @@
 #include "Precompiled.h"
+
 #include "Matrix4x4.h"
+
+#include "Quaternion.h"
 #include "Vector3D.h"
 #include "Vector4D.h"
-#include "Quaternion.h"
 
 Matrix4x4::Matrix4x4() noexcept
 {

@@ -1,10 +1,10 @@
 #include "Precompiled.h"
+
 #include "PhysicsSystem.h"
 
 #include "Collider.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include <algorithm>
 
 PhysicsSystem::PhysicsSystem()
 {

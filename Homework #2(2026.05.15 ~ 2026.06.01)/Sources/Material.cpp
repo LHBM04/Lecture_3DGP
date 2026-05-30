@@ -1,9 +1,9 @@
 #include "Precompiled.h"
+
 #include "Material.h"
+
 #include "ResourceSystem.h"
 #include "Shader.h"
-#include <fstream>
-#include <string>
 
 bool Material::Load()
 {

@@ -1,8 +1,8 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "CubeCollider.h"
+#include "GameObject.h"
 #include "SphereCollider.h"
 #include "Transform.h"
-#include "GameObject.h"
 #include "Vector3D.h"
 
 void CubeCollider::SetCenter(const Vector3D& center_) noexcept

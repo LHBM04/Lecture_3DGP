@@ -1,24 +1,21 @@
 #pragma once
 
 #include <array>
-#include <cassert>
-#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <expected>
 #include <span>
 #include <string>
-#include <vector>
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <windows.h>
 #include <wrl.h>
 
 #include "Matrix4x4.h"
+#include "Singleton.h"
 #include "Vector3D.h"
 #include "Vector4D.h"
-#include "Singleton.h"
 
 class Camera;
 class Light;
