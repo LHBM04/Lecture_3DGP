@@ -168,6 +168,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Camera.cpp" />
+    <ClCompile Include="Sources\CameraController.cpp" />
+    <ClCompile Include="Sources\Collider.cpp" />
     <ClCompile Include="Sources\ColorRGB.cpp" />
     <ClCompile Include="Sources\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Component.cpp" />
@@ -178,6 +180,7 @@
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Material.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
+    <ClCompile Include="Sources\PlayerController.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -186,12 +189,15 @@
     </ClCompile>
     <ClCompile Include="Sources\Mesh.cpp" />
     <ClCompile Include="Sources\MeshRenderer.cpp" />
+    <ClCompile Include="Sources\PhysicsSystem.cpp" />
     <ClCompile Include="Sources\Quaternion.cpp" />
     <ClCompile Include="Sources\RenderSystem.cpp" />
     <ClCompile Include="Sources\Resource.cpp" />
     <ClCompile Include="Sources\ResourceSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
     <ClCompile Include="Sources\SceneSystem.cpp" />
+    <ClCompile Include="Sources\Scene_Stage.cpp" />
+    <ClCompile Include="Sources\Scene_Stage1.cpp" />
     <ClCompile Include="Sources\Scene_Title.cpp" />
     <ClCompile Include="Sources\Shader.cpp" />
     <ClCompile Include="Sources\SphereCollider.cpp" />
@@ -202,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Camera.h" />
+    <ClInclude Include="Sources\CameraController.h" />
     <ClInclude Include="Sources\Collider.h" />
     <ClInclude Include="Sources\ColorRGB.h" />
     <ClInclude Include="Sources\ColorRGBA.h" />
@@ -215,6 +222,8 @@
     <ClInclude Include="Sources\Matrix4x4.h" />
     <ClInclude Include="Sources\Mesh.h" />
     <ClInclude Include="Sources\MeshRenderer.h" />
+    <ClInclude Include="Sources\PhysicsSystem.h" />
+    <ClInclude Include="Sources\PlayerController.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Quaternion.h" />
     <ClInclude Include="Sources\RenderSystem.h" />
@@ -222,6 +231,8 @@
     <ClInclude Include="Sources\ResourceSystem.h" />
     <ClInclude Include="Sources\Scene.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
+    <ClInclude Include="Sources\Scene_Stage.h" />
+    <ClInclude Include="Sources\Scene_Stage1.h" />
     <ClInclude Include="Sources\Scene_Title.h" />
     <ClInclude Include="Sources\Shader.h" />
     <ClInclude Include="Sources\Singleton.h" />
@@ -232,9 +243,20 @@
     <ClInclude Include="Sources\Vector4D.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Resources\Shaders\Default.hlsl">
+    <None Include="Resources\Shaders\Default.hlsl">
       <FileType>Document</FileType>
-    </Text>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materials\Floor.bin" />
+    <None Include="Resources\Materials\Player.bin" />
+    <None Include="Resources\Materials\Stairs.bin" />
+    <None Include="Resources\Materials\Wall.bin" />
+    <None Include="Resources\Meshes\Floor.bin" />
+    <None Include="Resources\Meshes\Player.bin" />
+    <None Include="Resources\Meshes\Stairs.bin" />
+    <None Include="Resources\Meshes\Wall.bin" />
+    <None Include="Resources\Scenes\Scene.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

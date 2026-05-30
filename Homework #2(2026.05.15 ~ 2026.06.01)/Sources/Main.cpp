@@ -3,6 +3,7 @@
 #include "InputSystem.h"
 #include "RenderSystem.h"
 #include "Scene_Title.h"
+#include "Scene_Stage1.h"
 #include "SceneSystem.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -68,13 +69,13 @@ INT APIENTRY wWinMain(
 	wndClass.hIconSm = LoadIconW(nullptr, IDI_APPLICATION);
 	RegisterClassExW(&wndClass);
 
-	HWND mainWindow = CreateWindowExW(
+	HWND mainWindow{ CreateWindowExW(
 		0,
 		WindowClassName,
 		WindowTitle,
 		WindowStyle,
 		CW_USEDEFAULT, CW_USEDEFAULT, WindowWidth, WindowHeight,
-		nullptr, nullptr, hInstance, nullptr);
+		nullptr, nullptr, hInstance, nullptr) };
 
 	if (mainWindow == nullptr)
 	{
@@ -82,7 +83,7 @@ INT APIENTRY wWinMain(
 		return -1;
 	}
 	
-	if (auto result = RenderSystem::GetInstance().Initialize(mainWindow); !result)
+	if (std::expected<void, std::wstring> result{ RenderSystem::GetInstance().Initialize(mainWindow) }; !result)
 	{
 		// Logger::Critical(result.error());
 		return -1;
@@ -97,7 +98,8 @@ INT APIENTRY wWinMain(
 	InputSystem::GetInstance().Reset();
 
 	SceneSystem::GetInstance().AddScene(L"Title Scene", std::make_unique<Scene_Title>());
-	SceneSystem::GetInstance().LoadScene(L"Title Scene");
+	SceneSystem::GetInstance().AddScene(L"Stage 1", std::make_unique<Scene_Stage1>());
+	SceneSystem::GetInstance().LoadScene(L"Stage 1");
 	
 	QueryPerformanceFrequency(&frequency);
 	QueryPerformanceCounter(&lastTime);
@@ -142,14 +144,17 @@ INT APIENTRY wWinMain(
 			}
 
 			SceneSystem::GetInstance().Update(deltaTime);
+			SceneSystem::GetInstance().LateUpdate(deltaTime);
 			lastTime = nowTime;
 		}
 		// 게임 렌더.
 		{
-			RenderSystem::GetInstance().BeginFrame();
-			SceneSystem::GetInstance().Render();
-			RenderSystem::GetInstance().EndFrame();
-			RenderSystem::GetInstance().Present();
+			if (RenderSystem::GetInstance().BeginFrame())
+			{
+				SceneSystem::GetInstance().Render();
+				RenderSystem::GetInstance().EndFrame();
+				RenderSystem::GetInstance().Present();
+			}
 		}
 	}
 

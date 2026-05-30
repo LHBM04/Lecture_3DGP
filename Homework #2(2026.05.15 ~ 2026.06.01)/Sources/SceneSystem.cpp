@@ -32,6 +32,14 @@ void SceneSystem::FixedUpdate(float fixedDeltaTime_)
 	}
 }
 
+void SceneSystem::LateUpdate(float deltaTime_)
+{
+	if (currentScene)
+	{
+		currentScene->LateUpdate(deltaTime_);
+	}
+}
+
 void SceneSystem::Render()
 {
 	if (!currentScene)
@@ -49,7 +57,7 @@ void SceneSystem::AddScene(std::wstring_view sceneName_, std::unique_ptr<Scene> 
 
 void SceneSystem::RemoveScene(std::wstring_view sceneName_)
 {
-	const auto it = scenes.find(std::wstring(sceneName_));
+	const std::unordered_map<std::wstring, std::unique_ptr<Scene>>::iterator it = scenes.find(std::wstring(sceneName_));
 	if (it != scenes.end())
 	{
 		if (currentScene == it->second.get())
@@ -69,7 +77,7 @@ void SceneSystem::RemoveScene(std::wstring_view sceneName_)
 
 void SceneSystem::LoadScene(std::wstring_view sceneName_)
 {
-	const auto it = scenes.find(std::wstring(sceneName_));
+	const std::unordered_map<std::wstring, std::unique_ptr<Scene>>::iterator it = scenes.find(std::wstring(sceneName_));
 	if (it != scenes.end())
 	{
 		nextScene = it->second.get();
@@ -78,7 +86,7 @@ void SceneSystem::LoadScene(std::wstring_view sceneName_)
 
 void SceneSystem::UnloadScene(std::wstring_view sceneName_)
 {
-	const auto it = scenes.find(std::wstring(sceneName_));
+	const std::unordered_map<std::wstring, std::unique_ptr<Scene>>::iterator it = scenes.find(std::wstring(sceneName_));
 	if (it != scenes.end())
 	{
 		if (currentScene == it->second.get())

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -13,28 +13,17 @@ class Shader final : public Resource
 {
 public:
 	Shader() = default;
-	~Shader() override = default;
+	~Shader() override;
 
 	bool Load() override;
 	void Unload() override;
 
 	std::expected<void, std::wstring> Compile(std::wstring_view vsEntry_ = L"VSMain", std::wstring_view psEntry_ = L"PSMain");
 
-	[[nodiscard]] ID3DBlob* GetVSBlob() const;
-	[[nodiscard]] ID3DBlob* GetPSBlob() const;
+	[[nodiscard]] ID3DBlob* GetVSBlob() const noexcept;
+	[[nodiscard]] ID3DBlob* GetPSBlob() const noexcept;
 
 private:
 	Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
 };
-
-inline ID3DBlob* Shader::GetVSBlob() const
-{
-	return vsBlob.Get();
-}
-
-inline ID3DBlob* Shader::GetPSBlob() const
-{
-	return psBlob.Get();
-}
-

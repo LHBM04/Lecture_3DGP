@@ -34,7 +34,7 @@ void GameObject::SetActive(bool isActive_)
 	}
 	isActive = isActive_;
 
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
 		if (isActive)
 		{
@@ -59,7 +59,7 @@ void GameObject::LateUpdate(float deltaTime_)
 		return;
 	}
 
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->LateUpdate(deltaTime_);
 	}
@@ -73,7 +73,7 @@ void GameObject::Destroy()
 	}
 	isDestroyed = true;
 
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->Destroy();
 	}
@@ -91,7 +91,7 @@ void GameObject::Update(float deltaTime_)
 		return;
 	}
 
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->Update(deltaTime_);
 	}
@@ -104,7 +104,7 @@ void GameObject::FixedUpdate(float fixedDeltaTime_)
 		return;
 	}
 
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->FixedUpdate(fixedDeltaTime_);
 	}
@@ -117,9 +117,33 @@ void GameObject::Render()
 		return;
 	}
 
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->Render();
+	}
+}
+
+void GameObject::NotifyCollisionEnter(Collider* other_)
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		component->CollisionEnter(other_);
+	}
+}
+
+void GameObject::NotifyCollisionStay(Collider* other_)
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		component->CollisionStay(other_);
+	}
+}
+
+void GameObject::NotifyCollisionExit(Collider* other_)
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		component->CollisionExit(other_);
 	}
 }
 

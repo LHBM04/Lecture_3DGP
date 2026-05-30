@@ -14,39 +14,39 @@
 
 std::expected<void, std::wstring> RenderSystem::Initialize(HWND window_)
 {
-	if (auto res{ CreateDevice() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateDevice() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateCommandQueue() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateCommandQueue() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateSwapChain(window_) }; !res)
+	if (std::expected<void, std::wstring> res{ CreateSwapChain(window_) }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateDescriptorHeaps() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateDescriptorHeaps() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateCommandList() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateCommandList() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateSyncObjects() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateSyncObjects() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateConstantBuffer() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateConstantBuffer() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreateRootSignature() }; !res)
+	if (std::expected<void, std::wstring> res{ CreateRootSignature() }; !res.has_value())
 	{
 		return res;
 	}
-	if (auto res{ CreatePipelineState() }; !res)
+	if (std::expected<void, std::wstring> res{ CreatePipelineState() }; !res.has_value())
 	{
 		return res;
 	}
@@ -75,18 +75,18 @@ void RenderSystem::Release()
 	}
 }
 
-void RenderSystem::BeginFrame()
+bool RenderSystem::BeginFrame()
 {
 	assert(commandAllocators[frameIndex] != nullptr);
 	assert(commandList != nullptr);
 
 	if (FAILED(commandAllocators[frameIndex]->Reset()))
 	{
-		return;
+		return false;
 	}
 	if (FAILED(commandList->Reset(commandAllocators[frameIndex].Get(), pipelineState.Get())))
 	{
-		return;
+		return false;
 	}
 
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -114,6 +114,8 @@ void RenderSystem::BeginFrame()
 	}
 
 	constantBufferOffset = frameIndex * MaxConstantBufferSize;
+
+	return true;
 }
 
 void RenderSystem::EndFrame()
@@ -210,7 +212,7 @@ void RenderSystem::SetLights(std::span<Light*> lights_)
 
 	if (camera)
 	{
-		if (auto* transform{ camera->GetOwner()->GetComponent<Transform>() })
+		if (Transform* transform{ camera->GetOwner()->GetComponent<Transform>() })
 		{
 			data.cameraPosition = transform->GetWorldPosition();
 		}
@@ -306,6 +308,31 @@ void RenderSystem::SetObjectConstants(const ObjectConstants& data_)
 void RenderSystem::SetMaterialConstants(const MaterialConstants& data_)
 {
 	SetGraphicsRootConstantBufferView(3, UploadConstantsData(data_));
+}
+
+ID3D12Device* RenderSystem::GetDevice() const noexcept
+{
+	return device.Get();
+}
+
+const D3D12_VIEWPORT& RenderSystem::GetViewport() const noexcept
+{
+	return viewport;
+}
+
+ID3D12RootSignature* RenderSystem::GetDefaultRootSignature() const noexcept
+{
+	return rootSignature.Get();
+}
+
+ID3D12PipelineState* RenderSystem::GetDefaultPipelineState() const noexcept
+{
+	return pipelineState.Get();
+}
+
+ID3D12PipelineState* RenderSystem::GetLightingPipelineState() const noexcept
+{
+	return lightingPipelineState.Get();
 }
 
 std::expected<void, std::wstring> RenderSystem::CreateGBuffers()
@@ -584,8 +611,8 @@ std::expected<void, std::wstring> RenderSystem::CreateRootSignature()
 
 std::expected<void, std::wstring> RenderSystem::CreatePipelineState()
 {
-	auto* shader{ ResourceSystem::GetInstance().GetOrLoadResource<Shader>(L"Resources/Shaders/GameObject.hlsl") };
-	if (!shader)
+	Shader* shader{ ResourceSystem::GetInstance().GetOrLoadResource<Shader>(L"Resources/Shaders/GameObject.hlsl") };
+	if (shader == nullptr)
 	{
 		return std::unexpected{ L"Failed to load GameObject shader." };
 	}

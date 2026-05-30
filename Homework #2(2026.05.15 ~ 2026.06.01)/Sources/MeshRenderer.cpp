@@ -9,6 +9,26 @@
 #include "Scene.h"
 #include "Transform.h"
 
+Mesh* MeshRenderer::GetMesh() const noexcept
+{
+	return mesh;
+}
+
+void MeshRenderer::SetMesh(Mesh* mesh_) noexcept
+{
+	mesh = mesh_;
+}
+
+Material* MeshRenderer::GetMaterial() const noexcept
+{
+	return material;
+}
+
+void MeshRenderer::SetMaterial(Material* material_) noexcept
+{
+	material = material_;
+}
+
 void MeshRenderer::OnRender()
 {
 	if (mesh == nullptr)
@@ -17,15 +37,15 @@ void MeshRenderer::OnRender()
 		return;
 	}
 
-	auto& rs = RenderSystem::GetInstance();
+	RenderSystem& rs{ RenderSystem::GetInstance() };
 
 	// 1. Set Constants
 	RenderSystem::ObjectConstants objData{ GetOwner()->GetComponent<Transform>()->GetWorldMatrix() };
 	rs.SetObjectConstants(objData);
 
-	if (material)
+	if (material != nullptr)
 	{
-		RenderSystem::MaterialConstants matData{ material->GetBaseColor(), material->GetRoughness(), material->GetMetallic(), { 0, 0 } };
+		RenderSystem::MaterialConstants matData{ material->GetBaseColor() };
 		rs.SetMaterialConstants(matData);
 	}
 

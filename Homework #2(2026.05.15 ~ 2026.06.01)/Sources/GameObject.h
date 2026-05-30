@@ -29,6 +29,10 @@ public:
 	void LateUpdate(float deltaTime_);
 	void Render();
 
+	void NotifyCollisionEnter(Collider* other_);
+	void NotifyCollisionStay(Collider* other_);
+	void NotifyCollisionExit(Collider* other_);
+
 	[[nodiscard]] std::wstring_view GetName() const noexcept;
 	void SetName(std::wstring_view name_);
 
@@ -67,32 +71,32 @@ private:
 template <class TComponent>
 inline TComponent* GameObject::AddComponent()
 {
-	if (auto* existing = GetComponent<TComponent>())
+	if (TComponent* existing{ GetComponent<TComponent>() }; existing != nullptr)
 	{
 		return existing;
 	}
 
-	auto component = std::make_unique<TComponent>();
-	TComponent* ptr = component.get();
-	
+	std::unique_ptr<TComponent> component{ std::make_unique<TComponent>() };
+	TComponent* ptr{ component.get() };
+
 	component->SetOwner(this);
 	components.push_back(std::move(component));
-	
+
 	ptr->Awake();
 	if (isActive)
 	{
 		ptr->Enable();
 	}
-	
+
 	return ptr;
 }
 
 template <class TComponent>
 inline TComponent* GameObject::GetComponent()
 {
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
-		if (auto* result = dynamic_cast<TComponent*>(component.get()))
+		if (TComponent* result{ dynamic_cast<TComponent*>(component.get()) }; result != nullptr)
 		{
 			return result;
 		}
@@ -103,9 +107,9 @@ inline TComponent* GameObject::GetComponent()
 template <class TComponent>
 inline const TComponent* GameObject::GetComponent() const
 {
-	for (auto& component : components)
+	for (const std::unique_ptr<Component>& component : components)
 	{
-		if (auto* result = dynamic_cast<const TComponent*>(component.get()))
+		if (const TComponent* result{ dynamic_cast<const TComponent*>(component.get()) }; result != nullptr)
 		{
 			return result;
 		}

@@ -1,8 +1,10 @@
 ﻿#pragma once
 
 #include <memory>
+#include <ranges>
 #include <set>
 #include <span>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -11,6 +13,7 @@
 class Camera;
 class GameObject;
 class Light;
+class Collider;
 
 class Scene
 {
@@ -29,10 +32,11 @@ public:
 
 	void Update(float deltaTime_);
 	void FixedUpdate(float fixedDeltaTime_);
+	void LateUpdate(float deltaTime_);
 		
 	void Render();
 
-	GameObject* CreateGameObject();
+	GameObject* Instantiate();
 
 	void AddCamera(Camera* camera_);
 	void RemoveCamera(Camera* camera_);
@@ -41,6 +45,11 @@ public:
 	void RemoveLight(Light* light_);
 
 	[[nodiscard]] GameObject* Pick(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_ = nullptr);
+
+	[[nodiscard]] GameObject* FindObjectWithName(std::wstring_view name_);
+	[[nodiscard]] GameObject* FindObjectWithTag(std::wstring_view tag_);
+	[[nodiscard]] std::vector<GameObject*> FindObjectsWithName(std::wstring_view name_);
+	[[nodiscard]] std::vector<GameObject*> FindObjectsWithTag(std::wstring_view tag_);
 
 	[[nodiscard]] std::span<Camera* const> GetCameras();
 	[[nodiscard]] std::span<const Camera* const> GetCameras() const;
@@ -51,36 +60,11 @@ public:
 protected:
 	virtual void OnLoad() = 0;
 	virtual void OnUnload() = 0;
-	
-private:
-	void ProcessPhysics(float fixedDeltaTime_);
 
-private:
+protected:
 	bool isLoaded{ false };
 
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
-	
 	std::vector<Camera*> cameras;
 	std::vector<Light*> lights;
 };
-
-inline std::span<Camera* const> Scene::GetCameras()
-{
-	return cameras;
-}
-
-inline std::span<const Camera* const> Scene::GetCameras() const
-{
-	return cameras;
-}
-
-inline std::span<Light* const> Scene::GetLights()
-{
-	return lights;
-}
-
-inline std::span<const Light* const> Scene::GetLights() const
-{
-	return lights;
-}
-

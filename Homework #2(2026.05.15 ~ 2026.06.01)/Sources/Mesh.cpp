@@ -1,8 +1,14 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Mesh.h"
 #include "RenderSystem.h"
 #include <fstream>
+#include <functional>
 #include <string>
+
+Mesh::~Mesh()
+{
+	Unload();
+}
 
 bool Mesh::Load()
 {
@@ -17,65 +23,42 @@ bool Mesh::Load()
 		return false;
 	}
 
-	auto ReadTag = [&file](const std::string& expectedTag) -> bool {
-		uint8_t tagLength = 0;
-		if (!file.read(reinterpret_cast<char*>(&tagLength), sizeof(uint8_t))) return false;
-		
-		std::string tag(tagLength, '\0');
-		if (!file.read(&tag[0], tagLength)) return false;
+	if (!ReadTag(file, "<BoundingBox>:")) return false;
+	ReadVector3(file, boundsMin);
+	ReadVector3(file, boundsMax);
 
-		return tag == expectedTag;
-	};
-
-	auto ReadVector3 = [&file](Vector3D& vec) {
-		file.read(reinterpret_cast<char*>(&vec.x), sizeof(float));
-		file.read(reinterpret_cast<char*>(&vec.y), sizeof(float));
-		file.read(reinterpret_cast<char*>(&vec.z), sizeof(float));
-	};
-
-	// 1. BoundingBox (Ignore for now)
-	if (!ReadTag("<BoundingBox>:")) return false;
-	Vector3D min, max;
-	ReadVector3(min);
-	ReadVector3(max);
-
-	// 2. Positions
-	if (!ReadTag("<Positions>:")) return false;
-	uint32_t positionCount = 0;
-	if (!file.read(reinterpret_cast<char*>(&positionCount), sizeof(uint32_t))) return false;
+	if (!ReadTag(file, "<Positions>:")) return false;
+	uint32_t positionCount{ 0 };
+	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&positionCount), sizeof(uint32_t)))) return false;
 	
 	std::vector<Vector3D> positions(positionCount);
-	for (uint32_t i = 0; i < positionCount; ++i)
+	for (uint32_t i{ 0 }; i < positionCount; ++i)
 	{
-		ReadVector3(positions[i]);
+		ReadVector3(file, positions[i]);
 	}
 
-	// 3. Normals
-	if (!ReadTag("<Normals>:")) return false;
-	uint32_t normalCount = 0;
-	if (!file.read(reinterpret_cast<char*>(&normalCount), sizeof(uint32_t))) return false;
+	if (!ReadTag(file, "<Normals>:")) return false;
+	uint32_t normalCount{ 0 };
+	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&normalCount), sizeof(uint32_t)))) return false;
 	
 	std::vector<Vector3D> normals(normalCount);
-	for (uint32_t i = 0; i < normalCount; ++i)
+	for (uint32_t i{ 0 }; i < normalCount; ++i)
 	{
-		ReadVector3(normals[i]);
+		ReadVector3(file, normals[i]);
 	}
 
-	// 4. TextureCoords (Skip)
-	if (!ReadTag("<TextureCoords>:")) return false;
-	uint32_t texCoordCount = 0;
-	if (!file.read(reinterpret_cast<char*>(&texCoordCount), sizeof(uint32_t))) return false;
+	if (!ReadTag(file, "<TextureCoords>:")) return false;
+	uint32_t texCoordCount{ 0 };
+	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&texCoordCount), sizeof(uint32_t)))) return false;
 	file.seekg(sizeof(float) * 2 * texCoordCount, std::ios::cur);
 
-	// 5. Indices
-	if (!ReadTag("<Indices>:")) return false;
-	uint32_t indexCount = 0;
-	if (!file.read(reinterpret_cast<char*>(&indexCount), sizeof(uint32_t))) return false;
+	if (!ReadTag(file, "<Indices>:")) return false;
+	uint32_t indexCount{ 0 };
+	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&indexCount), sizeof(uint32_t)))) return false;
 	
 	indices.resize(indexCount);
-	if (!file.read(reinterpret_cast<char*>(indices.data()), sizeof(uint32_t) * indexCount)) return false;
+	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(indices.data()), sizeof(uint32_t) * indexCount))) return false;
 
-	// Combine to Vertices
 	uint32_t vertexCount = positionCount;
 	vertices.resize(vertexCount);
 	for (uint32_t i = 0; i < vertexCount; ++i)
@@ -97,6 +80,61 @@ void Mesh::Unload()
 	indexBufferView = {};
 }
 
+void Mesh::SetVertices(std::vector<Vertex>&& vertices_)
+{
+	vertices = std::move(vertices_);
+}
+
+void Mesh::SetIndices(std::vector<uint32_t>&& indices_)
+{
+	indices = std::move(indices_);
+}
+
+const std::vector<Vertex>& Mesh::GetVertices() const noexcept
+{
+	return vertices;
+}
+
+const std::vector<uint32_t>& Mesh::GetIndices() const noexcept
+{
+	return indices;
+}
+
+const Vector3D& Mesh::GetBoundsMin() const noexcept
+{
+	return boundsMin;
+}
+
+const Vector3D& Mesh::GetBoundsMax() const noexcept
+{
+	return boundsMax;
+}
+
+ID3D12Resource* Mesh::GetVertexBuffer() const noexcept
+{
+	return vertexBuffer.Get();
+}
+
+const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView() const noexcept
+{
+	return vertexBufferView;
+}
+
+ID3D12Resource* Mesh::GetIndexBuffer() const noexcept
+{
+	return indexBuffer.Get();
+}
+
+const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView() const noexcept
+{
+	return indexBufferView;
+}
+
+uint32_t Mesh::GetIndexCount() const noexcept
+{
+	return static_cast<uint32_t>(indices.size());
+}
+
 bool Mesh::CreateBuffers(ID3D12Device* device_)
 {
 	if (vertices.empty())
@@ -104,44 +142,35 @@ bool Mesh::CreateBuffers(ID3D12Device* device_)
 		return false;
 	}
 
-	// Vertex Buffer
 	{
-		const UINT bufferSize = static_cast<UINT>(vertices.size() * sizeof(Vertex));
-
+		const UINT bufferSize{ static_cast<UINT>(sizeof(Vertex) * vertices.size()) };
+		
 		D3D12_HEAP_PROPERTIES heapProps{};
 		heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 
-		D3D12_RESOURCE_DESC resourceDesc{};
-		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		resourceDesc.Alignment = 0;
-		resourceDesc.Width = bufferSize;
-		resourceDesc.Height = 1;
-		resourceDesc.DepthOrArraySize = 1;
-		resourceDesc.MipLevels = 1;
-		resourceDesc.Format = DXGI_FORMAT_UNKNOWN;
-		resourceDesc.SampleDesc.Count = 1;
-		resourceDesc.SampleDesc.Quality = 0;
-		resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		D3D12_RESOURCE_DESC bufferDesc{};
+		bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		bufferDesc.Width = bufferSize;
+		bufferDesc.Height = 1;
+		bufferDesc.DepthOrArraySize = 1;
+		bufferDesc.MipLevels = 1;
+		bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+		bufferDesc.SampleDesc.Count = 1;
+		bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 		if (FAILED(device_->CreateCommittedResource(
-			&heapProps,
-			D3D12_HEAP_FLAG_NONE,
-			&resourceDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(&vertexBuffer))))
+			&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexBuffer))))
 		{
 			return false;
 		}
 
-		void* pVertexDataBegin;
-		D3D12_RANGE readRange{ 0, 0 };
-		if (FAILED(vertexBuffer->Map(0, &readRange, &pVertexDataBegin)))
+		void* mappedData{ nullptr };
+		if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
 		{
 			return false;
 		}
-		memcpy(pVertexDataBegin, vertices.data(), bufferSize);
+		std::memcpy(mappedData, vertices.data(), bufferSize);
 		vertexBuffer->Unmap(0, nullptr);
 
 		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
@@ -149,44 +178,36 @@ bool Mesh::CreateBuffers(ID3D12Device* device_)
 		vertexBufferView.SizeInBytes = bufferSize;
 	}
 
-	// Index Buffer
 	if (!indices.empty())
 	{
-		const UINT bufferSize = static_cast<UINT>(indices.size() * sizeof(uint32_t));
+		const UINT bufferSize{ static_cast<UINT>(sizeof(uint32_t) * indices.size()) };
 
 		D3D12_HEAP_PROPERTIES heapProps{};
 		heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 
-		D3D12_RESOURCE_DESC resourceDesc{};
-		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		resourceDesc.Alignment = 0;
-		resourceDesc.Width = bufferSize;
-		resourceDesc.Height = 1;
-		resourceDesc.DepthOrArraySize = 1;
-		resourceDesc.MipLevels = 1;
-		resourceDesc.Format = DXGI_FORMAT_UNKNOWN;
-		resourceDesc.SampleDesc.Count = 1;
-		resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		D3D12_RESOURCE_DESC bufferDesc{};
+		bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		bufferDesc.Width = bufferSize;
+		bufferDesc.Height = 1;
+		bufferDesc.DepthOrArraySize = 1;
+		bufferDesc.MipLevels = 1;
+		bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+		bufferDesc.SampleDesc.Count = 1;
+		bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 		if (FAILED(device_->CreateCommittedResource(
-			&heapProps,
-			D3D12_HEAP_FLAG_NONE,
-			&resourceDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(&indexBuffer))))
+			&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&indexBuffer))))
 		{
 			return false;
 		}
 
-		void* pIndexDataBegin;
-		D3D12_RANGE readRange{ 0, 0 };
-		if (FAILED(indexBuffer->Map(0, &readRange, &pIndexDataBegin)))
+		void* mappedData{ nullptr };
+		if (FAILED(indexBuffer->Map(0, nullptr, &mappedData)))
 		{
 			return false;
 		}
-		memcpy(pIndexDataBegin, indices.data(), bufferSize);
+		std::memcpy(mappedData, indices.data(), bufferSize);
 		indexBuffer->Unmap(0, nullptr);
 
 		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
@@ -197,3 +218,20 @@ bool Mesh::CreateBuffers(ID3D12Device* device_)
 	return true;
 }
 
+bool Mesh::ReadTag(std::ifstream& file_, const std::string& expectedTag_)
+{
+	uint8_t tagLength{ 0 };
+	if (!static_cast<bool>(file_.read(reinterpret_cast<char*>(&tagLength), sizeof(uint8_t)))) return false;
+
+	std::string tag(tagLength, '\0');
+	if (!static_cast<bool>(file_.read(&tag[0], tagLength))) return false;
+
+	return tag == expectedTag_;
+}
+
+void Mesh::ReadVector3(std::ifstream& file_, Vector3D& vector_)
+{
+	file_.read(reinterpret_cast<char*>(&vector_.x), sizeof(float));
+	file_.read(reinterpret_cast<char*>(&vector_.y), sizeof(float));
+	file_.read(reinterpret_cast<char*>(&vector_.z), sizeof(float));
+}

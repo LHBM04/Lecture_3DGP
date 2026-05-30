@@ -108,37 +108,37 @@ private:
 
 inline bool InputSystem::IsKeyPressed(KeyCode key_) const
 {
-	const auto index{ std::to_underlying(key_) };
+	const std::uint8_t index{ std::to_underlying(key_) };
 	return keyStates[index] && !prevKeyStates[index];
 }
 
 inline bool InputSystem::IsKeyDown(KeyCode key_) const
 {
-	const auto index{ std::to_underlying(key_) };
+	const std::uint8_t index{ std::to_underlying(key_) };
 	return keyStates[index];
 }
 
 inline bool InputSystem::IsKeyUp(KeyCode key_) const
 {
-	const auto index{ std::to_underlying(key_) };
+	const std::uint8_t index{ std::to_underlying(key_) };
 	return !keyStates[index] && prevKeyStates[index];
 }
 
 inline bool InputSystem::IsButtonPressed(ButtonCode button_) const
 {
-	const auto index{ std::to_underlying(button_) };
+	const std::uint8_t index{ std::to_underlying(button_) };
 	return buttonStates[index] && !prevButtonStates[index];
 }
 
 inline bool InputSystem::IsButtonDown(ButtonCode button_) const
 {
-	const auto index{ std::to_underlying(button_) };
+	const std::uint8_t index{ std::to_underlying(button_) };
 	return buttonStates[index];
 }
 
 inline bool InputSystem::IsButtonUp(ButtonCode button_) const
 {
-	const auto index{ std::to_underlying(button_) };
+	const std::uint8_t index{ std::to_underlying(button_) };
 	return !buttonStates[index] && prevButtonStates[index];
 }
 

@@ -27,8 +27,8 @@ namespace Logger
 		case Level::Critical: levelStr = L"CRIT"; break;
 		}
 
-		auto now = std::chrono::system_clock::now();
-		auto time = std::chrono::current_zone()->to_local(now);
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		std::chrono::local_time<std::chrono::system_clock::duration> time = std::chrono::current_zone()->to_local(now);
 
 		std::wstring message = std::vformat(format_, std::make_wformat_args(args_...));
 		std::wcout << std::format(L"[{:%H:%M:%OS}] [{}] {}\n", time, levelStr, message);

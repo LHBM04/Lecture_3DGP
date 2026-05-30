@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -8,8 +8,6 @@
 
 #include "Resource.h"
 #include "Vector3D.h"
-#include "Vector2D.h"
-#include "ColorRGBA.h"
 
 struct Vertex
 {
@@ -21,7 +19,7 @@ class Mesh final : public Resource
 {
 public:
 	Mesh() = default;
-	~Mesh() override = default;
+	~Mesh() override;
 
 	bool Load() override;
 	void Unload() override;
@@ -29,20 +27,26 @@ public:
 	void SetVertices(std::vector<Vertex>&& vertices_);
 	void SetIndices(std::vector<uint32_t>&& indices_);
 
-	[[nodiscard]] const std::vector<Vertex>& GetVertices() const;
-	[[nodiscard]] const std::vector<uint32_t>& GetIndices() const;
+	[[nodiscard]] const std::vector<Vertex>& GetVertices() const noexcept;
+	[[nodiscard]] const std::vector<uint32_t>& GetIndices() const noexcept;
 
-	[[nodiscard]] ID3D12Resource* GetVertexBuffer() const;
-	[[nodiscard]] const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const;
+	[[nodiscard]] const Vector3D& GetBoundsMin() const noexcept;
+	[[nodiscard]] const Vector3D& GetBoundsMax() const noexcept;
 
-	[[nodiscard]] ID3D12Resource* GetIndexBuffer() const;
-	[[nodiscard]] const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const;
+	[[nodiscard]] ID3D12Resource* GetVertexBuffer() const noexcept;
+	[[nodiscard]] const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const noexcept;
 
-	[[nodiscard]] uint32_t GetIndexCount() const;
+	[[nodiscard]] ID3D12Resource* GetIndexBuffer() const noexcept;
+	[[nodiscard]] const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const noexcept;
+
+	[[nodiscard]] uint32_t GetIndexCount() const noexcept;
 
 	bool CreateBuffers(ID3D12Device* device_);
 
 private:
+	bool ReadTag(std::ifstream& file_, const std::string& expectedTag_);
+	void ReadVector3(std::ifstream& file_, Vector3D& vector_);
+
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 
@@ -51,50 +55,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+
+	Vector3D boundsMin;
+	Vector3D boundsMax;
 };
-
-inline void Mesh::SetVertices(std::vector<Vertex>&& vertices_)
-{
-	vertices = std::move(vertices_);
-}
-
-inline void Mesh::SetIndices(std::vector<uint32_t>&& indices_)
-{
-	indices = std::move(indices_);
-}
-
-inline const std::vector<Vertex>& Mesh::GetVertices() const
-{
-	return vertices;
-}
-
-inline const std::vector<uint32_t>& Mesh::GetIndices() const
-{
-	return indices;
-}
-
-inline ID3D12Resource* Mesh::GetVertexBuffer() const
-{
-	return vertexBuffer.Get();
-}
-
-inline const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView() const
-{
-	return vertexBufferView;
-}
-
-inline ID3D12Resource* Mesh::GetIndexBuffer() const
-{
-	return indexBuffer.Get();
-}
-
-inline const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView() const
-{
-	return indexBufferView;
-}
-
-inline uint32_t Mesh::GetIndexCount() const
-{
-	return static_cast<uint32_t>(indices.size());
-}
-

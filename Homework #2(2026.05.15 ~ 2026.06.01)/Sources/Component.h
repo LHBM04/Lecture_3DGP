@@ -1,21 +1,17 @@
-﻿#pragma once
+#pragma once
 
+class Collider;
 class GameObject;
 
 class Component
 {
 public:
 	Component() = default;
-	virtual ~Component()
-	{
-		Destroy();
-	}
+	virtual ~Component();
 
-	// 복사 금지.
 	Component(const Component&) = delete;
 	Component& operator=(const Component&) = delete;
 	
-	// 이동 금지.
 	Component(Component&&) = delete;
 	Component& operator=(Component&&) = delete;
 
@@ -41,113 +37,29 @@ public:
 	void Disable();
 	void Destroy();
 
+	void CollisionEnter(Collider* other_);
+	void CollisionStay(Collider* other_);
+	void CollisionExit(Collider* other_);
+
 protected:
 	virtual void OnAwake() {}
 	virtual void OnEnable() {}
 	virtual void OnStart() {}
-
 	virtual void OnUpdate([[maybe_unused]] float deltaTime_) {}
 	virtual void OnFixedUpdate([[maybe_unused]] float fixedDeltaTime_) {}
 	virtual void OnLateUpdate([[maybe_unused]] float deltaTime_) {}
-	
 	virtual void OnPreRender() {}
 	virtual void OnRender() {}
 	virtual void OnPostRender() {}
-	
 	virtual void OnDisable() {}
 	virtual void OnDestroy() {}
+
+	virtual void OnCollisionEnter([[maybe_unused]] Collider* other_) {}
+	virtual void OnCollisionStay([[maybe_unused]] Collider* other_) {}
+	virtual void OnCollisionExit([[maybe_unused]] Collider* other_) {}
 
 private:
 	GameObject* owner{ nullptr };
 	bool isStarted{ false };
 	bool isEnabled{ true };
 };
-
-inline GameObject* Component::GetOwner() const noexcept
-{
-	return owner;
-}
-
-inline void Component::SetOwner(GameObject* owner_) noexcept
-{
-	owner = owner_;
-}
-
-inline bool Component::IsStarted() const noexcept
-{
-	return isStarted;
-}
-
-inline bool Component::IsEnabled() const noexcept
-{
-	return isEnabled;
-}
-
-inline void Component::Awake()
-{
-	OnAwake();
-}
-
-inline void Component::Enable()
-{
-	OnEnable();
-}
-
-inline void Component::Start()
-{
-	OnStart();
-}
-
-inline void Component::Update(float deltaTime_)
-{
-	if (!isEnabled)
-	{
-		return;
-	}
-
-	if (!isStarted)
-	{
-		Start();
-		isStarted = true;
-	}
-
-	OnUpdate(deltaTime_);
-}
-
-inline void Component::FixedUpdate(float fixedDeltaTime_)
-{
-	if (!isEnabled)
-	{
-		return;
-	}
-
-	OnFixedUpdate(fixedDeltaTime_);
-}
-
-inline void Component::LateUpdate(float deltaTime_)
-{
-	if (!isEnabled)
-	{
-		return;
-	}
-
-	OnLateUpdate(deltaTime_);
-}
-
-inline void Component::Render()
-{
-	if (!isEnabled)
-	{
-		return;
-	}
-
-	OnPreRender();
-	OnRender();
-	OnPostRender();
-}
-
-inline void Component::Disable()
-{
-	OnDisable();
-}
-

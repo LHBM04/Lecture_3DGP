@@ -34,7 +34,7 @@ public:
 	std::expected<void, std::wstring> Initialize(HWND window_);
 	void Release();
 
-	void BeginFrame();
+	bool BeginFrame();
 	void EndFrame();
 
 	void Present();
@@ -55,13 +55,13 @@ public:
 	void DrawIndexedInstanced(UINT indexCountPerInstance_, UINT instanceCount_, UINT startIndexLocation_, INT baseVertexLocation_, UINT startInstanceLocation_);
 
 public:
-	struct CameraConstants final
+	struct alignas(256) CameraConstants final
 	{
 		Matrix4x4 viewMatrix;
 		Matrix4x4 projectionMatrix;
 	};
 
-	struct LightConstants final
+	struct alignas(256) LightConstants final
 	{
 		Vector4D ambientColor;
 		Vector4D lights[8]; // color(rgb), intensity(a)
@@ -70,17 +70,14 @@ public:
 		uint32_t activeLightCount;
 	};
 
-	struct ObjectConstants final
+	struct alignas(256) ObjectConstants final
 	{
 		Matrix4x4 worldMatrix;
 	};
 
-	struct MaterialConstants final
+	struct alignas(256) MaterialConstants final
 	{
 		Vector4D color;
-		float roughness;
-		float metallic;
-		float padding[2];
 	};
 
 	void SetObjectConstants(const ObjectConstants& data_);
@@ -164,7 +161,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
 	uint8_t* mappedConstantData{ nullptr };
 	UINT constantBufferOffset{ 0 };
-	static constexpr UINT MaxConstantBufferSize{ 1024 * 128 };
+	static constexpr UINT MaxConstantBufferSize{ 1024 * 1024 * 8 };
 };
 
 template<class T>
@@ -181,29 +178,4 @@ inline D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantsData(const T& data
 	constantBufferOffset += size;
 
 	return gpuAddress;
-}
-
-inline ID3D12Device* RenderSystem::GetDevice() const noexcept
-{
-	return device.Get();
-}
-
-inline const D3D12_VIEWPORT& RenderSystem::GetViewport() const noexcept
-{
-	return viewport;
-}
-
-inline ID3D12RootSignature* RenderSystem::GetDefaultRootSignature() const noexcept
-{
-	return rootSignature.Get();
-}
-
-inline ID3D12PipelineState* RenderSystem::GetDefaultPipelineState() const noexcept
-{
-	return pipelineState.Get();
-}
-
-inline ID3D12PipelineState* RenderSystem::GetLightingPipelineState() const noexcept
-{
-	return lightingPipelineState.Get();
 }

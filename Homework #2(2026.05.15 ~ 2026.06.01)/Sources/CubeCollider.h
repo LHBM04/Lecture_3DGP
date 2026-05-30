@@ -1,44 +1,34 @@
 ﻿#pragma once
 
 #include <DirectXCollision.h>
-
 #include "Collider.h"
 
 class Vector3D;
 
-class CubeCollider final : public Collider<CubeCollider>
+class CubeCollider final : public Collider
 {
 public:
 	CubeCollider() = default;
 	~CubeCollider() override = default;
 
-	using Collider<CubeCollider>::IsIntersects;
-
 	[[nodiscard]] const DirectX::BoundingOrientedBox& GetVolume() const noexcept;
+	void SetCenter(const Vector3D& center_) noexcept;
 	void SetSize(const Vector3D& size_) noexcept;
 
-	bool IsIntersects(const DirectX::BoundingFrustum& frustum_) const;
+	[[nodiscard]] bool IsIntersects(const Collider* other_) const override;
+	[[nodiscard]] bool IsIntersects(const SphereCollider* other_) const override;
+	[[nodiscard]] bool IsIntersects(const CubeCollider* other_) const override;
 
+	[[nodiscard]] bool IsIntersects(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float& distance_) const override;
+	[[nodiscard]] bool IsIntersects(const DirectX::BoundingFrustum& frustum_) const override;
+
+	[[nodiscard]] DirectX::BoundingBox GetBoundingVolume() const override;
+
+	void UpdateVolume() override;
+
+	private:
 	void OnUpdate(float deltaTime_) override;
 
-private:
 	DirectX::BoundingOrientedBox localBox{ {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 0.0f, 1.0f} };
 	DirectX::BoundingOrientedBox worldBox{ {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 0.0f, 1.0f} };
 };
-
-// ============================================================================
-// Inline Implementations
-// ============================================================================
-
-#include "Vector3D.h"
-
-inline void CubeCollider::SetSize(const Vector3D& size_) noexcept
-{
-	localBox.Extents = { size_.x * 0.5f, size_.y * 0.5f, size_.z * 0.5f };
-}
-
-inline const DirectX::BoundingOrientedBox& CubeCollider::GetVolume() const noexcept
-{
-	return worldBox;
-}
-

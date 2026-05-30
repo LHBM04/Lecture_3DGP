@@ -40,8 +40,8 @@ void InputSystem::Update()
 	GetCursorPos(&pt);
 	
 	// Convert to screen coordinates
-	HWND hWnd = GetActiveWindow();
-	if (hWnd)
+	HWND hWnd{ GetActiveWindow() };
+	if (hWnd != nullptr)
 	{
 		ScreenToClient(hWnd, &pt);
 		mousePosition.x = static_cast<float>(pt.x);

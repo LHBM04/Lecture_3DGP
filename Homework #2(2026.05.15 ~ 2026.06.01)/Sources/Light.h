@@ -22,23 +22,3 @@ private:
 	ColorRGBA color{ ColorRGBA::GetWhite() };
 };
 
-inline float Light::GetIntensity() const
-{
-	return intensity;
-}
-
-inline void Light::SetIntensity(float intensity_)
-{
-	intensity = intensity_;
-}
-
-inline ColorRGBA Light::GetColor() const
-{
-	return color;
-}
-
-inline void Light::SetColor(const ColorRGBA& color_)
-{
-	color = color_;
-}
-

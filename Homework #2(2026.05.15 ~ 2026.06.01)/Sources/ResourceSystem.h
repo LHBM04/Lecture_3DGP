@@ -30,13 +30,13 @@ private:
 template <std::derived_from<Resource> TResource, class... Args>
 inline TResource* ResourceSystem::GetOrLoadResource(const std::filesystem::path& path_, Args&&... args_)
 {
-	const std::wstring key = path_.wstring();
-	if (auto it = resources.find(key); it != resources.end())
+	const std::wstring key{ path_.wstring() };
+	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(key) }; it != resources.end())
 	{
 		return static_cast<TResource*>(it->second.get());
 	}
 
-	auto resource = std::make_unique<TResource>(std::forward<Args>(args_)...);
+	std::unique_ptr<TResource> resource{ std::make_unique<TResource>(std::forward<Args>(args_)...) };
 	resource->SetPath(path_);
 
 	if (!resource->Load())
@@ -44,7 +44,7 @@ inline TResource* ResourceSystem::GetOrLoadResource(const std::filesystem::path&
 		return nullptr;
 	}
 	
-	TResource* resourcePtr = resource.get();
+	TResource* resourcePtr{ resource.get() };
 	resources[key] = std::move(resource);
 	
 	return resourcePtr;
@@ -53,8 +53,8 @@ inline TResource* ResourceSystem::GetOrLoadResource(const std::filesystem::path&
 template <std::derived_from<Resource> TResource>
 inline TResource* ResourceSystem::GetResource(const std::filesystem::path& path_)
 {
-	const std::wstring key = path_.wstring();
-	if (auto it = resources.find(key); it != resources.end())
+	const std::wstring key{ path_.wstring() };
+	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(key) }; it != resources.end())
 	{
 		return static_cast<TResource*>(it->second.get());
 	}
@@ -64,7 +64,7 @@ inline TResource* ResourceSystem::GetResource(const std::filesystem::path& path_
 
 inline void ResourceSystem::UnloadResource(const std::filesystem::path& path_)
 {
-	if (auto it = resources.find(path_.wstring()); it != resources.end())
+	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(path_.wstring()) }; it != resources.end())
 	{
 		it->second->Unload();
 		resources.erase(it);

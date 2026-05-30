@@ -94,7 +94,7 @@ Matrix4x4 Camera::GetViewMatrix() const
 {
 	const Transform* transform{ GetOwner()->GetComponent<Transform>() };
 
-	if (nullptr == transform)
+	if (transform == nullptr)
 	{
 		return Matrix4x4::GetIdentity();
 	}
@@ -104,9 +104,16 @@ Matrix4x4 Camera::GetViewMatrix() const
 
 Matrix4x4 Camera::GetProjectionMatrix() const
 {
-	const auto& rs = RenderSystem::GetInstance();
-	const float screenAspect = rs.GetViewport().Width / rs.GetViewport().Height;
-	const float aspectRatio{ (viewportRect.z / viewportRect.w) * screenAspect };
+	const RenderSystem& rs{ RenderSystem::GetInstance() };
+	const float width{ rs.GetViewport().Width };
+	const float height{ rs.GetViewport().Height };
+	
+	float aspectRatio{ 1.0f };
+	if (height > 0.0f && viewportRect.w > 0.0f)
+	{
+		const float screenAspect{ width / height };
+		aspectRatio = (viewportRect.z / viewportRect.w) * screenAspect;
+	}
 
 	switch (projectionType)
 	{
@@ -134,6 +141,11 @@ Matrix4x4 Camera::GetViewProjectionMatrix() const
 	return GetViewMatrix() * GetProjectionMatrix();
 }
 
+const DirectX::BoundingFrustum& Camera::GetFrustum() const
+{
+	return frustum;
+}
+
 void Camera::OnEnable()
 {
 	GetOwner()->GetScene()->AddCamera(this);
@@ -146,52 +158,53 @@ void Camera::OnDisable()
 
 void Camera::UpdateFrustum()
 {
-	DirectX::BoundingFrustum::CreateFromMatrix(frustum, Matrix4x4::Load(GetProjectionMatrix()));
-	
-	auto* transform = GetOwner()->GetComponent<Transform>();
-	if (transform)
+	const Transform* transform{ GetOwner() != nullptr ? GetOwner()->GetComponent<Transform>() : nullptr };
+	if (transform == nullptr)
 	{
-		frustum.Transform(frustum, Matrix4x4::Load(transform->GetWorldMatrix()));
+		return;
 	}
+
+	DirectX::BoundingFrustum::CreateFromMatrix(frustum, Matrix4x4::Load(GetProjectionMatrix()));
+	frustum.Transform(frustum, Matrix4x4::Load(transform->GetWorldMatrix()));
 }
 
 bool Camera::IsInFrustum(const SphereCollider* collider_) const
 {
-	if (!collider_) return true;
-	return frustum.Intersects(collider_->GetVolume());
+	if (collider_ == nullptr) return true;
+	return collider_->IsIntersects(frustum);
 }
 
 bool Camera::IsInFrustum(const CubeCollider* collider_) const
 {
-	if (!collider_) return true;
-	return frustum.Intersects(collider_->GetVolume());
+	if (collider_ == nullptr) return true;
+	return collider_->IsIntersects(frustum);
 }
 
 void Camera::ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const
 {
-	const auto& rs = RenderSystem::GetInstance();
-	const D3D12_VIEWPORT& rsViewport = rs.GetViewport();
+	const RenderSystem& rs{ RenderSystem::GetInstance() };
+	const D3D12_VIEWPORT& rsViewport{ rs.GetViewport() };
 	
-	const float sw = rsViewport.Width;
-	const float sh = rsViewport.Height;
+	const float sw{ rsViewport.Width };
+	const float sh{ rsViewport.Height };
 
-	const float vx = viewportRect.x * sw; 
-	const float vy = viewportRect.y * sh;
-	const float vw = viewportRect.z * sw;
-	const float vh = viewportRect.w * sh;
+	const float vx{ viewportRect.x * sw }; 
+	const float vy{ viewportRect.y * sh };
+	const float vw{ viewportRect.z * sw };
+	const float vh{ viewportRect.w * sh };
 
-	const float x = (((screenPoint_.x - vx) / vw) * 2.0f) - 1.0f;
-	const float y = -((((screenPoint_.y - vy) / vh) * 2.0f) - 1.0f);
+	const float x{ (((screenPoint_.x - vx) / vw) * 2.0f) - 1.0f };
+	const float y{ -((((screenPoint_.y - vy) / vh) * 2.0f) - 1.0f) };
 
-	const Matrix4x4 invVP = GetViewProjectionMatrix().GetInverse();
+	const Matrix4x4 invVP{ GetViewProjectionMatrix().GetInverse() };
 	
-	DirectX::XMVECTOR rayNear = DirectX::XMVectorSet(x, y, 0.0f, 1.0f);
-	DirectX::XMVECTOR rayFar = DirectX::XMVectorSet(x, y, 1.0f, 1.0f);
+	DirectX::XMVECTOR rayNear{ DirectX::XMVectorSet(x, y, 0.0f, 1.0f) };
+	DirectX::XMVECTOR rayFar{ DirectX::XMVectorSet(x, y, 1.0f, 1.0f) };
 
-	DirectX::XMVECTOR worldNear = DirectX::XMVector3TransformCoord(rayNear, Matrix4x4::Load(invVP));
-	DirectX::XMVECTOR worldFar = DirectX::XMVector3TransformCoord(rayFar, Matrix4x4::Load(invVP));
+	DirectX::XMVECTOR worldNear{ DirectX::XMVector3TransformCoord(rayNear, Matrix4x4::Load(invVP)) };
+	DirectX::XMVECTOR worldFar{ DirectX::XMVector3TransformCoord(rayFar, Matrix4x4::Load(invVP)) };
 
-	DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(worldFar, worldNear));
+	DirectX::XMVECTOR dir{ DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(worldFar, worldNear)) };
 
 	rayOrigin_ = Vector3D(worldNear);
 	rayDir_ = Vector3D(dir);

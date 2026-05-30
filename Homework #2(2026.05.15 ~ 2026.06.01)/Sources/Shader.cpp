@@ -1,7 +1,12 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Shader.h"
 
 #include <d3dcompiler.h>
+
+Shader::~Shader()
+{
+	Unload();
+}
 
 bool Shader::Load()
 {
@@ -22,18 +27,12 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 #endif
 
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
-
+	
 	// Vertex Shader
 	HRESULT hr = D3DCompileFromFile(
-		path.c_str(),
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		std::string(vsEntry_.begin(), vsEntry_.end()).c_str(),
-		"vs_5_0",
-		compileFlags,
-		0,
-		&vsBlob,
-		&errorBlob);
+		path.c_str(), nullptr, nullptr, 
+		std::string(vsEntry_.begin(), vsEntry_.end()).c_str(), 
+		"vs_5_0", compileFlags, 0, &vsBlob, &errorBlob);
 
 	if (FAILED(hr))
 	{
@@ -41,20 +40,14 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 		{
 			return std::unexpected(std::wstring(static_cast<const wchar_t*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize()));
 		}
-		return std::unexpected(L"Failed to compile Vertex Shader: " + path.wstring());
+		return std::unexpected{ L"Failed to compile Vertex Shader: " + path.wstring() };
 	}
 
 	// Pixel Shader
 	hr = D3DCompileFromFile(
-		path.c_str(),
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		std::string(psEntry_.begin(), psEntry_.end()).c_str(),
-		"ps_5_0",
-		compileFlags,
-		0,
-		&psBlob,
-		&errorBlob);
+		path.c_str(), nullptr, nullptr, 
+		std::string(psEntry_.begin(), psEntry_.end()).c_str(), 
+		"ps_5_0", compileFlags, 0, &psBlob, &errorBlob);
 
 	if (FAILED(hr))
 	{
@@ -62,9 +55,18 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 		{
 			return std::unexpected(std::wstring(static_cast<const wchar_t*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize()));
 		}
-		return std::unexpected(L"Failed to compile Pixel Shader: " + path.wstring());
+		return std::unexpected{ L"Failed to compile Pixel Shader: " + path.wstring() };
 	}
 
 	return {};
 }
 
+ID3DBlob* Shader::GetVSBlob() const noexcept
+{
+	return vsBlob.Get();
+}
+
+ID3DBlob* Shader::GetPSBlob() const noexcept
+{
+	return psBlob.Get();
+}

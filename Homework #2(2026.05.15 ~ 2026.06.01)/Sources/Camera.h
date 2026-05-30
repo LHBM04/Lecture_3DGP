@@ -86,8 +86,3 @@ private:
 	DirectX::BoundingFrustum frustum;
 };
 
-inline const DirectX::BoundingFrustum& Camera::GetFrustum() const
-{
-	return frustum;
-}
-

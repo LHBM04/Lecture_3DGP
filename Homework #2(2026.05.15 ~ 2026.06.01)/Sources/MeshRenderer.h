@@ -22,23 +22,3 @@ private:
 	Mesh* mesh{ nullptr };
 	Material* material{ nullptr };
 };
-
-inline Mesh* MeshRenderer::GetMesh() const noexcept
-{
-	return mesh;
-}
-
-inline void MeshRenderer::SetMesh(Mesh* mesh_) noexcept
-{
-	mesh = mesh_;
-}
-
-inline Material* MeshRenderer::GetMaterial() const noexcept
-{
-	return material;
-}
-
-inline void MeshRenderer::SetMaterial(Material* material_) noexcept
-{
-	material = material_;
-}

@@ -17,6 +17,8 @@ public:
 
 	void Update(float deltaTime_);
 	void FixedUpdate(float fixedDeltaTime_);
+	void LateUpdate(float deltaTime_);
+
 	void Render();
 
 	void AddScene(std::wstring_view sceneName_, std::unique_ptr<Scene> scene_);

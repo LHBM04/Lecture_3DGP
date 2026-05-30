@@ -1,18 +1,16 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Scene.h"
 
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include <ranges>
 
 #include "Camera.h"
-#include "CubeCollider.h"
+#include "Collider.h"
 #include "GameObject.h"
-#include "Material.h"
-#include "Mesh.h"
-#include "MeshRenderer.h"
+#include "PhysicsSystem.h"
 #include "RenderSystem.h"
-#include "SphereCollider.h"
 #include "Transform.h"
 
 Scene::Scene() = default;
@@ -34,6 +32,7 @@ void Scene::Unload()
 	{
 		return;
 	}
+	PhysicsSystem::GetInstance().Clear();
 	OnUnload();
 	isLoaded = false;
 }
@@ -42,7 +41,7 @@ void Scene::Update(float deltaTime_)
 {
 	assert(isLoaded);
 
-	for (const auto& go : gameObjects)
+	for (const std::unique_ptr<GameObject>& go : gameObjects)
 	{
 		go->Update(deltaTime_);
 	}
@@ -52,12 +51,21 @@ void Scene::FixedUpdate(float fixedDeltaTime_)
 {
 	assert(isLoaded);
 
-	// 물리 시뮬레이션 고정 시간 간격으로 실행
-	ProcessPhysics(fixedDeltaTime_);
+	PhysicsSystem::GetInstance().Update(fixedDeltaTime_);
 
-	for (const auto& go : gameObjects)
+	for (const std::unique_ptr<GameObject>& go : gameObjects)
 	{
 		go->FixedUpdate(fixedDeltaTime_);
+	}
+}
+
+void Scene::LateUpdate(float deltaTime_)
+{
+	assert(isLoaded);
+
+	for (const std::unique_ptr<GameObject>& go : gameObjects)
+	{
+		go->LateUpdate(deltaTime_);
 	}
 }
 
@@ -65,7 +73,7 @@ void Scene::Render()
 {
 	assert(isLoaded);
 
-	for (const auto& camera : cameras)
+	for (Camera* const& camera : cameras)
 	{
 		if (!camera->GetOwner()->IsActive())
 		{
@@ -75,7 +83,7 @@ void Scene::Render()
 		RenderSystem::GetInstance().SetCamera(camera);
 		RenderSystem::GetInstance().SetLights(lights);
 
-		for (const auto& gameObject : gameObjects)
+		for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 		{
 			if (!gameObject->IsActive())
 			{
@@ -83,13 +91,9 @@ void Scene::Render()
 			}
 
 			bool inFrustum{ true };
-			if (auto* sc = gameObject->GetComponent<SphereCollider>())
+			if (Collider* col{ gameObject->GetComponent<Collider>() }; col != nullptr)
 			{
-				inFrustum = camera->IsInFrustum(sc);
-			}
-			else if (auto* cc = gameObject->GetComponent<CubeCollider>())
-			{
-				inFrustum = camera->IsInFrustum(cc);
+				inFrustum = col->IsIntersects(camera->GetFrustum());
 			}
 
 			if (!inFrustum)
@@ -102,80 +106,82 @@ void Scene::Render()
 	}
 }
 
-void Scene::ProcessPhysics(float fixedDeltaTime_)
-{
-	// DirectX의 Intersects 기능을 활용한 완전 정적 물리 처리
-	for (size_t i{ 0 }; i < gameObjects.size(); ++i)
-	{
-		GameObject* go1{ gameObjects[i].get() };
-		if (!go1->IsActive()) continue;
-
-		auto* s1 = go1->GetComponent<SphereCollider>();
-		auto* c1 = go1->GetComponent<CubeCollider>();
-		if (!s1 && !c1) continue;
-
-		for (size_t j{ i + 1 }; j < gameObjects.size(); ++j)
-		{
-			GameObject* go2{ gameObjects[j].get() };
-			if (!go2->IsActive()) continue;
-
-			auto* s2 = go2->GetComponent<SphereCollider>();
-			auto* c2 = go2->GetComponent<CubeCollider>();
-			if (!s2 && !c2) continue;
-
-			bool isHit{ false };
-
-			// 각 콜라이더의 Volume을 꺼내어 DirectX::Intersects에게 직접 맡김
-			if (s1 && s2) isHit = s1->GetVolume().Intersects(s2->GetVolume());
-			else if (s1 && c2) isHit = s1->GetVolume().Intersects(c2->GetVolume());
-			else if (c1 && s2) isHit = c1->GetVolume().Intersects(s2->GetVolume());
-			else if (c1 && c2) isHit = c1->GetVolume().Intersects(c2->GetVolume());
-
-			if (isHit)
-			{
-				// 충돌 처리 로직
-			}
-		}
-	}
-}
-
 GameObject* Scene::Pick(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_)
 {
-	GameObject* closestObject{ nullptr };
-	float minDistance{ std::numeric_limits<float>::max() };
-
-	for (const auto& go : gameObjects)
-	{
-		if (!go->IsActive()) continue;
-
-		float distance{ 0.0f };
-		bool isHit{ false };
-
-		// 레이 피킹도 개별 클래스 오버로딩 없이 Collider 베이스의 IsIntersects를 통해 통일됨
-		if (auto* sc = go->GetComponent<SphereCollider>())
-		{
-			isHit = sc->IsIntersects(rayOrigin_, rayDir_, distance);
-		}
-		else if (auto* cc = go->GetComponent<CubeCollider>())
-		{
-			isHit = cc->IsIntersects(rayOrigin_, rayDir_, distance);
-		}
-
-		if (isHit && distance < minDistance)
-		{
-			minDistance = distance;
-			closestObject = go.get();
-		}
-	}
-
-	if (distance_)
-	{
-		*distance_ = minDistance;
-	}
-	return closestObject;
+	return PhysicsSystem::GetInstance().Raycast(rayOrigin_, rayDir_, distance_);
 }
 
-GameObject* Scene::CreateGameObject()
+GameObject* Scene::FindObjectWithName(std::wstring_view name_)
+{
+	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects, 
+		[name_](const std::unique_ptr<GameObject>& go) { return go->GetName() == name_; }) };
+	
+	if (found != gameObjects.end())
+	{
+		return found->get();
+	}
+	return nullptr;
+}
+
+GameObject* Scene::FindObjectWithTag(std::wstring_view tag_)
+{
+	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects,
+		[tag_](const std::unique_ptr<GameObject>& go) { return go->GetTag() == tag_; }) };
+
+	if (found != gameObjects.end())
+	{
+		return found->get();
+	}
+	return nullptr;
+}
+
+std::vector<GameObject*> Scene::FindObjectsWithName(std::wstring_view name_)
+{
+	std::vector<GameObject*> result;
+	for (const std::unique_ptr<GameObject>& go : gameObjects)
+	{
+		if (go->GetName() == name_)
+		{
+			result.push_back(go.get());
+		}
+	}
+	return result;
+}
+
+std::vector<GameObject*> Scene::FindObjectsWithTag(std::wstring_view tag_)
+{
+	std::vector<GameObject*> result;
+	for (const std::unique_ptr<GameObject>& go : gameObjects)
+	{
+		if (go->GetTag() == tag_)
+		{
+			result.push_back(go.get());
+		}
+	}
+	return result;
+}
+
+std::span<Camera* const> Scene::GetCameras()
+{
+	return cameras;
+}
+
+std::span<const Camera* const> Scene::GetCameras() const
+{
+	return cameras;
+}
+
+std::span<Light* const> Scene::GetLights()
+{
+	return lights;
+}
+
+std::span<const Light* const> Scene::GetLights() const
+{
+	return lights;
+}
+
+GameObject* Scene::Instantiate()
 {
 	std::unique_ptr<GameObject> newObject{ std::make_unique<GameObject>() };
 	newObject->scene = this;
@@ -213,4 +219,3 @@ void Scene::RemoveLight(Light* light_)
 {
 	lights.erase(std::remove(lights.begin(), lights.end(), light_), lights.end());
 }
-

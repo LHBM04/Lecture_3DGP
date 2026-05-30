@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Scene_Title.h"
 
 #include "Camera.h"
@@ -13,7 +13,7 @@
 void Scene_Title::OnLoad()
 {
 	// Camera
-	GameObject* cameraObject{ CreateGameObject() };
+	GameObject* cameraObject{ Instantiate() };
 	cameraObject->SetName(L"Main Camera");
 	cameraObject->SetTag(L"MainCamera");
 
@@ -24,7 +24,7 @@ void Scene_Title::OnLoad()
 	cameraObject->AddComponent<Camera>();
 
 	// Light
-	GameObject* lightObject{ CreateGameObject() };
+	GameObject* lightObject{ Instantiate() };
 	lightObject->SetName(L"Main Light");
 
 	Transform* lightTransform{ lightObject->GetComponent<Transform>() };
@@ -35,18 +35,16 @@ void Scene_Title::OnLoad()
 	light->SetColor(ColorRGBA{ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// Cube
-	auto* mesh = ResourceSystem::GetInstance().GetOrLoadResource<Mesh>(L"Resources/Meshes/Cube.bin");
+	Mesh* mesh{ ResourceSystem::GetInstance().GetOrLoadResource<Mesh>(L"Resources/Meshes/Cube.bin") };
 
 	// Create default material manually since the file doesn't exist
-	auto* mat = ResourceSystem::GetInstance().GetOrLoadResource<Material>(L"DefaultMaterial");
-	if (mat)
+	Material* mat{ ResourceSystem::GetInstance().GetOrLoadResource<Material>(L"DefaultMaterial") };
+	if (mat != nullptr)
 	{
 		mat->SetBaseColor(Vector4D{ 1.0f, 1.0f, 1.0f, 1.0f });
-		mat->SetRoughness(0.5f);
-		mat->SetMetallic(0.0f);
 	}
 
-	GameObject* cubeObject = CreateGameObject();
+	GameObject* cubeObject{ Instantiate() };
 	cubeObject->SetName(L"Cube");
 
 	Transform* cubeTransform{ cubeObject->GetComponent<Transform>() };
@@ -54,7 +52,7 @@ void Scene_Title::OnLoad()
 	cubeTransform->SetLocalRotation(Quaternion::Euler(0.0f, 45.0f, 0.0f));
 	cubeTransform->SetLocalScale(Vector3D{ 2.0f, 2.0f, 2.0f });
 
-	auto* meshRenderer = cubeObject->AddComponent<MeshRenderer>();
+	MeshRenderer* meshRenderer{ cubeObject->AddComponent<MeshRenderer>() };
 	meshRenderer->SetMesh(mesh);
 	meshRenderer->SetMaterial(mat);
 	}
@@ -64,4 +62,3 @@ void Scene_Title::OnUnload()
 	ResourceSystem::GetInstance().UnloadResource(L"Resources/Meshes/Cube.bin");
 	ResourceSystem::GetInstance().UnloadResource(L"DefaultMaterial");
 }
-
