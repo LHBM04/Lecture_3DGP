@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include "MathF.h"
@@ -518,3 +518,4 @@ inline Vector2D::operator Vector4D() const noexcept
 {
     return Vector4D(x, y, 0.0f, 0.0f);
 }
+

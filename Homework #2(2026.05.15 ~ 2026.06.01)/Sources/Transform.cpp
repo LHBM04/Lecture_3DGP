@@ -1,24 +1,26 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Transform.h"
 #include <algorithm>
 #include "Matrix4x4.h"
 
-Transform::~Transform()
+void Transform::OnDestroy()
 {
 	if (parent)
 	{
 		auto& pc = parent->children;
 		pc.erase(std::remove(pc.begin(), pc.end(), this), pc.end());
+		parent = nullptr;
 	}
 
 	for (auto* child : children)
 	{
 		child->parent = nullptr;
-		child->SetDirty();
+		child->UpdateMatrices();
 	}
+	children.clear();
 }
 
-Matrix4x4 Transform::GetLocalMatrix() const
+Matrix4x4 Transform::GetLocalMatrix() const noexcept
 {
 	Matrix4x4 result;
 	result.SetTRS(position, rotation, scale);
@@ -64,20 +66,8 @@ void Transform::SetWorldScale(const Vector3D& scale_)
 	}
 }
 
-const Matrix4x4& Transform::GetWorldMatrix() const
+const Matrix4x4& Transform::GetWorldMatrix() const noexcept
 {
-	if (isDirty)
-	{
-		if (parent)
-		{
-			cachedWorldMatrix = parent->GetWorldMatrix() * GetLocalMatrix();
-		}
-		else
-		{
-			cachedWorldMatrix = GetLocalMatrix();
-		}
-		isDirty = false;
-	}
 	return cachedWorldMatrix;
 }
 
@@ -101,19 +91,23 @@ void Transform::SetParent(Transform* const parent_)
 		parent->children.push_back(this);
 	}
 
-	SetDirty();
+	UpdateMatrices();
 }
 
-void Transform::SetDirty()
+void Transform::UpdateMatrices()
 {
-	if (isDirty)
+	if (parent)
 	{
-		return;
+		cachedWorldMatrix = GetLocalMatrix() * parent->GetWorldMatrix();
+	}
+	else
+	{
+		cachedWorldMatrix = GetLocalMatrix();
 	}
 
-	isDirty = true;
 	for (auto* child : children)
 	{
-		child->SetDirty();
+		child->UpdateMatrices();
 	}
 }
+

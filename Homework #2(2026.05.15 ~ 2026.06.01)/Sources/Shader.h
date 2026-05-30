@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -15,7 +15,10 @@ public:
 	Shader() = default;
 	~Shader() override = default;
 
-	std::expected<void, std::wstring> Load(std::wstring_view vsEntry_ = L"VSMain", std::wstring_view psEntry_ = L"PSMain");
+	bool Load() override;
+	void Unload() override;
+
+	std::expected<void, std::wstring> Compile(std::wstring_view vsEntry_ = L"VSMain", std::wstring_view psEntry_ = L"PSMain");
 
 	[[nodiscard]] ID3DBlob* GetVSBlob() const;
 	[[nodiscard]] ID3DBlob* GetPSBlob() const;
@@ -34,3 +37,4 @@ inline ID3DBlob* Shader::GetPSBlob() const
 {
 	return psBlob.Get();
 }
+

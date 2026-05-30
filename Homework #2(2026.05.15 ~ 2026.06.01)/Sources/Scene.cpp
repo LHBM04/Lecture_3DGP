@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene.h"
 
 #include <algorithm>
@@ -10,10 +10,13 @@
 #include "GameObject.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "MeshComponent.h"
+#include "MeshRenderer.h"
 #include "RenderSystem.h"
 #include "SphereCollider.h"
 #include "Transform.h"
+
+Scene::Scene() = default;
+Scene::~Scene() = default;
 
 void Scene::Load()
 {
@@ -49,43 +52,42 @@ void Scene::FixedUpdate(float fixedDeltaTime_)
 {
 	assert(isLoaded);
 
+	// 물리 시뮬레이션 고정 시간 간격으로 실행
+	ProcessPhysics(fixedDeltaTime_);
+
 	for (const auto& go : gameObjects)
 	{
 		go->FixedUpdate(fixedDeltaTime_);
 	}
-
-	ProcessPhysics(fixedDeltaTime_);
 }
 
 void Scene::Render()
 {
 	assert(isLoaded);
 
-	auto& rs{ RenderSystem::GetInstance() };
-
-	rs.SetLights(lights);
-
-	for (Camera* camera : cameras)
+	for (const auto& camera : cameras)
 	{
-		camera->UpdateFrustum();
-		rs.SetCamera(camera);
-
-		rs.SetPipelineState(rs.GetDefaultPipelineState());
-		rs.SetGraphicsRootSignature(rs.GetDefaultRootSignature());
-
-		for (const auto& go : gameObjects)
+		if (!camera->GetOwner()->IsActive())
 		{
-			if (!go->IsActive())
+			continue;
+		}
+
+		RenderSystem::GetInstance().SetCamera(camera);
+		RenderSystem::GetInstance().SetLights(lights);
+
+		for (const auto& gameObject : gameObjects)
+		{
+			if (!gameObject->IsActive())
 			{
 				continue;
 			}
 
 			bool inFrustum{ true };
-			if (auto* sc = go->GetComponent<SphereCollider>())
+			if (auto* sc = gameObject->GetComponent<SphereCollider>())
 			{
 				inFrustum = camera->IsInFrustum(sc);
 			}
-			else if (auto* cc = go->GetComponent<CubeCollider>())
+			else if (auto* cc = gameObject->GetComponent<CubeCollider>())
 			{
 				inFrustum = camera->IsInFrustum(cc);
 			}
@@ -95,39 +97,8 @@ void Scene::Render()
 				continue;
 			}
 
-			if (auto* meshComp = go->GetComponent<MeshComponent>())
-			{
-				Mesh* mesh{ meshComp->GetMesh() };
-				Material* mat{ meshComp->GetMaterial() };
-				if (!mesh) continue;
-
-				struct ObjectConstants { Matrix4x4 worldMatrices[1]; };
-				ObjectConstants objData{ go->GetComponent<Transform>()->GetWorldMatrix() };
-				rs.SetGraphicsRootConstantBufferView(2, rs.UploadConstantsData(objData));
-
-				if (mat)
-				{
-					struct MaterialConstants { Vector4D color; float r, m, p1, p2; };
-					MaterialConstants matData{ mat->GetBaseColor(), mat->GetRoughness(), mat->GetMetallic(), 0, 0 };
-					rs.SetGraphicsRootConstantBufferView(4, rs.UploadConstantsData(matData));
-				}
-
-				rs.SetVertexBuffer(mesh->GetVertexBufferView());
-				rs.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-				if (mesh->GetIndexCount() > 0)
-				{
-					rs.SetIndexBuffer(mesh->GetIndexBufferView());
-					rs.DrawIndexedInstanced(mesh->GetIndexCount(), 1, 0, 0, 0);
-				}
-				else
-				{
-					rs.DrawInstanced(static_cast<UINT>(mesh->GetVertices().size()), 1, 0, 0);
-				}
-			}
+			gameObject->Render();
 		}
-
-		rs.ExecuteDrawCalls(); 
 	}
 }
 
@@ -222,3 +193,24 @@ GameObject* Scene::CreateGameObject()
 
 	return newObjectPtr;
 }
+
+void Scene::AddCamera(Camera* camera_)
+{
+	cameras.push_back(camera_);
+}
+
+void Scene::RemoveCamera(Camera* camera_)
+{
+	cameras.erase(std::remove(cameras.begin(), cameras.end(), camera_), cameras.end());
+}
+
+void Scene::AddLight(Light* light_)
+{
+	lights.push_back(light_);
+}
+
+void Scene::RemoveLight(Light* light_)
+{
+	lights.erase(std::remove(lights.begin(), lights.end(), light_), lights.end());
+}
+

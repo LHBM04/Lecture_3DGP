@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "GameObject.h"
 
 std::wstring_view GameObject::GetName() const noexcept
@@ -6,7 +6,7 @@ std::wstring_view GameObject::GetName() const noexcept
 	return name;
 }
 
-void GameObject::SetName(std::wstring_view name_) noexcept
+void GameObject::SetName(std::wstring_view name_)
 {
 	name = name_;
 }
@@ -16,7 +16,7 @@ std::wstring_view GameObject::GetTag() const noexcept
 	return tag;
 }
 
-void GameObject::SetTag(std::wstring_view tag_) noexcept
+void GameObject::SetTag(std::wstring_view tag_)
 {
 	tag = tag_;
 }
@@ -26,7 +26,7 @@ bool GameObject::IsActive() const noexcept
 	return isActive;
 }
 
-void GameObject::SetActive(bool isActive_) noexcept
+void GameObject::SetActive(bool isActive_)
 {
 	if (isActive == isActive_)
 	{
@@ -34,9 +34,17 @@ void GameObject::SetActive(bool isActive_) noexcept
 	}
 	isActive = isActive_;
 
-	std::apply([isActive_](auto&... comp) {
-		(..., (comp ? (isActive_ ? comp->Enable() : comp->Disable()) : void()));
-	}, components);
+	for (auto& component : components)
+	{
+		if (isActive)
+		{
+			component->Enable();
+		}
+		else
+		{
+			component->Disable();
+		}
+	}
 }
 
 bool GameObject::IsDestroyed() const noexcept
@@ -44,19 +52,20 @@ bool GameObject::IsDestroyed() const noexcept
 	return isDestroyed;
 }
 
-void GameObject::LateUpdate(float deltaTime_) noexcept
+void GameObject::LateUpdate(float deltaTime_)
 {
 	if (!isActive)
 	{
 		return;
 	}
 
-	std::apply([deltaTime_](auto&... comp) {
-		(..., (comp ? comp->LateUpdate(deltaTime_) : void()));
-	}, components);
+	for (auto& component : components)
+	{
+		component->LateUpdate(deltaTime_);
+	}
 }
 
-void GameObject::Destroy() noexcept
+void GameObject::Destroy()
 {
 	if (isDestroyed)
 	{
@@ -64,9 +73,10 @@ void GameObject::Destroy() noexcept
 	}
 	isDestroyed = true;
 
-	std::apply([](auto&... comp) {
-		(..., (comp ? comp->Destroy() : void()));
-	}, components);
+	for (auto& component : components)
+	{
+		component->Destroy();
+	}
 }
 
 Scene* GameObject::GetScene() const noexcept
@@ -74,38 +84,42 @@ Scene* GameObject::GetScene() const noexcept
 	return scene;
 }
 
-void GameObject::Update(float deltaTime_) noexcept
+void GameObject::Update(float deltaTime_)
 {
 	if (!isActive)
 	{
 		return;
 	}
 
-	std::apply([deltaTime_](auto&... comp) {
-		(..., (comp ? comp->Update(deltaTime_) : void()));
-	}, components);
+	for (auto& component : components)
+	{
+		component->Update(deltaTime_);
+	}
 }
 
-void GameObject::FixedUpdate(float fixedDeltaTime_) noexcept
+void GameObject::FixedUpdate(float fixedDeltaTime_)
 {
 	if (!isActive)
 	{
 		return;
 	}
 
-	std::apply([fixedDeltaTime_](auto&... comp) {
-		(..., (comp ? comp->FixedUpdate(fixedDeltaTime_) : void()));
-	}, components);
+	for (auto& component : components)
+	{
+		component->FixedUpdate(fixedDeltaTime_);
+	}
 }
 
-void GameObject::Render() noexcept
+void GameObject::Render()
 {
 	if (!isActive)
 	{
 		return;
 	}
 
-	std::apply([](auto&... comp) {
-		(..., (comp ? comp->Render() : void()));
-	}, components);
+	for (auto& component : components)
+	{
+		component->Render();
+	}
 }
+

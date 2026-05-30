@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Camera.h"
 #include "SphereCollider.h"
 #include "CubeCollider.h"
@@ -104,7 +104,9 @@ Matrix4x4 Camera::GetViewMatrix() const
 
 Matrix4x4 Camera::GetProjectionMatrix() const
 {
-	const float aspectRatio{ viewportRect.z / viewportRect.w };
+	const auto& rs = RenderSystem::GetInstance();
+	const float screenAspect = rs.GetViewport().Width / rs.GetViewport().Height;
+	const float aspectRatio{ (viewportRect.z / viewportRect.w) * screenAspect };
 
 	switch (projectionType)
 	{
@@ -156,30 +158,32 @@ void Camera::UpdateFrustum()
 bool Camera::IsInFrustum(const SphereCollider* collider_) const
 {
 	if (!collider_) return true;
-	return frustum.Intersects(collider_->GetWorldSphere());
+	return frustum.Intersects(collider_->GetVolume());
 }
 
 bool Camera::IsInFrustum(const CubeCollider* collider_) const
 {
 	if (!collider_) return true;
-	return frustum.Intersects(collider_->GetWorldBox());
+	return frustum.Intersects(collider_->GetVolume());
 }
 
 void Camera::ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const
 {
-	auto& rs = RenderSystem::GetInstance();
-	float sw = 800.0f;
-	float sh = 600.0f;
+	const auto& rs = RenderSystem::GetInstance();
+	const D3D12_VIEWPORT& rsViewport = rs.GetViewport();
+	
+	const float sw = rsViewport.Width;
+	const float sh = rsViewport.Height;
 
-	float vx = viewportRect.x * sw; 
-	float vy = viewportRect.y * sh;
-	float vw = viewportRect.z * sw;
-	float vh = viewportRect.w * sh;
+	const float vx = viewportRect.x * sw; 
+	const float vy = viewportRect.y * sh;
+	const float vw = viewportRect.z * sw;
+	const float vh = viewportRect.w * sh;
 
-	float x = (((screenPoint_.x - vx) / vw) * 2.0f) - 1.0f;
-	float y = -((((screenPoint_.y - vy) / vh) * 2.0f) - 1.0f);
+	const float x = (((screenPoint_.x - vx) / vw) * 2.0f) - 1.0f;
+	const float y = -((((screenPoint_.y - vy) / vh) * 2.0f) - 1.0f);
 
-	Matrix4x4 invVP = GetViewProjectionMatrix().GetInverse();
+	const Matrix4x4 invVP = GetViewProjectionMatrix().GetInverse();
 	
 	DirectX::XMVECTOR rayNear = DirectX::XMVectorSet(x, y, 0.0f, 1.0f);
 	DirectX::XMVECTOR rayFar = DirectX::XMVectorSet(x, y, 1.0f, 1.0f);
@@ -192,3 +196,4 @@ void Camera::ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_
 	rayOrigin_ = Vector3D(worldNear);
 	rayDir_ = Vector3D(dir);
 }
+

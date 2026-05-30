@@ -1,28 +1,14 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 #include <memory>
 #include <string>
 #include <string_view>
-#include <tuple>
+#include <vector>
 
-#include "Camera.h"
-#include "CubeCollider.h"
-#include "Light.h"
-#include "MeshComponent.h"
-#include "SphereCollider.h"
-#include "Transform.h"
+#include "Component.h"
 
 class Scene;
-
-using ComponentTuple = std::tuple<
-	std::unique_ptr<Transform>,
-	std::unique_ptr<Camera>,
-	std::unique_ptr<Light>,
-	std::unique_ptr<MeshComponent>,
-	std::unique_ptr<SphereCollider>,
-	std::unique_ptr<CubeCollider>
->;
 
 class GameObject final
 {
@@ -38,10 +24,10 @@ public:
 	GameObject(GameObject&&) = delete;
 	GameObject& operator=(GameObject&&) = delete;
 
-	void Update(float deltaTime_) noexcept;
-	void FixedUpdate(float fixedDeltaTime_) noexcept;
-	void LateUpdate(float deltaTime_) noexcept;
-	void Render() noexcept;
+	void Update(float deltaTime_);
+	void FixedUpdate(float fixedDeltaTime_);
+	void LateUpdate(float deltaTime_);
+	void Render();
 
 	[[nodiscard]] std::wstring_view GetName() const noexcept;
 	void SetName(std::wstring_view name_);
@@ -58,13 +44,13 @@ public:
 	[[nodiscard]] Scene* GetScene() const noexcept;
 
 	template <class TComponent>
-	TComponent* AddComponent() noexcept;
+	TComponent* AddComponent();
 
 	template <class TComponent>
-	[[nodiscard]] TComponent* GetComponent() noexcept;
+	[[nodiscard]] TComponent* GetComponent();
 
 	template <class TComponent>
-	[[nodiscard]] const TComponent* GetComponent() const noexcept;
+	[[nodiscard]] const TComponent* GetComponent() const;
 
 private:
 	std::wstring name;
@@ -75,34 +61,55 @@ private:
 
 	Scene* scene{ nullptr };
 
-	ComponentTuple components;
+	std::vector<std::unique_ptr<Component>> components;
 };
 
 template <class TComponent>
-inline TComponent* GameObject::AddComponent() noexcept
+inline TComponent* GameObject::AddComponent()
 {
-	auto& ptr = std::get<std::unique_ptr<TComponent>>(components);
-	if (!ptr)
+	if (auto* existing = GetComponent<TComponent>())
 	{
-		ptr = std::make_unique<TComponent>();
-		ptr->SetOwner(this);
-		ptr->Awake();
-		if (isActive)
+		return existing;
+	}
+
+	auto component = std::make_unique<TComponent>();
+	TComponent* ptr = component.get();
+	
+	component->SetOwner(this);
+	components.push_back(std::move(component));
+	
+	ptr->Awake();
+	if (isActive)
+	{
+		ptr->Enable();
+	}
+	
+	return ptr;
+}
+
+template <class TComponent>
+inline TComponent* GameObject::GetComponent()
+{
+	for (auto& component : components)
+	{
+		if (auto* result = dynamic_cast<TComponent*>(component.get()))
 		{
-			ptr->Enable();
+			return result;
 		}
 	}
-	return ptr.get();
+	return nullptr;
 }
 
 template <class TComponent>
-inline TComponent* GameObject::GetComponent() noexcept
+inline const TComponent* GameObject::GetComponent() const
 {
-	return std::get<std::unique_ptr<TComponent>>(components).get();
+	for (auto& component : components)
+	{
+		if (auto* result = dynamic_cast<const TComponent*>(component.get()))
+		{
+			return result;
+		}
+	}
+	return nullptr;
 }
 
-template <class TComponent>
-inline const TComponent* GameObject::GetComponent() const noexcept
-{
-	return std::get<std::unique_ptr<TComponent>>(components).get();
-}

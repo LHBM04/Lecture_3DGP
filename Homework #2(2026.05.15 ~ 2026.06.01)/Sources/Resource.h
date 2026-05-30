@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <filesystem>
 #include <string>
@@ -15,6 +15,9 @@ public:
 
 	[[nodiscard]] const std::filesystem::path& GetPath() const;
 	void SetPath(const std::filesystem::path& path_);
+
+	virtual bool Load() = 0;
+	virtual void Unload() = 0;
 
 protected:
 	std::wstring name;
@@ -40,3 +43,4 @@ inline void Resource::SetPath(const std::filesystem::path& path_)
 {
 	path = path_;
 }
+

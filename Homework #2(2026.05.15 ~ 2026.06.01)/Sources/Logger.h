@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <format>
 #include <print>
@@ -31,7 +31,7 @@ namespace Logger
 		auto time = std::chrono::current_zone()->to_local(now);
 
 		std::wstring message = std::vformat(format_, std::make_wformat_args(args_...));
-		std::wprint(L"[{:%H:%M:%OS}] [{}] {}\n", time, levelStr, message);
+		std::wcout << std::format(L"[{:%H:%M:%OS}] [{}] {}\n", time, levelStr, message);
 	}
 
 	template <class... Args>
@@ -58,3 +58,4 @@ namespace Logger
 		Log(Level::Critical, format_, std::forward<Args>(args_)...);
 	}
 }
+

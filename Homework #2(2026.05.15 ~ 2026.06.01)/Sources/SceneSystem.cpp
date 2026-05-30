@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "SceneSystem.h"
 
 #include "RenderSystem.h"
@@ -18,7 +18,7 @@ void SceneSystem::Update(float deltaTime_)
 		currentScene->Load();
 	}
 
-	if (!currentScene)
+	if (currentScene)
 	{
 		currentScene->Update(deltaTime_);
 	}
@@ -26,7 +26,7 @@ void SceneSystem::Update(float deltaTime_)
 
 void SceneSystem::FixedUpdate(float fixedDeltaTime_)
 {
-	if (!currentScene)
+	if (currentScene)
 	{
 		currentScene->FixedUpdate(fixedDeltaTime_);
 	}
@@ -93,3 +93,4 @@ void SceneSystem::UnloadScene(std::wstring_view sceneName_)
 		}
 	}
 }
+

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 #include <memory>
@@ -31,3 +31,4 @@ private:
 	Scene* nextScene{ nullptr };
 	Scene* currentScene{ nullptr };
 };
+

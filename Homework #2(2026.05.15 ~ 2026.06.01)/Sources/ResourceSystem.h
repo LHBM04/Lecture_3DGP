@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 #include <filesystem>
@@ -38,6 +38,11 @@ inline TResource* ResourceSystem::GetOrLoadResource(const std::filesystem::path&
 
 	auto resource = std::make_unique<TResource>(std::forward<Args>(args_)...);
 	resource->SetPath(path_);
+
+	if (!resource->Load())
+	{
+		return nullptr;
+	}
 	
 	TResource* resourcePtr = resource.get();
 	resources[key] = std::move(resource);
@@ -59,5 +64,10 @@ inline TResource* ResourceSystem::GetResource(const std::filesystem::path& path_
 
 inline void ResourceSystem::UnloadResource(const std::filesystem::path& path_)
 {
-	resources.erase(path_.wstring());
+	if (auto it = resources.find(path_.wstring()); it != resources.end())
+	{
+		it->second->Unload();
+		resources.erase(it);
+	}
 }
+

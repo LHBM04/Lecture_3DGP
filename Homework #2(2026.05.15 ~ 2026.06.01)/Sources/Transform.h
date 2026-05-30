@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include "Component.h"
@@ -6,40 +6,42 @@
 #include "Quaternion.h"
 #include "Matrix4x4.h"
 
-class Transform final : public Component<Transform>
+class Transform final : public Component
 {
 public:
 	Transform() = default;
-	~Transform();
+	~Transform() override = default;
 
-	[[nodiscard]] const Vector3D& GetLocalPosition() const;
+	void OnDestroy() override;
+
+	[[nodiscard]] const Vector3D& GetLocalPosition() const noexcept;
 	void SetLocalPosition(const Vector3D& position_);
 
-	[[nodiscard]] const Quaternion& GetLocalRotation() const;
+	[[nodiscard]] const Quaternion& GetLocalRotation() const noexcept;
 	void SetLocalRotation(const Quaternion& rotation_);
 
-	[[nodiscard]] const Vector3D& GetLocalScale() const;
+	[[nodiscard]] const Vector3D& GetLocalScale() const noexcept;
 	void SetLocalScale(const Vector3D& scale_);
 
-	[[nodiscard]] Matrix4x4 GetLocalMatrix() const;
+	[[nodiscard]] Matrix4x4 GetLocalMatrix() const noexcept;
 	
-	[[nodiscard]] Vector3D GetWorldPosition() const;
+	[[nodiscard]] Vector3D GetWorldPosition() const noexcept;
 	void SetWorldPosition(const Vector3D& position_);
 
-	[[nodiscard]] Quaternion GetWorldRotation() const;
+	[[nodiscard]] Quaternion GetWorldRotation() const noexcept;
 	void SetWorldRotation(const Quaternion& rotation_);
 
-	[[nodiscard]] Vector3D GetWorldScale() const;
+	[[nodiscard]] Vector3D GetWorldScale() const noexcept;
 	void SetWorldScale(const Vector3D& scale_);
 
-	[[nodiscard]] const Matrix4x4& GetWorldMatrix() const;
+	[[nodiscard]] const Matrix4x4& GetWorldMatrix() const noexcept;
 
-	[[nodiscard]] Transform* GetParent();
-	[[nodiscard]] const Transform* GetParent() const;
+	[[nodiscard]] Transform* GetParent() noexcept;
+	[[nodiscard]] const Transform* GetParent() const noexcept;
 	void SetParent(Transform* const parent_);
 
 private:
-	void SetDirty();
+	void UpdateMatrices();
 
 private:
 	Vector3D position{ Vector3D::GetZero() };
@@ -49,11 +51,10 @@ private:
 	Transform* parent{ nullptr };
 	std::vector<Transform*> children;
 
-	mutable Matrix4x4 cachedWorldMatrix{ Matrix4x4::GetIdentity() };
-	mutable bool isDirty{ true };
+	Matrix4x4 cachedWorldMatrix{ Matrix4x4::GetIdentity() };
 };
 
-inline const Vector3D& Transform::GetLocalPosition() const
+inline const Vector3D& Transform::GetLocalPosition() const noexcept
 {
 	return position;
 }
@@ -61,10 +62,10 @@ inline const Vector3D& Transform::GetLocalPosition() const
 inline void Transform::SetLocalPosition(const Vector3D& position_)
 {
 	position = position_;
-	SetDirty();
+	UpdateMatrices();
 }
 
-inline const Quaternion& Transform::GetLocalRotation() const
+inline const Quaternion& Transform::GetLocalRotation() const noexcept
 {
 	return rotation;
 }
@@ -72,10 +73,10 @@ inline const Quaternion& Transform::GetLocalRotation() const
 inline void Transform::SetLocalRotation(const Quaternion& rotation_)
 {
 	rotation = rotation_;
-	SetDirty();
+	UpdateMatrices();
 }
 
-inline const Vector3D& Transform::GetLocalScale() const
+inline const Vector3D& Transform::GetLocalScale() const noexcept
 {
 	return scale;
 }
@@ -83,15 +84,15 @@ inline const Vector3D& Transform::GetLocalScale() const
 inline void Transform::SetLocalScale(const Vector3D& scale_)
 {
 	scale = scale_;
-	SetDirty();
+	UpdateMatrices();
 }
 
-inline Vector3D Transform::GetWorldPosition() const
+inline Vector3D Transform::GetWorldPosition() const noexcept
 {
 	return GetWorldMatrix().GetWorldPosition();
 }
 
-inline Quaternion Transform::GetWorldRotation() const
+inline Quaternion Transform::GetWorldRotation() const noexcept
 {
 	if (parent)
 	{
@@ -103,7 +104,7 @@ inline Quaternion Transform::GetWorldRotation() const
 	}
 }
 
-inline Vector3D Transform::GetWorldScale() const
+inline Vector3D Transform::GetWorldScale() const noexcept
 {
 	if (parent)
 	{
@@ -119,12 +120,13 @@ inline Vector3D Transform::GetWorldScale() const
 	}
 }
 
-inline Transform* Transform::GetParent()
+inline Transform* Transform::GetParent() noexcept
 {
 	return parent;
 }
 
-inline const Transform* Transform::GetParent() const
+inline const Transform* Transform::GetParent() const noexcept
 {
 	return parent;
 }
+

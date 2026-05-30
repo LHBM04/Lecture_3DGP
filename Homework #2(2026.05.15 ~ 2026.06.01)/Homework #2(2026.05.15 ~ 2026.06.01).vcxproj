@@ -170,7 +170,7 @@
     <ClCompile Include="Sources\Camera.cpp" />
     <ClCompile Include="Sources\ColorRGB.cpp" />
     <ClCompile Include="Sources\ColorRGBA.cpp" />
-
+    <ClCompile Include="Sources\Component.cpp" />
     <ClCompile Include="Sources\CubeCollider.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\InputSystem.cpp" />
@@ -185,7 +185,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Sources\Mesh.cpp" />
-    <ClCompile Include="Sources\MeshComponent.cpp" />
+    <ClCompile Include="Sources\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Quaternion.cpp" />
     <ClCompile Include="Sources\RenderSystem.cpp" />
     <ClCompile Include="Sources\Resource.cpp" />
@@ -214,7 +214,7 @@
     <ClInclude Include="Sources\MathF.h" />
     <ClInclude Include="Sources\Matrix4x4.h" />
     <ClInclude Include="Sources\Mesh.h" />
-    <ClInclude Include="Sources\MeshComponent.h" />
+    <ClInclude Include="Sources\MeshRenderer.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Quaternion.h" />
     <ClInclude Include="Sources\RenderSystem.h" />

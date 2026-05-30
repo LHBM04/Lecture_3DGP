@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <DirectXCollision.h>
 
@@ -12,7 +12,7 @@ class SphereCollider;
 class Vector2D;
 class Vector3D;
 
-class Camera final : public Component<Camera>
+class Camera final : public Component
 {
 public:
 	enum class ProjectionType
@@ -29,7 +29,7 @@ public:
 	};
 
 	Camera() = default;
-	~Camera() = default;
+	~Camera() override = default;
 
 	[[nodiscard]] float GetNearClipPlane() const;
 	void SetNearClipPlane(float nearClipPlane_);
@@ -67,8 +67,8 @@ public:
 
 	void ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const;
 
-	void OnEnable();
-	void OnDisable();
+	void OnEnable() override;
+	void OnDisable() override;
 
 private:
 	float nearPlane{ 0.1f };
@@ -90,3 +90,4 @@ inline const DirectX::BoundingFrustum& Camera::GetFrustum() const
 {
 	return frustum;
 }
+

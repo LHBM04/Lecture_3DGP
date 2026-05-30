@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include <set>
@@ -15,8 +15,8 @@ class Light;
 class Scene
 {
 public:
-	Scene() = default;
-	virtual ~Scene() = default;
+	Scene();
+	virtual ~Scene();
 
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
@@ -83,3 +83,4 @@ inline std::span<const Light* const> Scene::GetLights() const
 {
 	return lights;
 }
+

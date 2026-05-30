@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstddef>
 #include <iostream>
@@ -473,3 +473,4 @@ inline Matrix4x4 Matrix4x4::Frustum(float left_, float right_, float bottom_, fl
 {
 	return Matrix4x4(DirectX::XMMatrixPerspectiveOffCenterLH(left_, right_, bottom_, top_, nearZ_, farZ_));
 }
+

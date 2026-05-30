@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <DirectXCollision.h>
 
@@ -10,14 +10,16 @@ class CubeCollider final : public Collider<CubeCollider>
 {
 public:
 	CubeCollider() = default;
-	~CubeCollider() = default;
+	~CubeCollider() override = default;
+
+	using Collider<CubeCollider>::IsIntersects;
 
 	[[nodiscard]] const DirectX::BoundingOrientedBox& GetVolume() const noexcept;
 	void SetSize(const Vector3D& size_) noexcept;
 
-	bool IsIntersects(const DirectX::BoundingFrustum& frustum_) const noexcept;
+	bool IsIntersects(const DirectX::BoundingFrustum& frustum_) const;
 
-	void OnUpdate(float deltaTime_) noexcept;
+	void OnUpdate(float deltaTime_) override;
 
 private:
 	DirectX::BoundingOrientedBox localBox{ {0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 0.0f, 1.0f} };
@@ -39,3 +41,4 @@ inline const DirectX::BoundingOrientedBox& CubeCollider::GetVolume() const noexc
 {
 	return worldBox;
 }
+

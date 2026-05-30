@@ -1,12 +1,12 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 #include "ColorRGBA.h"
 
-class Light final : public Component<Light>
+class Light final : public Component
 {
 public:
 	Light() = default;
-	~Light() = default;
+	~Light() override = default;
 
 	[[nodiscard]] float GetIntensity() const;
 	void SetIntensity(float intensity_);
@@ -14,8 +14,8 @@ public:
 	[[nodiscard]] ColorRGBA GetColor() const;
 	void SetColor(const ColorRGBA& color_);
 
-	void OnEnable();
-	void OnDisable();
+	void OnEnable() override;
+	void OnDisable() override;
 
 private:
 	float intensity{ 1.0f };
@@ -41,3 +41,4 @@ inline void Light::SetColor(const ColorRGBA& color_)
 {
 	color = color_;
 }
+

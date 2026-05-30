@@ -1,9 +1,20 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Shader.h"
 
 #include <d3dcompiler.h>
 
-std::expected<void, std::wstring> Shader::Load(std::wstring_view vsEntry_, std::wstring_view psEntry_)
+bool Shader::Load()
+{
+	return Compile().has_value();
+}
+
+void Shader::Unload()
+{
+	vsBlob.Reset();
+	psBlob.Reset();
+}
+
+std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, std::wstring_view psEntry_)
 {
 	UINT compileFlags{ 0 };
 #if defined(_DEBUG)
@@ -56,3 +67,4 @@ std::expected<void, std::wstring> Shader::Load(std::wstring_view vsEntry_, std::
 
 	return {};
 }
+

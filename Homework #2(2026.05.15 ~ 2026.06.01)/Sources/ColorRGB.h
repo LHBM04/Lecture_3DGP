@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "MathF.h"
 
@@ -339,3 +339,4 @@ inline ColorRGBA ColorRGB::ToColorRGBA(float alpha_) const noexcept
 {
     return ColorRGBA(*this, alpha_);
 }
+

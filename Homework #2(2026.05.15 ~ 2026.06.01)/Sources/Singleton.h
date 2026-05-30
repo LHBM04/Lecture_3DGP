@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 template <class TInstance>
 class Singleton
@@ -25,3 +25,4 @@ TInstance& Singleton<TInstance>::GetInstance()
 	static TInstance* instance = new TInstance();
 	return *instance;
 }
+

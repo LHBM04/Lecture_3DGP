@@ -15,12 +15,12 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 
-#include "Singleton.h"
 #include "Matrix4x4.h"
+#include "Vector3D.h"
 #include "Vector4D.h"
+#include "Singleton.h"
 
 class Camera;
-class GameObject;
 class Light;
 class Mesh;
 class Material;
@@ -34,28 +34,60 @@ public:
 	std::expected<void, std::wstring> Initialize(HWND window_);
 	void Release();
 
-	void BeginFrame() noexcept;
-	void EndFrame() noexcept;
+	void BeginFrame();
+	void EndFrame();
 
-	void Present() noexcept;
+	void Present();
 
-	void SetCamera(Camera* camera_) noexcept;
-	void SetLights(std::span<Light*> lights_) noexcept;
+	void SetCamera(Camera* camera_);
+	void SetLights(std::span<Light*> lights_);
 
 	// Low-level API
-	void SetPipelineState(ID3D12PipelineState* pipelineState_) noexcept;
-	void SetGraphicsRootSignature(ID3D12RootSignature* rootSignature_) noexcept;
-	void SetVertexBuffer(const D3D12_VERTEX_BUFFER_VIEW& vbv_) noexcept;
-	void SetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& ibv_) noexcept;
-	void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY topology_) noexcept;
-	void SetGraphicsRootConstantBufferView(UINT rootParameterIndex_, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress_) noexcept;
-	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex_, D3D12_GPU_DESCRIPTOR_HANDLE baseDescriptor_) noexcept;
+	void SetPipelineState(ID3D12PipelineState* pipelineState_);
+	void SetGraphicsRootSignature(ID3D12RootSignature* rootSignature_);
+	void SetVertexBuffer(const D3D12_VERTEX_BUFFER_VIEW& vbv_);
+	void SetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& ibv_);
+	void SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY topology_);
+	void SetGraphicsRootConstantBufferView(UINT rootParameterIndex_, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress_);
+	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex_, D3D12_GPU_DESCRIPTOR_HANDLE baseDescriptor_);
 	
-	void DrawInstanced(UINT vertexCountPerInstance_, UINT instanceCount_, UINT startVertexLocation_, UINT startInstanceLocation_) noexcept;
-	void DrawIndexedInstanced(UINT indexCountPerInstance_, UINT instanceCount_, UINT startIndexLocation_, INT baseVertexLocation_, UINT startInstanceLocation_) noexcept;
+	void DrawInstanced(UINT vertexCountPerInstance_, UINT instanceCount_, UINT startVertexLocation_, UINT startInstanceLocation_);
+	void DrawIndexedInstanced(UINT indexCountPerInstance_, UINT instanceCount_, UINT startIndexLocation_, INT baseVertexLocation_, UINT startInstanceLocation_);
+
+public:
+	struct CameraConstants final
+	{
+		Matrix4x4 viewMatrix;
+		Matrix4x4 projectionMatrix;
+	};
+
+	struct LightConstants final
+	{
+		Vector4D ambientColor;
+		Vector4D lights[8]; // color(rgb), intensity(a)
+		Vector4D lightDirs[8]; // direction(xyz), active(a)
+		Vector3D cameraPosition;
+		uint32_t activeLightCount;
+	};
+
+	struct ObjectConstants final
+	{
+		Matrix4x4 worldMatrix;
+	};
+
+	struct MaterialConstants final
+	{
+		Vector4D color;
+		float roughness;
+		float metallic;
+		float padding[2];
+	};
+
+	void SetObjectConstants(const ObjectConstants& data_);
+	void SetMaterialConstants(const MaterialConstants& data_);
 
 	template<class T>
-	D3D12_GPU_VIRTUAL_ADDRESS UploadConstantsData(const T& data_) noexcept;
+	D3D12_GPU_VIRTUAL_ADDRESS UploadConstantsData(const T& data_);
 
 private:
 	std::expected<void, std::wstring> CreateDevice();
@@ -69,8 +101,8 @@ private:
 	std::expected<void, std::wstring> CreatePipelineState();
 	std::expected<void, std::wstring> CreateGBuffers();
 
-	void WaitForGpu() noexcept;
-	void MoveToNextFrame() noexcept;
+	void WaitForGpu();
+	void MoveToNextFrame();
 
 public:
 	static constexpr UINT MaxLights{ 8 };
@@ -84,27 +116,6 @@ public:
 	[[nodiscard]] ID3D12PipelineState* GetLightingPipelineState() const noexcept;
 
 private:
-	struct CameraConstants final
-	{
-		Matrix4x4 viewMatrix;
-		Matrix4x4 projectionMatrix;
-	};
-
-	struct LightData final
-	{
-		Vector4D color;
-		Vector4D direction;
-	};
-
-	struct LightConstants final
-	{
-		Vector4D ambientColor;
-		Vector4D cameraPosition;
-		LightData lights[MaxLights];
-		uint32_t activeLightCount;
-		float padding[3];
-	};
-
 	static constexpr std::size_t FrameCount{ 2 };
 
 #if defined(_DEBUG)
@@ -132,15 +143,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap;
 	UINT srvDescriptorSize{ 0 };
 
-	struct GBuffer final
-	{
-		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandle;
-	};
-
-	std::array<GBuffer, 2> gBuffers; // 0: Albedo, 1: Normal
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> gBufferRtvHeap;
+	Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
+	Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
@@ -164,7 +168,7 @@ private:
 };
 
 template<class T>
-inline D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantsData(const T& data_) noexcept
+inline D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantsData(const T& data_)
 {
 	const UINT size{ (sizeof(T) + 255) & ~255 };
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include "MathF.h"
@@ -539,3 +539,4 @@ inline Quaternion Quaternion::LookRotation(const Vector3D& forward_, const Vecto
 	Store(result, DirectX::XMQuaternionRotationMatrix(basis));
 	return result;
 }
+

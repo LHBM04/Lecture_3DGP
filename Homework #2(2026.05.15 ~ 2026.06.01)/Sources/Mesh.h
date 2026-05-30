@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -8,12 +8,13 @@
 
 #include "Resource.h"
 #include "Vector3D.h"
+#include "Vector2D.h"
 #include "ColorRGBA.h"
 
 struct Vertex
 {
 	Vector3D position;
-	ColorRGBA color;
+	Vector3D normal;
 };
 
 class Mesh final : public Resource
@@ -21,6 +22,9 @@ class Mesh final : public Resource
 public:
 	Mesh() = default;
 	~Mesh() override = default;
+
+	bool Load() override;
+	void Unload() override;
 
 	void SetVertices(std::vector<Vertex>&& vertices_);
 	void SetIndices(std::vector<uint32_t>&& indices_);
@@ -93,3 +97,4 @@ inline uint32_t Mesh::GetIndexCount() const
 {
 	return static_cast<uint32_t>(indices.size());
 }
+

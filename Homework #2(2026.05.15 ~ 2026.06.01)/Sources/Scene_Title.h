@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Scene.h"
 
@@ -12,3 +12,4 @@ protected:
 	void OnLoad() override;
 	void OnUnload() override;
 };
+

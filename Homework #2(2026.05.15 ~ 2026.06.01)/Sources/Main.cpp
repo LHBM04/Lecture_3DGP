@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "InputSystem.h"
 #include "RenderSystem.h"
@@ -24,6 +24,7 @@ constexpr LPCWSTR WindowClassName{ L"Homework #2 Class" };
 constexpr LPCWSTR WindowTitle{ L"Homework #2(2026.05.15 ~ 2026.06.01)" };
 constexpr int WindowWidth{ 800 };
 constexpr int WindowHeight{ 600 };
+constexpr DWORD WindowStyle{ WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX };
 
 LARGE_INTEGER frequency;
 LARGE_INTEGER lastTime;
@@ -69,9 +70,9 @@ INT APIENTRY wWinMain(
 
 	HWND mainWindow = CreateWindowExW(
 		0,
-		wndClass.lpszClassName,
+		WindowClassName,
 		WindowTitle,
-		WS_OVERLAPPEDWINDOW,
+		WindowStyle,
 		CW_USEDEFAULT, CW_USEDEFAULT, WindowWidth, WindowHeight,
 		nullptr, nullptr, hInstance, nullptr);
 
@@ -164,3 +165,4 @@ INT APIENTRY wWinMain(
 
 	return static_cast<INT>(msg.wParam);
 }
+

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Light.h"
 
 #include "GameObject.h"
@@ -13,3 +13,4 @@ void Light::OnDisable()
 {
 	GetOwner()->GetScene()->RemoveLight(this);
 }
+

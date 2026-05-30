@@ -1,17 +1,21 @@
-#pragma once
+﻿#pragma once
 
 class GameObject;
 
-template <class TDerived>
 class Component
 {
 public:
 	Component() = default;
-	~Component() = default;
+	virtual ~Component()
+	{
+		Destroy();
+	}
 
+	// 복사 금지.
 	Component(const Component&) = delete;
 	Component& operator=(const Component&) = delete;
 	
+	// 이동 금지.
 	Component(Component&&) = delete;
 	Component& operator=(Component&&) = delete;
 
@@ -22,20 +26,36 @@ public:
 	
 	[[nodiscard]] bool IsActive() const noexcept;
 	[[nodiscard]] bool IsEnabled() const noexcept;
-	void SetEnabled(bool isEnabled_) noexcept;
+	void SetEnabled(bool isEnabled_);
 
-	void Awake() noexcept;
-	void Enable() noexcept;
-	void Start() noexcept;
+	void Awake();
+	void Enable();
+	void Start();
 	
-	void Update(float deltaTime_) noexcept;
-	void FixedUpdate(float fixedDeltaTime_) noexcept;
-	void LateUpdate(float deltaTime_) noexcept;
+	void Update(float deltaTime_);
+	void FixedUpdate(float fixedDeltaTime_);
+	void LateUpdate(float deltaTime_);
 	
-	void Render() noexcept;
+	void Render();
 	
-	void Disable() noexcept;
-	void Destroy() noexcept;
+	void Disable();
+	void Destroy();
+
+protected:
+	virtual void OnAwake() {}
+	virtual void OnEnable() {}
+	virtual void OnStart() {}
+
+	virtual void OnUpdate([[maybe_unused]] float deltaTime_) {}
+	virtual void OnFixedUpdate([[maybe_unused]] float fixedDeltaTime_) {}
+	virtual void OnLateUpdate([[maybe_unused]] float deltaTime_) {}
+	
+	virtual void OnPreRender() {}
+	virtual void OnRender() {}
+	virtual void OnPostRender() {}
+	
+	virtual void OnDisable() {}
+	virtual void OnDestroy() {}
 
 private:
 	GameObject* owner{ nullptr };
@@ -43,63 +63,42 @@ private:
 	bool isEnabled{ true };
 };
 
-// ============================================================================
-// Inline Implementations
-// ============================================================================
-
-template <class TDerived>
-inline GameObject* Component<TDerived>::GetOwner() const noexcept
+inline GameObject* Component::GetOwner() const noexcept
 {
 	return owner;
 }
 
-template <class TDerived>
-inline void Component<TDerived>::SetOwner(GameObject* owner_) noexcept
+inline void Component::SetOwner(GameObject* owner_) noexcept
 {
 	owner = owner_;
 }
 
-template <class TDerived>
-inline bool Component<TDerived>::IsStarted() const noexcept
+inline bool Component::IsStarted() const noexcept
 {
 	return isStarted;
 }
 
-template <class TDerived>
-inline bool Component<TDerived>::IsEnabled() const noexcept
+inline bool Component::IsEnabled() const noexcept
 {
 	return isEnabled;
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Awake() noexcept
+inline void Component::Awake()
 {
-	if constexpr (requires(TDerived d) { d.OnAwake(); })
-	{
-		static_cast<TDerived*>(this)->OnAwake();
-	}
+	OnAwake();
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Enable() noexcept
+inline void Component::Enable()
 {
-	if constexpr (requires(TDerived d) { d.OnEnable(); })
-	{
-		static_cast<TDerived*>(this)->OnEnable();
-	}
+	OnEnable();
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Start() noexcept
+inline void Component::Start()
 {
-	if constexpr (requires(TDerived d) { d.OnStart(); })
-	{
-		static_cast<TDerived*>(this)->OnStart();
-	}
+	OnStart();
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Update(float deltaTime_) noexcept
+inline void Component::Update(float deltaTime_)
 {
 	if (!isEnabled)
 	{
@@ -112,108 +111,43 @@ inline void Component<TDerived>::Update(float deltaTime_) noexcept
 		isStarted = true;
 	}
 
-	if constexpr (requires(TDerived d, float dt) { d.OnUpdate(dt); })
-	{
-		static_cast<TDerived*>(this)->OnUpdate(deltaTime_);
-	}
+	OnUpdate(deltaTime_);
 }
 
-template <class TDerived>
-inline void Component<TDerived>::FixedUpdate(float fixedDeltaTime_) noexcept
+inline void Component::FixedUpdate(float fixedDeltaTime_)
 {
 	if (!isEnabled)
 	{
 		return;
 	}
 
-	if constexpr (requires(TDerived d, float dt) { d.OnFixedUpdate(dt); })
-	{
-		static_cast<TDerived*>(this)->OnFixedUpdate(fixedDeltaTime_);
-	}
+	OnFixedUpdate(fixedDeltaTime_);
 }
 
-template <class TDerived>
-inline void Component<TDerived>::LateUpdate(float deltaTime_) noexcept
+inline void Component::LateUpdate(float deltaTime_)
 {
 	if (!isEnabled)
 	{
 		return;
 	}
 
-	if constexpr (requires(TDerived d, float dt) { d.OnLateUpdate(dt); })
-	{
-		static_cast<TDerived*>(this)->OnLateUpdate(deltaTime_);
-	}
+	OnLateUpdate(deltaTime_);
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Render() noexcept
+inline void Component::Render()
 {
 	if (!isEnabled)
 	{
 		return;
 	}
 
-	if constexpr (requires(TDerived d) { d.OnPreRender(); })
-	{
-		static_cast<TDerived*>(this)->OnPreRender();
-	}
-
-	if constexpr (requires(TDerived d) { d.OnRender(); })
-	{
-		static_cast<TDerived*>(this)->OnRender();
-	}
-
-	if constexpr (requires(TDerived d) { d.OnPostRender(); })
-	{
-		static_cast<TDerived*>(this)->OnPostRender();
-	}
+	OnPreRender();
+	OnRender();
+	OnPostRender();
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Disable() noexcept
+inline void Component::Disable()
 {
-	if constexpr (requires(TDerived d) { d.OnDisable(); })
-	{
-		static_cast<TDerived*>(this)->OnDisable();
-	}
+	OnDisable();
 }
 
-template <class TDerived>
-inline void Component<TDerived>::Destroy() noexcept
-{
-	if constexpr (requires(TDerived d) { d.OnDestroy(); })
-	{
-		static_cast<TDerived*>(this)->OnDestroy();
-	}
-}
-
-#include "GameObject.h"
-
-template <class TDerived>
-inline bool Component<TDerived>::IsActive() const noexcept
-{
-	return isEnabled && owner && owner->IsActive();
-}
-
-template <class TDerived>
-inline void Component<TDerived>::SetEnabled(bool isEnabled_) noexcept
-{
-	if (isEnabled == isEnabled_)
-	{
-		return;
-	}
-	isEnabled = isEnabled_;
-
-	if (owner && owner->IsActive())
-	{
-		if (isEnabled)
-		{
-			Enable();
-		}
-		else
-		{
-			Disable();
-		}
-	}
-}

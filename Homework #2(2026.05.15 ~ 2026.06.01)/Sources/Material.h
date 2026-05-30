@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string_view>
 
@@ -12,6 +12,9 @@ class Material final : public Resource
 public:
 	Material() = default;
 	~Material() override = default;
+
+	bool Load() override;
+	void Unload() override;
 
 	[[nodiscard]] Shader* GetShader() const;
 	void SetShader(Shader* shader_);
@@ -71,3 +74,4 @@ inline void Material::SetMetallic(float metallic_)
 {
 	metallic = metallic_;
 }
+

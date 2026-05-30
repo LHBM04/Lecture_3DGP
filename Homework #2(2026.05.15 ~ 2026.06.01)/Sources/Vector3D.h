@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include "MathF.h"
@@ -14,6 +14,7 @@ public:
     explicit Vector3D(float x_, float y_, float z_) noexcept;
 	explicit Vector3D(const Vector2D& vector_, float z_ = 0.0f) noexcept;
 	explicit Vector3D(const Vector4D& vector_) noexcept;
+	explicit Vector3D(DirectX::XMVECTOR vector_) noexcept;
 
     Vector3D(const Vector3D& other_) noexcept;
     Vector3D(Vector3D&& other_) noexcept;
@@ -125,6 +126,11 @@ inline Vector3D::Vector3D(float value_) noexcept
 inline Vector3D::Vector3D(float x_, float y_, float z_) noexcept
     : DirectX::XMFLOAT3(x_, y_, z_)
 {
+}
+
+inline Vector3D::Vector3D(DirectX::XMVECTOR vector_) noexcept
+{
+    DirectX::XMStoreFloat3(this, vector_);
 }
 
 inline Vector3D::Vector3D(const Vector3D& other_) noexcept
@@ -608,3 +614,4 @@ inline Vector3D::operator Vector4D() const noexcept
 {
     return Vector4D(x, y, z, 0.0f);
 }
+

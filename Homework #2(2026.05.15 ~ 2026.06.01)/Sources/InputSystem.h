@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <array>
 #include <cstddef>
@@ -146,3 +146,4 @@ inline const Vector2D& InputSystem::GetMousePosition() const
 {
 	return mousePosition;
 }
+
