@@ -19,7 +19,13 @@ bool Collider::IsStatic() const noexcept
 
 void Collider::SetStatic(bool isStatic_) noexcept
 {
+	if (isStatic == isStatic_)
+	{
+		return;
+	}
+
 	isStatic = isStatic_;
+	PhysicsSystem::GetInstance().RegisterStaticObjectsToGrid();
 }
 
 void Collider::OnEnable()

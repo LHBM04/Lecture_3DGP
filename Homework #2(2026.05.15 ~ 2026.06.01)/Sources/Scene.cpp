@@ -1,11 +1,12 @@
 #include "Precompiled.h"
-
 #include "Scene.h"
 
 #include "Camera.h"
 #include "Collider.h"
 #include "GameObject.h"
+#include "Light.h"
 #include "PhysicsSystem.h"
+#include "Quaternion.h"
 #include "RenderSystem.h"
 #include "Transform.h"
 
@@ -40,8 +41,13 @@ void Scene::Update(float deltaTime_)
 
 	for (const std::unique_ptr<GameObject>& go : gameObjects)
 	{
+		if (go->IsDestroyed())
+		{
+			continue;
+		}
 		go->Update(deltaTime_);
 	}
+	ProcessDestroyQueue();
 }
 
 void Scene::FixedUpdate(float fixedDeltaTime_)
@@ -52,8 +58,13 @@ void Scene::FixedUpdate(float fixedDeltaTime_)
 
 	for (const std::unique_ptr<GameObject>& go : gameObjects)
 	{
+		if (go->IsDestroyed())
+		{
+			continue;
+		}
 		go->FixedUpdate(fixedDeltaTime_);
 	}
+	ProcessDestroyQueue();
 }
 
 void Scene::LateUpdate(float deltaTime_)
@@ -62,8 +73,13 @@ void Scene::LateUpdate(float deltaTime_)
 
 	for (const std::unique_ptr<GameObject>& go : gameObjects)
 	{
+		if (go->IsDestroyed())
+		{
+			continue;
+		}
 		go->LateUpdate(deltaTime_);
 	}
+	ProcessDestroyQueue();
 }
 
 void Scene::Render()
@@ -158,6 +174,11 @@ std::vector<GameObject*> Scene::FindObjectsWithTag(std::wstring_view tag_)
 	return result;
 }
 
+const std::vector<std::unique_ptr<GameObject>>& Scene::GetGameObjects() const noexcept
+{
+	return gameObjects;
+}
+
 std::span<Camera* const> Scene::GetCameras()
 {
 	return cameras;
@@ -197,6 +218,32 @@ GameObject* Scene::Instantiate()
 	return newObjectPtr;
 }
 
+GameObject* Scene::Instantiate(const Vector3D& position_, const Quaternion& rotation_)
+{
+	GameObject* newObject{ Instantiate() };
+	if (newObject == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (Transform* transform{ newObject->GetComponent<Transform>() }; transform != nullptr)
+	{
+		transform->SetWorldPosition(position_);
+		transform->SetWorldRotation(rotation_);
+	}
+	return newObject;
+}
+
+void Scene::Destroy(GameObject* gameObject_)
+{
+	if (gameObject_ == nullptr || gameObject_->IsDestroyed())
+	{
+		return;
+	}
+	gameObject_->Destroy();
+	destroyQueue.emplace_back(gameObject_);
+}
+
 void Scene::AddCamera(Camera* camera_)
 {
 	cameras.push_back(camera_);
@@ -215,4 +262,35 @@ void Scene::AddLight(Light* light_)
 void Scene::RemoveLight(Light* light_)
 {
 	lights.erase(std::remove(lights.begin(), lights.end(), light_), lights.end());
+}
+
+void Scene::ProcessDestroyQueue()
+{
+	if (destroyQueue.empty())
+	{
+		return;
+	}
+
+	for (GameObject* gameObject : destroyQueue)
+	{
+		if (gameObject == nullptr)
+		{
+			continue;
+		}
+
+		cameras.erase(std::remove_if(cameras.begin(), cameras.end(),
+			[gameObject](Camera* camera) { return camera == nullptr || camera->GetOwner() == gameObject; }),
+			cameras.end());
+
+		lights.erase(std::remove_if(lights.begin(), lights.end(),
+			[gameObject](Light* light) { return light == nullptr || light->GetOwner() == gameObject; }),
+			lights.end());
+	}
+
+	std::erase_if(gameObjects, [](const std::unique_ptr<GameObject>& go)
+	{
+		return go == nullptr || go->IsDestroyed();
+	});
+
+	destroyQueue.clear();
 }

@@ -1,8 +1,6 @@
-﻿#pragma once
+#pragma once
 
-#include <filesystem>
 #include <string>
-#include <string_view>
 
 class Resource
 {
@@ -10,37 +8,19 @@ public:
 	Resource() = default;
 	virtual ~Resource() = default;
 
-	[[nodiscard]] std::wstring_view GetName() const;
-	void SetName(std::wstring_view name_);
-
-	[[nodiscard]] const std::filesystem::path& GetPath() const;
-	void SetPath(const std::filesystem::path& path_);
+	Resource(const Resource&) = delete;
+	Resource& operator=(const Resource&) = delete;
 
 	virtual bool Load() = 0;
 	virtual void Unload() = 0;
 
+	[[nodiscard]] const std::wstring& GetPath() const noexcept { return path; }
+	void SetPath(const std::wstring& path_) { path = path_; }
+
+	[[nodiscard]] const std::wstring& GetName() const noexcept { return name; }
+	void SetName(const std::wstring& name_) { name = name_; }
+
 protected:
+	std::wstring path;
 	std::wstring name;
-	std::filesystem::path path;
 };
-
-inline std::wstring_view Resource::GetName() const
-{
-	return name;
-}
-
-inline void Resource::SetName(std::wstring_view name_)
-{
-	name = name_;
-}
-
-inline const std::filesystem::path& Resource::GetPath() const
-{
-	return path;
-}
-
-inline void Resource::SetPath(const std::filesystem::path& path_)
-{
-	path = path_;
-}
-

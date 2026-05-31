@@ -16,6 +16,15 @@
     <Filter Include="Resources\Shaders">
       <UniqueIdentifier>{eab1ef25-5d60-4cc9-afa3-d58cf10048c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\Materials">
+      <UniqueIdentifier>{38b8df1b-9156-43ac-8e43-7e6eb2c2bf4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes">
+      <UniqueIdentifier>{08e2fe9b-47a4-4fc4-9e5e-ff3175267bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Scenes">
+      <UniqueIdentifier>{f9d486a4-6cbc-4f99-9fda-cf56b15fe974}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Precompiled.cpp">
@@ -81,9 +90,6 @@
     <ClCompile Include="Sources\Mesh.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\MeshComponent.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Resource.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
@@ -94,6 +100,45 @@
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\SphereCollider.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\CameraController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Collider.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Component.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\MeshRenderer.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\PhysicsSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\PlayerController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\PlayerProjectile.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Stage1.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Stage.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\StairCollider.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\EnemyController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ExplodeParticle.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TitleSceneController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,9 +215,6 @@
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MeshComponent.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\ResourceSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
@@ -185,10 +227,100 @@
     <ClInclude Include="Sources\SphereCollider.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\CameraController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MeshRenderer.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PhysicsSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PlayerController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PlayerProjectile.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Stage1.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Stage.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\StairCollider.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\EnemyController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ExplodeParticle.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TitleSceneController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Resources\Shaders\Default.hlsl">
+    <None Include="Resources\Materials\Floor.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Player.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\PlayerProjectile.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Crosshair.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Enemy.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Particle.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Stairs.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Wall.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Meshes\Floor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Player.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Stairs.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Wall.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cube.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Title.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Shaders\GameObject.hlsl">
       <Filter>Resources\Shaders</Filter>
-    </Text>
+    </None>
+    <None Include="Resources\Shaders\UIObject.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Resources\Meshes\Sphere.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Crosshair.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Scenes\Scene_Stage1.bin">
+      <Filter>Resources\Scenes</Filter>
+    </None>
   </ItemGroup>
 </Project>

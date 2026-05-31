@@ -39,9 +39,11 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 	{
 		if (errorBlob)
 		{
-			return std::unexpected(std::wstring(static_cast<const wchar_t*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize()));
+			const char* errorChars{ static_cast<const char*>(errorBlob->GetBufferPointer()) };
+			const std::string errorText(errorChars, errorBlob->GetBufferSize());
+			return std::unexpected(std::wstring(errorText.begin(), errorText.end()));
 		}
-		return std::unexpected{ L"Failed to compile Vertex Shader: " + path.wstring() };
+		return std::unexpected(L"Failed to compile Vertex Shader: " + path);
 	}
 
 	// Pixel Shader
@@ -54,9 +56,11 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 	{
 		if (errorBlob)
 		{
-			return std::unexpected(std::wstring(static_cast<const wchar_t*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize()));
+			const char* errorChars{ static_cast<const char*>(errorBlob->GetBufferPointer()) };
+			const std::string errorText(errorChars, errorBlob->GetBufferSize());
+			return std::unexpected(std::wstring(errorText.begin(), errorText.end()));
 		}
-		return std::unexpected{ L"Failed to compile Pixel Shader: " + path.wstring() };
+		return std::unexpected(L"Failed to compile Pixel Shader: " + path);
 	}
 
 	return {};

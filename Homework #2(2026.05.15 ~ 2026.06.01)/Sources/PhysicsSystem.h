@@ -27,6 +27,7 @@ public:
 	void RemoveCollider(Collider* collider_);
 
 	[[nodiscard]] bool IsCollidingWithStatic(Collider* collider_) const;
+	[[nodiscard]] std::vector<Collider*> GetNearbyStaticColliders(Collider* collider_) const;
 	[[nodiscard]] GameObject* Raycast(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_ = nullptr) const;
 
 	void RegisterStaticObjectsToGrid();

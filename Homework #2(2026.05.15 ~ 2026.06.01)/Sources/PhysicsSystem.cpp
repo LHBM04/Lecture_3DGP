@@ -70,12 +70,16 @@ bool PhysicsSystem::IsCollidingWithStatic(Collider* collider_) const
 				{
 					if (staticCol == collider_) continue;
 
-					if (staticCol->GetOwner()->GetName().find(L"Wall") != std::wstring::npos)
+					const std::wstring_view staticName{ staticCol->GetOwner()->GetName() };
+					const bool blocksMovement{
+						staticName.find(L"Wall") != std::wstring::npos ||
+						staticName.find(L"Stair") != std::wstring::npos ||
+						staticName.find(L"Floor") != std::wstring::npos
+					};
+
+					if (blocksMovement && collider_->IsIntersects(staticCol))
 					{
-						if (collider_->IsIntersects(staticCol))
-						{
-							return true;
-						}
+						return true;
 					}
 				}
 			}
@@ -83,6 +87,43 @@ bool PhysicsSystem::IsCollidingWithStatic(Collider* collider_) const
 	}
 
 	return false;
+}
+
+std::vector<Collider*> PhysicsSystem::GetNearbyStaticColliders(Collider* collider_) const
+{
+	std::vector<Collider*> nearby;
+	if (collider_ == nullptr)
+	{
+		return nearby;
+	}
+
+	DirectX::BoundingBox aabb{ collider_->GetBoundingVolume() };
+
+	const int minX{ static_cast<int>((aabb.Center.x - aabb.Extents.x - gridOrigin.x) / cellSize) };
+	const int minZ{ static_cast<int>((aabb.Center.z - aabb.Extents.z - gridOrigin.z) / cellSize) };
+	const int maxX{ static_cast<int>((aabb.Center.x + aabb.Extents.x - gridOrigin.x) / cellSize) };
+	const int maxZ{ static_cast<int>((aabb.Center.z + aabb.Extents.z - gridOrigin.z) / cellSize) };
+
+	for (int z{ minZ }; z <= maxZ; ++z)
+	{
+		for (int x{ minX }; x <= maxX; ++x)
+		{
+			if (x < 0 || x >= gridWidth || z < 0 || z >= gridHeight)
+			{
+				continue;
+			}
+
+			for (Collider* staticCol : grid[z][x].staticColliders)
+			{
+				if (staticCol != nullptr)
+				{
+					nearby.emplace_back(staticCol);
+				}
+			}
+		}
+	}
+
+	return nearby;
 }
 
 GameObject* PhysicsSystem::Raycast(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_) const

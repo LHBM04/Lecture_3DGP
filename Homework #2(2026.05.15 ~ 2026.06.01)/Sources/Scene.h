@@ -1,16 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <span>
-#include <string_view>
-#include <vector>
-
 #include "Vector3D.h"
 
 class Camera;
 class Collider;
 class GameObject;
 class Light;
+class Quaternion;
 
 class Scene
 {
@@ -34,6 +30,8 @@ public:
 	void Render();
 
 	GameObject* Instantiate();
+	GameObject* Instantiate(const Vector3D& position_, const Quaternion& rotation_);
+	void Destroy(GameObject* gameObject_);
 
 	void AddCamera(Camera* camera_);
 	void RemoveCamera(Camera* camera_);
@@ -47,6 +45,8 @@ public:
 	[[nodiscard]] GameObject* FindObjectWithTag(std::wstring_view tag_);
 	[[nodiscard]] std::vector<GameObject*> FindObjectsWithName(std::wstring_view name_);
 	[[nodiscard]] std::vector<GameObject*> FindObjectsWithTag(std::wstring_view tag_);
+
+	[[nodiscard]] const std::vector<std::unique_ptr<GameObject>>& GetGameObjects() const noexcept;
 
 	[[nodiscard]] std::span<Camera* const> GetCameras();
 	[[nodiscard]] std::span<const Camera* const> GetCameras() const;
@@ -64,4 +64,7 @@ protected:
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
 	std::vector<Camera*> cameras;
 	std::vector<Light*> lights;
+	std::vector<GameObject*> destroyQueue;
+
+	void ProcessDestroyQueue();
 };

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "Scene_Title.h"
 
@@ -9,22 +9,22 @@
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include "ResourceSystem.h"
+#include "TitleSceneController.h"
+#include "CubeCollider.h"
 #include "Transform.h"
 
 void Scene_Title::OnLoad()
 {
-	// Camera
 	GameObject* cameraObject{ Instantiate() };
 	cameraObject->SetName(L"Main Camera");
 	cameraObject->SetTag(L"MainCamera");
 
 	Transform* cameraTransform{ cameraObject->GetComponent<Transform>() };
-	cameraTransform->SetWorldPosition(Vector3D{ 0.0f, 2.0f, -5.0f });
-	cameraTransform->SetLocalRotation(Quaternion::Euler(20.0f, 0.0f, 0.0f));
+	cameraTransform->SetWorldPosition(Vector3D{ 0.0f, 0.0f, -20.0f });
+	cameraTransform->SetLocalRotation(Quaternion::Euler(0.0f, 0.0f, 0.0f));
 
-	cameraObject->AddComponent<Camera>();
+	Camera* camera{ cameraObject->AddComponent<Camera>() };
 
-	// Light
 	GameObject* lightObject{ Instantiate() };
 	lightObject->SetName(L"Main Light");
 
@@ -35,31 +35,50 @@ void Scene_Title::OnLoad()
 	light->SetIntensity(1.0f);
 	light->SetColor(ColorRGBA{ 1.0f, 1.0f, 1.0f, 1.0f });
 
-	// Cube
-	Mesh* mesh{ ResourceSystem::GetInstance().GetOrLoadResource<Mesh>(L"Resources/Meshes/Cube.bin") };
-
-	// Create default material manually since the file doesn't exist
-	Material* mat{ ResourceSystem::GetInstance().GetOrLoadResource<Material>(L"DefaultMaterial") };
+	Material* mat{ ResourceSystem::GetInstance().GetResource<Material>(L"DefaultMaterial") };
 	if (mat != nullptr)
 	{
 		mat->SetBaseColor(Vector4D{ 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 
-	GameObject* cubeObject{ Instantiate() };
-	cubeObject->SetName(L"Cube");
+	Mesh* titleMesh{ ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Title.bin") };
+	Mesh* buttonMesh{ ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Button.bin") };
 
-	Transform* cubeTransform{ cubeObject->GetComponent<Transform>() };
-	cubeTransform->SetLocalPosition(Vector3D{ 0.0f, 0.0f, 0.0f });
-	cubeTransform->SetLocalRotation(Quaternion::Euler(0.0f, 45.0f, 0.0f));
-	cubeTransform->SetLocalScale(Vector3D{ 2.0f, 2.0f, 2.0f });
+	GameObject* titleObject{ Instantiate() };
+	titleObject->SetName(L"TitleLogo");
+	Transform* titleTransform{ titleObject->GetComponent<Transform>() };
+	titleTransform->SetLocalPosition(Vector3D{ 0.0f, 4.0f, 0.0f });
+	titleTransform->SetLocalScale(Vector3D{ 6.0f, 3.0f, 1.0f });
+	MeshRenderer* titleRenderer{ titleObject->AddComponent<MeshRenderer>() };
+	titleRenderer->SetMesh(titleMesh);
+	titleRenderer->SetMaterial(mat);
 
-	MeshRenderer* meshRenderer{ cubeObject->AddComponent<MeshRenderer>() };
-	meshRenderer->SetMesh(mesh);
-	meshRenderer->SetMaterial(mat);
+	GameObject* buttonObject{ Instantiate() };
+	buttonObject->SetName(L"StartButton");
+	buttonObject->SetTag(L"StartButton");
+	Transform* buttonTransform{ buttonObject->GetComponent<Transform>() };
+	buttonTransform->SetLocalPosition(Vector3D{ 0.0f, -4.0f, 0.0f });
+	buttonTransform->SetLocalScale(Vector3D{ 3.5f, 1.4f, 1.0f });
+
+	MeshRenderer* buttonRenderer{ buttonObject->AddComponent<MeshRenderer>() };
+	buttonRenderer->SetMesh(buttonMesh);
+	buttonRenderer->SetMaterial(mat);
+
+	if (buttonMesh != nullptr)
+	{
+		const Vector3D boundsMin{ buttonMesh->GetBoundsMin() };
+		const Vector3D boundsMax{ buttonMesh->GetBoundsMax() };
+		CubeCollider* buttonCollider{ buttonObject->AddComponent<CubeCollider>() };
+		buttonCollider->SetCenter((boundsMin + boundsMax) * 0.5f);
+		buttonCollider->SetSize(boundsMax - boundsMin);
+		buttonCollider->SetStatic(true);
+		buttonCollider->UpdateVolume();
 	}
+
+	TitleSceneController* titleController{ cameraObject->AddComponent<TitleSceneController>() };
+	titleController->SetCamera(camera);
+}
 
 void Scene_Title::OnUnload()
 {
-	ResourceSystem::GetInstance().UnloadResource(L"Resources/Meshes/Cube.bin");
-	ResourceSystem::GetInstance().UnloadResource(L"DefaultMaterial");
 }

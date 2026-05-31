@@ -1,59 +1,38 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <filesystem>
-#include <memory>
-#include <unordered_map>
-#include <utility>
-
 #include "Resource.h"
 #include "Singleton.h"
 
 class ResourceSystem final : public Singleton<ResourceSystem>
 {
+	friend class Singleton<ResourceSystem>;
+
 public:
 	ResourceSystem() = default;
 	~ResourceSystem() override = default;
 
-	template <std::derived_from<Resource> TResource, class... Args>
-	TResource* GetOrLoadResource(const std::filesystem::path& path_, Args&&... args_);
+	void Initialize();
+	void Release();
 
-	template <std::derived_from<Resource> TResource>
-	TResource* GetResource(const std::filesystem::path& path_);
+	template <class TResource, class... Args>
+	TResource* LoadResource(const std::filesystem::path& path_, Args&&... args_);
 
 	void UnloadResource(const std::filesystem::path& path_);
 
+	template <class TResource>
+	[[nodiscard]] TResource* GetResource(std::wstring_view path_);
+
 private:
+	static std::wstring NormalizeKey(std::wstring key_);
+	static std::wstring NormalizeKey(std::wstring_view key_);
+
 	std::unordered_map<std::wstring, std::unique_ptr<Resource>> resources;
 };
 
-template <std::derived_from<Resource> TResource, class... Args>
-inline TResource* ResourceSystem::GetOrLoadResource(const std::filesystem::path& path_, Args&&... args_)
+template <class TResource>
+inline TResource* ResourceSystem::GetResource(std::wstring_view path_)
 {
-	const std::wstring key{ path_.wstring() };
-	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(key) }; it != resources.end())
-	{
-		return static_cast<TResource*>(it->second.get());
-	}
-
-	std::unique_ptr<TResource> resource{ std::make_unique<TResource>(std::forward<Args>(args_)...) };
-	resource->SetPath(path_);
-
-	if (!resource->Load())
-	{
-		return nullptr;
-	}
-	
-	TResource* resourcePtr{ resource.get() };
-	resources[key] = std::move(resource);
-	
-	return resourcePtr;
-}
-
-template <std::derived_from<Resource> TResource>
-inline TResource* ResourceSystem::GetResource(const std::filesystem::path& path_)
-{
-	const std::wstring key{ path_.wstring() };
+	const std::wstring key{ NormalizeKey(path_) };
 	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(key) }; it != resources.end())
 	{
 		return static_cast<TResource*>(it->second.get());
@@ -62,12 +41,25 @@ inline TResource* ResourceSystem::GetResource(const std::filesystem::path& path_
 	return nullptr;
 }
 
-inline void ResourceSystem::UnloadResource(const std::filesystem::path& path_)
+template <class TResource, class... Args>
+inline TResource* ResourceSystem::LoadResource(const std::filesystem::path& path_, Args&&... args_)
 {
-	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(path_.wstring()) }; it != resources.end())
+	const std::wstring key{ NormalizeKey(path_.wstring()) };
+	if (std::unordered_map<std::wstring, std::unique_ptr<Resource>>::iterator it{ resources.find(key) }; it != resources.end())
 	{
-		it->second->Unload();
-		resources.erase(it);
+		return static_cast<TResource*>(it->second.get());
 	}
-}
 
+	std::unique_ptr<TResource> resource{ std::make_unique<TResource>(std::forward<Args>(args_)...) };
+	resource->SetPath(path_.wstring());
+	resource->SetName(path_.filename().wstring());
+
+	if (resource->Load())
+	{
+		TResource* ptr{ resource.get() };
+		resources[key] = std::move(resource);
+		return ptr;
+	}
+
+	return nullptr;
+}

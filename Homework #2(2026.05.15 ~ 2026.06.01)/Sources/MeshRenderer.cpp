@@ -39,6 +39,14 @@ void MeshRenderer::OnRender()
 	}
 
 	RenderSystem& rs{ RenderSystem::GetInstance() };
+	if (!mesh->HasGpuBuffers())
+	{
+		if (!mesh->CreateBuffers(rs.GetDevice()))
+		{
+			Logger::Warning(L"Mesh GPU buffer upload failed.");
+			return;
+		}
+	}
 
 	// 1. Set Constants
 	RenderSystem::ObjectConstants objData{ GetOwner()->GetComponent<Transform>()->GetWorldMatrix() };

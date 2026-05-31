@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Component.h"
 #include "Vector3D.h"
 #include "Quaternion.h"

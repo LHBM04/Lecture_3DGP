@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "RenderSystem.h"
 
@@ -610,7 +610,7 @@ std::expected<void, std::wstring> RenderSystem::CreateRootSignature()
 
 std::expected<void, std::wstring> RenderSystem::CreatePipelineState()
 {
-	Shader* shader{ ResourceSystem::GetInstance().GetOrLoadResource<Shader>(L"Resources/Shaders/GameObject.hlsl") };
+	Shader* shader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/GameObject.hlsl") };
 	if (shader == nullptr)
 	{
 		return std::unexpected{ L"Failed to load GameObject shader." };

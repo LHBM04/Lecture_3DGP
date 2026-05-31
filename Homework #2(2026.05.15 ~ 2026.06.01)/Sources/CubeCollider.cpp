@@ -1,5 +1,7 @@
 #include "Precompiled.h"
+
 #include "CubeCollider.h"
+
 #include "GameObject.h"
 #include "SphereCollider.h"
 #include "Transform.h"
@@ -25,22 +27,6 @@ const DirectX::BoundingOrientedBox& CubeCollider::GetVolume() const noexcept
 	return worldBox;
 }
 
-void CubeCollider::UpdateVolume()
-{
-	Transform* transform{ GetOwner()->GetComponent<Transform>() };
-	if (transform == nullptr)
-	{
-		return;
-	}
-
-	localBox.Transform(worldBox, Matrix4x4::Load(transform->GetWorldMatrix()));
-}
-
-void CubeCollider::OnUpdate(float deltaTime_)
-{
-	UpdateVolume();
-}
-
 bool CubeCollider::IsIntersects(const Collider* other_) const
 {
 	return other_->IsIntersects(this);
@@ -48,7 +34,7 @@ bool CubeCollider::IsIntersects(const Collider* other_) const
 
 bool CubeCollider::IsIntersects(const SphereCollider* other_) const
 {
-	return worldBox.Intersects(other_->GetVolume());
+	return other_->IsIntersects(this);
 }
 
 bool CubeCollider::IsIntersects(const CubeCollider* other_) const
@@ -66,13 +52,29 @@ bool CubeCollider::IsIntersects(const DirectX::BoundingFrustum& frustum_) const
 	return frustum_.Intersects(worldBox);
 }
 
+void CubeCollider::UpdateVolume()
+{
+	Transform* transform{ GetOwner()->GetComponent<Transform>() };
+	if (transform == nullptr)
+	{
+		return;
+	}
+
+	localBox.Transform(worldBox, Matrix4x4::Load(transform->GetWorldMatrix()));
+}
+
+void CubeCollider::OnUpdate(float deltaTime_)
+{
+	UpdateVolume();
+}
+
 DirectX::BoundingBox CubeCollider::GetBoundingVolume() const
 {
 	Vector3D corners[8];
 	worldBox.GetCorners(corners);
 
-	Vector3D min{ corners[0] };
-	Vector3D max{ corners[0] };
+	Vector3D min = corners[0];
+	Vector3D max = corners[0];
 
 	for (int i{ 1 }; i < 8; ++i)
 	{

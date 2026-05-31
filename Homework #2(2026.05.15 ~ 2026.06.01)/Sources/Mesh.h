@@ -39,6 +39,7 @@ public:
 	[[nodiscard]] const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const noexcept;
 
 	[[nodiscard]] uint32_t GetIndexCount() const noexcept;
+	[[nodiscard]] bool HasGpuBuffers() const noexcept;
 
 	bool CreateBuffers(ID3D12Device* device_);
 

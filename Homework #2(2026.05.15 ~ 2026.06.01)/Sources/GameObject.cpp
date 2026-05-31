@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "GameObject.h"
 
 std::wstring_view GameObject::GetName() const noexcept

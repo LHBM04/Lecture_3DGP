@@ -66,7 +66,13 @@ bool Mesh::Load()
 		vertices[i].normal = (i < normalCount) ? normals[i] : Vector3D::GetUp();
 	}
 
-	return CreateBuffers(RenderSystem::GetInstance().GetDevice());
+	ID3D12Device* device{ RenderSystem::GetInstance().GetDevice() };
+	if (device == nullptr)
+	{
+		// Resource preload path: GPU device can be unavailable before RenderSystem init.
+		return true;
+	}
+	return CreateBuffers(device);
 }
 
 void Mesh::Unload()
@@ -134,8 +140,23 @@ uint32_t Mesh::GetIndexCount() const noexcept
 	return static_cast<uint32_t>(indices.size());
 }
 
+bool Mesh::HasGpuBuffers() const noexcept
+{
+	return vertexBuffer != nullptr;
+}
+
 bool Mesh::CreateBuffers(ID3D12Device* device_)
 {
+	if (device_ == nullptr)
+	{
+		return false;
+	}
+
+	if (HasGpuBuffers())
+	{
+		return true;
+	}
+
 	if (vertices.empty())
 	{
 		return false;

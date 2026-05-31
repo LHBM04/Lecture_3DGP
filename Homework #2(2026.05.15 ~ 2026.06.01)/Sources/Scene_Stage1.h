@@ -11,4 +11,8 @@ public:
 protected:
 	void OnLoad() override;
 	void OnUnload() override;
+
+private:
+	void SpawnEnemiesFromMap(std::wstring_view mapPath_);
+	void SpawnEnemyAt(const Vector3D& position_);
 };
