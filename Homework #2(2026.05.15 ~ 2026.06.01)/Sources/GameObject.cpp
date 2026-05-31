@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "GameObject.h"
 
 std::wstring_view GameObject::GetName() const noexcept
@@ -125,6 +125,11 @@ void GameObject::Render()
 
 void GameObject::NotifyCollisionEnter(Collider* other_)
 {
+	if (isDestroyed)
+	{
+		return;
+	}
+
 	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->CollisionEnter(other_);
@@ -133,6 +138,11 @@ void GameObject::NotifyCollisionEnter(Collider* other_)
 
 void GameObject::NotifyCollisionStay(Collider* other_)
 {
+	if (isDestroyed)
+	{
+		return;
+	}
+
 	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->CollisionStay(other_);
@@ -141,6 +151,11 @@ void GameObject::NotifyCollisionStay(Collider* other_)
 
 void GameObject::NotifyCollisionExit(Collider* other_)
 {
+	if (isDestroyed)
+	{
+		return;
+	}
+
 	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->CollisionExit(other_);

@@ -87,6 +87,9 @@
     <ClCompile Include="Sources\Material.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\MenuSceneController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Mesh.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
@@ -126,7 +129,7 @@
     <ClCompile Include="Sources\Scene_Stage1.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Stage.cpp">
+    <ClCompile Include="Sources\Scene_Menu.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\StairCollider.cpp">
@@ -177,6 +180,9 @@
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\MathF.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MenuSceneController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene.h">
@@ -245,7 +251,7 @@
     <ClInclude Include="Sources\Scene_Stage1.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Stage.h">
+    <ClInclude Include="Sources\Scene_Menu.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\StairCollider.h">
@@ -263,6 +269,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Materials\Floor.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Floor_Day.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Floor_Night.bin">
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\Player.bin">
@@ -283,10 +295,28 @@
     <None Include="Resources\Materials\Stairs.bin">
       <Filter>Resources\Materials</Filter>
     </None>
+    <None Include="Resources\Materials\Stairs_Day.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Stairs_Night.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
     <None Include="Resources\Materials\Wall.bin">
       <Filter>Resources\Materials</Filter>
     </None>
+    <None Include="Resources\Materials\Wall_Day.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Wall_Night.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
     <None Include="Resources\Meshes\Floor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Day.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Night.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
     <None Include="Resources\Meshes\Player.bin">

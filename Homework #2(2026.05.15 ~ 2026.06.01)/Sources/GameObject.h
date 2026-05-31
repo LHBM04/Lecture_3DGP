@@ -43,7 +43,6 @@ public:
 	void SetActive(bool isActive_);
 
 	[[nodiscard]] bool IsDestroyed() const noexcept;
-	void Destroy();
 
 	[[nodiscard]] Scene* GetScene() const noexcept;
 
@@ -55,6 +54,9 @@ public:
 
 	template <class TComponent>
 	[[nodiscard]] const TComponent* GetComponent() const;
+
+private:
+	void Destroy();
 
 private:
 	std::wstring name;

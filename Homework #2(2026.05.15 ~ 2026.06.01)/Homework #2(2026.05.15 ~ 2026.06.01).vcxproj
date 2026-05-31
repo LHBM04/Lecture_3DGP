@@ -181,6 +181,7 @@
     <ClCompile Include="Sources\Light.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Material.cpp" />
+    <ClCompile Include="Sources\MenuSceneController.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\PlayerController.cpp" />
     <ClCompile Include="Sources\PlayerProjectile.cpp" />
@@ -199,8 +200,8 @@
     <ClCompile Include="Sources\ResourceSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
     <ClCompile Include="Sources\SceneSystem.cpp" />
-    <ClCompile Include="Sources\Scene_Stage.cpp" />
     <ClCompile Include="Sources\Scene_Stage1.cpp" />
+    <ClCompile Include="Sources\Scene_Menu.cpp" />
     <ClCompile Include="Sources\Scene_Title.cpp" />
     <ClCompile Include="Sources\Shader.cpp" />
     <ClCompile Include="Sources\SphereCollider.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Sources\Logger.h" />
     <ClInclude Include="Sources\MathF.h" />
     <ClInclude Include="Sources\Matrix4x4.h" />
+    <ClInclude Include="Sources\MenuSceneController.h" />
     <ClInclude Include="Sources\Mesh.h" />
     <ClInclude Include="Sources\MeshRenderer.h" />
     <ClInclude Include="Sources\PhysicsSystem.h" />
@@ -240,8 +242,8 @@
     <ClInclude Include="Sources\ResourceSystem.h" />
     <ClInclude Include="Sources\Scene.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
-    <ClInclude Include="Sources\Scene_Stage.h" />
     <ClInclude Include="Sources\Scene_Stage1.h" />
+    <ClInclude Include="Sources\Scene_Menu.h" />
     <ClInclude Include="Sources\Scene_Title.h" />
     <ClInclude Include="Sources\Shader.h" />
     <ClInclude Include="Sources\Singleton.h" />
@@ -262,12 +264,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Materials\Floor.bin" />
+    <None Include="Resources\Materials\Floor_Day.bin" />
+    <None Include="Resources\Materials\Floor_Night.bin" />
     <None Include="Resources\Materials\Player.bin" />
     <None Include="Resources\Materials\Stairs.bin" />
+    <None Include="Resources\Materials\Stairs_Day.bin" />
+    <None Include="Resources\Materials\Stairs_Night.bin" />
     <None Include="Resources\Materials\Wall.bin" />
+    <None Include="Resources\Materials\Wall_Day.bin" />
+    <None Include="Resources\Materials\Wall_Night.bin" />
     <None Include="Resources\Meshes\Cube.bin" />
     <None Include="Resources\Meshes\Button.bin" />
     <None Include="Resources\Meshes\Floor.bin" />
+    <None Include="Resources\Meshes\Day.bin" />
+    <None Include="Resources\Meshes\Night.bin" />
     <None Include="Resources\Meshes\Player.bin" />
     <None Include="Resources\Meshes\Stairs.bin" />
     <None Include="Resources\Meshes\Title.bin" />

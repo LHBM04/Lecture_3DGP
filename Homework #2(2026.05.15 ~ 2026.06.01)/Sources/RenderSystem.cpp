@@ -45,6 +45,10 @@ std::expected<void, std::wstring> RenderSystem::Initialize(HWND window_)
 	{
 		return res;
 	}
+	if (std::expected<void, std::wstring> res{ CreateGBuffers() }; !res.has_value())
+	{
+		return res;
+	}
 	if (std::expected<void, std::wstring> res{ CreatePipelineState() }; !res.has_value())
 	{
 		return res;
@@ -95,16 +99,20 @@ bool RenderSystem::BeginFrame()
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	commandList->ResourceBarrier(1, &barrier);
 
-	// Bind default back buffer
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
-	rtvHandle.ptr += frameIndex * rtvDescriptorSize;
+	// Bind GBuffer RTs for geometry pass
+	D3D12_CPU_DESCRIPTOR_HANDLE gbufferRtvs[2]{};
+	gbufferRtvs[0] = gbufferRtvHeap->GetCPUDescriptorHandleForHeapStart();
+	gbufferRtvs[1] = gbufferRtvs[0];
+	gbufferRtvs[1].ptr += gbufferRtvDescriptorSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{ dsvHeap->GetCPUDescriptorHandleForHeapStart() };
 	
-	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+	commandList->OMSetRenderTargets(2, gbufferRtvs, FALSE, &dsvHandle);
 
 	// Default clear
-	float clearColor[]{ 0.0f, 0.0f, 0.0f, 1.0f };
-	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	float clearAlbedo[]{ 0.0f, 0.0f, 0.0f, 1.0f };
+	float clearNormal[]{ 0.5f, 0.5f, 1.0f, 1.0f };
+	commandList->ClearRenderTargetView(gbufferRtvs[0], clearAlbedo, 0, nullptr);
+	commandList->ClearRenderTargetView(gbufferRtvs[1], clearNormal, 0, nullptr);
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	if (rootSignature)
@@ -149,6 +157,61 @@ void RenderSystem::Present()
 	MoveToNextFrame();
 }
 
+void RenderSystem::ExecuteLightingPass()
+{
+	assert(commandList != nullptr);
+	assert(rootSignature != nullptr);
+	assert(lightingPipelineState != nullptr);
+	assert(srvHeap != nullptr);
+
+	D3D12_RESOURCE_BARRIER barriers[2]{};
+	barriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barriers[0].Transition.pResource = gbufferAlbedo.Get();
+	barriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barriers[0].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barriers[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barriers[1].Transition.pResource = gbufferNormal.Get();
+	barriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barriers[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	commandList->ResourceBarrier(2, barriers);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE backRtv{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
+	backRtv.ptr += frameIndex * rtvDescriptorSize;
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{ dsvHeap->GetCPUDescriptorHandleForHeapStart() };
+	commandList->OMSetRenderTargets(1, &backRtv, FALSE, &dsvHandle);
+
+	commandList->SetPipelineState(lightingPipelineState.Get());
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
+
+	ID3D12DescriptorHeap* descriptorHeaps[]{ srvHeap.Get() };
+	commandList->SetDescriptorHeaps(1, descriptorHeaps);
+
+	commandList->SetGraphicsRootConstantBufferView(0, cameraCbvAddress);
+	commandList->SetGraphicsRootConstantBufferView(1, lightCbvAddress);
+	commandList->SetGraphicsRootDescriptorTable(4, srvHeap->GetGPUDescriptorHandleForHeapStart());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->DrawInstanced(3, 1, 0, 0);
+
+	D3D12_RESOURCE_BARRIER restore[2]{};
+	restore[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	restore[0].Transition.pResource = gbufferAlbedo.Get();
+	restore[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	restore[0].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	restore[0].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	restore[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	restore[1].Transition.pResource = gbufferNormal.Get();
+	restore[1].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	restore[1].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	restore[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	commandList->ResourceBarrier(2, restore);
+
+	commandList->SetPipelineState(pipelineState.Get());
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
+}
+
 void RenderSystem::SetCamera(Camera* camera_)
 {
 	assert(commandList != nullptr);
@@ -177,29 +240,13 @@ void RenderSystem::SetCamera(Camera* camera_)
 
 	camera_->UpdateFrustum();
 
-	// 2. Clear if requested
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
-	rtvHandle.ptr += frameIndex * rtvDescriptorSize;
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{ dsvHeap->GetCPUDescriptorHandleForHeapStart() };
-
-	if (camera->GetClearMode() == Camera::ClearType::SolidColor)
-	{
-		const ColorRGBA& color = camera->GetClearColor();
-		float clearColor[]{ color.x, color.y, color.z, color.w };
-		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-	}
-
-	if (camera->GetClearMode() != Camera::ClearType::Nothing)
-	{
-		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-	}
-
-	// 3. Camera Constants (Slot 0)
+	// 2. Camera Constants (Slot 0)
 	CameraConstants data{};
 	data.viewMatrix = camera->GetViewMatrix();
 	data.projectionMatrix = camera->GetProjectionMatrix();
 	
-	SetGraphicsRootConstantBufferView(0, UploadConstantsData(data));
+	cameraCbvAddress = UploadConstantsData(data);
+	SetGraphicsRootConstantBufferView(0, cameraCbvAddress);
 }
 
 void RenderSystem::SetLights(std::span<Light*> lights_)
@@ -242,7 +289,8 @@ void RenderSystem::SetLights(std::span<Light*> lights_)
 	}
 	data.activeLightCount = activeCount;
 
-	SetGraphicsRootConstantBufferView(1, UploadConstantsData(data));
+	lightCbvAddress = UploadConstantsData(data);
+	SetGraphicsRootConstantBufferView(1, lightCbvAddress);
 }
 
 void RenderSystem::SetPipelineState(ID3D12PipelineState* pipelineState_)
@@ -336,6 +384,83 @@ ID3D12PipelineState* RenderSystem::GetLightingPipelineState() const noexcept
 
 std::expected<void, std::wstring> RenderSystem::CreateGBuffers()
 {
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC rtvDesc{};
+		rtvDesc.NumDescriptors = 2;
+		rtvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		rtvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		if (FAILED(device->CreateDescriptorHeap(&rtvDesc, IID_PPV_ARGS(&gbufferRtvHeap))))
+		{
+			return std::unexpected{ L"Failed to create GBuffer RTV heap." };
+		}
+		gbufferRtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	}
+
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC srvDesc{};
+		srvDesc.NumDescriptors = 2;
+		srvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		srvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		if (FAILED(device->CreateDescriptorHeap(&srvDesc, IID_PPV_ARGS(&srvHeap))))
+		{
+			return std::unexpected{ L"Failed to create GBuffer SRV heap." };
+		}
+		srvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	}
+
+	D3D12_HEAP_PROPERTIES defaultHeap{};
+	defaultHeap.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	auto CreateTarget = [&](DXGI_FORMAT format, Microsoft::WRL::ComPtr<ID3D12Resource>& outResource) -> bool
+	{
+		D3D12_RESOURCE_DESC tex{};
+		tex.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		tex.Width = width;
+		tex.Height = height;
+		tex.DepthOrArraySize = 1;
+		tex.MipLevels = 1;
+		tex.Format = format;
+		tex.SampleDesc.Count = 1;
+		tex.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		tex.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+		D3D12_CLEAR_VALUE clear{};
+		clear.Format = format;
+		clear.Color[0] = 0.0f;
+		clear.Color[1] = 0.0f;
+		clear.Color[2] = 0.0f;
+		clear.Color[3] = 1.0f;
+
+		return SUCCEEDED(device->CreateCommittedResource(
+			&defaultHeap, D3D12_HEAP_FLAG_NONE, &tex,
+			D3D12_RESOURCE_STATE_RENDER_TARGET, &clear, IID_PPV_ARGS(&outResource)));
+	};
+
+	if (!CreateTarget(DXGI_FORMAT_R8G8B8A8_UNORM, gbufferAlbedo))
+	{
+		return std::unexpected{ L"Failed to create GBuffer Albedo." };
+	}
+	if (!CreateTarget(DXGI_FORMAT_R8G8B8A8_UNORM, gbufferNormal))
+	{
+		return std::unexpected{ L"Failed to create GBuffer Normal." };
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE gRtv = gbufferRtvHeap->GetCPUDescriptorHandleForHeapStart();
+	device->CreateRenderTargetView(gbufferAlbedo.Get(), nullptr, gRtv);
+	gRtv.ptr += gbufferRtvDescriptorSize;
+	device->CreateRenderTargetView(gbufferNormal.Get(), nullptr, gRtv);
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srv{};
+	srv.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srv.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srv.Texture2D.MipLevels = 1;
+	srv.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE gSrv = srvHeap->GetCPUDescriptorHandleForHeapStart();
+	device->CreateShaderResourceView(gbufferAlbedo.Get(), &srv, gSrv);
+	gSrv.ptr += srvDescriptorSize;
+	device->CreateShaderResourceView(gbufferNormal.Get(), &srv, gSrv);
+
 	return {};
 }
 
@@ -563,7 +688,7 @@ std::expected<void, std::wstring> RenderSystem::CreateConstantBuffer()
 
 std::expected<void, std::wstring> RenderSystem::CreateRootSignature()
 {
-	D3D12_ROOT_PARAMETER rootParameters[4]{};
+	D3D12_ROOT_PARAMETER rootParameters[5]{};
 
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[0].Descriptor.ShaderRegister = 0;
@@ -585,11 +710,33 @@ std::expected<void, std::wstring> RenderSystem::CreateRootSignature()
 	rootParameters[3].Descriptor.RegisterSpace = 0;
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	D3D12_DESCRIPTOR_RANGE gbufferRange{};
+	gbufferRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	gbufferRange.NumDescriptors = 2;
+	gbufferRange.BaseShaderRegister = 0;
+	gbufferRange.RegisterSpace = 0;
+	gbufferRange.OffsetInDescriptorsFromTableStart = 0;
+
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[4].DescriptorTable.NumDescriptorRanges = 1;
+	rootParameters[4].DescriptorTable.pDescriptorRanges = &gbufferRange;
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	D3D12_STATIC_SAMPLER_DESC linearSampler{};
+	linearSampler.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	linearSampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	linearSampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	linearSampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	linearSampler.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	linearSampler.ShaderRegister = 0;
+	linearSampler.RegisterSpace = 0;
+	linearSampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 	D3D12_ROOT_SIGNATURE_DESC rootSigDesc{};
 	rootSigDesc.NumParameters = _countof(rootParameters);
 	rootSigDesc.pParameters = rootParameters;
-	rootSigDesc.NumStaticSamplers = 0;
-	rootSigDesc.pStaticSamplers = nullptr;
+	rootSigDesc.NumStaticSamplers = 1;
+	rootSigDesc.pStaticSamplers = &linearSampler;
 	rootSigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	Microsoft::WRL::ComPtr<ID3DBlob> signature;
@@ -637,14 +784,42 @@ std::expected<void, std::wstring> RenderSystem::CreatePipelineState()
 	psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	psoDesc.NumRenderTargets = 1;
+	psoDesc.NumRenderTargets = 2;
 	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	psoDesc.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	psoDesc.SampleDesc.Count = 1;
 
 	if (FAILED(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState))))
 	{
 		return std::unexpected{ L"Failed to create Geometry Pipeline State." };
+	}
+
+	Shader* lightingShader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/DeferredLighting.hlsl") };
+	if (lightingShader == nullptr)
+	{
+		return std::unexpected{ L"Failed to load DeferredLighting shader." };
+	}
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC lightingDesc{};
+	lightingDesc.InputLayout = { nullptr, 0 };
+	lightingDesc.pRootSignature = rootSignature.Get();
+	lightingDesc.VS = { lightingShader->GetVSBlob()->GetBufferPointer(), lightingShader->GetVSBlob()->GetBufferSize() };
+	lightingDesc.PS = { lightingShader->GetPSBlob()->GetBufferPointer(), lightingShader->GetPSBlob()->GetBufferSize() };
+	lightingDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	lightingDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	lightingDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	lightingDesc.DepthStencilState.DepthEnable = FALSE;
+	lightingDesc.DepthStencilState.StencilEnable = FALSE;
+	lightingDesc.SampleMask = UINT_MAX;
+	lightingDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	lightingDesc.NumRenderTargets = 1;
+	lightingDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	lightingDesc.SampleDesc.Count = 1;
+
+	if (FAILED(device->CreateGraphicsPipelineState(&lightingDesc, IID_PPV_ARGS(&lightingPipelineState))))
+	{
+		return std::unexpected{ L"Failed to create Lighting Pipeline State." };
 	}
 
 	return {};

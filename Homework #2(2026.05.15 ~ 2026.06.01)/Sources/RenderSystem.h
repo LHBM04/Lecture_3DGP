@@ -35,6 +35,7 @@ public:
 	void EndFrame();
 
 	void Present();
+	void ExecuteLightingPass();
 
 	void SetCamera(Camera* camera_);
 	void SetLights(std::span<Light*> lights_);
@@ -159,6 +160,14 @@ private:
 	uint8_t* mappedConstantData{ nullptr };
 	UINT constantBufferOffset{ 0 };
 	static constexpr UINT MaxConstantBufferSize{ 1024 * 1024 * 8 };
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> gbufferAlbedo;
+	Microsoft::WRL::ComPtr<ID3D12Resource> gbufferNormal;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> gbufferRtvHeap;
+	UINT gbufferRtvDescriptorSize{ 0 };
+
+	D3D12_GPU_VIRTUAL_ADDRESS cameraCbvAddress{ 0 };
+	D3D12_GPU_VIRTUAL_ADDRESS lightCbvAddress{ 0 };
 };
 
 template<class T>

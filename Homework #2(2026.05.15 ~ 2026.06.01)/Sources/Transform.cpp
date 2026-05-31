@@ -167,6 +167,16 @@ const Transform* Transform::GetParent() const noexcept
 	return parent;
 }
 
+std::span<Transform* const> Transform::GetChildren() noexcept
+{
+	return children;
+}
+
+std::span<Transform* const> Transform::GetChildren() const noexcept
+{
+	return children;
+}
+
 void Transform::SetParent(Transform* const parent_)
 {
 	if (parent == parent_)

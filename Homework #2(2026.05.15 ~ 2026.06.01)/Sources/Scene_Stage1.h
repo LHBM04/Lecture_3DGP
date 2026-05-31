@@ -1,8 +1,12 @@
 #pragma once
 
-#include "Scene_Stage.h"
+#include <fstream>
+#include <string>
+#include <string_view>
 
-class Scene_Stage1 final : public Scene_Stage
+#include "Scene.h"
+
+class Scene_Stage1 final : public Scene
 {
 public:
 	Scene_Stage1() = default;
@@ -13,6 +17,9 @@ protected:
 	void OnUnload() override;
 
 private:
+	void BuildSceneObjects(std::wstring_view mapPath_);
+	bool ReadTag(std::ifstream& file_, const std::string& expectedTag_);
+	std::wstring ReadString(std::ifstream& file_);
 	void SpawnEnemiesFromMap(std::wstring_view mapPath_);
 	void SpawnEnemyAt(const Vector3D& position_);
 };

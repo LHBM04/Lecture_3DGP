@@ -7,6 +7,7 @@ class Collider;
 class GameObject;
 class Light;
 class Quaternion;
+class Transform;
 
 class Scene
 {
@@ -30,7 +31,11 @@ public:
 	void Render();
 
 	GameObject* Instantiate();
+	GameObject* Instantiate(const Vector3D& position_);
+	GameObject* Instantiate(const Quaternion& rotation_);
 	GameObject* Instantiate(const Vector3D& position_, const Quaternion& rotation_);
+	GameObject* Instantiate(Transform* parent_);
+	GameObject* Instantiate(const Vector3D& position_, const Quaternion& rotation_, Transform* parent_);
 	void Destroy(GameObject* gameObject_);
 
 	void AddCamera(Camera* camera_);

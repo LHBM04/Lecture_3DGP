@@ -1,15 +1,14 @@
 #include "Precompiled.h"
-#include "TitleSceneController.h"
+
+#include "MenuSceneController.h"
 
 #include "Camera.h"
 #include "GameObject.h"
 #include "InputSystem.h"
 #include "PhysicsSystem.h"
 #include "SceneSystem.h"
-#include "Vector2D.h"
-#include "Vector3D.h"
 
-void TitleSceneController::OnUpdate(float)
+void MenuSceneController::OnUpdate(float)
 {
 	if (camera == nullptr)
 	{
@@ -21,18 +20,28 @@ void TitleSceneController::OnUpdate(float)
 		return;
 	}
 
-	Vector3D rayOrigin;
-	Vector3D rayDir;
+	Vector3D rayOrigin{};
+	Vector3D rayDir{};
 	camera->ScreenPointToRay(InputSystem::GetInstance().GetMousePosition(), rayOrigin, rayDir);
 
 	GameObject* hitObject{ PhysicsSystem::GetInstance().Raycast(rayOrigin, rayDir) };
-	if (hitObject != nullptr && hitObject->GetTag() == L"StartButton")
+	if (hitObject == nullptr)
 	{
-		SceneSystem::GetInstance().LoadScene(L"Menu Scene");
+		return;
+	}
+
+	const std::wstring_view name{ hitObject->GetName() };
+	if (name == L"Day")
+	{
+		SceneSystem::GetInstance().LoadScene(L"Stage 1");
+	}
+	else if (name == L"Night")
+	{
+		SceneSystem::GetInstance().LoadScene(L"Stage 2");
 	}
 }
 
-void TitleSceneController::SetCamera(Camera* camera_) noexcept
+void MenuSceneController::SetCamera(Camera* camera_) noexcept
 {
 	camera = camera_;
 }

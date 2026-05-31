@@ -9,6 +9,7 @@ namespace Logger
 {
 	enum class Level
 	{
+		Trace,
 		Info,
 		Warning,
 		Error,
@@ -21,6 +22,7 @@ namespace Logger
 		std::wstring levelStr;
 		switch (level_)
 		{
+		case Level::Trace:    levelStr = L"TRACE"; break;
 		case Level::Info:     levelStr = L"INFO"; break;
 		case Level::Warning:  levelStr = L"WARN"; break;
 		case Level::Error:    levelStr = L"ERROR"; break;
@@ -32,6 +34,12 @@ namespace Logger
 
 		std::wstring message = std::vformat(format_, std::make_wformat_args(args_...));
 		std::wcout << std::format(L"[{:%H:%M:%OS}] [{}] {}\n", time, levelStr, message);
+	}
+
+	template <class... Args>
+	void Trace(std::wstring_view format_, Args&&... args_)
+	{
+		Log(Level::Trace, format_, std::forward<Args>(args_)...);
 	}
 
 	template <class... Args>

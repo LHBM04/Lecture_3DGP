@@ -125,13 +125,21 @@ void Component::Disable()
 
 void Component::Destroy()
 {
-	if (owner == nullptr)
+	if (owner == nullptr || isDestroyed)
 	{
 		return;
 	}
 
+	isDestroyed = true;
+
+	if (isEnabled)
+	{
+		Disable();
+	}
+
 	OnDestroy();
 	owner = nullptr;
+	isEnabled = false;
 }
 
 void Component::CollisionEnter(Collider* other_)

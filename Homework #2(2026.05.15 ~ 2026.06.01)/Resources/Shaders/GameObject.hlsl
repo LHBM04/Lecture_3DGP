@@ -12,6 +12,12 @@ struct VSOutput
     float3 normalWS : NORMAL;
 };
 
+struct GBufferOutput
+{
+    float4 albedo : SV_TARGET0;
+    float4 normal : SV_TARGET1;
+};
+
 cbuffer CameraConstants : register(b0)
 {
     matrix View;
@@ -49,19 +55,11 @@ VSOutput VSMain(VSInput input)
     return output;
 }
 
-float4 PSMain(VSOutput input) : SV_TARGET
+GBufferOutput PSMain(VSOutput input)
 {
+    GBufferOutput output;
     const float3 n = normalize(input.normalWS);
-    float3 totalDiffuse = AmbientColor.rgb;
-
-    [loop]
-    for (uint i = 0; i < ActiveLightCount; ++i)
-    {
-        const float3 l = normalize(-LightDirs[i].xyz);
-        const float ndotl = saturate(dot(n, l));
-        totalDiffuse += Lights[i].rgb * Lights[i].a * ndotl;
-    }
-
-    const float3 litColor = AlbedoColor.rgb * totalDiffuse;
-    return float4(litColor, AlbedoColor.a);
+    output.albedo = AlbedoColor;
+    output.normal = float4(n * 0.5f + 0.5f, 1.0f);
+    return output;
 }

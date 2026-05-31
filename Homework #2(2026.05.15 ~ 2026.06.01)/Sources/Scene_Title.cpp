@@ -46,9 +46,11 @@ void Scene_Title::OnLoad()
 
 	GameObject* titleObject{ Instantiate() };
 	titleObject->SetName(L"TitleLogo");
+
 	Transform* titleTransform{ titleObject->GetComponent<Transform>() };
-	titleTransform->SetLocalPosition(Vector3D{ 0.0f, 4.0f, 0.0f });
-	titleTransform->SetLocalScale(Vector3D{ 6.0f, 3.0f, 1.0f });
+	titleTransform->SetLocalPosition(Vector3D{ 0.0f, 4.0f, 75.0f });
+	titleTransform->SetLocalScale(Vector3D{ 10.0f, 10.0f, 10.0f });
+	
 	MeshRenderer* titleRenderer{ titleObject->AddComponent<MeshRenderer>() };
 	titleRenderer->SetMesh(titleMesh);
 	titleRenderer->SetMaterial(mat);
@@ -56,9 +58,10 @@ void Scene_Title::OnLoad()
 	GameObject* buttonObject{ Instantiate() };
 	buttonObject->SetName(L"StartButton");
 	buttonObject->SetTag(L"StartButton");
+	
 	Transform* buttonTransform{ buttonObject->GetComponent<Transform>() };
-	buttonTransform->SetLocalPosition(Vector3D{ 0.0f, -4.0f, 0.0f });
-	buttonTransform->SetLocalScale(Vector3D{ 3.5f, 1.4f, 1.0f });
+	buttonTransform->SetLocalPosition(Vector3D{ 0.0f, -4.0f, 75.0f });
+	buttonTransform->SetLocalScale(Vector3D{ 10.0f, 10.0f, 10.0f });
 
 	MeshRenderer* buttonRenderer{ buttonObject->AddComponent<MeshRenderer>() };
 	buttonRenderer->SetMesh(buttonMesh);

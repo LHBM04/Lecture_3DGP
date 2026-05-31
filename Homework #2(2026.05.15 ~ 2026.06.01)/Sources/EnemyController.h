@@ -22,4 +22,5 @@ private:
 	float verticalVelocity{ 0.0f };
 	float gravity{ -20.0f };
 	bool isGrounded{ false };
+	bool hasDetectedPlayer{ false };
 };

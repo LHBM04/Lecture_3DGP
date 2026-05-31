@@ -1,10 +1,13 @@
 #include "Precompiled.h"
 
 #include "InputSystem.h"
+#include "Logger.h"
 #include "RenderSystem.h"
 #include "ResourceSystem.h"
+#include "Scene_Menu.h"
 #include "SceneSystem.h"
 #include "Scene_Stage1.h"
+#include "Scene_Stage2.h"
 #include "Scene_Title.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -76,12 +79,27 @@ INT APIENTRY wWinMain(
 		windowPosX, windowPosY, WindowWidth, WindowHeight,
 		nullptr, nullptr, hInstance, nullptr) };
 
-	if (mainWindow == nullptr) return -1;
+	if (mainWindow == nullptr)
+	{
+		Logger::Critical(L"[Init] CreateWindowExW failed");
+		return -1;
+	}
 
+	Logger::Trace(L"[Init] InputSystem.Reset begin");
 	InputSystem::GetInstance().Reset();
-	ResourceSystem::GetInstance().Initialize();
+	Logger::Info(L"[Init] InputSystem.Reset success");
 
-	if (RenderSystem::GetInstance().Initialize(mainWindow).has_value() == false) return -1;
+	Logger::Trace(L"[Init] ResourceSystem.Initialize begin");
+	ResourceSystem::GetInstance().Initialize();
+	Logger::Info(L"[Init] ResourceSystem.Initialize success");
+
+	Logger::Trace(L"[Init] RenderSystem.Initialize begin");
+	if (std::expected<void, std::wstring> renderInitResult{ RenderSystem::GetInstance().Initialize(mainWindow) }; !renderInitResult.has_value())
+	{
+		Logger::Critical(L"[Init] RenderSystem.Initialize failed: {}", renderInitResult.error());
+		return -1;
+	}
+	Logger::Info(L"[Init] RenderSystem.Initialize success");
 
 	if (IsWindowVisible(mainWindow) == false)
 	{
@@ -89,13 +107,18 @@ INT APIENTRY wWinMain(
 		UpdateWindow(mainWindow);
 	}
 
+	Logger::Trace(L"[Init] SceneSystem.AddScene begin");
 	SceneSystem::GetInstance().AddScene(L"Title Scene", std::make_unique<Scene_Title>());
+	SceneSystem::GetInstance().AddScene(L"Menu Scene", std::make_unique<Scene_Menu>());
 	SceneSystem::GetInstance().AddScene(L"Stage 1", std::make_unique<Scene_Stage1>());
+	SceneSystem::GetInstance().AddScene(L"Stage 2", std::make_unique<Scene_Stage2>());
 	SceneSystem::GetInstance().LoadScene(L"Title Scene");
+	Logger::Info(L"[Init] SceneSystem.AddScene/LoadScene success");
 	
 	QueryPerformanceFrequency(&frequency);
 	QueryPerformanceCounter(&lastTime);
 
+	Logger::Info(L"[Init] Main loop start");
 	isRunning = true;
 	MSG msg{};
 
@@ -140,8 +163,13 @@ INT APIENTRY wWinMain(
 		}
 	}
 
+	Logger::Trace(L"[Shutdown] RenderSystem.Release begin");
 	RenderSystem::GetInstance().Release();
+	Logger::Info(L"[Shutdown] RenderSystem.Release success");
+
+	Logger::Trace(L"[Shutdown] ResourceSystem.Release begin");
 	ResourceSystem::GetInstance().Release();
+	Logger::Info(L"[Shutdown] ResourceSystem.Release success");
 
 	if (mainWindow != nullptr)
 	{

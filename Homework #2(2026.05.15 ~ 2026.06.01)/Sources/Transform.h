@@ -1,5 +1,7 @@
 #pragma once
 
+#include <span>
+
 #include "Component.h"
 #include "Vector3D.h"
 #include "Quaternion.h"
@@ -38,6 +40,8 @@ public:
 
 	[[nodiscard]] Transform* GetParent() noexcept;
 	[[nodiscard]] const Transform* GetParent() const noexcept;
+	[[nodiscard]] std::span<Transform* const> GetChildren() noexcept;
+	[[nodiscard]] std::span<Transform* const> GetChildren() const noexcept;
 	void SetParent(Transform* const parent_);
 
 private:

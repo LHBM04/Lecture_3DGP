@@ -105,16 +105,16 @@ void PlayerController::OnUpdate(float deltaTime_)
 		moveDelta -= forward * (moveSpeed * deltaTime_);
 	}
 
+	// 4. Gravity & Jump
+	verticalVelocity += gravity * deltaTime_;
 	if (InputSystem::GetInstance().IsKeyPressed(KeyCode::Space) && isGrounded)
 	{
 		verticalVelocity = jumpSpeed;
 		isGrounded = false;
 	}
+	moveDelta.y = verticalVelocity * deltaTime_;
 
-	verticalVelocity += gravity * deltaTime_;
-	moveDelta.y += verticalVelocity * deltaTime_;
-
-	// 4. Axis-Separated Move & Revert (with Narrow-Test for smooth sliding)
+	// 5. Axis-Separated Move & Revert (with Narrow-Test for smooth sliding)
 	const Vector3D originalSize{ collider->GetSize() };
 	const float skinWidth{ 0.02f };
 	Vector3D currentPos{ transform->GetWorldPosition() };
@@ -135,25 +135,50 @@ void PlayerController::OnUpdate(float deltaTime_)
 		}
 	}
 
-	// --- Y Axis ---
+	// --- Y Axis (swept in small steps to prevent tunneling through thin floors) ---
 	if (std::abs(moveDelta.y) > Mathf::Epsilon)
 	{
 		collider->SetSize(Vector3D{ originalSize.x - skinWidth, originalSize.y, originalSize.z - skinWidth });
-		transform->SetWorldPosition(Vector3D{ currentPos.x, currentPos.y + moveDelta.y, currentPos.z });
-		collider->UpdateVolume();
-		if (PhysicsSystem::GetInstance().IsCollidingWithStatic(collider))
+
+		float remainingY{ moveDelta.y };
+		constexpr float maxStepY{ 0.1f };
+
+		while (std::abs(remainingY) > Mathf::Epsilon)
 		{
-			if (verticalVelocity < 0.0f)
+			const float stepY{ std::clamp(remainingY, -maxStepY, maxStepY) };
+			transform->SetWorldPosition(Vector3D{ currentPos.x, currentPos.y + stepY, currentPos.z });
+			collider->UpdateVolume();
+
+			if (PhysicsSystem::GetInstance().IsCollidingWithStatic(collider))
 			{
-				isGrounded = true;
+				if (stepY <= 0.0f)
+				{
+					isGrounded = true;
+				}
+				verticalVelocity = 0.0f;
+				transform->SetWorldPosition(currentPos);
+				collider->UpdateVolume();
+				break;
 			}
-			verticalVelocity = 0.0f;
-			transform->SetWorldPosition(currentPos);
-		}
-		else
-		{
-			currentPos.y += moveDelta.y;
+
+			currentPos.y += stepY;
+			remainingY -= stepY;
 			isGrounded = false;
+		}
+	}
+	else
+	{
+		// Probe ground when vertical delta is near zero to keep grounded state stable.
+		collider->SetSize(Vector3D{ originalSize.x - skinWidth, originalSize.y, originalSize.z - skinWidth });
+		transform->SetWorldPosition(Vector3D{ currentPos.x, currentPos.y - 0.02f, currentPos.z });
+		collider->UpdateVolume();
+		const bool onGround{ PhysicsSystem::GetInstance().IsCollidingWithStatic(collider) };
+		transform->SetWorldPosition(currentPos);
+		collider->UpdateVolume();
+		isGrounded = onGround;
+		if (onGround && verticalVelocity < 0.0f)
+		{
+			verticalVelocity = 0.0f;
 		}
 	}
 

@@ -1,9 +1,13 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Scene_Stage2.h"
 
+#include "Camera.h"
+#include "CameraController.h"
 #include "CubeCollider.h"
 #include "EnemyController.h"
 #include "GameObject.h"
+#include "Light.h"
+#include "Logger.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
@@ -15,6 +19,34 @@
 void Scene_Stage2::OnLoad()
 {
 	BuildSceneObjects(L"Resources/Scenes/Scene_Stage1.bin");
+
+	GameObject* cameraObject{ Instantiate() };
+	cameraObject->SetName(L"Main Camera");
+	cameraObject->SetTag(L"MainCamera");
+	cameraObject->GetComponent<Transform>()->SetWorldPosition(Vector3D(0.0f, 30.0f, -60.0f));
+	cameraObject->GetComponent<Transform>()->SetLocalRotation(Quaternion::Euler(25.0f, 0.0f, 0.0f));
+
+	Camera* camera{ cameraObject->AddComponent<Camera>() };
+	camera->SetClearMode(Camera::ClearType::SolidColor);
+	camera->SetClearColor(ColorRGBA{ 0.0f, 0.0f, 0.0f, 1.0f });
+
+	GameObject* lightObject{ Instantiate() };
+	lightObject->SetName(L"Main Light");
+	lightObject->GetComponent<Transform>()->SetLocalRotation(Quaternion::Euler(45.0f, -45.0f, 0.0f));
+
+	Light* light{ lightObject->AddComponent<Light>() };
+	light->SetIntensity(1.2f);
+	light->SetColor(ColorRGBA::GetWhite());
+
+	CameraController* cameraController{ cameraObject->AddComponent<CameraController>() };
+	cameraController->SetThirdPersonOffset(Vector3D{ 0.0f, 2.0f, -3.0f });
+	cameraController->SetFirstPersonOffset(Vector3D{ 0.0f, 1.6f, 0.0f });
+
+	GameObject* playerObject{ FindObjectWithTag(L"Player") };
+	if (playerObject != nullptr)
+	{
+		cameraController->SetTarget(playerObject->GetComponent<Transform>());
+	}
 }
 
 void Scene_Stage2::OnUnload()
@@ -40,17 +72,45 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 		return;
 	}
 
+	if (objectCount == 0)
+	{
+		Logger::Warning(L"[StageLoad] objectCount is 0. map='{}'", std::wstring(mapPath_));
+		return;
+	}
+
+	const std::streamoff totalBytes{ static_cast<std::streamoff>(std::filesystem::file_size(std::wstring(mapPath_.begin(), mapPath_.end()))) };
+	const std::streamoff currentPos{ file.tellg() };
+	const std::streamoff remainBytes{ std::max<std::streamoff>(0, totalBytes - currentPos) };
+	constexpr std::streamoff MinBytesPerObject{ 1 + 12 + 1 + 1 + (sizeof(float) * 16) };
+	const uint32_t maxPossibleObjects{ static_cast<uint32_t>(remainBytes / MinBytesPerObject) };
+	if (maxPossibleObjects == 0)
+	{
+		Logger::Error(L"[StageLoad] maxPossibleObjects is 0. map='{}'", std::wstring(mapPath_));
+		return;
+	}
+	if (objectCount > maxPossibleObjects)
+	{
+		Logger::Warning(L"[StageLoad] objectCount clamped {} -> {}. map='{}'", objectCount, maxPossibleObjects, std::wstring(mapPath_));
+		objectCount = maxPossibleObjects;
+	}
+	Logger::Trace(L"[StageLoad] Begin map='{}' objectCount={}", std::wstring(mapPath_), objectCount);
+
 	Mesh* defaultMesh{ ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Cube.bin") };
 	Material* defaultMat{ ResourceSystem::GetInstance().GetResource<Material>(L"DefaultMaterial") };
 
 	for (uint32_t i{ 0 }; i < objectCount; ++i)
 	{
+		if (!file.good())
+		{
+			break;
+		}
+
 		if (!ReadTag(file, "<GameObject>:"))
 		{
 			break;
 		}
 
-		const std::wstring name{ ReadString(file) };
+		std::wstring name{ ReadString(file) };
 
 		Matrix4x4 worldMatrix;
 		if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&worldMatrix), sizeof(float) * 16)))
@@ -85,21 +145,28 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 		else if (name.find(L"Wall") != std::wstring::npos)
 		{
 			meshPath = L"Resources/Meshes/Wall.bin";
-			matPath = L"Resources/Materials/Wall.bin";
+			matPath = L"Resources/Materials/Wall_Night.bin";
 		}
 		else if (name.find(L"Stair") != std::wstring::npos)
 		{
 			meshPath = L"Resources/Meshes/Stairs.bin";
-			matPath = L"Resources/Materials/Stairs.bin";
+			matPath = L"Resources/Materials/Stairs_Night.bin";
 		}
 		else if (name.find(L"Floor") != std::wstring::npos)
 		{
 			meshPath = L"Resources/Meshes/Floor.bin";
-			matPath = L"Resources/Materials/Floor.bin";
+			matPath = L"Resources/Materials/Floor_Night.bin";
 		}
 
 		Mesh* mesh{ ResourceSystem::GetInstance().GetResource<Mesh>(meshPath) };
 		Material* mat{ ResourceSystem::GetInstance().GetResource<Material>(matPath) };
+		const Vector3D worldPos{ worldMatrix.GetWorldPosition() };
+
+		if (i < 200 || (i % 500) == 0)
+		{
+			Logger::Trace(L"[StageLoad] [{}] name='{}' pos=({:.2f},{:.2f},{:.2f}) mesh='{}' mat='{}'",
+				i, name, worldPos.x, worldPos.y, worldPos.z, meshPath, matPath);
+		}
 
 		MeshRenderer* renderer{ go->AddComponent<MeshRenderer>() };
 		renderer->SetMesh(mesh != nullptr ? mesh : defaultMesh);
@@ -109,11 +176,13 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 		{
 			const Vector3D& min{ mesh->GetBoundsMin() };
 			const Vector3D& max{ mesh->GetBoundsMax() };
+			Vector3D center{ (min + max) * 0.5f };
+			Vector3D size{ max - min };
 			if (name.find(L"Stair") != std::wstring::npos)
 			{
 				StairCollider* stairCollider{ go->AddComponent<StairCollider>() };
-				stairCollider->SetCenter((min + max) * 0.5f);
-				stairCollider->SetSize(max - min);
+				stairCollider->SetCenter(center);
+				stairCollider->SetSize(size);
 				stairCollider->SetSlopeAxis(StairCollider::SlopeAxis::PositiveZ);
 				stairCollider->SetStatic(true);
 				stairCollider->UpdateVolume();
@@ -121,13 +190,34 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 			else
 			{
 				CubeCollider* collider{ go->AddComponent<CubeCollider>() };
-				collider->SetCenter((min + max) * 0.5f);
-				collider->SetSize(max - min);
+				collider->SetCenter(center);
+				collider->SetSize(size);
 				collider->SetStatic(isStaticCollider);
 				collider->UpdateVolume();
 			}
 		}
+
+		std::streampos pos{ file.tellg() };
+		uint8_t nextTagLen{ 0 };
+		if (static_cast<bool>(file.read(reinterpret_cast<char*>(&nextTagLen), sizeof(uint8_t))))
+		{
+			std::string nextTag(nextTagLen, '\0');
+			if (!static_cast<bool>(file.read(&nextTag[0], nextTagLen)))
+			{
+				break;
+			}
+
+			if (nextTag != "<Mesh>:")
+			{
+				file.seekg(pos);
+			}
+			else
+			{
+				ReadString(file);
+			}
+		}
 	}
+	Logger::Info(L"[StageLoad] End map='{}' processed={}", std::wstring(mapPath_), objectCount);
 }
 
 bool Scene_Stage2::ReadTag(std::ifstream& file_, const std::string& expectedTag_)
@@ -163,3 +253,5 @@ std::wstring Scene_Stage2::ReadString(std::ifstream& file_)
 
 	return std::wstring(str.begin(), str.end());
 }
+
+

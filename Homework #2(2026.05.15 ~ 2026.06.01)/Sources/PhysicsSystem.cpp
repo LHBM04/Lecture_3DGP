@@ -133,7 +133,7 @@ GameObject* PhysicsSystem::Raycast(const Vector3D& rayOrigin_, const Vector3D& r
 
 	for (Collider* col : colliders)
 	{
-		if (!col->GetOwner()->IsActive()) continue;
+		if (col == nullptr || col->GetOwner() == nullptr || col->GetOwner()->IsDestroyed() || !col->GetOwner()->IsActive()) continue;
 
 		float distance{ 0.0f };
 		if (col->IsIntersects(rayOrigin_, rayDir_, distance))
@@ -170,6 +170,19 @@ void PhysicsSystem::Clear()
 
 void PhysicsSystem::ProcessPhysics(float fixedDeltaTime_)
 {
+	auto isColliderValid = [](const Collider* col) -> bool
+	{
+		return col != nullptr &&
+			col->GetOwner() != nullptr &&
+			!col->GetOwner()->IsDestroyed();
+	};
+
+	std::erase_if(colliders, [&](Collider* col) { return !isColliderValid(col); });
+	std::erase_if(previousCollisions, [&](const ColliderPair& pair)
+	{
+		return !isColliderValid(pair.c1) || !isColliderValid(pair.c2);
+	});
+
 	// 1. Clear dynamic objects from grid and collect them
 	for (std::vector<Cell>& row : grid)
 	{
@@ -182,7 +195,7 @@ void PhysicsSystem::ProcessPhysics(float fixedDeltaTime_)
 	std::vector<Collider*> dynamicColliders;
 	for (Collider* col : colliders)
 	{
-		if (!col->GetOwner()->IsActive()) continue;
+		if (!isColliderValid(col) || !col->GetOwner()->IsActive()) continue;
 
 		if (!col->IsStatic())
 		{
@@ -252,24 +265,59 @@ void PhysicsSystem::ProcessPhysics(float fixedDeltaTime_)
 	// 3. Trigger callbacks
 	for (const ColliderPair& pair : currentCollisions)
 	{
+		if (!isColliderValid(pair.c1) || !isColliderValid(pair.c2))
+		{
+			continue;
+		}
+
+		auto canNotify = [](Collider* col) -> bool
+		{
+			return col != nullptr &&
+				col->GetOwner() != nullptr &&
+				!col->GetOwner()->IsDestroyed();
+		};
+
 		if (previousCollisions.find(pair) != previousCollisions.end())
 		{
-			pair.c1->GetOwner()->NotifyCollisionStay(pair.c2);
-			pair.c2->GetOwner()->NotifyCollisionStay(pair.c1);
+			if (canNotify(pair.c1))
+			{
+				pair.c1->GetOwner()->NotifyCollisionStay(pair.c2);
+			}
+			if (canNotify(pair.c2))
+			{
+				pair.c2->GetOwner()->NotifyCollisionStay(pair.c1);
+			}
 		}
 		else
 		{
-			pair.c1->GetOwner()->NotifyCollisionEnter(pair.c2);
-			pair.c2->GetOwner()->NotifyCollisionEnter(pair.c1);
+			if (canNotify(pair.c1))
+			{
+				pair.c1->GetOwner()->NotifyCollisionEnter(pair.c2);
+			}
+			if (canNotify(pair.c2))
+			{
+				pair.c2->GetOwner()->NotifyCollisionEnter(pair.c1);
+			}
 		}
 	}
 
 	for (const ColliderPair& pair : previousCollisions)
 	{
+		if (!isColliderValid(pair.c1) || !isColliderValid(pair.c2))
+		{
+			continue;
+		}
+
 		if (currentCollisions.find(pair) == currentCollisions.end())
 		{
-			pair.c1->GetOwner()->NotifyCollisionExit(pair.c2);
-			pair.c2->GetOwner()->NotifyCollisionExit(pair.c1);
+			if (pair.c1->GetOwner() != nullptr && !pair.c1->GetOwner()->IsDestroyed())
+			{
+				pair.c1->GetOwner()->NotifyCollisionExit(pair.c2);
+			}
+			if (pair.c2->GetOwner() != nullptr && !pair.c2->GetOwner()->IsDestroyed())
+			{
+				pair.c2->GetOwner()->NotifyCollisionExit(pair.c1);
+			}
 		}
 	}
 
@@ -296,7 +344,7 @@ void PhysicsSystem::RegisterStaticObjectsToGrid()
 
 	for (Collider* col : colliders)
 	{
-		if (!col->GetOwner()->IsActive()) continue;
+		if (col == nullptr || col->GetOwner() == nullptr || col->GetOwner()->IsDestroyed() || !col->GetOwner()->IsActive()) continue;
 
 		if (col->IsStatic())
 		{

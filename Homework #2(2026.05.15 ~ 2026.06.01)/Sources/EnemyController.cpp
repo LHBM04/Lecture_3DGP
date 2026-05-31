@@ -47,7 +47,12 @@ void EnemyController::OnUpdate(float deltaTime_)
 	const float distanceToPlayer{ toPlayer.GetMagnitude() };
 	Vector3D moveDelta{ Vector3D::GetZero() };
 
-	if (distanceToPlayer <= detectRange && distanceToPlayer > Mathf::Epsilon)
+	if (!hasDetectedPlayer && distanceToPlayer <= detectRange)
+	{
+		hasDetectedPlayer = true;
+	}
+
+	if (hasDetectedPlayer && distanceToPlayer > Mathf::Epsilon)
 	{
 		Vector3D moveDir{ toPlayer };
 		moveDir.y = 0.0f;
@@ -144,19 +149,26 @@ void EnemyController::OnUpdate(float deltaTime_)
 
 	verticalVelocity += gravity * deltaTime_;
 	const float yDelta{ verticalVelocity * deltaTime_ };
-	transform->SetLocalPosition(Vector3D(currentPos.x, currentPos.y + yDelta, currentPos.z));
+	float remainingY{ yDelta };
+	constexpr float maxStepY{ 0.1f };
+	while (std::abs(remainingY) > Mathf::Epsilon)
+	{
+		const float stepY{ std::clamp(remainingY, -maxStepY, maxStepY) };
+		transform->SetLocalPosition(Vector3D(currentPos.x, currentPos.y + stepY, currentPos.z));
 
-	if (IsColliding(false))
-	{
-		if (verticalVelocity < 0.0f)
+		if (IsColliding(false))
 		{
-			isGrounded = true;
+			if (stepY <= 0.0f)
+			{
+				isGrounded = true;
+			}
+			verticalVelocity = 0.0f;
+			transform->SetLocalPosition(currentPos);
+			break;
 		}
-		verticalVelocity = 0.0f;
-		transform->SetLocalPosition(currentPos);
-	}
-	else
-	{
+
+		currentPos = transform->GetLocalPosition();
+		remainingY -= stepY;
 		isGrounded = false;
 	}
 }

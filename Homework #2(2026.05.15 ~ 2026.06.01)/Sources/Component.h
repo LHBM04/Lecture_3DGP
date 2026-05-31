@@ -62,4 +62,5 @@ private:
 	GameObject* owner{ nullptr };
 	bool isStarted{ false };
 	bool isEnabled{ true };
+	bool isDestroyed{ false };
 };

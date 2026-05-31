@@ -47,7 +47,6 @@ void Scene::Update(float deltaTime_)
 		}
 		go->Update(deltaTime_);
 	}
-	ProcessDestroyQueue();
 }
 
 void Scene::FixedUpdate(float fixedDeltaTime_)
@@ -64,7 +63,6 @@ void Scene::FixedUpdate(float fixedDeltaTime_)
 		}
 		go->FixedUpdate(fixedDeltaTime_);
 	}
-	ProcessDestroyQueue();
 }
 
 void Scene::LateUpdate(float deltaTime_)
@@ -116,6 +114,8 @@ void Scene::Render()
 
 			gameObject->Render();
 		}
+
+		RenderSystem::GetInstance().ExecuteLightingPass();
 	}
 }
 
@@ -234,14 +234,89 @@ GameObject* Scene::Instantiate(const Vector3D& position_, const Quaternion& rota
 	return newObject;
 }
 
+GameObject* Scene::Instantiate(const Vector3D& position_)
+{
+	return Instantiate(position_, Quaternion::GetIdentity());
+}
+
+GameObject* Scene::Instantiate(const Quaternion& rotation_)
+{
+	return Instantiate(Vector3D::GetZero(), rotation_);
+}
+
+GameObject* Scene::Instantiate(Transform* parent_)
+{
+	GameObject* newObject{ Instantiate() };
+	if (newObject == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (Transform* transform{ newObject->GetComponent<Transform>() }; transform != nullptr)
+	{
+		transform->SetParent(parent_);
+	}
+	return newObject;
+}
+
+GameObject* Scene::Instantiate(const Vector3D& position_, const Quaternion& rotation_, Transform* parent_)
+{
+	GameObject* newObject{ Instantiate(position_, rotation_) };
+	if (newObject == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (Transform* transform{ newObject->GetComponent<Transform>() }; transform != nullptr)
+	{
+		transform->SetParent(parent_);
+	}
+	return newObject;
+}
+
 void Scene::Destroy(GameObject* gameObject_)
 {
 	if (gameObject_ == nullptr || gameObject_->IsDestroyed())
 	{
 		return;
 	}
-	gameObject_->Destroy();
-	destroyQueue.emplace_back(gameObject_);
+
+	std::vector<GameObject*> pending;
+	pending.emplace_back(gameObject_);
+
+	while (!pending.empty())
+	{
+		GameObject* current{ pending.back() };
+		pending.pop_back();
+
+		if (current == nullptr || current->IsDestroyed())
+		{
+			continue;
+		}
+
+		if (Transform* transform{ current->GetComponent<Transform>() }; transform != nullptr)
+		{
+			for (Transform* childTransform : transform->GetChildren())
+			{
+				if (childTransform == nullptr)
+				{
+					continue;
+				}
+
+				GameObject* childOwner{ childTransform->GetOwner() };
+				if (childOwner != nullptr && !childOwner->IsDestroyed())
+				{
+					pending.emplace_back(childOwner);
+				}
+			}
+		}
+
+		current->Destroy();
+		if (std::find(destroyQueue.begin(), destroyQueue.end(), current) == destroyQueue.end())
+		{
+			destroyQueue.emplace_back(current);
+		}
+	}
 }
 
 void Scene::AddCamera(Camera* camera_)
