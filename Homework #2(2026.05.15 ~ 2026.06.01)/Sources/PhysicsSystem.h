@@ -37,6 +37,7 @@ public:
 private:
 	void ProcessPhysics(float fixedDeltaTime_);
 	void CreateGrid();
+	void RemoveColliderReferences(Collider* collider_);
 
 private:
 	struct ColliderPair

@@ -36,15 +36,40 @@ void PhysicsSystem::RemoveCollider(Collider* collider_)
 {
 	if (collider_ == nullptr) return;
 
+	const bool wasStatic{ collider_->IsStatic() };
 	std::vector<Collider*>::iterator it{ std::find(colliders.begin(), colliders.end(), collider_) };
 	if (it != colliders.end())
 	{
 		colliders.erase(it);
+	}
 
-		// Re-register static objects if a static one was removed
-		if (collider_->IsStatic())
+	RemoveColliderReferences(collider_);
+
+	if (wasStatic)
+	{
+		RegisterStaticObjectsToGrid();
+	}
+}
+
+void PhysicsSystem::RemoveColliderReferences(Collider* collider_)
+{
+	if (collider_ == nullptr)
+	{
+		return;
+	}
+
+	std::erase_if(previousCollisions,
+		[collider_](const ColliderPair& pair)
 		{
-			RegisterStaticObjectsToGrid();
+			return pair.c1 == collider_ || pair.c2 == collider_;
+		});
+
+	for (std::vector<Cell>& row : grid)
+	{
+		for (Cell& cell : row)
+		{
+			std::erase(cell.staticColliders, collider_);
+			std::erase(cell.dynamicColliders, collider_);
 		}
 	}
 }
@@ -69,8 +94,13 @@ bool PhysicsSystem::IsCollidingWithStatic(Collider* collider_) const
 				for (Collider* staticCol : grid[z][x].staticColliders)
 				{
 					if (staticCol == collider_) continue;
+					GameObject* staticOwner{ staticCol != nullptr ? staticCol->GetOwner() : nullptr };
+					if (staticOwner == nullptr || staticOwner->IsDestroyed() || !staticOwner->IsActive())
+					{
+						continue;
+					}
 
-					const std::wstring_view staticName{ staticCol->GetOwner()->GetName() };
+					const std::wstring_view staticName{ staticOwner->GetName() };
 					const bool blocksMovement{
 						staticName.find(L"Wall") != std::wstring::npos ||
 						staticName.find(L"Stair") != std::wstring::npos ||
@@ -117,6 +147,11 @@ std::vector<Collider*> PhysicsSystem::GetNearbyStaticColliders(Collider* collide
 			{
 				if (staticCol != nullptr)
 				{
+					GameObject* staticOwner{ staticCol->GetOwner() };
+					if (staticOwner == nullptr || staticOwner->IsDestroyed() || !staticOwner->IsActive())
+					{
+						continue;
+					}
 					nearby.emplace_back(staticCol);
 				}
 			}
@@ -320,6 +355,16 @@ void PhysicsSystem::ProcessPhysics(float fixedDeltaTime_)
 			}
 		}
 	}
+
+	auto isColliderRegistered = [this](const Collider* col) -> bool
+	{
+		return std::find(colliders.begin(), colliders.end(), col) != colliders.end();
+	};
+
+	std::erase_if(currentCollisions, [&](const ColliderPair& pair)
+	{
+		return !isColliderRegistered(pair.c1) || !isColliderRegistered(pair.c2);
+	});
 
 	previousCollisions = std::move(currentCollisions);
 }

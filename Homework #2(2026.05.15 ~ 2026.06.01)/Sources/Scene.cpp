@@ -86,7 +86,13 @@ void Scene::Render()
 
 	for (Camera* const& camera : cameras)
 	{
-		if (!camera->GetOwner()->IsActive())
+		if (camera == nullptr)
+		{
+			continue;
+		}
+
+		GameObject* cameraOwner{ camera->GetOwner() };
+		if (cameraOwner == nullptr || cameraOwner->IsDestroyed() || !cameraOwner->IsActive())
 		{
 			continue;
 		}

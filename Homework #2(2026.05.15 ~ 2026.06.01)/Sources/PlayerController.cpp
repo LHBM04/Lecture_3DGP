@@ -70,6 +70,10 @@ void PlayerController::OnUpdate(float deltaTime_)
 		GameObject* projectile{ scene->Instantiate(muzzlePos, Quaternion::LookRotation(forward, Vector3D::GetUp())) };
 		projectile->SetName(L"PlayerProjectile");
 		projectile->SetTag(L"PlayerProjectile");
+		if (Transform* projectileTransform{ projectile->GetComponent<Transform>() }; projectileTransform != nullptr)
+		{
+			projectileTransform->SetLocalScale(Vector3D(0.16f, 0.16f, 0.16f));
+		}
 
 		MeshRenderer* projectileRenderer{ projectile->AddComponent<MeshRenderer>() };
 		projectileRenderer->SetMesh(projectileMesh != nullptr ? projectileMesh : defaultMesh);
@@ -81,7 +85,7 @@ void PlayerController::OnUpdate(float deltaTime_)
 			const Vector3D boundsMax{ projectileMesh->GetBoundsMax() };
 			CubeCollider* projectileCollider{ projectile->AddComponent<CubeCollider>() };
 			projectileCollider->SetCenter((boundsMin + boundsMax) * 0.5f);
-			projectileCollider->SetSize((boundsMax - boundsMin) * 0.3f);
+			projectileCollider->SetSize((boundsMax - boundsMin) * 0.12f);
 			projectileCollider->SetStatic(false);
 			projectileCollider->UpdateVolume();
 		}
