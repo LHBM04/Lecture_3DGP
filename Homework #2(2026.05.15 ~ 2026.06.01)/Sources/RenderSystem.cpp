@@ -163,7 +163,6 @@ void RenderSystem::EndFrame()
 		return;
 	}
 
-	// Final transition of the Back Buffer to PRESENT state
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Transition.pResource = renderTargets[frameIndex].Get();
