@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "MeshRenderer.h"
 
@@ -24,7 +24,6 @@ void MeshRenderer::OnRender()
 		return;
 	}
 
-	// Meshes can be preloaded before RenderSystem init; build GPU buffers on first render use.
 	if (!mesh->HasGpuBuffers())
 	{
 		if (!mesh->CreateBuffers(device))
