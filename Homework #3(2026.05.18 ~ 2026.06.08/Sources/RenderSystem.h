@@ -19,6 +19,16 @@ public:
 
 	};
 
+	struct alignas(BufferOffset) ObjectConstants final
+	{
+
+	};
+
+	struct alignas(BufferOffset) MaterialConstants final
+	{
+
+	};
+
 	virtual ~RenderSystem() = default;
 
 	bool Initialize();
