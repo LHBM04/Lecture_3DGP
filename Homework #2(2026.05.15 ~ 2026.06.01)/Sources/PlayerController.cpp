@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "PlayerController.h"
 
 #include <windows.h>
@@ -249,4 +249,3 @@ void PlayerController::OnCollisionEnter(Collider* other_)
 		PostQuitMessage(0);
 	}
 }
-
