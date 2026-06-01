@@ -97,7 +97,7 @@ void RenderSystem::Release()
 
 bool RenderSystem::BeginFrame()
 {
-	if (commandAllocators[frameIndex] == nullptr || commandList == nullptr || pipelineState == nullptr)
+	if (commandAllocators[frameIndex] == nullptr || commandList == nullptr || gameObjectPipelineState == nullptr)
 	{
 		return false;
 	}
@@ -106,13 +106,13 @@ bool RenderSystem::BeginFrame()
 	{
 		return false;
 	}
-	if (FAILED(commandList->Reset(commandAllocators[frameIndex].Get(), pipelineState.Get())))
+	if (FAILED(commandList->Reset(commandAllocators[frameIndex].Get(), gameObjectPipelineState.Get())))
 	{
 		return false;
 	}
 
 	constantBufferOffset = 0;
-	instanceBufferOffset = frameIndex * (instanceBufferCapacity / SwapChainBufferCount);
+	instanceBufferOffset = frameIndex * (instanceBufferCapacity / BackBufferCount);
 
 	if (gbufferAlbedo == nullptr || gbufferNormal == nullptr)
 	{
@@ -392,8 +392,8 @@ ID3D12Device* RenderSystem::GetDevice() const noexcept { return device.Get(); }
 ID3D12GraphicsCommandList* RenderSystem::GetCommandList() const noexcept { return commandList.Get(); }
 const D3D12_VIEWPORT& RenderSystem::GetViewport() const noexcept { return viewport; }
 ID3D12RootSignature* RenderSystem::GetDefaultRootSignature() const noexcept { return rootSignature.Get(); }
-ID3D12PipelineState* RenderSystem::GetDefaultPipelineState() const noexcept { return pipelineState.Get(); }
-ID3D12PipelineState* RenderSystem::GetUIPipelineState() const noexcept { return uiPipelineState.Get(); }
+ID3D12PipelineState* RenderSystem::GetDefaultPipelineState() const noexcept { return gameObjectPipelineState.Get(); }
+ID3D12PipelineState* RenderSystem::GetUIPipelineState() const noexcept { return uiObjectPipelineState.Get(); }
 ID3D12PipelineState* RenderSystem::GetLightingPipelineState() const noexcept { return lightingPipelineState.Get(); }
 
 void RenderSystem::SetPipelineState(ID3D12PipelineState* pipelineState_)
@@ -475,8 +475,8 @@ void RenderSystem::DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span
 	SetObjectConstants(objectData);
 
 	const uint32_t matrixSize{ static_cast<uint32_t>(sizeof(Matrix4x4)) };
-	const uint32_t frameStartOffset{ frameIndex * (instanceBufferCapacity / SwapChainBufferCount) };
-	const uint32_t frameEndOffset{ (frameIndex + 1) * (instanceBufferCapacity / SwapChainBufferCount) };
+	const uint32_t frameStartOffset{ frameIndex * (instanceBufferCapacity / BackBufferCount) };
+	const uint32_t frameEndOffset{ (frameIndex + 1) * (instanceBufferCapacity / BackBufferCount) };
 	const uint32_t frameCapacity{ frameEndOffset - frameStartOffset };
 	const uint32_t maxInstancesPerChunk{ frameCapacity / matrixSize };
 	if (maxInstancesPerChunk == 0)
@@ -568,7 +568,7 @@ std::expected<void, std::wstring> RenderSystem::CreateCommandObjects()
 		return std::unexpected<std::wstring>(L"Failed to create Command Queue.");
 	}
 
-	for (uint32_t i{ 0 }; i < SwapChainBufferCount; ++i)
+	for (uint32_t i{ 0 }; i < BackBufferCount; ++i)
 	{
 		if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocators[i]))))
 		{
@@ -601,7 +601,7 @@ std::expected<void, std::wstring> RenderSystem::CreateSwapChain(HWND hWnd_)
 	sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.SampleDesc.Count = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = SwapChainBufferCount;
+	sd.BufferCount = BackBufferCount;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
 	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
@@ -628,7 +628,7 @@ std::expected<void, std::wstring> RenderSystem::CreateSwapChain(HWND hWnd_)
 std::expected<void, std::wstring> RenderSystem::CreateDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
-	rtvHeapDesc.NumDescriptors = SwapChainBufferCount;
+	rtvHeapDesc.NumDescriptors = BackBufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	if (FAILED(device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&rtvHeap))))
 	{
@@ -637,7 +637,7 @@ std::expected<void, std::wstring> RenderSystem::CreateDescriptorHeaps()
 	rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
-	for (uint32_t i{ 0 }; i < SwapChainBufferCount; ++i)
+	for (uint32_t i{ 0 }; i < BackBufferCount; ++i)
 	{
 		if (FAILED(swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]))))
 		{
@@ -843,9 +843,9 @@ std::expected<void, std::wstring> RenderSystem::CreatePipelineStates()
 	pd.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	pd.SampleDesc.Count = 1;
 
-	if (FAILED(device->CreateGraphicsPipelineState(&pd, IID_PPV_ARGS(&pipelineState))))
+	if (FAILED(device->CreateGraphicsPipelineState(&pd, IID_PPV_ARGS(&gameObjectPipelineState))))
 	{
-		return std::unexpected<std::wstring>(L"Failed to create pipelineState.");
+		return std::unexpected<std::wstring>(L"Failed to create gameObjectPipelineState.");
 	}
 
 	Shader* const lShader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/DeferredLighting.hlsl") };
@@ -874,7 +874,7 @@ std::expected<void, std::wstring> RenderSystem::CreatePipelineStates()
 		ud.InputLayout = { uiIl, 2 };
 		ud.VS = { uShader->GetVSBlob()->GetBufferPointer(), uShader->GetVSBlob()->GetBufferSize() };
 		ud.PS = { uShader->GetPSBlob()->GetBufferPointer(), uShader->GetPSBlob()->GetBufferSize() };
-		device->CreateGraphicsPipelineState(&ud, IID_PPV_ARGS(&uiPipelineState));
+		device->CreateGraphicsPipelineState(&ud, IID_PPV_ARGS(&uiObjectPipelineState));
 	}
 
 	return {};

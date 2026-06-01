@@ -104,7 +104,7 @@ private:
 	void MoveToNextFrame();
 	void WaitForGpu();
 
-	static constexpr uint32_t SwapChainBufferCount{ 2 };
+	static constexpr uint32_t BackBufferCount{ 2 };
 	static constexpr uint32_t MaxConstantBufferSize{ 1024 * 1024 * 8 }; // 8MB
 
 	uint32_t width{ 800 };
@@ -112,7 +112,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D12Device> device;
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocators[SwapChainBufferCount];
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocators[BackBufferCount];
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
@@ -128,15 +128,15 @@ private:
 	uint32_t srvDescriptorSize{ 0 };
 	uint32_t gbufferRtvDescriptorSize{ 0 };
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> renderTargets[SwapChainBufferCount];
+	Microsoft::WRL::ComPtr<ID3D12Resource> renderTargets[BackBufferCount];
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> gbufferAlbedo;
 	Microsoft::WRL::ComPtr<ID3D12Resource> gbufferNormal;
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> uiPipelineState;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> gameObjectPipelineState;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> uiObjectPipelineState;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> lightingPipelineState;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
@@ -156,7 +156,7 @@ private:
 	D3D12_GPU_VIRTUAL_ADDRESS lightCbvAddress{ 0 };
 
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-	uint64_t fenceValues[SwapChainBufferCount]{ 0 };
+	uint64_t fenceValues[BackBufferCount]{ 0 };
 	HANDLE fenceEvent{ nullptr };
 };
 
@@ -165,8 +165,8 @@ inline D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantsData(const T& data
 {
 	const uint32_t size{ (static_cast<uint32_t>(sizeof(T)) + 255) & ~255 };
 	
-	const uint32_t frameStartOffset{ frameIndex * (MaxConstantBufferSize / SwapChainBufferCount) };
-	const uint32_t frameEndOffset{ (frameIndex + 1) * (MaxConstantBufferSize / SwapChainBufferCount) };
+	const uint32_t frameStartOffset{ frameIndex * (MaxConstantBufferSize / BackBufferCount) };
+	const uint32_t frameEndOffset{ (frameIndex + 1) * (MaxConstantBufferSize / BackBufferCount) };
 
 	if (constantBufferOffset < frameStartOffset || constantBufferOffset + size > frameEndOffset)
 	{
