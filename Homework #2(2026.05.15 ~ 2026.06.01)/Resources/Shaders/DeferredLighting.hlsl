@@ -1,4 +1,4 @@
-#pragma pack_matrix(row_major)
+﻿#pragma pack_matrix(row_major)
 
 struct VSOutput
 {
@@ -43,7 +43,6 @@ float4 PSMain(VSOutput input) : SV_TARGET
     const float4 normalPacked = NormalTex.Sample(LinearSampler, input.uv);
     if (normalPacked.a < 0.5f)
     {
-        // Background(clear) pixel: preserve camera clear color without lighting.
         return float4(albedo.rgb, 1.0f);
     }
 
