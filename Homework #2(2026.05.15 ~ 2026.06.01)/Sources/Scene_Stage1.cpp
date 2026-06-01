@@ -275,4 +275,3 @@ std::wstring Scene_Stage1::ReadString(std::ifstream& file_)
 
 	return std::wstring(str.begin(), str.end());
 }
-
