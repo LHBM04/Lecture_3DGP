@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene_Stage2.h"
 
 #include "Camera.h"
@@ -13,40 +13,71 @@
 #include "MeshRenderer.h"
 #include "PlayerController.h"
 #include "ResourceSystem.h"
+#include "Shader.h"
 #include "StairCollider.h"
+#include "StageSceneController.h"
 #include "Transform.h"
 
 void Scene_Stage2::OnLoad()
 {
-	BuildSceneObjects(L"Resources/Scenes/Scene_Stage1.bin");
+	const std::wstring_view StageMapPath{ L"Resources/Scenes/Scene_Stage2.bin" };
+	BuildSceneObjects(StageMapPath);
 
-	GameObject* cameraObject{ Instantiate() };
+	GameObject* const cameraObject{ Instantiate() };
 	cameraObject->SetName(L"Main Camera");
 	cameraObject->SetTag(L"MainCamera");
-	cameraObject->GetComponent<Transform>()->SetWorldPosition(Vector3D(0.0f, 30.0f, -60.0f));
-	cameraObject->GetComponent<Transform>()->SetLocalRotation(Quaternion::Euler(25.0f, 0.0f, 0.0f));
 
-	Camera* camera{ cameraObject->AddComponent<Camera>() };
+	Transform* const camTr{ cameraObject->GetComponent<Transform>() };
+	camTr->SetWorldPosition(Vector3D{ 0.0f, 30.0f, -60.0f });
+	camTr->SetLocalRotation(Quaternion::Euler(25.0f, 0.0f, 0.0f));
+
+	Camera* const camera{ cameraObject->AddComponent<Camera>() };
 	camera->SetClearMode(Camera::ClearType::SolidColor);
-	camera->SetClearColor(ColorRGBA{ 0.0f, 0.0f, 0.0f, 1.0f });
+	camera->SetClearColor(ColorRGBA{ 0.02f, 0.05f, 0.25f, 1.0f });
 
-	GameObject* lightObject{ Instantiate() };
+	GameObject* const lightObject{ Instantiate() };
 	lightObject->SetName(L"Main Light");
 	lightObject->GetComponent<Transform>()->SetLocalRotation(Quaternion::Euler(45.0f, -45.0f, 0.0f));
 
-	Light* light{ lightObject->AddComponent<Light>() };
-	light->SetIntensity(1.2f);
+	Light* const light{ lightObject->AddComponent<Light>() };
+	light->SetIntensity(1.5f);
 	light->SetColor(ColorRGBA::GetWhite());
 
-	CameraController* cameraController{ cameraObject->AddComponent<CameraController>() };
+	CameraController* const cameraController{ cameraObject->AddComponent<CameraController>() };
 	cameraController->SetThirdPersonOffset(Vector3D{ 0.0f, 2.0f, -3.0f });
 	cameraController->SetFirstPersonOffset(Vector3D{ 0.0f, 1.6f, 0.0f });
 
-	GameObject* playerObject{ FindObjectWithTag(L"Player") };
+	GameObject* const playerObject{ FindObjectWithTag(L"Player") };
 	if (playerObject != nullptr)
 	{
 		cameraController->SetTarget(playerObject->GetComponent<Transform>());
 	}
+
+	GameObject* const crosshairObject{ Instantiate() };
+	crosshairObject->SetName(L"Crosshair");
+	crosshairObject->SetTag(L"UI");
+
+	Mesh* const crosshairMesh{ ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Crosshair.bin") };
+	Material* const crosshairMaterial{ ResourceSystem::GetInstance().GetResource<Material>(L"Resources/Materials/Crosshair.bin") };
+	Shader* const uiShader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/UIObject.hlsl") };
+	if (crosshairMaterial != nullptr && uiShader != nullptr)
+	{
+		crosshairMaterial->SetShader(uiShader);
+	}
+
+	Transform* const crosshairTransform{ crosshairObject->GetComponent<Transform>() };
+	crosshairTransform->SetParent(cameraObject->GetComponent<Transform>());
+	crosshairTransform->SetLocalPosition(Vector3D{ 0.0f, 0.0f, 0.2f });
+	crosshairTransform->SetLocalRotation(Quaternion::GetIdentity());
+	crosshairTransform->SetLocalScale(Vector3D{ 0.03f, 0.03f, 0.03f });
+
+	MeshRenderer* const crosshairRenderer{ crosshairObject->AddComponent<MeshRenderer>() };
+	crosshairRenderer->SetMesh(crosshairMesh);
+	crosshairRenderer->SetMaterial(crosshairMaterial);
+	crosshairObject->SetActive(false);
+
+	cameraController->SetCrosshairObject(crosshairObject);
+	cameraObject->AddComponent<StageSceneController>();
 }
 
 void Scene_Stage2::OnUnload()
@@ -118,9 +149,9 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 			break;
 		}
 
-		GameObject* go{ Instantiate() };
-		go->SetName(name);
-		go->GetComponent<Transform>()->SetWorldMatrix(worldMatrix);
+		GameObject* gameObject{ Instantiate() };
+		gameObject->SetName(name);
+		gameObject->GetComponent<Transform>()->SetWorldMatrix(worldMatrix);
 
 		std::wstring meshPath{ L"Resources/Meshes/Cube.bin" };
 		std::wstring matPath{ L"DefaultMaterial" };
@@ -130,16 +161,16 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 		{
 			meshPath = L"Resources/Meshes/Player.bin";
 			matPath = L"Resources/Materials/Player.bin";
-			go->SetTag(L"Player");
-			go->AddComponent<PlayerController>();
+			gameObject->SetTag(L"Player");
+			gameObject->AddComponent<PlayerController>();
 			isStaticCollider = false;
 		}
 		else if (name.find(L"Enemy") != std::wstring::npos)
 		{
 			meshPath = L"Resources/Meshes/Enemy.bin";
 			matPath = L"Resources/Materials/Enemy.bin";
-			go->SetTag(L"Enemy");
-			go->AddComponent<EnemyController>();
+			gameObject->SetTag(L"Enemy");
+			gameObject->AddComponent<EnemyController>();
 			isStaticCollider = false;
 		}
 		else if (name.find(L"Wall") != std::wstring::npos)
@@ -168,7 +199,7 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 				i, name, worldPos.x, worldPos.y, worldPos.z, meshPath, matPath);
 		}
 
-		MeshRenderer* renderer{ go->AddComponent<MeshRenderer>() };
+		MeshRenderer* renderer{ gameObject->AddComponent<MeshRenderer>() };
 		renderer->SetMesh(mesh != nullptr ? mesh : defaultMesh);
 		renderer->SetMaterial(mat != nullptr ? mat : defaultMat);
 
@@ -180,7 +211,7 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 			Vector3D size{ max - min };
 			if (name.find(L"Stair") != std::wstring::npos)
 			{
-				StairCollider* stairCollider{ go->AddComponent<StairCollider>() };
+				StairCollider* stairCollider{ gameObject->AddComponent<StairCollider>() };
 				stairCollider->SetCenter(center);
 				stairCollider->SetSize(size);
 				stairCollider->SetSlopeAxis(StairCollider::SlopeAxis::PositiveZ);
@@ -189,10 +220,19 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 			}
 			else
 			{
-				CubeCollider* collider{ go->AddComponent<CubeCollider>() };
-				collider->SetCenter(center);
-				collider->SetSize(size);
-				collider->SetStatic(isStaticCollider);
+				CubeCollider* collider{ gameObject->AddComponent<CubeCollider>() };
+				if (name.find(L"Player") != std::wstring::npos)
+				{
+					collider->SetCenter(Vector3D{ 0.0f, 0.0f, 0.0f });
+					collider->SetSize(Vector3D{ 0.8f, 2.0f, 0.8f });
+					collider->SetStatic(false);
+				}
+				else
+				{
+					collider->SetCenter(center);
+					collider->SetSize(size);
+					collider->SetStatic(isStaticCollider);
+				}
 				collider->UpdateVolume();
 			}
 		}
@@ -253,5 +293,3 @@ std::wstring Scene_Stage2::ReadString(std::ifstream& file_)
 
 	return std::wstring(str.begin(), str.end());
 }
-
-

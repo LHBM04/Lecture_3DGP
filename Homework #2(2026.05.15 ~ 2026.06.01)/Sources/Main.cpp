@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "InputSystem.h"
 #include "Logger.h"
@@ -151,7 +151,6 @@ INT APIENTRY wWinMain(
 			}
 
 			SceneSystem::GetInstance().Update(deltaTime);
-			SceneSystem::GetInstance().LateUpdate(deltaTime);
 			lastTime = nowTime;
 		}
 

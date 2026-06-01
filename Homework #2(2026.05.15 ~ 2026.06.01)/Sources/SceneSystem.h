@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -17,7 +17,6 @@ public:
 
 	void Update(float deltaTime_);
 	void FixedUpdate(float fixedDeltaTime_);
-	void LateUpdate(float deltaTime_);
 
 	void Render();
 
@@ -33,4 +32,3 @@ private:
 	Scene* nextScene{ nullptr };
 	Scene* currentScene{ nullptr };
 };
-

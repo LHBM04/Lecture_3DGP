@@ -17,8 +17,11 @@ protected:
 	void OnStart() override;
 
 	void OnUpdate(float deltaTime_) override;
+	void OnCollisionEnter(class Collider* other_) override;
 
 private:
+	[[nodiscard]] bool IsColliding(bool ignoreFloor_);
+
 	float moveSpeed{ 10.0f };
 	float rotationSpeed{ 180.0f };
 
@@ -31,4 +34,5 @@ private:
 	float fireCooldown{ 0.2f };
 	float projectileSpeed{ 40.0f };
 	float projectileLifetime{ 2.0f };
+	bool gameOverTriggered{ false };
 };

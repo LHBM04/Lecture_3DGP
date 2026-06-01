@@ -1,22 +1,24 @@
 ﻿#include "Precompiled.h"
 #include "GameObject.h"
 
-std::wstring_view GameObject::GetName() const noexcept
+#include "Component.h"
+
+const std::wstring& GameObject::GetName() const noexcept
 {
 	return name;
 }
 
-void GameObject::SetName(std::wstring_view name_)
+void GameObject::SetName(const std::wstring& name_)
 {
 	name = name_;
 }
 
-std::wstring_view GameObject::GetTag() const noexcept
+const std::wstring& GameObject::GetTag() const noexcept
 {
 	return tag;
 }
 
-void GameObject::SetTag(std::wstring_view tag_)
+void GameObject::SetTag(const std::wstring& tag_)
 {
 	tag = tag_;
 }
@@ -52,19 +54,6 @@ bool GameObject::IsDestroyed() const noexcept
 	return isDestroyed;
 }
 
-void GameObject::LateUpdate(float deltaTime_)
-{
-	if (!isActive)
-	{
-		return;
-	}
-
-	for (const std::unique_ptr<Component>& component : components)
-	{
-		component->LateUpdate(deltaTime_);
-	}
-}
-
 void GameObject::Destroy()
 {
 	if (isDestroyed)
@@ -94,6 +83,11 @@ void GameObject::Update(float deltaTime_)
 	for (const std::unique_ptr<Component>& component : components)
 	{
 		component->Update(deltaTime_);
+	}
+
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		component->LateUpdate(deltaTime_);
 	}
 }
 
@@ -161,4 +155,3 @@ void GameObject::NotifyCollisionExit(Collider* other_)
 		component->CollisionExit(other_);
 	}
 }
-

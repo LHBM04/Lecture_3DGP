@@ -1,17 +1,14 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene.h"
 
 #include "Camera.h"
 #include "Collider.h"
-#include "GameObject.h"
 #include "Light.h"
+#include "Logger.h"
 #include "PhysicsSystem.h"
 #include "Quaternion.h"
 #include "RenderSystem.h"
 #include "Transform.h"
-
-Scene::Scene() = default;
-Scene::~Scene() = default;
 
 void Scene::Load()
 {
@@ -19,6 +16,7 @@ void Scene::Load()
 	{
 		return;
 	}
+
 	OnLoad();
 	PhysicsSystem::GetInstance().RegisterStaticObjectsToGrid();
 	isLoaded = true;
@@ -30,14 +28,24 @@ void Scene::Unload()
 	{
 		return;
 	}
+
 	PhysicsSystem::GetInstance().Clear();
 	OnUnload();
+
+	gameObjects.clear();
+	cameras.clear();
+	lights.clear();
+	destroyQueue.clear();
+
 	isLoaded = false;
 }
 
 void Scene::Update(float deltaTime_)
 {
-	assert(isLoaded);
+	if (!isLoaded)
+	{
+		return;
+	}
 
 	for (const std::unique_ptr<GameObject>& go : gameObjects)
 	{
@@ -45,13 +53,19 @@ void Scene::Update(float deltaTime_)
 		{
 			continue;
 		}
+
 		go->Update(deltaTime_);
 	}
+
+	ProcessDestroyQueue();
 }
 
 void Scene::FixedUpdate(float fixedDeltaTime_)
 {
-	assert(isLoaded);
+	if (!isLoaded)
+	{
+		return;
+	}
 
 	PhysicsSystem::GetInstance().Update(fixedDeltaTime_);
 
@@ -65,24 +79,12 @@ void Scene::FixedUpdate(float fixedDeltaTime_)
 	}
 }
 
-void Scene::LateUpdate(float deltaTime_)
-{
-	assert(isLoaded);
-
-	for (const std::unique_ptr<GameObject>& go : gameObjects)
-	{
-		if (go->IsDestroyed())
-		{
-			continue;
-		}
-		go->LateUpdate(deltaTime_);
-	}
-	ProcessDestroyQueue();
-}
-
 void Scene::Render()
 {
-	assert(isLoaded);
+	if (!isLoaded)
+	{
+		return;
+	}
 
 	for (Camera* const& camera : cameras)
 	{
@@ -100,9 +102,10 @@ void Scene::Render()
 		RenderSystem::GetInstance().SetCamera(camera);
 		RenderSystem::GetInstance().SetLights(lights);
 
+		RenderSystem::GetInstance().SetPipelineState(RenderSystem::GetInstance().GetDefaultPipelineState());
 		for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 		{
-			if (!gameObject->IsActive())
+			if (gameObject == nullptr || !gameObject->IsActive() || gameObject->IsDestroyed() || gameObject->GetTag() == L"UI")
 			{
 				continue;
 			}
@@ -122,87 +125,19 @@ void Scene::Render()
 		}
 
 		RenderSystem::GetInstance().ExecuteLightingPass();
-	}
-}
 
-GameObject* Scene::Pick(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_)
-{
-	return PhysicsSystem::GetInstance().Raycast(rayOrigin_, rayDir_, distance_);
-}
-
-GameObject* Scene::FindObjectWithName(std::wstring_view name_)
-{
-	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects, 
-		[name_](const std::unique_ptr<GameObject>& go) { return go->GetName() == name_; }) };
-	
-	if (found != gameObjects.end())
-	{
-		return found->get();
-	}
-	return nullptr;
-}
-
-GameObject* Scene::FindObjectWithTag(std::wstring_view tag_)
-{
-	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects,
-		[tag_](const std::unique_ptr<GameObject>& go) { return go->GetTag() == tag_; }) };
-
-	if (found != gameObjects.end())
-	{
-		return found->get();
-	}
-	return nullptr;
-}
-
-std::vector<GameObject*> Scene::FindObjectsWithName(std::wstring_view name_)
-{
-	std::vector<GameObject*> result;
-	for (const std::unique_ptr<GameObject>& go : gameObjects)
-	{
-		if (go->GetName() == name_)
+		RenderSystem::GetInstance().SetRenderTargetToBackBuffer();
+		RenderSystem::GetInstance().SetPipelineState(RenderSystem::GetInstance().GetUIPipelineState());
+		for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 		{
-			result.push_back(go.get());
+			if (gameObject == nullptr || !gameObject->IsActive() || gameObject->IsDestroyed() || gameObject->GetTag() != L"UI")
+			{
+				continue;
+			}
+
+			gameObject->Render();
 		}
 	}
-	return result;
-}
-
-std::vector<GameObject*> Scene::FindObjectsWithTag(std::wstring_view tag_)
-{
-	std::vector<GameObject*> result;
-	for (const std::unique_ptr<GameObject>& go : gameObjects)
-	{
-		if (go->GetTag() == tag_)
-		{
-			result.push_back(go.get());
-		}
-	}
-	return result;
-}
-
-const std::vector<std::unique_ptr<GameObject>>& Scene::GetGameObjects() const noexcept
-{
-	return gameObjects;
-}
-
-std::span<Camera* const> Scene::GetCameras()
-{
-	return cameras;
-}
-
-std::span<const Camera* const> Scene::GetCameras() const
-{
-	return cameras;
-}
-
-std::span<Light* const> Scene::GetLights()
-{
-	return lights;
-}
-
-std::span<const Light* const> Scene::GetLights() const
-{
-	return lights;
 }
 
 GameObject* Scene::Instantiate()
@@ -220,6 +155,11 @@ GameObject* Scene::Instantiate()
 
 	GameObject* newObjectPtr{ newObject.get() };
 	gameObjects.push_back(std::move(newObject));
+	Logger::Trace(
+		L"[Scene] Instantiate: scene_ptr=0x{:X}, object_ptr=0x{:X}, name={}",
+		static_cast<unsigned long long>(reinterpret_cast<std::uintptr_t>(this)),
+		static_cast<unsigned long long>(reinterpret_cast<std::uintptr_t>(newObjectPtr)),
+		newObjectPtr->GetName());
 
 	return newObjectPtr;
 }
@@ -323,6 +263,60 @@ void Scene::Destroy(GameObject* gameObject_)
 			destroyQueue.emplace_back(current);
 		}
 	}
+}
+
+GameObject* Scene::Pick(const Vector3D& rayOrigin_, const Vector3D& rayDir_, float* distance_)
+{
+	return PhysicsSystem::GetInstance().Raycast(rayOrigin_, rayDir_, distance_);
+}
+
+GameObject* Scene::FindObjectWithName(std::wstring_view name_)
+{
+	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects, 
+		[name_](const std::unique_ptr<GameObject>& go) { return go->GetName() == name_; }) };
+	
+	if (found != gameObjects.end())
+	{
+		return found->get();
+	}
+	return nullptr;
+}
+
+GameObject* Scene::FindObjectWithTag(std::wstring_view tag_)
+{
+	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects,
+		[tag_](const std::unique_ptr<GameObject>& go) { return go->GetTag() == tag_; }) };
+
+	if (found != gameObjects.end())
+	{
+		return found->get();
+	}
+	return nullptr;
+}
+
+std::span<const std::unique_ptr<GameObject>> Scene::GetGameObjects() const noexcept
+{
+	return gameObjects;
+}
+
+std::span<Camera* const> Scene::GetCameras()
+{
+	return cameras;
+}
+
+std::span<const Camera* const> Scene::GetCameras() const
+{
+	return cameras;
+}
+
+std::span<Light* const> Scene::GetLights()
+{
+	return lights;
+}
+
+std::span<const Light* const> Scene::GetLights() const
+{
+	return lights;
 }
 
 void Scene::AddCamera(Camera* camera_)

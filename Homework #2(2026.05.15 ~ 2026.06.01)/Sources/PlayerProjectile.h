@@ -16,6 +16,7 @@ public:
 protected:
 	void OnAwake() override;
 	void OnUpdate(float deltaTime_) override;
+	void OnCollisionEnter(class Collider* other_) override;
 
 private:
 	Vector3D direction{ Vector3D::GetForward() };

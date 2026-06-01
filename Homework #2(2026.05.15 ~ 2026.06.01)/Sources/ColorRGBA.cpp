@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "ColorRGBA.h"
 #include "ColorRGB.h"
 #include "Vector3D.h"
@@ -169,15 +169,50 @@ bool ColorRGBA::IsApproximately(const ColorRGBA& lhs_, const ColorRGBA& rhs_, fl
 		   std::abs(lhs_.w - rhs_.w) <= epsilon_;
 }
 
-ColorRGBA ColorRGBA::GetBlack() noexcept { return ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetWhite() noexcept { return ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetRed() noexcept { return ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetGreen() noexcept { return ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetBlue() noexcept { return ColorRGBA(0.0f, 0.0f, 1.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetYellow() noexcept { return ColorRGBA(1.0f, 0.92f, 0.016f, 1.0f); }
-ColorRGBA ColorRGBA::GetCyan() noexcept { return ColorRGBA(0.0f, 1.0f, 1.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetMagenta() noexcept { return ColorRGBA(1.0f, 0.0f, 1.0f, 1.0f); }
-ColorRGBA ColorRGBA::GetClear() noexcept { return ColorRGBA(0.0f, 0.0f, 0.0f, 0.0f); }
+ColorRGBA ColorRGBA::GetBlack() noexcept
+{
+    return ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+ColorRGBA ColorRGBA::GetWhite() noexcept 
+{ 
+    return ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetRed() noexcept 
+{ 
+    return ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetGreen() noexcept 
+{ 
+    return ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetBlue() noexcept 
+{ 
+    return ColorRGBA(0.0f, 0.0f, 1.0f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetYellow() noexcept 
+{ 
+    return ColorRGBA(1.0f, 0.92f, 0.016f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetCyan() noexcept 
+{ 
+    return ColorRGBA(0.0f, 1.0f, 1.0f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetMagenta() noexcept 
+{ 
+    return ColorRGBA(1.0f, 0.0f, 1.0f, 1.0f); 
+}
+
+ColorRGBA ColorRGBA::GetClear() noexcept 
+{ 
+    return ColorRGBA(0.0f, 0.0f, 0.0f, 0.0f); 
+}
 
 bool ColorRGBA::IsTransparent(float epsilon_) const noexcept
 {

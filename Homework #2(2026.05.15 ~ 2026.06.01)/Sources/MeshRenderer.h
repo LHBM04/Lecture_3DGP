@@ -1,9 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include "Component.h"
 
-class Mesh;
 class Material;
+class Mesh;
 
 class MeshRenderer final : public Component
 {
@@ -17,6 +17,7 @@ public:
 	[[nodiscard]] Material* GetMaterial() const noexcept;
 	void SetMaterial(Material* material_) noexcept;
 
+protected:
 	void OnRender() override;
 
 private:

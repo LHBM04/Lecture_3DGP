@@ -20,6 +20,4 @@ private:
 	void BuildSceneObjects(std::wstring_view mapPath_);
 	bool ReadTag(std::ifstream& file_, const std::string& expectedTag_);
 	std::wstring ReadString(std::ifstream& file_);
-	void SpawnEnemiesFromMap(std::wstring_view mapPath_);
-	void SpawnEnemyAt(const Vector3D& position_);
 };

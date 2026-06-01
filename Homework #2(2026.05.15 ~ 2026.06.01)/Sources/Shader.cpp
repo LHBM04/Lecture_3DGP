@@ -1,8 +1,10 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "Shader.h"
 
 #include <d3dcompiler.h>
+
+#include "Logger.h"
 
 Shader::~Shader()
 {
@@ -11,7 +13,13 @@ Shader::~Shader()
 
 bool Shader::Load()
 {
-	return Compile().has_value();
+	const std::expected<void, std::wstring> result{ Compile() };
+	if (!result.has_value())
+	{
+		Logger::Critical(L"[Shader] Compile failed: {}", result.error());
+		return false;
+	}
+	return true;
 }
 
 void Shader::Unload()
@@ -41,9 +49,9 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 		{
 			const char* errorChars{ static_cast<const char*>(errorBlob->GetBufferPointer()) };
 			const std::string errorText(errorChars, errorBlob->GetBufferSize());
-			return std::unexpected(std::wstring(errorText.begin(), errorText.end()));
+			return std::unexpected<std::wstring>(std::wstring(errorText.begin(), errorText.end()));
 		}
-		return std::unexpected(L"Failed to compile Vertex Shader: " + path);
+		return std::unexpected<std::wstring>(L"Failed to compile Vertex Shader: " + path);
 	}
 
 	// Pixel Shader
@@ -58,9 +66,9 @@ std::expected<void, std::wstring> Shader::Compile(std::wstring_view vsEntry_, st
 		{
 			const char* errorChars{ static_cast<const char*>(errorBlob->GetBufferPointer()) };
 			const std::string errorText(errorChars, errorBlob->GetBufferSize());
-			return std::unexpected(std::wstring(errorText.begin(), errorText.end()));
+			return std::unexpected<std::wstring>(std::wstring(errorText.begin(), errorText.end()));
 		}
-		return std::unexpected(L"Failed to compile Pixel Shader: " + path);
+		return std::unexpected<std::wstring>(L"Failed to compile Pixel Shader: " + path);
 	}
 
 	return {};

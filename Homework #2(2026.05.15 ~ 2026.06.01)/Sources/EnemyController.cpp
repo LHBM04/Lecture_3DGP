@@ -1,4 +1,5 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
+
 #include "EnemyController.h"
 
 #include "Collider.h"
@@ -14,252 +15,200 @@
 #include "ResourceSystem.h"
 #include "Scene.h"
 #include "Transform.h"
+#include "Vector3D.h"
+
+void EnemyController::OnAwake()
+{
+}
+
+void EnemyController::OnStart()
+{
+}
 
 void EnemyController::OnUpdate(float deltaTime_)
 {
-	GameObject* owner{ GetOwner() };
-	if (owner == nullptr)
+	GameObject* const owner{ GetOwner() };
+	Transform* const transform{ owner->GetComponent<Transform>() };
+	GameObject* const player{ owner->GetScene()->FindObjectWithTag(L"Player") };
+
+	if (player == nullptr)
 	{
 		return;
 	}
 
-	Transform* transform{ owner->GetComponent<Transform>() };
-	CubeCollider* myCollider{ owner->GetComponent<CubeCollider>() };
-	Scene* scene{ owner->GetScene() };
-	if (transform == nullptr || myCollider == nullptr || scene == nullptr)
-	{
-		return;
-	}
+	const Vector3D playerPos{ player->GetComponent<Transform>()->GetWorldPosition() };
+	const Vector3D currentPos{ transform->GetWorldPosition() };
+	const float distanceToPlayer{ Vector3D::Distance(currentPos, playerPos) };
 
-	GameObject* player{ scene->FindObjectWithTag(L"Player") };
-	if (player == nullptr || !player->IsActive())
-	{
-		return;
-	}
-
-	Transform* playerTransform{ player->GetComponent<Transform>() };
-	if (playerTransform == nullptr)
-	{
-		return;
-	}
-
-	const Vector3D toPlayer{ playerTransform->GetWorldPosition() - transform->GetWorldPosition() };
-	const float distanceToPlayer{ toPlayer.GetMagnitude() };
-	Vector3D moveDelta{ Vector3D::GetZero() };
-
-	if (!hasDetectedPlayer && distanceToPlayer <= detectRange)
+	if (distanceToPlayer <= detectionRange)
 	{
 		hasDetectedPlayer = true;
 	}
 
-	if (hasDetectedPlayer && distanceToPlayer > Mathf::Epsilon)
+	if (hasDetectedPlayer)
 	{
-		Vector3D moveDir{ toPlayer };
-		moveDir.y = 0.0f;
-		if (!moveDir.IsZero())
+		const Vector3D moveDir{ Vector3D::Normalize(playerPos - currentPos) };
+		const Quaternion targetRotation{ Quaternion::LookRotation(moveDir, Vector3D::GetUp()) };
+		transform->SetWorldRotation(Quaternion::Slerp(transform->GetWorldRotation(), targetRotation, rotationSpeed * deltaTime_));
+
+		Vector3D moveDelta{ moveDir * (moveSpeed * deltaTime_) };
+		moveDelta.y = 0.0f;
+
+		Vector3D currentPos{ transform->GetWorldPosition() };
+		const float maxStepHeight{ 0.5f };
+
+		// X-axis move + step-up check
+		if (std::abs(moveDelta.x) > Mathf::Epsilon)
 		{
-			moveDir.Normalize();
-			moveDelta = moveDir * (moveSpeed * deltaTime_);
-
-			const Quaternion targetRotation{ Quaternion::LookRotation(moveDir, Vector3D::GetUp()) };
-			const Quaternion currentRotation{ transform->GetLocalRotation() };
-			const float t{ std::min(1.0f, rotationSpeed * deltaTime_ / 180.0f) };
-			transform->SetLocalRotation(Quaternion::Slerp(currentRotation, targetRotation, t));
-		}
-	}
-
-	Vector3D currentPos{ transform->GetLocalPosition() };
-
-	auto IsColliding = [&](bool ignoreFloor) -> bool
-	{
-		myCollider->UpdateVolume();
-		std::vector<Collider*> nearbyColliders{ PhysicsSystem::GetInstance().GetNearbyStaticColliders(myCollider) };
-		for (Collider* otherCol : nearbyColliders)
-		{
-			GameObject* otherObject{ otherCol->GetOwner() };
-			if (otherObject == nullptr || otherObject == owner)
+			transform->SetWorldPosition(Vector3D{ currentPos.x + moveDelta.x, currentPos.y, currentPos.z });
+			if (IsColliding(true))
 			{
-				continue;
-			}
-
-			if (!myCollider->IsIntersects(otherCol))
-			{
-				continue;
-			}
-
-			if (ignoreFloor && otherObject->GetName().find(L"Floor") != std::wstring::npos)
-			{
-				continue;
-			}
-
-			return true;
-		}
-		return false;
-	};
-
-	if (std::abs(moveDelta.x) > Mathf::Epsilon)
-	{
-		transform->SetLocalPosition(Vector3D(currentPos.x + moveDelta.x, currentPos.y, currentPos.z));
-		if (IsColliding(true))
-		{
-			bool climbed{ false };
-			float testY{ currentPos.y };
-			while (testY < currentPos.y + maxStepHeight)
-			{
-				testY += 0.05f;
-				transform->SetLocalPosition(Vector3D(currentPos.x + moveDelta.x, testY, currentPos.z));
-				if (!IsColliding(true))
+				bool climbed{ false };
+				float testY{ currentPos.y };
+				while (testY < currentPos.y + maxStepHeight)
 				{
-					climbed = true;
-					break;
+					testY += 0.05f;
+					transform->SetWorldPosition(Vector3D{ currentPos.x + moveDelta.x, testY, currentPos.z });
+					if (!IsColliding(true))
+					{
+						climbed = true;
+						break;
+					}
+				}
+				if (!climbed)
+				{
+					transform->SetWorldPosition(currentPos);
 				}
 			}
-			if (!climbed)
-			{
-				transform->SetLocalPosition(currentPos);
-			}
+			currentPos = transform->GetWorldPosition();
 		}
-		currentPos = transform->GetLocalPosition();
-	}
 
-	if (std::abs(moveDelta.z) > Mathf::Epsilon)
-	{
-		transform->SetLocalPosition(Vector3D(currentPos.x, currentPos.y, currentPos.z + moveDelta.z));
-		if (IsColliding(true))
+		// Z-axis move + step-up check
+		if (std::abs(moveDelta.z) > Mathf::Epsilon)
 		{
-			bool climbed{ false };
-			float testY{ currentPos.y };
-			while (testY < currentPos.y + maxStepHeight)
+			transform->SetWorldPosition(Vector3D{ currentPos.x, currentPos.y, currentPos.z + moveDelta.z });
+			if (IsColliding(true))
 			{
-				testY += 0.05f;
-				transform->SetLocalPosition(Vector3D(currentPos.x, testY, currentPos.z + moveDelta.z));
-				if (!IsColliding(true))
+				bool climbed{ false };
+				float testY{ currentPos.y };
+				while (testY < currentPos.y + maxStepHeight)
 				{
-					climbed = true;
-					break;
+					testY += 0.05f;
+					transform->SetWorldPosition(Vector3D{ currentPos.x, testY, currentPos.z + moveDelta.z });
+					if (!IsColliding(true))
+					{
+						climbed = true;
+						break;
+					}
+				}
+				if (!climbed)
+				{
+					transform->SetWorldPosition(currentPos);
 				}
 			}
-			if (!climbed)
-			{
-				transform->SetLocalPosition(currentPos);
-			}
 		}
-		currentPos = transform->GetLocalPosition();
 	}
 
+	// Gravity
 	verticalVelocity += gravity * deltaTime_;
-	const float yDelta{ verticalVelocity * deltaTime_ };
-	float remainingY{ yDelta };
-	constexpr float maxStepY{ 0.1f };
-	while (std::abs(remainingY) > Mathf::Epsilon)
+	float remainingY{ verticalVelocity * deltaTime_ };
+	const float maxStepY{ 0.1f };
+	bool blockedOnY{ false };
+
+	for (int stepIndex{ 0 }; stepIndex < 64 && std::abs(remainingY) > Mathf::Epsilon; ++stepIndex)
 	{
 		const float stepY{ std::clamp(remainingY, -maxStepY, maxStepY) };
-		transform->SetLocalPosition(Vector3D(currentPos.x, currentPos.y + stepY, currentPos.z));
+		const Vector3D beforeStepPos{ transform->GetWorldPosition() };
+		transform->SetWorldPosition(Vector3D{ beforeStepPos.x, beforeStepPos.y + stepY, beforeStepPos.z });
 
 		if (IsColliding(false))
 		{
-			if (stepY <= 0.0f)
+			transform->SetWorldPosition(beforeStepPos);
+			blockedOnY = true;
+			if (verticalVelocity < 0.0f)
 			{
 				isGrounded = true;
 			}
 			verticalVelocity = 0.0f;
-			transform->SetLocalPosition(currentPos);
 			break;
 		}
 
-		currentPos = transform->GetLocalPosition();
 		remainingY -= stepY;
+	}
+
+	if (!blockedOnY)
+	{
 		isGrounded = false;
 	}
 }
 
 void EnemyController::OnCollisionEnter(Collider* other_)
 {
-	if (other_ == nullptr)
-	{
-		return;
-	}
-
-	GameObject* owner{ GetOwner() };
-	GameObject* otherObject{ other_->GetOwner() };
-	if (owner == nullptr || otherObject == nullptr)
-	{
-		return;
-	}
-
-	auto SpawnExplosionParticles = [&](const Vector3D& origin_)
-	{
-		Scene* scene{ owner->GetScene() };
-		if (scene == nullptr)
-		{
-			return;
-		}
-
-		Mesh* particleMesh{ ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Cube.bin") };
-		if (std::rand() % 2 == 0)
-		{
-			particleMesh = ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Sphere.bin");
-		}
-		Material* particleMaterial{ ResourceSystem::GetInstance().GetResource<Material>(L"Resources/Materials/Particle.bin") };
-
-		constexpr int ParticleCount{ 14 };
-		for (int i = 0; i < ParticleCount; ++i)
-		{
-			const float rx{ (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX)) * 2.0f - 1.0f };
-			const float ry{ (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX)) * 1.2f + 0.2f };
-			const float rz{ (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX)) * 2.0f - 1.0f };
-			Vector3D velocity(rx, ry, rz);
-			velocity.Normalize();
-			velocity *= 5.0f + (static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX)) * 3.0f;
-
-			GameObject* particle{ scene->Instantiate(origin_, Quaternion::GetIdentity()) };
-			particle->SetName(L"ExplosionParticle");
-			particle->SetTag(L"Effect");
-
-			MeshRenderer* renderer{ particle->AddComponent<MeshRenderer>() };
-			renderer->SetMesh(particleMesh);
-			renderer->SetMaterial(particleMaterial);
-
-			Transform* particleTransform{ particle->GetComponent<Transform>() };
-			particleTransform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
-
-			ExplodeParticle* explodeParticle{ particle->AddComponent<ExplodeParticle>() };
-			explodeParticle->SetVelocity(velocity);
-			explodeParticle->SetLifeTime(0.55f);
-			explodeParticle->SetGravity(-16.0f);
-		}
-	};
-
+	const GameObject* const otherObject{ other_->GetOwner() };
 	if (otherObject->GetTag() == L"PlayerProjectile")
 	{
-		Transform* enemyTransform{ owner->GetComponent<Transform>() };
-		if (enemyTransform != nullptr)
+		SpawnExplosionParticles(GetOwner()->GetComponent<Transform>()->GetWorldPosition());
+		GetOwner()->GetScene()->Destroy(GetOwner());
+	}
+}
+
+bool EnemyController::IsColliding(bool ignoreFloor_)
+{
+	GameObject* const owner{ GetOwner() };
+	CubeCollider* const myCollider{ owner->GetComponent<CubeCollider>() };
+	if (myCollider == nullptr)
+	{
+		return false;
+	}
+
+	myCollider->UpdateVolume();
+	
+	const std::vector<Collider*> nearbyColliders{ PhysicsSystem::GetInstance().GetNearbyStaticColliders(myCollider) };
+	for (Collider* const otherCol : nearbyColliders)
+	{
+		GameObject* const go{ otherCol->GetOwner() };
+		if (go == nullptr || go == owner)
 		{
-			SpawnExplosionParticles(enemyTransform->GetWorldPosition() + Vector3D(0.0f, 0.5f, 0.0f));
+			continue;
 		}
 
-		Scene* scene{ owner->GetScene() };
-		if (scene != nullptr)
+		if (myCollider->IsIntersects(otherCol))
 		{
-			scene->Destroy(otherObject);
-			scene->Destroy(owner);
+			if (ignoreFloor_ && go->GetName().find(L"Floor") != std::wstring::npos)
+			{
+				continue;
+			}
+			return true; 
 		}
 	}
-	else if (otherObject->GetTag() == L"Player")
+	return false;
+}
+
+void EnemyController::SpawnExplosionParticles(const Vector3D& origin_)
+{
+	Scene* const scene{ GetOwner()->GetScene() };
+	Mesh* const particleMesh{ ResourceSystem::GetInstance().GetResource<Mesh>(L"Resources/Meshes/Sphere.bin") };
+	Material* const particleMaterial{ ResourceSystem::GetInstance().GetResource<Material>(L"Resources/Materials/Particle.bin") };
+
+	constexpr int ParticleCount{ 10 };
+	for (int i{ 0 }; i < ParticleCount; ++i)
 	{
-		Transform* playerTransform{ otherObject->GetComponent<Transform>() };
-		if (playerTransform != nullptr)
-		{
-			SpawnExplosionParticles(playerTransform->GetWorldPosition() + Vector3D(0.0f, 0.5f, 0.0f));
-		}
+		GameObject* const particle{ scene->Instantiate(origin_) };
+		particle->SetName(L"ExplodeParticle");
+		
+		const Vector3D randomDir{ 
+			(static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f - 1.0f,
+			(static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f - 1.0f,
+			(static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f - 1.0f
+		};
 
-		Scene* scene{ owner->GetScene() };
-		if (scene != nullptr)
-		{
-			scene->Destroy(otherObject);
-		}
-
-		::MessageBoxW(nullptr, L"Game Over!", L"Game Over", MB_OK | MB_ICONINFORMATION);
-		::PostQuitMessage(0);
+		ExplodeParticle* const logic{ particle->AddComponent<ExplodeParticle>() };
+		logic->SetVelocity(Vector3D::Normalize(randomDir) * 5.0f);
+		
+		MeshRenderer* const renderer{ particle->AddComponent<MeshRenderer>() };
+		renderer->SetMesh(particleMesh);
+		renderer->SetMaterial(particleMaterial);
+		
+		particle->GetComponent<Transform>()->SetLocalScale(Vector3D{ 0.2f, 0.2f, 0.2f });
 	}
 }

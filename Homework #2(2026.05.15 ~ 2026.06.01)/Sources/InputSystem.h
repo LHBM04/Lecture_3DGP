@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -92,6 +92,10 @@ public:
 	[[nodiscard]] bool IsButtonUp(ButtonCode button_) const;
 
 	[[nodiscard]] const Vector2D& GetMousePosition() const;
+	[[nodiscard]] Vector2D GetMouseDelta() const;
+
+	void SetCursorLock(bool isLocked_);
+	[[nodiscard]] bool IsCursorLocked() const noexcept;
 
 private:
 	static constexpr std::size_t KeyCount{ 256 };
@@ -103,47 +107,8 @@ private:
 	std::array<bool, ButtonCount> buttonStates;
 	std::array<bool, ButtonCount> prevButtonStates;
 
-	Vector2D mousePosition{ 0, 0 };
+	Vector2D mousePosition{ 0.0f, 0.0f };
+	Vector2D prevMousePosition{ 0.0f, 0.0f };
+
+	bool isCursorLocked{ false };
 };
-
-inline bool InputSystem::IsKeyPressed(KeyCode key_) const
-{
-	const std::uint8_t index{ std::to_underlying(key_) };
-	return keyStates[index] && !prevKeyStates[index];
-}
-
-inline bool InputSystem::IsKeyDown(KeyCode key_) const
-{
-	const std::uint8_t index{ std::to_underlying(key_) };
-	return keyStates[index];
-}
-
-inline bool InputSystem::IsKeyUp(KeyCode key_) const
-{
-	const std::uint8_t index{ std::to_underlying(key_) };
-	return !keyStates[index] && prevKeyStates[index];
-}
-
-inline bool InputSystem::IsButtonPressed(ButtonCode button_) const
-{
-	const std::uint8_t index{ std::to_underlying(button_) };
-	return buttonStates[index] && !prevButtonStates[index];
-}
-
-inline bool InputSystem::IsButtonDown(ButtonCode button_) const
-{
-	const std::uint8_t index{ std::to_underlying(button_) };
-	return buttonStates[index];
-}
-
-inline bool InputSystem::IsButtonUp(ButtonCode button_) const
-{
-	const std::uint8_t index{ std::to_underlying(button_) };
-	return !buttonStates[index] && prevButtonStates[index];
-}
-
-inline const Vector2D& InputSystem::GetMousePosition() const
-{
-	return mousePosition;
-}
-

@@ -1,9 +1,7 @@
-#pragma once
+﻿#pragma once
 
-#include <concepts>
 #include <memory>
 #include <string>
-#include <string_view>
 #include <vector>
 
 #include "Component.h"
@@ -16,28 +14,38 @@ class GameObject final
 
 public:
 	GameObject() = default;
-	~GameObject() = default;
+	virtual ~GameObject() = default;
 
 	GameObject(const GameObject&) = delete;
 	GameObject& operator=(const GameObject&) = delete;
 
-	GameObject(GameObject&&) = delete;
-	GameObject& operator=(GameObject&&) = delete;
-
 	void Update(float deltaTime_);
 	void FixedUpdate(float fixedDeltaTime_);
-	void LateUpdate(float deltaTime_);
 	void Render();
+
+	void Destroy();
 
 	void NotifyCollisionEnter(Collider* other_);
 	void NotifyCollisionStay(Collider* other_);
 	void NotifyCollisionExit(Collider* other_);
 
-	[[nodiscard]] std::wstring_view GetName() const noexcept;
-	void SetName(std::wstring_view name_);
+	template <class TComponent, class... Args>
+	TComponent* AddComponent(Args&&... args_);
 
-	[[nodiscard]] std::wstring_view GetTag() const noexcept;
-	void SetTag(std::wstring_view tag_);
+	template <class TComponent>
+	TComponent* GetComponent();
+
+	template <class TComponent>
+	const TComponent* GetComponent() const;
+
+	template <class TComponent>
+	void RemoveComponent();
+
+	[[nodiscard]] const std::wstring& GetName() const noexcept;
+	void SetName(const std::wstring& name_);
+
+	[[nodiscard]] const std::wstring& GetTag() const noexcept;
+	void SetTag(const std::wstring& tag_);
 
 	[[nodiscard]] bool IsActive() const noexcept;
 	void SetActive(bool isActive_);
@@ -46,51 +54,32 @@ public:
 
 	[[nodiscard]] Scene* GetScene() const noexcept;
 
-	template <class TComponent>
-	TComponent* AddComponent();
-
-	template <class TComponent>
-	[[nodiscard]] TComponent* GetComponent();
-
-	template <class TComponent>
-	[[nodiscard]] const TComponent* GetComponent() const;
-
 private:
-	void Destroy();
-
-private:
-	std::wstring name;
-	std::wstring tag;
-
+	std::wstring name{ L"New GameObject" };
+	std::wstring tag{ L"Untagged" };
 	bool isActive{ true };
 	bool isDestroyed{ false };
 
 	Scene* scene{ nullptr };
-
 	std::vector<std::unique_ptr<Component>> components;
 };
 
-template <class TComponent>
-inline TComponent* GameObject::AddComponent()
+template <class TComponent, class... Args>
+inline TComponent* GameObject::AddComponent(Args&&... args_)
 {
-	if (TComponent* existing{ GetComponent<TComponent>() }; existing != nullptr)
-	{
-		return existing;
-	}
-
-	std::unique_ptr<TComponent> component{ std::make_unique<TComponent>() };
-	TComponent* ptr{ component.get() };
-
-	component->SetOwner(this);
-	components.push_back(std::move(component));
-
-	ptr->Awake();
+	std::unique_ptr<TComponent> component{ std::make_unique<TComponent>(std::forward<Args>(args_)...) };
+	component->owner = this;
+	
+	TComponent* componentPtr{ component.get() };
+	components.emplace_back(std::move(component));
+	
+	componentPtr->Awake();
 	if (isActive)
 	{
-		ptr->Enable();
+		componentPtr->Enable();
 	}
 
-	return ptr;
+	return componentPtr;
 }
 
 template <class TComponent>
@@ -98,9 +87,9 @@ inline TComponent* GameObject::GetComponent()
 {
 	for (const std::unique_ptr<Component>& component : components)
 	{
-		if (TComponent* result{ dynamic_cast<TComponent*>(component.get()) }; result != nullptr)
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
 		{
-			return result;
+			return casted;
 		}
 	}
 	return nullptr;
@@ -111,10 +100,19 @@ inline const TComponent* GameObject::GetComponent() const
 {
 	for (const std::unique_ptr<Component>& component : components)
 	{
-		if (const TComponent* result{ dynamic_cast<const TComponent*>(component.get()) }; result != nullptr)
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
 		{
-			return result;
+			return casted;
 		}
 	}
 	return nullptr;
+}
+
+template <class TComponent>
+inline void GameObject::RemoveComponent()
+{
+	std::erase_if(components, [](const std::unique_ptr<Component>& component)
+	{
+		return dynamic_cast<TComponent*>(component.get()) != nullptr;
+	});
 }

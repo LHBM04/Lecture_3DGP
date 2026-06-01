@@ -59,9 +59,9 @@ protected:
 	virtual void OnDisable() {}
 	virtual void OnDestroy() {}
 
-	virtual void OnCollisionEnter(Collider* other_);
-	virtual void OnCollisionStay(Collider* other_);
-	virtual void OnCollisionExit(Collider* other_);
+	virtual void OnCollisionEnter(Collider* other_) {}
+	virtual void OnCollisionStay(Collider* other_) {}
+	virtual void OnCollisionExit(Collider* other_) {}
 
 private:
 	GameObject* owner{ nullptr };

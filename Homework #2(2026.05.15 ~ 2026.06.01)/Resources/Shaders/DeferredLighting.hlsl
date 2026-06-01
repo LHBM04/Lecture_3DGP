@@ -40,7 +40,14 @@ VSOutput VSMain(uint vertexID : SV_VertexID)
 float4 PSMain(VSOutput input) : SV_TARGET
 {
     const float4 albedo = AlbedoTex.Sample(LinearSampler, input.uv);
-    const float3 n = normalize(NormalTex.Sample(LinearSampler, input.uv).xyz * 2.0f - 1.0f);
+    const float4 normalPacked = NormalTex.Sample(LinearSampler, input.uv);
+    if (normalPacked.a < 0.5f)
+    {
+        // Background(clear) pixel: preserve camera clear color without lighting.
+        return float4(albedo.rgb, 1.0f);
+    }
+
+    const float3 n = normalize(normalPacked.xyz * 2.0f - 1.0f);
 
     float3 totalDiffuse = AmbientColor.rgb;
     [loop]
@@ -52,4 +59,3 @@ float4 PSMain(VSOutput input) : SV_TARGET
 
     return float4(albedo.rgb * totalDiffuse, albedo.a);
 }
-

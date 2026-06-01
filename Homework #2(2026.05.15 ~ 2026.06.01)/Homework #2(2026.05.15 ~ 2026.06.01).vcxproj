@@ -206,6 +206,7 @@
     <ClCompile Include="Sources\Shader.cpp" />
     <ClCompile Include="Sources\SphereCollider.cpp" />
     <ClCompile Include="Sources\Scene_Stage2.cpp" />
+    <ClCompile Include="Sources\StageSceneController.cpp" />
     <ClCompile Include="Sources\StairCollider.cpp" />
     <ClCompile Include="Sources\Transform.cpp" />
     <ClCompile Include="Sources\TitleSceneController.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Sources\Singleton.h" />
     <ClInclude Include="Sources\SphereCollider.h" />
     <ClInclude Include="Sources\Scene_Stage2.h" />
+    <ClInclude Include="Sources\StageSceneController.h" />
     <ClInclude Include="Sources\StairCollider.h" />
     <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\TitleSceneController.h" />
@@ -285,6 +287,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Scenes\Scene_Stage1.bin" />
+    <None Include="Resources\Scenes\Scene_Stage2.bin" />
     <None Include="Resources\Shaders\GameObject.hlsl">
       <FileType>Document</FileType>
     </None>

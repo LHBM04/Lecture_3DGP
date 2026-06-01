@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 #include "PlayerProjectile.h"
 
+#include "Collider.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "Transform.h"
@@ -47,6 +48,34 @@ void PlayerProjectile::OnUpdate(float deltaTime_)
 	{
 		Scene* scene{ owner->GetScene() };
 		if (scene != nullptr)
+		{
+			scene->Destroy(owner);
+		}
+	}
+}
+
+void PlayerProjectile::OnCollisionEnter(Collider* other_)
+{
+	GameObject* const owner{ GetOwner() };
+	if (owner == nullptr || other_ == nullptr || other_->GetOwner() == nullptr)
+	{
+		return;
+	}
+
+	GameObject* const otherOwner{ other_->GetOwner() };
+	const std::wstring& otherName{ otherOwner->GetName() };
+	const std::wstring& otherTag{ otherOwner->GetTag() };
+
+	const bool isWorldGeometry{
+		otherTag == L"Wall" || otherTag == L"Floor" || otherTag == L"Stair" ||
+		otherName.find(L"Wall") != std::wstring::npos ||
+		otherName.find(L"Floor") != std::wstring::npos ||
+		otherName.find(L"Stair") != std::wstring::npos
+	};
+
+	if (isWorldGeometry || otherTag == L"Enemy")
+	{
+		if (Scene* const scene{ owner->GetScene() })
 		{
 			scene->Destroy(owner);
 		}
