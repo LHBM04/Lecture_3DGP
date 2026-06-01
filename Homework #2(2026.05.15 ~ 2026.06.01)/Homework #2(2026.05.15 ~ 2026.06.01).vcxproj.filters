@@ -280,34 +280,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\Floor.bin">
-      <Filter>Resources\Materials</Filter>
-    </None>
     <None Include="Resources\Materials\Floor_Day.bin">
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\Floor_Night.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\Player.bin">
-      <Filter>Resources\Materials</Filter>
-    </None>
     <None Include="Resources\Materials\PlayerProjectile.bin">
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\Crosshair.bin">
-      <Filter>Resources\Materials</Filter>
-    </None>
-    <None Include="Resources\Materials\Stairs.bin">
-      <Filter>Resources\Materials</Filter>
-    </None>
-    <None Include="Resources\Materials\Stairs_Day.bin">
-      <Filter>Resources\Materials</Filter>
-    </None>
-    <None Include="Resources\Materials\Stairs_Night.bin">
-      <Filter>Resources\Materials</Filter>
-    </None>
-    <None Include="Resources\Materials\Wall.bin">
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\Wall_Day.bin">
@@ -326,9 +308,6 @@
       <Filter>Resources\Meshes</Filter>
     </None>
     <None Include="Resources\Meshes\Player.bin">
-      <Filter>Resources\Meshes</Filter>
-    </None>
-    <None Include="Resources\Meshes\Stairs.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
     <None Include="Resources\Meshes\Wall.bin">
@@ -357,6 +336,21 @@
     </None>
     <None Include="Resources\Scenes\Scene_Stage1.bin">
       <Filter>Resources\Scenes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Stair.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Shaders\DeferredLighting.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Resources\Scenes\Scene_Stage2.bin">
+      <Filter>Resources\Scenes</Filter>
+    </None>
+    <None Include="Resources\Materials\Stair_Day.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Stair_Night.bin">
+      <Filter>Resources\Materials</Filter>
     </None>
   </ItemGroup>
 </Project>

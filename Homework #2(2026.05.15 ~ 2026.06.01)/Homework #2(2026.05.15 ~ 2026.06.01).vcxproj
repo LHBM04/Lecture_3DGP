@@ -292,7 +292,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\DeferredLighting.hlsl" />
+    <None Include="Resources\Shaders\DeferredLighting.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

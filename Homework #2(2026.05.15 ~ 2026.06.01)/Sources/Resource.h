@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
@@ -14,11 +14,11 @@ public:
 	virtual bool Load() = 0;
 	virtual void Unload() = 0;
 
-	[[nodiscard]] const std::wstring& GetPath() const noexcept { return path; }
-	void SetPath(const std::wstring& path_) { path = path_; }
+	[[nodiscard]] const std::wstring& GetPath() const noexcept;
+	void SetPath(std::wstring_view path_);
 
-	[[nodiscard]] const std::wstring& GetName() const noexcept { return name; }
-	void SetName(const std::wstring& name_) { name = name_; }
+	[[nodiscard]] const std::wstring& GetName() const noexcept;
+	void SetName(std::wstring_view name_);
 
 protected:
 	std::wstring path;
