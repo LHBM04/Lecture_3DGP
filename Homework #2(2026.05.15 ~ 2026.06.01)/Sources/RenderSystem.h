@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <array>
 #include <cstdint>
@@ -25,13 +25,20 @@ class Material;
 
 class RenderSystem final : public Singleton<RenderSystem>
 {
-	friend class Singleton<RenderSystem>;
-
 public:
 	struct alignas(256) CameraConstants final
 	{
 		Matrix4x4 viewMatrix;
 		Matrix4x4 projectionMatrix;
+	};
+
+	struct alignas(256) LightConstants final
+	{
+		Vector4D ambientColor;
+		Vector4D lights[8];
+		Vector4D lightDirs[8];
+		Vector3D cameraPosition;
+		uint32_t activeLightCount;
 	};
 
 	struct alignas(256) ObjectConstants final
@@ -44,16 +51,6 @@ public:
 		ColorRGBA color;
 	};
 
-	struct alignas(256) LightConstants final
-	{
-		Vector4D ambientColor;
-		Vector4D lights[8];
-		Vector4D lightDirs[8];
-		Vector3D cameraPosition;
-		uint32_t activeLightCount;
-	};
-
-public:
 	RenderSystem() = default;
 	~RenderSystem() override = default;
 
@@ -107,7 +104,6 @@ private:
 	void MoveToNextFrame();
 	void WaitForGpu();
 
-private:
 	static constexpr uint32_t SwapChainBufferCount{ 2 };
 	static constexpr uint32_t MaxConstantBufferSize{ 1024 * 1024 * 8 }; // 8MB
 
@@ -169,8 +165,6 @@ inline D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantsData(const T& data
 {
 	const uint32_t size{ (static_cast<uint32_t>(sizeof(T)) + 255) & ~255 };
 	
-	// Ensure we don't overflow the current frame's portion of the constant buffer
-	// We use frameIndex to segment the buffer: [frame 0][frame 1]
 	const uint32_t frameStartOffset{ frameIndex * (MaxConstantBufferSize / SwapChainBufferCount) };
 	const uint32_t frameEndOffset{ (frameIndex + 1) * (MaxConstantBufferSize / SwapChainBufferCount) };
 

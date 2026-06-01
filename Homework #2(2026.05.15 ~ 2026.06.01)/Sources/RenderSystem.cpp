@@ -1,9 +1,5 @@
-#include "Precompiled.h"
-
+﻿#include "Precompiled.h"
 #include "RenderSystem.h"
-
-#include <dxgi1_6.h>
-#include <d3dcompiler.h>
 
 #include "Camera.h"
 #include "GameObject.h"
@@ -123,7 +119,6 @@ bool RenderSystem::BeginFrame()
 		return false;
 	}
 
-	// 1. Transition G-Buffers to RENDER_TARGET for drawing geometry
 	D3D12_RESOURCE_BARRIER barriers[2]{};
 	
 	barriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -140,7 +135,6 @@ bool RenderSystem::BeginFrame()
 
 	commandList->ResourceBarrier(2, barriers);
 
-	// 2. Set Render Targets
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2]{};
 	rtvHandles[0] = gbufferRtvHeap->GetCPUDescriptorHandleForHeapStart();
 	rtvHandles[1].ptr = rtvHandles[0].ptr + gbufferRtvDescriptorSize;
@@ -149,7 +143,6 @@ bool RenderSystem::BeginFrame()
 
 	commandList->OMSetRenderTargets(2, rtvHandles, FALSE, &dsvHandle);
 
-	// 3. Clear Targets
 	const float clearAlbedo[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
 	const float clearNormal[4]{ 0.5f, 0.5f, 1.0f, 0.0f };
 	commandList->ClearRenderTargetView(rtvHandles[0], clearAlbedo, 0, nullptr);
@@ -248,7 +241,6 @@ void RenderSystem::SetCamera(Camera* camera_)
 		}
 		case Camera::ClearType::DepthOnly:
 		{
-			// GBuffer albedo is left as-is; only depth was already cleared in BeginFrame.
 			break;
 		}
 		case Camera::ClearType::Nothing:
@@ -312,7 +304,6 @@ void RenderSystem::ExecuteLightingPass()
 		return;
 	}
 
-	// 1. Transition G-Buffers to PIXEL_SHADER_RESOURCE for sampling
 	D3D12_RESOURCE_BARRIER gbufferBarriers[2]{};
 	gbufferBarriers[0].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	gbufferBarriers[0].Transition.pResource = gbufferAlbedo.Get();
@@ -328,7 +319,6 @@ void RenderSystem::ExecuteLightingPass()
 
 	commandList->ResourceBarrier(2, gbufferBarriers);
 
-	// 2. Transition Back Buffer to RENDER_TARGET
 	D3D12_RESOURCE_BARRIER backBufferBarrier{};
 	backBufferBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	backBufferBarrier.Transition.pResource = renderTargets[frameIndex].Get();
@@ -337,7 +327,6 @@ void RenderSystem::ExecuteLightingPass()
 	backBufferBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	commandList->ResourceBarrier(1, &backBufferBarrier);
 
-	// 3. Clear Back Buffer
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{ rtvHeap->GetCPUDescriptorHandleForHeapStart() };
 	rtvHandle.ptr += static_cast<size_t>(frameIndex) * rtvDescriptorSize;
 	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
@@ -353,7 +342,6 @@ void RenderSystem::ExecuteLightingPass()
 	}
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
-	// 4. Draw Lighting Quad
 	commandList->SetPipelineState(lightingPipelineState.Get());
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	commandList->SetGraphicsRootConstantBufferView(0, cameraCbvAddress);
@@ -365,8 +353,6 @@ void RenderSystem::ExecuteLightingPass()
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->DrawInstanced(3, 1, 0, 0);
-	
-	// Back Buffer stays in RENDER_TARGET for subsequent UI pass
 }
 
 void RenderSystem::SetRenderTargetToBackBuffer()
@@ -820,7 +806,10 @@ std::expected<void, std::wstring> RenderSystem::CreateRootSignature()
 std::expected<void, std::wstring> RenderSystem::CreatePipelineStates()
 {
 	Shader* const shader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/GameObject.hlsl") };
-	if (shader == nullptr) return std::unexpected<std::wstring>(L"Failed to load GameObject shader.");
+	if (shader == nullptr)
+	{
+		return std::unexpected<std::wstring>(L"Failed to load GameObject shader.");
+	}
 
 	D3D12_INPUT_ELEMENT_DESC instancedIl[]{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -861,7 +850,10 @@ std::expected<void, std::wstring> RenderSystem::CreatePipelineStates()
 	}
 
 	Shader* const lShader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/DeferredLighting.hlsl") };
-	if (lShader == nullptr) return std::unexpected<std::wstring>(L"Failed to load DeferredLighting shader.");
+	if (lShader == nullptr)
+	{
+		return std::unexpected<std::wstring>(L"Failed to load DeferredLighting shader.");
+	}
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC ld{ pd };
 	ld.InputLayout = { nullptr, 0 };
