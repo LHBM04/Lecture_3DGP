@@ -180,8 +180,8 @@ void Scene_Stage2::BuildSceneObjects(std::wstring_view mapPath_)
 		}
 		else if (name.find(L"Stair") != std::wstring::npos)
 		{
-			meshPath = L"Resources/Meshes/Stairs.bin";
-			matPath = L"Resources/Materials/Stairs_Night.bin";
+			meshPath = L"Resources/Meshes/Stair.bin";
+			matPath = L"Resources/Materials/Stair_Night.bin";
 		}
 		else if (name.find(L"Floor") != std::wstring::npos)
 		{

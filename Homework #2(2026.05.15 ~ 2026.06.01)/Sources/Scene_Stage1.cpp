@@ -152,17 +152,17 @@ void Scene_Stage1::BuildSceneObjects(std::wstring_view mapPath_)
 		else if (name.find(L"Wall") != std::wstring::npos)
 		{
 			meshPath = L"Resources/Meshes/Wall.bin";
-			matPath = L"Resources/Materials/Wall.bin";
+			matPath = L"Resources/Materials/Wall_Day.bin";
 		}
 		else if (name.find(L"Stair") != std::wstring::npos)
 		{
-			meshPath = L"Resources/Meshes/Stairs.bin";
-			matPath = L"Resources/Materials/Stairs.bin";
+			meshPath = L"Resources/Meshes/Stair.bin";
+			matPath = L"Resources/Materials/Stair_Day.bin";
 		}
 		else if (name.find(L"Floor") != std::wstring::npos)
 		{
 			meshPath = L"Resources/Meshes/Floor.bin";
-			matPath = L"Resources/Materials/Floor.bin";
+			matPath = L"Resources/Materials/Floor_Day.bin";
 		}
 
 		Mesh* const mesh{ ResourceSystem::GetInstance().GetResource<Mesh>(meshPath) };
@@ -203,7 +203,6 @@ void Scene_Stage1::BuildSceneObjects(std::wstring_view mapPath_)
 
 				if (name.find(L"Player") != std::wstring::npos)
 				{
-					// Use a stable gameplay collider instead of mesh bounds to avoid floor tunneling.
 					collider->SetCenter(Vector3D{ 0.0f, 0.0f, 0.0f });
 					collider->SetSize(Vector3D{ 0.8f, 2.0f, 0.8f });
 					collider->SetStatic(false);

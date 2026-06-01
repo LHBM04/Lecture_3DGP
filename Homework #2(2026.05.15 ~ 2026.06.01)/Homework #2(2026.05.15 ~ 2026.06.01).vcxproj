@@ -265,14 +265,10 @@
     <None Include="Resources\Meshes\Sphere.bin" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\Floor.bin" />
     <None Include="Resources\Materials\Floor_Day.bin" />
     <None Include="Resources\Materials\Floor_Night.bin" />
-    <None Include="Resources\Materials\Player.bin" />
-    <None Include="Resources\Materials\Stairs.bin" />
-    <None Include="Resources\Materials\Stairs_Day.bin" />
-    <None Include="Resources\Materials\Stairs_Night.bin" />
-    <None Include="Resources\Materials\Wall.bin" />
+    <None Include="Resources\Materials\Stair_Day.bin" />
+    <None Include="Resources\Materials\Stair_Night.bin" />
     <None Include="Resources\Materials\Wall_Day.bin" />
     <None Include="Resources\Materials\Wall_Night.bin" />
     <None Include="Resources\Meshes\Cube.bin" />
@@ -281,7 +277,7 @@
     <None Include="Resources\Meshes\Day.bin" />
     <None Include="Resources\Meshes\Night.bin" />
     <None Include="Resources\Meshes\Player.bin" />
-    <None Include="Resources\Meshes\Stairs.bin" />
+    <None Include="Resources\Meshes\Stair.bin" />
     <None Include="Resources\Meshes\Title.bin" />
     <None Include="Resources\Meshes\Wall.bin" />
   </ItemGroup>
