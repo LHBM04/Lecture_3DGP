@@ -6,7 +6,6 @@
 #include <expected>
 #include <span>
 #include <string>
-#include <vector>
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -147,7 +146,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
 	uint8_t* mappedConstantData{ nullptr };
 	uint32_t constantBufferOffset{ 0 };
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> transientUploadBuffers;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> instanceUploadBuffer;
+	uint8_t* mappedInstanceData{ nullptr };
+	uint32_t instanceBufferCapacity{ 1024 * 1024 * 8 };
+	uint32_t instanceBufferOffset{ 0 };
 
 	D3D12_VIEWPORT viewport{};
 	D3D12_RECT scissorRect{};

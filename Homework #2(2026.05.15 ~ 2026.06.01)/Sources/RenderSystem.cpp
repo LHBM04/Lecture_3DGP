@@ -86,6 +86,11 @@ void RenderSystem::Release()
 		constantBuffer->Unmap(0, nullptr);
 		mappedConstantData = nullptr;
 	}
+	if (mappedInstanceData != nullptr)
+	{
+		instanceUploadBuffer->Unmap(0, nullptr);
+		mappedInstanceData = nullptr;
+	}
 
 	if (fenceEvent != nullptr)
 	{
@@ -111,7 +116,7 @@ bool RenderSystem::BeginFrame()
 	}
 
 	constantBufferOffset = 0;
-	transientUploadBuffers.clear();
+	instanceBufferOffset = frameIndex * (instanceBufferCapacity / SwapChainBufferCount);
 
 	if (gbufferAlbedo == nullptr || gbufferNormal == nullptr)
 	{
@@ -466,7 +471,7 @@ void RenderSystem::SetMaterialConstants(const MaterialConstants& data_)
 
 void RenderSystem::DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span<const Matrix4x4> worldMatrices_)
 {
-	if (mesh_ == nullptr || material_ == nullptr || worldMatrices_.empty() || commandList == nullptr || device == nullptr)
+	if (mesh_ == nullptr || material_ == nullptr || worldMatrices_.empty() || commandList == nullptr || device == nullptr || mappedInstanceData == nullptr)
 	{
 		return;
 	}
@@ -484,54 +489,60 @@ void RenderSystem::DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span
 	objectData.worldMatrix = Matrix4x4::GetIdentity();
 	SetObjectConstants(objectData);
 
-	D3D12_HEAP_PROPERTIES heapProps{};
-	heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-	D3D12_RESOURCE_DESC bufferDesc{};
-	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	bufferDesc.Width = static_cast<UINT64>(sizeof(Matrix4x4) * worldMatrices_.size());
-	bufferDesc.Height = 1;
-	bufferDesc.DepthOrArraySize = 1;
-	bufferDesc.MipLevels = 1;
-	bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
-	bufferDesc.SampleDesc.Count = 1;
-	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> instanceBuffer;
-	if (FAILED(device->CreateCommittedResource(
-		&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&instanceBuffer))))
+	const uint32_t matrixSize{ static_cast<uint32_t>(sizeof(Matrix4x4)) };
+	const uint32_t frameStartOffset{ frameIndex * (instanceBufferCapacity / SwapChainBufferCount) };
+	const uint32_t frameEndOffset{ (frameIndex + 1) * (instanceBufferCapacity / SwapChainBufferCount) };
+	const uint32_t frameCapacity{ frameEndOffset - frameStartOffset };
+	const uint32_t maxInstancesPerChunk{ frameCapacity / matrixSize };
+	if (maxInstancesPerChunk == 0)
 	{
 		return;
 	}
 
-	void* mappedData{ nullptr };
-	if (FAILED(instanceBuffer->Map(0, nullptr, &mappedData)))
+	if (instanceBufferOffset < frameStartOffset || instanceBufferOffset >= frameEndOffset)
 	{
-		return;
+		instanceBufferOffset = frameStartOffset;
 	}
 
-	std::memcpy(mappedData, worldMatrices_.data(), sizeof(Matrix4x4) * worldMatrices_.size());
-	instanceBuffer->Unmap(0, nullptr);
-	transientUploadBuffers.emplace_back(instanceBuffer);
+	uint32_t remaining{ static_cast<uint32_t>(worldMatrices_.size()) };
+	uint32_t processed{ 0 };
 
-	D3D12_VERTEX_BUFFER_VIEW views[2]{};
-	views[0] = mesh_->GetVertexBufferView();
-	views[1].BufferLocation = instanceBuffer->GetGPUVirtualAddress();
-	views[1].StrideInBytes = sizeof(Matrix4x4);
-	views[1].SizeInBytes = static_cast<UINT>(sizeof(Matrix4x4) * worldMatrices_.size());
-
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->IASetVertexBuffers(0, 2, views);
-
-	if (mesh_->GetIndexCount() > 0)
+	while (remaining > 0)
 	{
-		commandList->IASetIndexBuffer(&mesh_->GetIndexBufferView());
-		commandList->DrawIndexedInstanced(mesh_->GetIndexCount(), static_cast<UINT>(worldMatrices_.size()), 0, 0, 0);
-	}
-	else
-	{
-		commandList->DrawInstanced(static_cast<UINT>(mesh_->GetVertices().size()), static_cast<UINT>(worldMatrices_.size()), 0, 0);
+		const uint32_t availableBytes{ frameEndOffset - instanceBufferOffset };
+		uint32_t chunkCapacity{ availableBytes / matrixSize };
+		if (chunkCapacity == 0)
+		{
+			return;
+		}
+
+		const uint32_t chunkCount{ std::min(remaining, chunkCapacity) };
+		const uint32_t chunkBytes{ chunkCount * matrixSize };
+
+		std::memcpy(mappedInstanceData + instanceBufferOffset, worldMatrices_.data() + processed, chunkBytes);
+
+		D3D12_VERTEX_BUFFER_VIEW views[2]{};
+		views[0] = mesh_->GetVertexBufferView();
+		views[1].BufferLocation = instanceUploadBuffer->GetGPUVirtualAddress() + instanceBufferOffset;
+		views[1].StrideInBytes = matrixSize;
+		views[1].SizeInBytes = chunkBytes;
+
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->IASetVertexBuffers(0, 2, views);
+
+		if (mesh_->GetIndexCount() > 0)
+		{
+			commandList->IASetIndexBuffer(&mesh_->GetIndexBufferView());
+			commandList->DrawIndexedInstanced(mesh_->GetIndexCount(), chunkCount, 0, 0, 0);
+		}
+		else
+		{
+			commandList->DrawInstanced(static_cast<UINT>(mesh_->GetVertices().size()), chunkCount, 0, 0);
+		}
+
+		instanceBufferOffset += chunkBytes;
+		processed += chunkCount;
+		remaining -= chunkCount;
 	}
 }
 
@@ -901,6 +912,27 @@ std::expected<void, std::wstring> RenderSystem::CreateConstantBuffer()
 	{
 		return std::unexpected<std::wstring>(L"Failed to map Constant Buffer.");
 	}
+
+	D3D12_RESOURCE_DESC instanceDesc{};
+	instanceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	instanceDesc.Width = instanceBufferCapacity;
+	instanceDesc.Height = 1;
+	instanceDesc.DepthOrArraySize = 1;
+	instanceDesc.MipLevels = 1;
+	instanceDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instanceDesc.SampleDesc.Count = 1;
+	instanceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	if (FAILED(device->CreateCommittedResource(&hp, D3D12_HEAP_FLAG_NONE, &instanceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&instanceUploadBuffer))))
+	{
+		return std::unexpected<std::wstring>(L"Failed to create Instance Upload Buffer.");
+	}
+
+	if (FAILED(instanceUploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedInstanceData))))
+	{
+		return std::unexpected<std::wstring>(L"Failed to map Instance Upload Buffer.");
+	}
+
 	return {};
 }
 
