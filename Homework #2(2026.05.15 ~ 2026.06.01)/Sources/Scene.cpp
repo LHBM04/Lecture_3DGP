@@ -1,10 +1,14 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 #include "Scene.h"
 
+#include <unordered_map>
 #include "Camera.h"
 #include "Collider.h"
 #include "Light.h"
 #include "Logger.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "MeshRenderer.h"
 #include "PhysicsSystem.h"
 #include "Quaternion.h"
 #include "RenderSystem.h"
@@ -103,6 +107,31 @@ void Scene::Render()
 		RenderSystem::GetInstance().SetLights(lights);
 
 		RenderSystem::GetInstance().SetPipelineState(RenderSystem::GetInstance().GetDefaultPipelineState());
+
+		struct BatchKey final
+		{
+			Mesh* mesh;
+			Material* material;
+
+			bool operator==(const BatchKey& other_) const noexcept
+			{
+				return mesh == other_.mesh && material == other_.material;
+			}
+		};
+
+		struct BatchKeyHash final
+		{
+			std::size_t operator()(const BatchKey& key_) const noexcept
+			{
+				const std::size_t meshHash{ std::hash<Mesh*>{}(key_.mesh) };
+				const std::size_t materialHash{ std::hash<Material*>{}(key_.material) };
+				return meshHash ^ (materialHash << 1);
+			}
+		};
+
+		std::unordered_map<BatchKey, std::vector<Matrix4x4>, BatchKeyHash> batches;
+		std::vector<GameObject*> fallbackRenderObjects;
+
 		for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 		{
 			if (gameObject == nullptr || !gameObject->IsActive() || gameObject->IsDestroyed() || gameObject->GetTag() == L"UI")
@@ -121,7 +150,33 @@ void Scene::Render()
 				continue;
 			}
 
-			gameObject->Render();
+			if (MeshRenderer* meshRenderer{ gameObject->GetComponent<MeshRenderer>() }; meshRenderer != nullptr)
+			{
+				Mesh* const mesh{ meshRenderer->GetMesh() };
+				Material* const material{ meshRenderer->GetMaterial() };
+				Transform* const transform{ gameObject->GetComponent<Transform>() };
+
+				if (mesh != nullptr && material != nullptr && transform != nullptr)
+				{
+					batches[{ mesh, material }].emplace_back(transform->GetWorldMatrix());
+					continue;
+				}
+			}
+
+			fallbackRenderObjects.emplace_back(gameObject.get());
+		}
+
+		for (auto& [key, transforms] : batches)
+		{
+			RenderSystem::GetInstance().DrawMeshInstanced(key.mesh, key.material, transforms);
+		}
+
+		for (GameObject* gameObject : fallbackRenderObjects)
+		{
+			if (gameObject != nullptr)
+			{
+				gameObject->Render();
+			}
 		}
 
 		RenderSystem::GetInstance().ExecuteLightingPass();
@@ -369,3 +424,4 @@ void Scene::ProcessDestroyQueue()
 
 	destroyQueue.clear();
 }
+

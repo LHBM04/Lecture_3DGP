@@ -6,6 +6,7 @@
 #include <expected>
 #include <span>
 #include <string>
+#include <vector>
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -20,6 +21,8 @@
 
 class Camera;
 class Light;
+class Mesh;
+class Material;
 
 class RenderSystem final : public Singleton<RenderSystem>
 {
@@ -86,6 +89,7 @@ public:
 
 	void SetObjectConstants(const ObjectConstants& data_);
 	void SetMaterialConstants(const MaterialConstants& data_);
+	void DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span<const Matrix4x4> worldMatrices_);
 
 private:
 	std::expected<void, std::wstring> CreateDevice();
@@ -143,6 +147,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer;
 	uint8_t* mappedConstantData{ nullptr };
 	uint32_t constantBufferOffset{ 0 };
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> transientUploadBuffers;
 
 	D3D12_VIEWPORT viewport{};
 	D3D12_RECT scissorRect{};

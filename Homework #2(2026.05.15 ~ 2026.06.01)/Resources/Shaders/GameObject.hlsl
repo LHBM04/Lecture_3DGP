@@ -4,6 +4,10 @@ struct VSInput
 {
     float3 position : POSITION;
     float3 normal : NORMAL;
+    float4 instanceWorld0 : INSTANCE_WORLD0;
+    float4 instanceWorld1 : INSTANCE_WORLD1;
+    float4 instanceWorld2 : INSTANCE_WORLD2;
+    float4 instanceWorld3 : INSTANCE_WORLD3;
 };
 
 struct VSOutput
@@ -47,11 +51,13 @@ VSOutput VSMain(VSInput input)
 {
     VSOutput output;
 
-    const float4 positionWS = mul(float4(input.position, 1.0f), World);
+    const matrix instanceWorld = matrix(input.instanceWorld0, input.instanceWorld1, input.instanceWorld2, input.instanceWorld3);
+    const matrix finalWorld = mul(instanceWorld, World);
+    const float4 positionWS = mul(float4(input.position, 1.0f), finalWorld);
     output.positionCS = mul(positionWS, View);
     output.positionCS = mul(output.positionCS, Projection);
 
-    output.normalWS = normalize(mul(float4(input.normal, 0.0f), World).xyz);
+    output.normalWS = normalize(mul(float4(input.normal, 0.0f), finalWorld).xyz);
     return output;
 }
 

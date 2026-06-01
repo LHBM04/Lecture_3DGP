@@ -111,6 +111,7 @@ bool RenderSystem::BeginFrame()
 	}
 
 	constantBufferOffset = 0;
+	transientUploadBuffers.clear();
 
 	if (gbufferAlbedo == nullptr || gbufferNormal == nullptr)
 	{
@@ -463,6 +464,77 @@ void RenderSystem::SetMaterialConstants(const MaterialConstants& data_)
 	}
 }
 
+void RenderSystem::DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span<const Matrix4x4> worldMatrices_)
+{
+	if (mesh_ == nullptr || material_ == nullptr || worldMatrices_.empty() || commandList == nullptr || device == nullptr)
+	{
+		return;
+	}
+
+	if (!mesh_->HasGpuBuffers() && !mesh_->CreateBuffers(device.Get()))
+	{
+		return;
+	}
+
+	MaterialConstants materialData{};
+	materialData.color = material_->GetColor();
+	SetMaterialConstants(materialData);
+
+	ObjectConstants objectData{};
+	objectData.worldMatrix = Matrix4x4::GetIdentity();
+	SetObjectConstants(objectData);
+
+	D3D12_HEAP_PROPERTIES heapProps{};
+	heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	D3D12_RESOURCE_DESC bufferDesc{};
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = static_cast<UINT64>(sizeof(Matrix4x4) * worldMatrices_.size());
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+	bufferDesc.SampleDesc.Count = 1;
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> instanceBuffer;
+	if (FAILED(device->CreateCommittedResource(
+		&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&instanceBuffer))))
+	{
+		return;
+	}
+
+	void* mappedData{ nullptr };
+	if (FAILED(instanceBuffer->Map(0, nullptr, &mappedData)))
+	{
+		return;
+	}
+
+	std::memcpy(mappedData, worldMatrices_.data(), sizeof(Matrix4x4) * worldMatrices_.size());
+	instanceBuffer->Unmap(0, nullptr);
+	transientUploadBuffers.emplace_back(instanceBuffer);
+
+	D3D12_VERTEX_BUFFER_VIEW views[2]{};
+	views[0] = mesh_->GetVertexBufferView();
+	views[1].BufferLocation = instanceBuffer->GetGPUVirtualAddress();
+	views[1].StrideInBytes = sizeof(Matrix4x4);
+	views[1].SizeInBytes = static_cast<UINT>(sizeof(Matrix4x4) * worldMatrices_.size());
+
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->IASetVertexBuffers(0, 2, views);
+
+	if (mesh_->GetIndexCount() > 0)
+	{
+		commandList->IASetIndexBuffer(&mesh_->GetIndexBufferView());
+		commandList->DrawIndexedInstanced(mesh_->GetIndexCount(), static_cast<UINT>(worldMatrices_.size()), 0, 0, 0);
+	}
+	else
+	{
+		commandList->DrawInstanced(static_cast<UINT>(mesh_->GetVertices().size()), static_cast<UINT>(worldMatrices_.size()), 0, 0);
+	}
+}
+
 std::expected<void, std::wstring> RenderSystem::CreateDevice()
 {
 	UINT factoryFlags{ 0 };
@@ -739,13 +811,22 @@ std::expected<void, std::wstring> RenderSystem::CreatePipelineStates()
 	Shader* const shader{ ResourceSystem::GetInstance().GetResource<Shader>(L"Resources/Shaders/GameObject.hlsl") };
 	if (shader == nullptr) return std::unexpected<std::wstring>(L"Failed to load GameObject shader.");
 
-	D3D12_INPUT_ELEMENT_DESC il[]{
+	D3D12_INPUT_ELEMENT_DESC instancedIl[]{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "INSTANCE_WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCE_WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCE_WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCE_WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 }
+	};
+
+	D3D12_INPUT_ELEMENT_DESC uiIl[]{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pd{};
-	pd.InputLayout = { il, 2 };
+	pd.InputLayout = { instancedIl, 6 };
 	pd.pRootSignature = rootSignature.Get();
 	pd.VS = { shader->GetVSBlob()->GetBufferPointer(), shader->GetVSBlob()->GetBufferSize() };
 	pd.PS = { shader->GetPSBlob()->GetBufferPointer(), shader->GetPSBlob()->GetBufferSize() };
@@ -788,7 +869,7 @@ std::expected<void, std::wstring> RenderSystem::CreatePipelineStates()
 	if (uShader != nullptr)
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC ud{ ld };
-		ud.InputLayout = { il, 2 };
+		ud.InputLayout = { uiIl, 2 };
 		ud.VS = { uShader->GetVSBlob()->GetBufferPointer(), uShader->GetVSBlob()->GetBufferSize() };
 		ud.PS = { uShader->GetPSBlob()->GetBufferPointer(), uShader->GetPSBlob()->GetBufferSize() };
 		device->CreateGraphicsPipelineState(&ud, IID_PPV_ARGS(&uiPipelineState));
