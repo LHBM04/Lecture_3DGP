@@ -1,10 +1,8 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Vector4D.h"
+
 #include "Vector2D.h"
 #include "Vector3D.h"
-#include <limits>
-#include <cmath>
-#include <algorithm>
 
 Vector4D::Vector4D() noexcept
     : DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)

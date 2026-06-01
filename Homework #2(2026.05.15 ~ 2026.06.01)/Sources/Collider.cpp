@@ -1,5 +1,6 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Collider.h"
+
 #include "PhysicsSystem.h"
 
 bool Collider::IsTrigger() const noexcept

@@ -10,12 +10,7 @@ ColorRGBA::ColorRGBA() noexcept
 }
 
 ColorRGBA::ColorRGBA(float value_) noexcept
-    : DirectX::XMFLOAT4(value_, value_, value_, 1.0f)
-{
-}
-
-ColorRGBA::ColorRGBA(float r_, float g_, float b_) noexcept
-    : DirectX::XMFLOAT4(r_, g_, b_, 1.0f)
+    : DirectX::XMFLOAT4(value_, value_, value_, value_)
 {
 }
 
@@ -24,13 +19,23 @@ ColorRGBA::ColorRGBA(float r_, float g_, float b_, float a_) noexcept
 {
 }
 
-ColorRGBA::ColorRGBA(const ColorRGBA& color_) noexcept
-    : DirectX::XMFLOAT4(color_)
+ColorRGBA::ColorRGBA(const float* values_) noexcept
+    : DirectX::XMFLOAT4(values_)
 {
 }
 
-ColorRGBA::ColorRGBA(ColorRGBA&& color_) noexcept
-    : DirectX::XMFLOAT4(color_)
+ColorRGBA::ColorRGBA(const ColorRGB& rgb_, float a_) noexcept
+    : DirectX::XMFLOAT4(rgb_.x, rgb_.y, rgb_.z, a_)
+{
+}
+
+ColorRGBA::ColorRGBA(const Vector3D& vector_, float alpha_) noexcept
+	: DirectX::XMFLOAT4(vector_.x, vector_.y, vector_.z, alpha_)
+{
+}
+
+ColorRGBA::ColorRGBA(const Vector4D& vector_) noexcept
+    : DirectX::XMFLOAT4(vector_.x, vector_.y, vector_.z, vector_.w)
 {
 }
 
@@ -52,94 +57,21 @@ ColorRGBA& ColorRGBA::operator=(ColorRGBA&& other_) noexcept
     return *this;
 }
 
-ColorRGBA::operator COLORREF() const noexcept
+ColorRGBA& ColorRGBA::operator=(const Vector4D& other_) noexcept
 {
-	const unsigned char r{ static_cast<unsigned char>(std::clamp(x, 0.0f, 1.0f) * 255.0f) };
-	const unsigned char g{ static_cast<unsigned char>(std::clamp(y, 0.0f, 1.0f) * 255.0f) };
-	const unsigned char b{ static_cast<unsigned char>(std::clamp(z, 0.0f, 1.0f) * 255.0f) };
-	return RGB(r, g, b);
-}
-
-ColorRGBA ColorRGBA::GetClear() noexcept
-{
-    return ColorRGBA(0.0f, 0.0f, 0.0f, 0.0f);
-}
-
-ColorRGBA ColorRGBA::GetBlack() noexcept
-{
-    return ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetWhite() noexcept
-{
-    return ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetRed() noexcept
-{
-    return ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetGreen() noexcept
-{
-    return ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetBlue() noexcept
-{
-    return ColorRGBA(0.0f, 0.0f, 1.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetYellow() noexcept
-{
-    return ColorRGBA(1.0f, 1.0f, 0.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetCyan() noexcept
-{
-    return ColorRGBA(0.0f, 1.0f, 1.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetMagenta() noexcept
-{
-    return ColorRGBA(1.0f, 0.0f, 1.0f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetGray() noexcept
-{
-    return ColorRGBA(0.5f, 0.5f, 0.5f, 1.0f);
-}
-
-ColorRGBA ColorRGBA::GetGrey() noexcept
-{
-    return GetGray();
-}
-
-ColorRGBA ColorRGBA::Lerp(const ColorRGBA& a_, const ColorRGBA& b_, float t_) noexcept
-{
-    return LerpUnclamped(a_, b_, Mathf::Clamp(t_, 0.0f, 1.0f));
-}
-
-ColorRGBA ColorRGBA::LerpUnclamped(const ColorRGBA& a_, const ColorRGBA& b_, float t_) noexcept
-{
-    return ColorRGBA(
-        Mathf::Lerp(a_.x, b_.x, t_),
-        Mathf::Lerp(a_.y, b_.y, t_),
-        Mathf::Lerp(a_.z, b_.z, t_),
-        Mathf::Lerp(a_.w, b_.w, t_));
-}
-
-bool ColorRGBA::IsApproximately(const ColorRGBA& lhs_, const ColorRGBA& rhs_, float epsilon_) noexcept
-{
-    return std::abs(lhs_.x - rhs_.x) <= epsilon_
-        && std::abs(lhs_.y - rhs_.y) <= epsilon_
-        && std::abs(lhs_.z - rhs_.z) <= epsilon_
-        && std::abs(lhs_.w - rhs_.w) <= epsilon_;
+    x = other_.x;
+    y = other_.y;
+    z = other_.z;
+    w = other_.w;
+    return *this;
 }
 
 bool ColorRGBA::operator==(const ColorRGBA& other_) const noexcept
 {
-    return IsApproximately(*this, other_);
+    return std::abs(x - other_.x) < Mathf::Epsilon &&
+           std::abs(y - other_.y) < Mathf::Epsilon &&
+           std::abs(z - other_.z) < Mathf::Epsilon &&
+           std::abs(w - other_.w) < Mathf::Epsilon;
 }
 
 bool ColorRGBA::operator!=(const ColorRGBA& other_) const noexcept
@@ -147,82 +79,74 @@ bool ColorRGBA::operator!=(const ColorRGBA& other_) const noexcept
     return !(*this == other_);
 }
 
-bool ColorRGBA::IsFinite() const noexcept
+ColorRGBA ColorRGBA::operator+(const ColorRGBA& other_) const noexcept
 {
-    return std::isfinite(x) && std::isfinite(y) && std::isfinite(z) && std::isfinite(w);
+    ColorRGBA result;
+    Store(result, DirectX::XMVectorAdd(Load(*this), Load(other_)));
+    return result;
 }
 
-bool ColorRGBA::IsHDR() const noexcept
+ColorRGBA& ColorRGBA::operator+=(const ColorRGBA& other_) noexcept
 {
-    return x > 1.0f || y > 1.0f || z > 1.0f;
+    Store(*this, DirectX::XMVectorAdd(Load(*this), Load(other_)));
+    return *this;
 }
 
-bool ColorRGBA::IsTransparent(float epsilon_) const noexcept
+ColorRGBA ColorRGBA::operator-(const ColorRGBA& other_) const noexcept
 {
-    return std::abs(w) <= epsilon_;
+    ColorRGBA result;
+    Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other_)));
+    return result;
 }
 
-bool ColorRGBA::IsOpaque(float epsilon_) const noexcept
+ColorRGBA& ColorRGBA::operator-=(const ColorRGBA& other_) noexcept
 {
-    return std::abs(w - 1.0f) <= epsilon_;
+    Store(*this, DirectX::XMVectorSubtract(Load(*this), Load(other_)));
+    return *this;
 }
 
-ColorRGBA::ColorRGBA(const ColorRGB& rgb_, float a_) noexcept
-    : DirectX::XMFLOAT4(rgb_.x, rgb_.y, rgb_.z, a_)
+ColorRGBA ColorRGBA::operator*(const ColorRGBA& other_) const noexcept
 {
+    ColorRGBA result;
+    Store(result, DirectX::XMVectorMultiply(Load(*this), Load(other_)));
+    return result;
 }
 
-ColorRGBA::ColorRGBA(const Vector3D& vector_, float alpha_) noexcept
-    : DirectX::XMFLOAT4(vector_.x, vector_.y, vector_.z, alpha_)
+ColorRGBA& ColorRGBA::operator*=(const ColorRGBA& other_) noexcept
 {
+    Store(*this, DirectX::XMVectorMultiply(Load(*this), Load(other_)));
+    return *this;
 }
 
-ColorRGBA::ColorRGBA(const Vector4D& vector_) noexcept
-    : DirectX::XMFLOAT4(vector_.x, vector_.y, vector_.z, vector_.w)
+ColorRGBA ColorRGBA::operator*(float scalar_) const noexcept
 {
+    ColorRGBA result;
+    Store(result, DirectX::XMVectorScale(Load(*this), scalar_));
+    return result;
 }
 
-ColorRGBA ColorRGBA::GetGamma() const noexcept
+ColorRGBA& ColorRGBA::operator*=(float scalar_) noexcept
 {
-    const ColorRGB gamma{ ColorRGB(x, y, z).GetGamma() };
-    return ColorRGBA(gamma.x, gamma.y, gamma.z, w);
+    Store(*this, DirectX::XMVectorScale(Load(*this), scalar_));
+    return *this;
 }
 
-ColorRGBA ColorRGBA::GetLinear() const noexcept
+ColorRGBA ColorRGBA::operator/(float scalar_) const noexcept
 {
-    const ColorRGB linear{ ColorRGB(x, y, z).GetLinear() };
-    return ColorRGBA(linear.x, linear.y, linear.z, w);
+    ColorRGBA result;
+    Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar_));
+    return result;
 }
 
-float ColorRGBA::GetGrayscale() const noexcept
+ColorRGBA& ColorRGBA::operator/=(float scalar_) noexcept
 {
-    return ColorRGB(x, y, z).GetGrayscale();
+    Store(*this, DirectX::XMVectorScale(Load(*this), 1.0f / scalar_));
+    return *this;
 }
 
-float ColorRGBA::GetMaxColorComponent() const noexcept
+ColorRGB ColorRGBA::ToColorRGB() const noexcept
 {
-    return ColorRGB(x, y, z).GetMaxColorComponent();
-}
-
-ColorRGBA ColorRGBA::HSVToRGB(float h_, float s_, float v_) noexcept
-{
-    return HSVToRGB(h_, s_, v_, false);
-}
-
-ColorRGBA ColorRGBA::HSVToRGB(float h_, float s_, float v_, bool hdr_) noexcept
-{
-    const ColorRGB rgb{ ColorRGB::HSVToRGB(h_, s_, v_, hdr_) };
-    return ColorRGBA(rgb.x, rgb.y, rgb.z, 1.0f);
-}
-
-void ColorRGBA::RGBToHSV(const ColorRGBA& rgbColor_, float& h_, float& s_, float& v_) noexcept
-{
-    ColorRGB::RGBToHSV(ColorRGB(rgbColor_.x, rgbColor_.y, rgbColor_.z), h_, s_, v_);
-}
-
-Vector3D ColorRGBA::ToVector3D() const noexcept
-{
-    return Vector3D(x, y, z);
+    return ColorRGB(x, y, z);
 }
 
 Vector4D ColorRGBA::ToVector4D() const noexcept
@@ -230,7 +154,52 @@ Vector4D ColorRGBA::ToVector4D() const noexcept
     return Vector4D(x, y, z, w);
 }
 
-ColorRGB ColorRGBA::ToColorRGB() const noexcept
+ColorRGBA ColorRGBA::Lerp(const ColorRGBA& start_, const ColorRGBA& end_, float t_) noexcept
 {
-    return ColorRGB(x, y, z);
+    ColorRGBA result;
+    Store(result, DirectX::XMVectorLerp(Load(start_), Load(end_), t_));
+    return result;
+}
+
+bool ColorRGBA::IsApproximately(const ColorRGBA& lhs_, const ColorRGBA& rhs_, float epsilon_) noexcept
+{
+	return std::abs(lhs_.x - rhs_.x) <= epsilon_ &&
+		   std::abs(lhs_.y - rhs_.y) <= epsilon_ &&
+		   std::abs(lhs_.z - rhs_.z) <= epsilon_ &&
+		   std::abs(lhs_.w - rhs_.w) <= epsilon_;
+}
+
+ColorRGBA ColorRGBA::GetBlack() noexcept { return ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetWhite() noexcept { return ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetRed() noexcept { return ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetGreen() noexcept { return ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetBlue() noexcept { return ColorRGBA(0.0f, 0.0f, 1.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetYellow() noexcept { return ColorRGBA(1.0f, 0.92f, 0.016f, 1.0f); }
+ColorRGBA ColorRGBA::GetCyan() noexcept { return ColorRGBA(0.0f, 1.0f, 1.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetMagenta() noexcept { return ColorRGBA(1.0f, 0.0f, 1.0f, 1.0f); }
+ColorRGBA ColorRGBA::GetClear() noexcept { return ColorRGBA(0.0f, 0.0f, 0.0f, 0.0f); }
+
+bool ColorRGBA::IsTransparent(float epsilon_) const noexcept
+{
+	return w <= epsilon_;
+}
+
+bool ColorRGBA::IsOpaque(float epsilon_) const noexcept
+{
+	return w >= 1.0f - epsilon_;
+}
+
+DirectX::XMVECTOR ColorRGBA::Load(const ColorRGBA& color_) noexcept
+{
+    return DirectX::XMLoadFloat4(&color_);
+}
+
+void ColorRGBA::Store(ColorRGBA& destination_, DirectX::XMVECTOR source_) noexcept
+{
+    DirectX::XMStoreFloat4(&destination_, source_);
+}
+
+ColorRGBA::operator Vector4D() const noexcept
+{
+    return Vector4D(x, y, z, w);
 }
