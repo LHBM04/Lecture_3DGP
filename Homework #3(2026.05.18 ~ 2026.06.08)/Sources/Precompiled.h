@@ -66,3 +66,8 @@
 
 #include <d3dcommon.h>
 #include <d3dcompiler.h>
+
+#include <DirectXCollision.h>
+#include <DirectXColors.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
