@@ -7,18 +7,7 @@
 #include <windowsx.h>
 
 #include "Service.h"
-
-struct WindowOptions final
-{
-	std::wstring title;
-	int x;
-	int y;
-	int width;
-	int height;
-	bool isFullscreen;
-	bool isBorderless;
-	bool isResizable;
-};
+#include "WindowOptions.h"
 
 class WindowService : public Service
 {
@@ -31,6 +20,7 @@ public:
 	bool PollEvents();
 
 	[[nodiscard]] HWND GetMainWindow() const noexcept;
+	[[nodiscard]] const std::unordered_set<HWND>& GetWindows() const noexcept;
 	void SetMainWindow(HWND window_) noexcept;
 
 protected:

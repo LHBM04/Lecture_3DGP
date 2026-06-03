@@ -2,6 +2,8 @@
 #include "Engine.h"
 
 #include "RenderService.h"
+#include "ResourceService.h"
+#include "SceneService.h"
 #include "WindowService.h"
 
 INT APIENTRY wWinMain(
@@ -48,14 +50,16 @@ INT APIENTRY wWinMain(
 		return -1;
 	}
 
-	return engine.Run();
+	const int result{ engine.Run() };
+	engine.Shutdown();
+	return result;
 }
 
 bool Engine::Initialize()
 {
 	// 윈도우 시스템 추가
 	{
-		windowService = &AddService<WindowService>();
+		WindowService& windowService{ AddService<WindowService>() };
 
 		WindowOptions mainOptions{};
 		mainOptions.width = GetOption(L"Window.Width", 800);
@@ -64,18 +68,24 @@ bool Engine::Initialize()
 		mainOptions.x = 0;
 		mainOptions.y = 0;
 
-		HWND mainWindow{ windowService->AddWindow(mainOptions) };
+		HWND mainWindow{ windowService.AddWindow(mainOptions) };
 		if (mainWindow == nullptr)
 		{
 			return false;
 		}
-		windowService->SetMainWindow(mainWindow);
+
+		windowService.SetMainWindow(mainWindow);
 	}
 	// 렌더 시스템 추가
 	{
-		renderService = &AddService<RenderService>();
+		RenderService& renderService{ AddService<RenderService>() };
 
-		renderService->AddTarget(windowService->GetMainWindow());
+		renderService.AddTarget(GetService<WindowService>().GetMainWindow());
+	}
+	// 리소스/씬 서비스는 구체 리소스 로더나 씬 구현을 몰라야 합니다.
+	{
+		AddService<ResourceService>();
+		AddService<SceneService>();
 	}
 
 	return true;
@@ -83,24 +93,80 @@ bool Engine::Initialize()
 
 void Engine::Shutdown()
 {
-
+	for (auto it{ services.rbegin() }; it != services.rend(); ++it)
+	{
+		(*it)->NotifyRemove();
+	}
+	services.clear();
 }
 
 int Engine::Run()
 {
 	WindowService& windowService{ GetService<WindowService>() };
 	RenderService& renderService{ GetService<RenderService>() };
+	SceneService& sceneService{ GetService<SceneService>() };
+
+	ApplicationRequest applicationRequest;
+	SceneRequest sceneRequest;
+	RenderContext renderContext;
+	TimeContext timeContext;
+
+	auto previousTime{ std::chrono::steady_clock::now() };
+	float totalTime{ 0.0f };
 
 	bool shouldClose{ false };
 	while (!shouldClose)
 	{
+		applicationRequest.Clear();
+		sceneRequest.Clear();
+
+		const auto currentTime{ std::chrono::steady_clock::now() };
+		const std::chrono::duration<float> deltaTime{ currentTime - previousTime };
+		previousTime = currentTime;
+		totalTime += deltaTime.count();
+
+		timeContext.deltaTime = deltaTime.count();
+		timeContext.unscaledDeltaTime = deltaTime.count();
+		timeContext.totalTime = totalTime;
+
+		sceneService.SetRequests(applicationRequest, sceneRequest);
+
 		if (!windowService.PollEvents())
 		{
 			shouldClose = true;
 			break;
 		}
 
-		renderService.Render();
+		sceneService.Update(timeContext);
+
+		// 지연 실행은 Update 이후에 처리합니다.
+		// 컴포넌트 순회 중 씬 상태를 바꾸면 반복자가 깨질 수 있기 때문입니다.
+		if (applicationRequest.IsQuitRequested())
+		{
+			break;
+		}
+		if (sceneRequest.HasSceneChangeRequest())
+		{
+			if (sceneRequest.IsUnloadRequested())
+			{
+				sceneService.UnloadScene();
+			}
+			else
+			{
+				sceneService.LoadScene(sceneRequest.GetPendingSceneLoad());
+			}
+		}
+
+		renderService.BeginFrame();
+
+		for (HWND window : windowService.GetWindows())
+		{
+			renderContext.Clear();
+			sceneService.Render(renderContext);
+			renderService.Render(window, renderContext);
+		}
+
+		renderService.EndFrame();
 	}
 
 	return true;

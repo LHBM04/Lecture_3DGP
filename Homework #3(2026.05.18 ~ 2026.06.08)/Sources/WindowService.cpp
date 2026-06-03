@@ -8,7 +8,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		return 0;
+        ::PostQuitMessage(0);
+        return 0;
 	default:
 		return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 	}
@@ -122,6 +123,11 @@ void WindowService::OnRemove()
 HWND WindowService::GetMainWindow() const noexcept
 {
     return mainWindow;
+}
+
+const std::unordered_set<HWND>& WindowService::GetWindows() const noexcept
+{
+    return windows;
 }
 
 void WindowService::SetMainWindow(HWND window_) noexcept

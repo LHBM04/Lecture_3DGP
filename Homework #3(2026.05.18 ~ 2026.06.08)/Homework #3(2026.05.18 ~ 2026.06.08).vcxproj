@@ -96,6 +96,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -116,6 +117,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -134,6 +136,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -154,6 +157,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -174,23 +178,46 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Component.cpp" />
     <ClCompile Include="Sources\Engine.cpp" />
+    <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Requests.cpp" />
     <ClCompile Include="Sources\RenderService.cpp" />
+    <ClCompile Include="Sources\ResourceService.cpp" />
+    <ClCompile Include="Sources\Scene.cpp" />
+    <ClCompile Include="Sources\SceneService.cpp" />
     <ClCompile Include="Sources\Service.cpp" />
     <ClCompile Include="Sources\WindowService.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\ApplicationRequest.h" />
+    <ClInclude Include="Sources\Component.h" />
     <ClInclude Include="Sources\Engine.h" />
+    <ClInclude Include="Sources\GameObject.h" />
+    <ClInclude Include="Sources\IResourceLoader.h" />
+    <ClInclude Include="Sources\Logger.h" />
+    <ClInclude Include="Sources\Requests.h" />
+    <ClInclude Include="Sources\RenderContext.h" />
+    <ClInclude Include="Sources\RendererOptions.h" />
+    <ClInclude Include="Sources\RenderRequest.h" />
     <ClInclude Include="Sources\RenderService.h" />
+    <ClInclude Include="Sources\RenderTarget.h" />
+    <ClInclude Include="Sources\Resource.h" />
+    <ClInclude Include="Sources\ResourceService.h" />
+    <ClInclude Include="Sources\Scene.h" />
+    <ClInclude Include="Sources\SceneRequest.h" />
+    <ClInclude Include="Sources\SceneService.h" />
     <ClInclude Include="Sources\Service.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Singleton.h" />
+    <ClInclude Include="Sources\TimeContext.h" />
+    <ClInclude Include="Sources\WindowOptions.h" />
     <ClInclude Include="Sources\WindowService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -106,43 +106,55 @@ void RenderService::RemoveTarget(HWND window_)
     }
 }
 
-void RenderService::Render()
+void RenderService::BeginFrame()
 {
     commandAllocators[globalFrameIndex]->Reset();
     commandList->Reset(commandAllocators[globalFrameIndex].Get(), nullptr);
+}
 
-    for (auto& [hwnd, target] : renderTargets)
+void RenderService::Render(HWND window_, const RenderContext& renderContext_)
+{
+    (void)renderContext_;
+
+    auto it{ renderTargets.find(window_) };
+    if (it == renderTargets.end())
     {
-        UINT currentFrameIndex{ target->frameIndex };
-
-        D3D12_RESOURCE_BARRIER barrier{};
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-        barrier.Transition.pResource = target->backBuffers[currentFrameIndex].Get();
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-        commandList->ResourceBarrier(1, &barrier);
-
-        D3D12_VIEWPORT viewport{ 0.0f, 0.0f, static_cast<float>(target->width), static_cast<float>(target->height), 0.0f, 1.0f };
-        D3D12_RECT scissorRect{ 0, 0, target->width, target->height };
-        commandList->RSSetViewports(1, &viewport);
-        commandList->RSSetScissorRects(1, &scissorRect);
-
-        commandList->OMSetRenderTargets(1, &target->rtvHandles[currentFrameIndex], FALSE, &target->dsvHandle);
-
-        const float clearColor[] = { 0.1f, 0.2f, 0.3f, 1.0f };
-        commandList->ClearRenderTargetView(target->rtvHandles[currentFrameIndex], clearColor, 0, nullptr);
-        commandList->ClearDepthStencilView(target->dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-        // TODO: 오브젝트 드로우 로직이 들어갈 자리입니다.
-
-        // 명시적으로 D3D12_RESOURCE_BARRIER 구조체 채우기 (RENDER_TARGET -> PRESENT)
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-        commandList->ResourceBarrier(1, &barrier);
+        return;
     }
 
+    RenderTarget& target{ *it->second };
+    UINT currentFrameIndex{ target.frameIndex };
+
+    D3D12_RESOURCE_BARRIER barrier{};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = target.backBuffers[currentFrameIndex].Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    commandList->ResourceBarrier(1, &barrier);
+
+    D3D12_VIEWPORT viewport{ 0.0f, 0.0f, static_cast<float>(target.width), static_cast<float>(target.height), 0.0f, 1.0f };
+    D3D12_RECT scissorRect{ 0, 0, target.width, target.height };
+    commandList->RSSetViewports(1, &viewport);
+    commandList->RSSetScissorRects(1, &scissorRect);
+
+    commandList->OMSetRenderTargets(1, &target.rtvHandles[currentFrameIndex], FALSE, &target.dsvHandle);
+
+    const float clearColor[] = { 0.1f, 0.2f, 0.3f, 1.0f };
+    commandList->ClearRenderTargetView(target.rtvHandles[currentFrameIndex], clearColor, 0, nullptr);
+    commandList->ClearDepthStencilView(target.dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+    // RenderContext는 컴포넌트가 제출한 RenderRequest 묶음입니다.
+    // 실제 Mesh/Material 파이프라인이 들어오면 여기서 요청을 소비합니다.
+
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    commandList->ResourceBarrier(1, &barrier);
+}
+
+void RenderService::EndFrame()
+{
     commandList->Close();
     ID3D12CommandList* ppCommandLists[] = { commandList.Get() };
     commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
