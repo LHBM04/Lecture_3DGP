@@ -178,47 +178,45 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\ColorRGB.cpp" />
+    <ClCompile Include="Sources\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Component.cpp" />
-    <ClCompile Include="Sources\Engine.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
+    <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Sources\Requests.cpp" />
-    <ClCompile Include="Sources\RenderService.cpp" />
-    <ClCompile Include="Sources\ResourceService.cpp" />
+    <ClCompile Include="Sources\Quaternion.cpp" />
+    <ClCompile Include="Sources\RenderSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
-    <ClCompile Include="Sources\SceneService.cpp" />
-    <ClCompile Include="Sources\Service.cpp" />
-    <ClCompile Include="Sources\WindowService.cpp" />
+    <ClCompile Include="Sources\Vector2D.cpp" />
+    <ClCompile Include="Sources\Vector3D.cpp" />
+    <ClCompile Include="Sources\Vector4D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\ApplicationRequest.h" />
+    <ClInclude Include="Sources\ColorRGB.h" />
+    <ClInclude Include="Sources\ColorRGBA.h" />
     <ClInclude Include="Sources\Component.h" />
-    <ClInclude Include="Sources\Engine.h" />
+    <ClInclude Include="Sources\Game.h" />
     <ClInclude Include="Sources\GameObject.h" />
-    <ClInclude Include="Sources\IResourceLoader.h" />
     <ClInclude Include="Sources\Logger.h" />
-    <ClInclude Include="Sources\Requests.h" />
-    <ClInclude Include="Sources\RenderContext.h" />
-    <ClInclude Include="Sources\RendererOptions.h" />
-    <ClInclude Include="Sources\RenderRequest.h" />
-    <ClInclude Include="Sources\RenderService.h" />
-    <ClInclude Include="Sources\RenderTarget.h" />
-    <ClInclude Include="Sources\Resource.h" />
-    <ClInclude Include="Sources\ResourceService.h" />
-    <ClInclude Include="Sources\Scene.h" />
-    <ClInclude Include="Sources\SceneRequest.h" />
-    <ClInclude Include="Sources\SceneService.h" />
-    <ClInclude Include="Sources\Service.h" />
+    <ClInclude Include="Sources\MathF.h" />
+    <ClInclude Include="Sources\Matrix4x4.h" />
+    <ClInclude Include="Sources\PhysicsSystem.h" />
     <ClInclude Include="Sources\Precompiled.h" />
+    <ClInclude Include="Sources\Quaternion.h" />
+    <ClInclude Include="Sources\RenderSystem.h" />
+    <ClInclude Include="Sources\Scene.h" />
+    <ClInclude Include="Sources\SceneSystem.h" />
     <ClInclude Include="Sources\Singleton.h" />
-    <ClInclude Include="Sources\TimeContext.h" />
-    <ClInclude Include="Sources\WindowOptions.h" />
-    <ClInclude Include="Sources\WindowService.h" />
+    <ClInclude Include="Sources\TimeSystem.h" />
+    <ClInclude Include="Sources\Vector2D.h" />
+    <ClInclude Include="Sources\Vector3D.h" />
+    <ClInclude Include="Sources\Vector4D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

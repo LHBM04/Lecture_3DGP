@@ -1,32 +1,15 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene.h"
 
-void Scene::Update(const TimeContext& time_)
+auto& Scene::FindObjectsWithName(std::wstring_view name_)
 {
-	(void)time_;
-}
-
-void Scene::Render(RenderContext& renderContext_)
-{
-	(void)renderContext_;
-}
-
-ApplicationRequest* Scene::GetApplicationRequest() const noexcept
-{
-	return applicationRequest;
-}
-
-SceneRequest* Scene::GetSceneRequest() const noexcept
-{
-	return sceneRequest;
-}
-
-void Scene::SetApplicationRequest(ApplicationRequest* applicationRequest_) noexcept
-{
-	applicationRequest = applicationRequest_;
-}
-
-void Scene::SetSceneRequest(SceneRequest* sceneRequest_) noexcept
-{
-	sceneRequest = sceneRequest_;
+	return gameObjects
+		| std::views::filter([name_](const auto& gameObject)
+			{
+				return gameObject->GetName() == name_;
+			})
+		| std::views::transform([](const auto& gameObject)
+			{
+				return gameObject.get();
+			});
 }

@@ -1,22 +1,12 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Component.h"
 
-void Component::Update(const TimeContext& time_)
+const GameObject* Component::GetOwner() const noexcept
 {
-	(void)time_;
+	return owner;
 }
 
-void Component::OnRender(RenderContext& renderContext_)
+GameObject* Component::GetOwner() noexcept
 {
-	(void)renderContext_;
-}
-
-GameObject* Component::GetGameObject() const noexcept
-{
-	return gameObject;
-}
-
-void Component::SetGameObject(GameObject* gameObject_) noexcept
-{
-	gameObject = gameObject_;
+	return owner;
 }

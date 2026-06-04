@@ -26,108 +26,102 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Component.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Precompiled.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\GameObject.cpp">
+    <ClCompile Include="Sources\Main.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Requests.cpp">
+    <ClCompile Include="Sources\RenderSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ResourceService.cpp">
+    <ClCompile Include="Sources\Vector3D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Vector4D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Vector2D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Quaternion.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Matrix4x4.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ColorRGB.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ColorRGBA.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Scene.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SceneService.cpp">
+    <ClCompile Include="Sources\Component.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\WindowService.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Service.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Engine.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\RenderService.cpp">
+    <ClCompile Include="Sources\GameObject.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\ApplicationRequest.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Component.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Precompiled.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Singleton.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Service.h">
+    <ClInclude Include="Sources\Logger.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\RenderService.h">
+    <ClInclude Include="Sources\Game.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\WindowService.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Engine.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\GameObject.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\IResourceLoader.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Requests.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\RenderContext.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\RendererOptions.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\RenderRequest.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\RenderTarget.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Resource.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\ResourceService.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\SceneRequest.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\SceneService.h">
+    <ClInclude Include="Sources\RenderSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Logger.h">
+    <ClInclude Include="Sources\GameObject.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\TimeContext.h">
+    <ClInclude Include="Sources\SceneSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\WindowOptions.h">
+    <ClInclude Include="Sources\Vector3D.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vector4D.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vector2D.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Quaternion.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MathF.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Matrix4x4.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ColorRGB.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ColorRGBA.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PhysicsSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TimeSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Component.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

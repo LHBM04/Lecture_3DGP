@@ -1,20 +1,41 @@
-#pragma once
+﻿#pragma once
 
-#include "Requests.h"
-
+class Collider;
 class GameObject;
 
 class Component
 {
+	friend class GameObject;
+
 public:
+	Component() = default;
 	virtual ~Component() = default;
 
-	virtual void Update(const TimeContext& time_);
-	virtual void OnRender(RenderContext& renderContext_);
+	[[nodiscard]] GameObject* GetOwner() noexcept;
+	[[nodiscard]] const GameObject* GetOwner() const noexcept;
 
-	[[nodiscard]] GameObject* GetGameObject() const noexcept;
-	void SetGameObject(GameObject* gameObject_) noexcept;
+protected:
+	virtual void OnAwake() {}
+	virtual void OnEnable() {}
+	virtual void OnStart() {}
+
+	virtual void OnUpdate(float deltaTime_) {}
+	virtual void OnLateUpdate(float deltaTime_) {}
+	virtual void OnFixedUpdate(float fixedDeltaTime_) {}
+
+	virtual void OnDisable() {}
+	virtual void OnDestroy() {}
+
+	virtual void OnCollisionEnter(Collider* other_) {}
+	virtual void OnCollisionStay(Collider* other_) {}
+	virtual void OnCollisionExit(Collider* other_) {}
 
 private:
-	GameObject* gameObject{ nullptr };
+	Component(const Component&) = delete;
+	Component& operator=(const Component&) = delete;
+
+	Component(Component&&) = delete;
+	Component& operator=(Component&&) = delete;
+
+	GameObject* owner{ nullptr };
 };
