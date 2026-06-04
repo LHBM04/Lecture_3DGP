@@ -2,6 +2,10 @@
 
 #include "Logger.h"
 #include "RenderSystem.h"
+#include "ResourceSystem.h"
+#include "Scene_Test.h"
+#include "SceneSystem.h"
+#include "TimeSystem.h"
 
 LRESULT CALLBACK WindowProc(
 	_In_ HWND hwnd,
@@ -93,6 +97,12 @@ INT APIENTRY wWinMain(
 		return -1;
 	}
 
+	ResourceSystem::GetInstance().Initialize();
+	SceneSystem::GetInstance().AddScene<Scene_Test>(L"Scene_Test");
+	SceneSystem::GetInstance().LoadScene(L"Scene_Test");
+
+	TimeSystem::GetInstance().Reset();
+
 	MSG msg;
 	while (true)
 	{
@@ -107,10 +117,25 @@ INT APIENTRY wWinMain(
 		}
 		else
 		{
-			// Game loop goes here.
+			TimeSystem::GetInstance().Tick();
+
+			while (TimeSystem::GetInstance().ConsumeFixedUpdate())
+			{
+				SceneSystem::GetInstance().FixedUpdate();
+			}
+
+			SceneSystem::GetInstance().Update();
+			SceneSystem::GetInstance().LateUpdate();
+
+			RenderSystem::GetInstance().BeginFrame();
+			RenderSystem::GetInstance().Clear();
+			SceneSystem::GetInstance().Render(RenderSystem::GetInstance().GetCommandList());
+			RenderSystem::GetInstance().EndFrame();
+			RenderSystem::GetInstance().Present();
 		}
 	}
 
+	ResourceSystem::GetInstance().Release();
 	RenderSystem::GetInstance().Release();
 
 	if (!::DestroyWindow(mainWindow))

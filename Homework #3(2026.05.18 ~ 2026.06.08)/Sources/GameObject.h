@@ -7,8 +7,16 @@
 #include <typeindex>
 
 #include "Component.h"
+#include "Transform.h"
 
 class Scene;
+class Transform;
+struct ID3D12GraphicsCommandList;
+
+struct alignas(256) GameObjectConstants final
+{
+	Matrix4x4 worldMatrix{ Matrix4x4::GetIdentity() };
+};
 
 class GameObject
 {
@@ -17,6 +25,13 @@ class GameObject
 public:
 	GameObject() = default;
 	virtual ~GameObject() = default;
+
+	void Update();
+	void LateUpdate();
+	void FixedUpdate();
+	
+	void Render(ID3D12GraphicsCommandList* commandList_);
+	void Destroy();
 
 	[[nodiscard]] const std::wstring& GetName() const noexcept;
 	void SetName(std::wstring_view name_);
@@ -31,9 +46,11 @@ public:
 
 	[[nodiscard]] Scene* GetCurrentScene() noexcept;
 	[[nodiscard]] const Scene* GetCurrentScene() const noexcept;
+	[[nodiscard]] Scene* GetScene() noexcept;
+	[[nodiscard]] const Scene* GetScene() const noexcept;
 
-	template <std::derived_from<Component> TComponent>
-	TComponent* AddComponent();
+	template <std::derived_from<Component> TComponent, class... TArgs>
+	TComponent* AddComponent(TArgs&&... args_);
 
 	template <std::derived_from<Component> TComponent>
 	TComponent* GetComponent();
@@ -43,6 +60,10 @@ public:
 
 	template <std::derived_from<Component> TComponent>
 	void RemoveComponent();
+
+	[[nodiscard]] Transform* GetTransform() noexcept;
+	[[nodiscard]] const Transform* GetTransform() const noexcept;
+	[[nodiscard]] GameObjectConstants GetGameObjectConstants() const noexcept;
 
 private:
 	GameObject(const GameObject&) = delete;
@@ -60,38 +81,40 @@ private:
 	Scene* currentScene{ nullptr };
 
 	std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
+	Transform* transform{ nullptr };
 };
 
-template <std::derived_from<Component> TComponent>
-inline TComponent* GameObject::AddComponent()
+template <std::derived_from<Component> TComponent, class... TArgs>
+inline TComponent* GameObject::AddComponent(TArgs&&... args_)
 {
-	if (const auto iter{ components.find(typeid(TComponent)) }; iter != components.end())
+	const std::type_index typeIndex{ typeid(TComponent) };
+	if (const auto iter{ components.find(typeIndex) }; iter != components.end())
 	{
 		return nullptr;
 	}
 
-	std::unique_ptr<TComponent> component{ std::make_unique<TComponent>() };
+	std::unique_ptr<TComponent> component{ std::make_unique<TComponent>(std::forward<TArgs>(args_)...) };
 	component->owner = this;
 	TComponent* componentPtr{ component.get() };
 	components[typeIndex] = std::move(component);
+	componentPtr->Awake();
+	if (isActive)
+	{
+		componentPtr->Enable();
+	}
+
+	if constexpr (std::derived_from<TComponent, Transform>)
+	{
+		transform = componentPtr;
+	}
 	return componentPtr;
 }
 
 template <std::derived_from<Component> TComponent>
 inline const TComponent* GameObject::GetComponent() const
 {
-	if (const auto iter{ components.find(typeid(TComponent)) }; iter != components.end())
-	{
-		return static_cast<TComponent*>(iter->second.get());
-	}
-
-	return nullptr;
-}
-
-template <std::derived_from<Component> TComponent>
-inline const TComponent* GameObject::GetComponent() const
-{
-	if (const auto iter{ components.find(typeid(TComponent)) }; iter != components.end())
+	const std::type_index typeIndex{ typeid(TComponent) };
+	if (const auto iter{ components.find(typeIndex) }; iter != components.end())
 	{
 		return static_cast<TComponent*>(iter->second.get());
 	}

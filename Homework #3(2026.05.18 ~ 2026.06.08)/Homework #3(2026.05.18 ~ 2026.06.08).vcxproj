@@ -180,10 +180,15 @@
   <ItemGroup>
     <ClCompile Include="Sources\ColorRGB.cpp" />
     <ClCompile Include="Sources\ColorRGBA.cpp" />
+    <ClCompile Include="Sources\Camera.cpp" />
     <ClCompile Include="Sources\Component.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
+    <ClCompile Include="Sources\Light.cpp" />
+    <ClCompile Include="Sources\Material.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
+    <ClCompile Include="Sources\Mesh.cpp" />
+    <ClCompile Include="Sources\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -192,7 +197,14 @@
     </ClCompile>
     <ClCompile Include="Sources\Quaternion.cpp" />
     <ClCompile Include="Sources\RenderSystem.cpp" />
+    <ClCompile Include="Sources\Resource.cpp" />
+    <ClCompile Include="Sources\ResourceSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
+    <ClCompile Include="Sources\Scene_Test.cpp" />
+    <ClCompile Include="Sources\SceneSystem.cpp" />
+    <ClCompile Include="Sources\Shader.cpp" />
+    <ClCompile Include="Sources\TimeSystem.cpp" />
+    <ClCompile Include="Sources\Transform.cpp" />
     <ClCompile Include="Sources\Vector2D.cpp" />
     <ClCompile Include="Sources\Vector3D.cpp" />
     <ClCompile Include="Sources\Vector4D.cpp" />
@@ -200,20 +212,29 @@
   <ItemGroup>
     <ClInclude Include="Sources\ColorRGB.h" />
     <ClInclude Include="Sources\ColorRGBA.h" />
+    <ClInclude Include="Sources\Camera.h" />
     <ClInclude Include="Sources\Component.h" />
-    <ClInclude Include="Sources\Game.h" />
     <ClInclude Include="Sources\GameObject.h" />
+    <ClInclude Include="Sources\Light.h" />
     <ClInclude Include="Sources\Logger.h" />
+    <ClInclude Include="Sources\Material.h" />
     <ClInclude Include="Sources\MathF.h" />
     <ClInclude Include="Sources\Matrix4x4.h" />
+    <ClInclude Include="Sources\Mesh.h" />
+    <ClInclude Include="Sources\MeshRenderer.h" />
     <ClInclude Include="Sources\PhysicsSystem.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Quaternion.h" />
     <ClInclude Include="Sources\RenderSystem.h" />
+    <ClInclude Include="Sources\Resource.h" />
+    <ClInclude Include="Sources\ResourceSystem.h" />
     <ClInclude Include="Sources\Scene.h" />
+    <ClInclude Include="Sources\Scene_Test.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
+    <ClInclude Include="Sources\Shader.h" />
     <ClInclude Include="Sources\Singleton.h" />
     <ClInclude Include="Sources\TimeSystem.h" />
+    <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\Vector2D.h" />
     <ClInclude Include="Sources\Vector3D.h" />
     <ClInclude Include="Sources\Vector4D.h" />

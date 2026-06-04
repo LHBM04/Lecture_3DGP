@@ -56,6 +56,9 @@
     <ClCompile Include="Sources\ColorRGBA.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Camera.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Scene.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
@@ -63,6 +66,39 @@
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\GameObject.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Material.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Light.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TimeSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Transform.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Resource.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ResourceSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Mesh.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\MeshRenderer.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SceneSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Shader.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Test.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,7 +112,10 @@
     <ClInclude Include="Sources\Logger.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game.h">
+    <ClInclude Include="Sources\Camera.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Material.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\RenderSystem.h">
@@ -118,10 +157,34 @@
     <ClInclude Include="Sources\PhysicsSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Light.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\TimeSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Component.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Transform.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Resource.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ResourceSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Mesh.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\MeshRenderer.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Shader.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Test.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

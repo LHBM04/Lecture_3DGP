@@ -2,26 +2,46 @@
 
 class Collider;
 class GameObject;
+struct ID3D12GraphicsCommandList;
 
 class Component
 {
 	friend class GameObject;
 
 public:
-	Component() = default;
-	virtual ~Component() = default;
+	Component() noexcept = default;
+	virtual ~Component() noexcept;
 
 	[[nodiscard]] GameObject* GetOwner() noexcept;
 	[[nodiscard]] const GameObject* GetOwner() const noexcept;
+
+	[[nodiscard]] bool IsStarted() const noexcept;
+	[[nodiscard]] bool IsEnabled() const noexcept;
+	[[nodiscard]] bool IsActive() const noexcept;
+	void SetEnabled(bool isEnabled_);
+
+	void Awake();
+	void Enable();
+	void Start();
+	void Update();
+	void LateUpdate();
+	void FixedUpdate();
+	void Render(ID3D12GraphicsCommandList* commandList_);
+	void Disable();
+	void Destroy();
 
 protected:
 	virtual void OnAwake() {}
 	virtual void OnEnable() {}
 	virtual void OnStart() {}
 
-	virtual void OnUpdate(float deltaTime_) {}
-	virtual void OnLateUpdate(float deltaTime_) {}
-	virtual void OnFixedUpdate(float fixedDeltaTime_) {}
+	virtual void OnUpdate() {}
+	virtual void OnLateUpdate() {}
+	virtual void OnFixedUpdate() {}
+
+	virtual void OnPreRender(ID3D12GraphicsCommandList* commandList_) {}
+	virtual void OnRender(ID3D12GraphicsCommandList* commandList_) {}
+	virtual void OnPostRender(ID3D12GraphicsCommandList* commandList_) {}
 
 	virtual void OnDisable() {}
 	virtual void OnDestroy() {}
@@ -38,4 +58,7 @@ private:
 	Component& operator=(Component&&) = delete;
 
 	GameObject* owner{ nullptr };
+	bool isStarted{ false };
+	bool isEnabled{ true };
+	bool isDestroyed{ false };
 };

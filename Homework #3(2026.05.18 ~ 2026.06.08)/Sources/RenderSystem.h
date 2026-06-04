@@ -12,33 +12,17 @@
 
 #include "Singleton.h"
 
+class Camera;
+class Light;
+struct CameraConstants;
+struct LightConstants;
+struct GameObjectConstants;
+class Material;
+struct MaterialConstants;
+
 class RenderSystem : public Singleton<RenderSystem>
 {
 public:
-	struct alignas(256) CameraConstants final
-	{
-		// Matrix4x4 viewMatrix;
-		// Matrix4x4 projectionMatrix;
-	};
-
-	struct alignas(256) LightConstants final
-	{
-		// Vector4D ambientColor;
-		// Vector4D lights[8];
-		// Vector4D lightDirs[8];
-		// Vector3D cameraPosition;
-		// uint32_t activeLightCount;
-	};
-
-	struct alignas(256) ObjectConstants final
-	{
-		// Matrix4x4 worldMatrix;
-	};
-
-	struct alignas(256) MaterialConstants final
-	{
-		// ColorRGBA color;
-	};
 
 	RenderSystem() = default;
 	~RenderSystem() override = default;
@@ -54,18 +38,42 @@ public:
 
 	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
 	[[nodiscard]] ID3D12GraphicsCommandList* GetCommandList() const noexcept;
+	void SetCameraConstants(const CameraConstants& data_);
+	void SetLightConstants(const LightConstants& data_);
+	void SetObjectConstants(const GameObjectConstants& data_);
+	void SetMaterialConstants(const MaterialConstants& data_);
 
 private:
 	static constexpr UINT BackBufferCount{ 2 };
+	static constexpr UINT FrameConstantBufferSize{ 64 * 1024 };
+
+	struct FrameConstantBuffer final
+	{
+		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+		std::byte* mappedData{ nullptr };
+		D3D12_GPU_VIRTUAL_ADDRESS gpuBaseAddress{ 0 };
+		UINT currentOffset{ 0 };
+	};
+
+	void WaitForGpu();
+	void MoveToNextFrame();
+	[[nodiscard]] D3D12_RESOURCE_BARRIER CreateTransitionBarrier(
+		ID3D12Resource* resource_,
+		D3D12_RESOURCE_STATES before_,
+		D3D12_RESOURCE_STATES after_) const noexcept;
 
 	HRESULT CreateDevice();
 	HRESULT CreateCommandObjects();
 	HRESULT CreateSwapChain(HWND hWnd_);
 	HRESULT CreateDescriptorHeaps();
 	HRESULT CreateSyncObjects();
+	HRESULT CreateConstantBuffers();
 
 	HRESULT CreateRenderTargetViews();
 	HRESULT CreateDepthStencilView();
+
+	D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, UINT sizeInBytes_);
+	static UINT AlignConstantBufferSize(UINT sizeInBytes_) noexcept;
 
 	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
 
@@ -75,7 +83,7 @@ private:
 	UINT msaa4xQualityLevels{ 0 };
 
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocators;
+	std::array<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, BackBufferCount> commandAllocators;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
@@ -90,12 +98,17 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{};
 
 	UINT frameIndex{ 0 };
+	UINT clientWidth{ 0 };
+	UINT clientHeight{ 0 };
+
+	D3D12_VIEWPORT viewport{};
+	D3D12_RECT scissorRect{};
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
 	UINT rtvDescriptorSize{ 0 };
-	UINT rtvHeapOffset{ 0 };
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
 	UINT dsvDescriptorSize{ 0 };
-	UINT dsvHeapOffset{ 0 };
+
+	std::array<FrameConstantBuffer, BackBufferCount> frameConstantBuffers;
 };

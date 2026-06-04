@@ -7,4 +7,7 @@ class PhysicsSystem final : public Singleton<PhysicsSystem>
 public:
 	PhysicsSystem() = default;
 	~PhysicsSystem() override = default;
+
+	void Simulate();
+
 };
