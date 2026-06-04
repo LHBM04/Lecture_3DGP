@@ -31,10 +31,10 @@ public:
 	GameObject* Instantiate(const Vector3D& position_, const Quaternion& rotation_, Transform* parent_);
 
 	[[nodiscard]] GameObject* FindObjectWithName(std::wstring_view name_);
-	[[nodiscard]] auto& FindObjectsWithName(std::wstring_view name_);
+	[[nodiscard]] auto FindObjectsWithName(std::wstring_view name_);
 
 	[[nodiscard]] GameObject* FindObjectWithTag(std::wstring_view tag_);
-	[[nodiscard]] auto& FindObjectsWithTag(std::wstring_view tag_);
+	[[nodiscard]] auto FindObjectsWithTag(std::wstring_view tag_);
 
 private:
 	Scene(const Scene&) = delete;

@@ -23,12 +23,11 @@ LRESULT CALLBACK WindowProc(
 
 constexpr LPCWSTR WindowClassName{ L"Homework #3 Class" };
 
-HWND mainWindow{ nullptr };
-
 constexpr LPCWSTR WindowTitle{ L"Homework #3(2026.05.18 ~ 2026.06.08)" };
 constexpr int WindowWidth{ 800 };
 constexpr int WindowHeight{ 600 };
 constexpr DWORD WindowStyle{ WS_OVERLAPPEDWINDOW };
+HWND mainWindow{ nullptr };
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -69,8 +68,8 @@ INT APIENTRY wWinMain(
 
 	mainWindow = ::CreateWindowExW(
 		0,
-		TEXT("Homework #3 Class"),
-		TEXT("Homework #3(2026.05.18 ~ 2026.06.08)"),
+		L"Homework #3 Class",
+		L"Homework #3(2026.05.18 ~ 2026.06.08)",
 		WindowStyle,
 		windowPosX, windowPosY,
 		WindowWidth, WindowHeight,
@@ -94,9 +93,9 @@ INT APIENTRY wWinMain(
 		return -1;
 	}
 
+	MSG msg;
 	while (true)
 	{
-		MSG msg{};
 		if (::PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
@@ -113,4 +112,14 @@ INT APIENTRY wWinMain(
 	}
 
 	RenderSystem::GetInstance().Release();
+
+	if (!::DestroyWindow(mainWindow))
+	{
+		Logger::Critical(L"[Release] DestroyWindow failed");
+		return -1;
+	}
+
+	::UnregisterClassW(WindowClassName, hInstance);
+
+	return static_cast<int>(msg.wParam);
 }
