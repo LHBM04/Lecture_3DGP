@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Main.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Precompiled.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\RenderService.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Window.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\WindowService.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Precompiled.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Singleton.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Service.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderService.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderContext.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderDevice.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SwapChain.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\UploadBuffer.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\DescriptorAllocator.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Window.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowService.h">
+      <Filter>Sources\Header FIles</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{f6a25bf2-0ec4-4fe1-be01-fbc7b0ee5065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Header FIles">
+      <UniqueIdentifier>{f3f4d6cd-63c3-420b-a653-a67dbdfe4aca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Source Files">
+      <UniqueIdentifier>{efe03ff5-082e-4e1a-b910-06bd0dacf81a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

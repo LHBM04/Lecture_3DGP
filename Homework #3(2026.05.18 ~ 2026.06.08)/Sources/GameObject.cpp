@@ -149,12 +149,3 @@ const Transform* GameObject::GetTransform() const noexcept
 	return transform;
 }
 
-GameObjectConstants GameObject::GetGameObjectConstants() const noexcept
-{
-	GameObjectConstants constants{};
-	if (transform != nullptr)
-	{
-		constants.worldMatrix = transform->GetWorldMatrix();
-	}
-	return constants;
-}

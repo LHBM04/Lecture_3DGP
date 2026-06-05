@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <span>
 #include <string>
@@ -15,7 +15,7 @@ class Shader;
 
 struct alignas(256) MaterialConstants final
 {
-	ColorRGBA albedoColor{ ColorRGBA::GetWhite() };
+	ColorRGBA albedoColor;
 };
 
 class Material final : public Resource
@@ -64,7 +64,6 @@ public:
 		DXGI_FORMAT depthStencilFormat_ = DXGI_FORMAT_D24_UNORM_S8_UINT);
 
 	void Bind(ID3D12GraphicsCommandList* commandList_) const;
-	[[nodiscard]] MaterialConstants GetMaterialConstants() const noexcept;
 
 	[[nodiscard]] ID3D12RootSignature* GetRootSignature() const noexcept;
 	[[nodiscard]] ID3D12PipelineState* GetPipelineState() const noexcept;

@@ -66,8 +66,29 @@ void MeshRenderer::OnRender(ID3D12GraphicsCommandList* commandList_)
 	}
 
 	RenderSystem& renderSystem{ RenderSystem::GetInstance() };
-	renderSystem.SetObjectConstants(owner->GetGameObjectConstants());
-	renderSystem.SetMaterialConstants(material->GetMaterialConstants());
+	GameObjectConstants objectConstants{};
+	if (const Transform* const transform{ owner->GetTransform() }; transform != nullptr)
+	{
+		objectConstants.worldMatrix = transform->GetWorldMatrix();
+	}
+	const D3D12_GPU_VIRTUAL_ADDRESS objectGpuAddress{
+		renderSystem.UploadConstantData(&objectConstants, sizeof(objectConstants))
+	};
+	if (objectGpuAddress != 0)
+	{
+		commandList_->SetGraphicsRootConstantBufferView(2, objectGpuAddress);
+	}
+
+	MaterialConstants materialConstants{};
+	materialConstants.albedoColor = material->GetColor();
+	const D3D12_GPU_VIRTUAL_ADDRESS materialGpuAddress{
+		renderSystem.UploadConstantData(&materialConstants, sizeof(materialConstants))
+	};
+	if (materialGpuAddress != 0)
+	{
+		commandList_->SetGraphicsRootConstantBufferView(3, materialGpuAddress);
+	}
+
 	material->Bind(commandList_);
 	mesh->Bind(commandList_);
 	mesh->Draw(commandList_);

@@ -63,7 +63,6 @@ public:
 
 	[[nodiscard]] Transform* GetTransform() noexcept;
 	[[nodiscard]] const Transform* GetTransform() const noexcept;
-	[[nodiscard]] GameObjectConstants GetGameObjectConstants() const noexcept;
 
 private:
 	GameObject(const GameObject&) = delete;

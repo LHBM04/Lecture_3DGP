@@ -12,18 +12,9 @@
 
 #include "Singleton.h"
 
-class Camera;
-class Light;
-struct CameraConstants;
-struct LightConstants;
-struct GameObjectConstants;
-class Material;
-struct MaterialConstants;
-
 class RenderSystem : public Singleton<RenderSystem>
 {
 public:
-
 	RenderSystem() = default;
 	~RenderSystem() override = default;
 
@@ -38,10 +29,7 @@ public:
 
 	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
 	[[nodiscard]] ID3D12GraphicsCommandList* GetCommandList() const noexcept;
-	void SetCameraConstants(const CameraConstants& data_);
-	void SetLightConstants(const LightConstants& data_);
-	void SetObjectConstants(const GameObjectConstants& data_);
-	void SetMaterialConstants(const MaterialConstants& data_);
+	D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, UINT sizeInBytes_);
 
 private:
 	static constexpr UINT BackBufferCount{ 2 };
@@ -51,7 +39,7 @@ private:
 	{
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		std::byte* mappedData{ nullptr };
-		D3D12_GPU_VIRTUAL_ADDRESS gpuBaseAddress{ 0 };
+		D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ 0 };
 		UINT currentOffset{ 0 };
 	};
 
@@ -72,7 +60,6 @@ private:
 	HRESULT CreateRenderTargetViews();
 	HRESULT CreateDepthStencilView();
 
-	D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, UINT sizeInBytes_);
 	static UINT AlignConstantBufferSize(UINT sizeInBytes_) noexcept;
 
 	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Light.h"
 
 #include "GameObject.h"
@@ -23,23 +23,6 @@ const ColorRGBA& Light::GetColor() const noexcept
 void Light::SetColor(const ColorRGBA& color_) noexcept
 {
 	color = color_;
-}
-
-LightConstants Light::GetLightConstants() const noexcept
-{
-	LightConstants constants{};
-	constants.lightColor = color * intensity;
-
-	if (const GameObject* const owner{ GetOwner() }; owner != nullptr)
-	{
-		if (const Transform* const transform{ owner->GetTransform() }; transform != nullptr)
-		{
-			const Vector3D direction{ transform->GetWorldMatrix().GetForward().GetNormalized() };
-			constants.lightDirection = Vector4D(direction.x, direction.y, direction.z, 0.0f);
-		}
-	}
-
-	return constants;
 }
 
 void Light::OnEnable()

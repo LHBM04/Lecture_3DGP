@@ -1,11 +1,7 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "RenderSystem.h"
 
-#include "Camera.h"
-#include "GameObject.h"
-#include "Light.h"
 #include "Logger.h"
-#include "Material.h"
 
 bool RenderSystem::Initialize(HWND window_)
 {
@@ -138,7 +134,7 @@ void RenderSystem::Release()
 		}
 
 		frameConstantBuffer.resource.Reset();
-		frameConstantBuffer.gpuBaseAddress = 0;
+		frameConstantBuffer.gpuAddress = 0;
 		frameConstantBuffer.currentOffset = 0;
 	}
 
@@ -212,62 +208,6 @@ ID3D12Device* RenderSystem::GetDevice() const noexcept
 ID3D12GraphicsCommandList* RenderSystem::GetCommandList() const noexcept
 {
 	return commandList.Get();
-}
-
-void RenderSystem::SetCameraConstants(const CameraConstants& data_)
-{
-	if (commandList == nullptr)
-	{
-		return;
-	}
-
-	const D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ UploadConstantData(&data_, sizeof(data_)) };
-	if (gpuAddress != 0)
-	{
-		commandList->SetGraphicsRootConstantBufferView(0, gpuAddress);
-	}
-}
-
-void RenderSystem::SetLightConstants(const LightConstants& data_)
-{
-	if (commandList == nullptr)
-	{
-		return;
-	}
-
-	const D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ UploadConstantData(&data_, sizeof(data_)) };
-	if (gpuAddress != 0)
-	{
-		commandList->SetGraphicsRootConstantBufferView(1, gpuAddress);
-	}
-}
-
-void RenderSystem::SetObjectConstants(const GameObjectConstants& data_)
-{
-	if (commandList == nullptr)
-	{
-		return;
-	}
-
-	const D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ UploadConstantData(&data_, sizeof(data_)) };
-	if (gpuAddress != 0)
-	{
-		commandList->SetGraphicsRootConstantBufferView(2, gpuAddress);
-	}
-}
-
-void RenderSystem::SetMaterialConstants(const MaterialConstants& data_)
-{
-	if (commandList == nullptr)
-	{
-		return;
-	}
-
-	const D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ UploadConstantData(&data_, sizeof(data_)) };
-	if (gpuAddress != 0)
-	{
-		commandList->SetGraphicsRootConstantBufferView(3, gpuAddress);
-	}
 }
 
 void RenderSystem::WaitForGpu()
@@ -512,7 +452,7 @@ HRESULT RenderSystem::CreateConstantBuffers()
 			return E_FAIL;
 		}
 
-		frameConstantBuffer.gpuBaseAddress = frameConstantBuffer.resource->GetGPUVirtualAddress();
+		frameConstantBuffer.gpuAddress = frameConstantBuffer.resource->GetGPUVirtualAddress();
 		frameConstantBuffer.currentOffset = 0;
 	}
 
@@ -588,7 +528,7 @@ D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantData(const void* data_, UI
 	}
 
 	std::memcpy(frameConstantBuffer.mappedData + frameConstantBuffer.currentOffset, data_, sizeInBytes_);
-	const D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ frameConstantBuffer.gpuBaseAddress + frameConstantBuffer.currentOffset };
+	const D3D12_GPU_VIRTUAL_ADDRESS gpuAddress{ frameConstantBuffer.gpuAddress + frameConstantBuffer.currentOffset };
 	frameConstantBuffer.currentOffset += alignedSize;
 	return gpuAddress;
 }

@@ -304,13 +304,6 @@ void Material::Bind(ID3D12GraphicsCommandList* commandList_) const
 	commandList_->IASetPrimitiveTopology(primitiveTopology);
 }
 
-MaterialConstants Material::GetMaterialConstants() const noexcept
-{
-	MaterialConstants constants{};
-	constants.albedoColor = color;
-	return constants;
-}
-
 ID3D12RootSignature* Material::GetRootSignature() const noexcept
 {
 	return rootSignature.Get();

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Camera.h"
 
 #include "GameObject.h"
@@ -122,14 +122,6 @@ Matrix4x4 Camera::GetProjectionMatrix() const noexcept
 Matrix4x4 Camera::GetViewProjectionMatrix() const noexcept
 {
 	return GetViewMatrix() * GetProjectionMatrix();
-}
-
-CameraConstants Camera::GetCameraConstants() const noexcept
-{
-	CameraConstants constants{};
-	constants.viewMatrix = GetViewMatrix();
-	constants.projectionMatrix = GetProjectionMatrix();
-	return constants;
 }
 
 void Camera::OnEnable()

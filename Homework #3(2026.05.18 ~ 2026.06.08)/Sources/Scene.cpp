@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene.h"
 
 #include "Camera.h"
@@ -70,23 +70,51 @@ void Scene::FixedUpdate()
 
 void Scene::Render(ID3D12GraphicsCommandList* commandList_)
 {
-	RenderSystem& renderSystem{ RenderSystem::GetInstance() };
-	if (!cameras.empty())
+	if (commandList_ == nullptr)
 	{
-		renderSystem.SetCameraConstants(cameras.front()->GetCameraConstants());
-	}
-	else
-	{
-		renderSystem.SetCameraConstants(CameraConstants{});
+		return;
 	}
 
+	RenderSystem& renderSystem{ RenderSystem::GetInstance() };
+	CameraConstants cameraConstants{};
+	if (!cameras.empty())
+	{
+		const Camera* const camera{ cameras.front() };
+		cameraConstants.viewMatrix = camera->GetViewMatrix();
+		cameraConstants.projectionMatrix = camera->GetProjectionMatrix();
+		cameraConstants.viewProjectionMatrix = cameraConstants.viewMatrix * cameraConstants.projectionMatrix;
+	}
+
+	const D3D12_GPU_VIRTUAL_ADDRESS cameraGpuAddress{
+		renderSystem.UploadConstantData(&cameraConstants, sizeof(cameraConstants))
+	};
+	if (cameraGpuAddress != 0)
+	{
+		commandList_->SetGraphicsRootConstantBufferView(0, cameraGpuAddress);
+	}
+
+	LightConstants lightConstants{};
 	if (!lights.empty())
 	{
-		renderSystem.SetLightConstants(lights.front()->GetLightConstants());
+		const Light* const light{ lights.front() };
+		lightConstants.lightColor = light->GetColor() * light->GetIntensity();
+
+		if (const GameObject* const owner{ light->GetOwner() }; owner != nullptr)
+		{
+			if (const Transform* const transform{ owner->GetTransform() }; transform != nullptr)
+			{
+				const Vector3D direction{ transform->GetWorldMatrix().GetForward().GetNormalized() };
+				lightConstants.lightDirection = Vector4D(direction.x, direction.y, direction.z, 0.0f);
+			}
+		}
 	}
-	else
+
+	const D3D12_GPU_VIRTUAL_ADDRESS lightGpuAddress{
+		renderSystem.UploadConstantData(&lightConstants, sizeof(lightConstants))
+	};
+	if (lightGpuAddress != 0)
 	{
-		renderSystem.SetLightConstants(LightConstants{});
+		commandList_->SetGraphicsRootConstantBufferView(1, lightGpuAddress);
 	}
 
 	OnRender(commandList_);

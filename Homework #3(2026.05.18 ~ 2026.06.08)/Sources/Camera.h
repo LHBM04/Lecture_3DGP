@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ColorRGBA.h"
 #include "Component.h"
@@ -7,8 +7,9 @@
 
 struct alignas(256) CameraConstants final
 {
-	Matrix4x4 viewMatrix{ Matrix4x4::GetIdentity() };
-	Matrix4x4 projectionMatrix{ Matrix4x4::GetIdentity() };
+	Matrix4x4 viewMatrix;
+	Matrix4x4 projectionMatrix;
+	Matrix4x4 viewProjectionMatrix;
 };
 
 class Camera final : public Component
@@ -60,7 +61,6 @@ public:
 	[[nodiscard]] Matrix4x4 GetViewMatrix() const noexcept;
 	[[nodiscard]] Matrix4x4 GetProjectionMatrix() const noexcept;
 	[[nodiscard]] Matrix4x4 GetViewProjectionMatrix() const noexcept;
-	[[nodiscard]] CameraConstants GetCameraConstants() const noexcept;
 
 	void OnEnable() override;
 	void OnDisable() override;

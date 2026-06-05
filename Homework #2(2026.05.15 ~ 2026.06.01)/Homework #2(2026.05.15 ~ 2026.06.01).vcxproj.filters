@@ -278,6 +278,9 @@
     <ClInclude Include="Sources\StageSceneController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Material.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Materials\Floor_Day.bin">
