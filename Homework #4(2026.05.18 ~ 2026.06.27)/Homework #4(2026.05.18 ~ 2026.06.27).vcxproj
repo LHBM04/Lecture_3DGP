@@ -163,29 +163,61 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Camera.cpp" />
+    <ClCompile Include="Sources\ColorRGB.cpp" />
+    <ClCompile Include="Sources\ColorRGBA.cpp" />
+    <ClCompile Include="Sources\Component.cpp" />
+    <ClCompile Include="Sources\DescriptorAllocator.cpp" />
     <ClCompile Include="Sources\Framework.cpp" />
+    <ClCompile Include="Sources\GameObject.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Quaternion.cpp" />
+    <ClCompile Include="Sources\RenderContext.cpp" />
+    <ClCompile Include="Sources\RenderDevice.cpp" />
     <ClCompile Include="Sources\RenderService.cpp" />
+    <ClCompile Include="Sources\Scene.cpp" />
+    <ClCompile Include="Sources\Service.cpp" />
+    <ClCompile Include="Sources\SwapChain.cpp" />
+    <ClCompile Include="Sources\Transform.cpp" />
+    <ClCompile Include="Sources\UploadBuffer.cpp" />
+    <ClCompile Include="Sources\Vector2D.cpp" />
+    <ClCompile Include="Sources\Vector3D.cpp" />
+    <ClCompile Include="Sources\Vector4D.cpp" />
     <ClCompile Include="Sources\Window.cpp" />
     <ClCompile Include="Sources\WindowService.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Camera.h" />
+    <ClInclude Include="Sources\ColorRGB.h" />
+    <ClInclude Include="Sources\ColorRGBA.h" />
+    <ClInclude Include="Sources\Component.h" />
     <ClInclude Include="Sources\DescriptorAllocator.h" />
     <ClInclude Include="Sources\Framework.h" />
+    <ClInclude Include="Sources\GameObject.h" />
+    <ClInclude Include="Sources\Light.h" />
+    <ClInclude Include="Sources\MathF.h" />
+    <ClInclude Include="Sources\Matrix4x4.h" />
     <ClInclude Include="Sources\Precompiled.h" />
+    <ClInclude Include="Sources\Quaternion.h" />
     <ClInclude Include="Sources\RenderContext.h" />
     <ClInclude Include="Sources\RenderDevice.h" />
     <ClInclude Include="Sources\RenderService.h" />
+    <ClInclude Include="Sources\Scene.h" />
     <ClInclude Include="Sources\Singleton.h" />
     <ClInclude Include="Sources\Service.h" />
     <ClInclude Include="Sources\SwapChain.h" />
+    <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\UploadBuffer.h" />
+    <ClInclude Include="Sources\Vector2D.h" />
+    <ClInclude Include="Sources\Vector3D.h" />
+    <ClInclude Include="Sources\Vector4D.h" />
     <ClInclude Include="Sources\Window.h" />
     <ClInclude Include="Sources\WindowService.h" />
   </ItemGroup>

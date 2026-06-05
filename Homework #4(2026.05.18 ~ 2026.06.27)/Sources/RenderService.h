@@ -2,7 +2,6 @@
 
 #include <array>
 #include <memory>
-#include <vector>
 
 #include <wrl.h>
 
@@ -19,11 +18,12 @@ class UploadBuffer;
 class RenderService : public Service
 {
 public:
-	RenderService() noexcept = default;
-	~RenderService() noexcept override = default;
+	RenderService() noexcept;
+	~RenderService() noexcept override;
+
+	[[nodiscard]] bool IsInitialized() const noexcept;
 
 	void BeginFrame();
-	void EndFrame();
 	void Clear();
 	void Present();
 
@@ -36,6 +36,7 @@ private:
 	static constexpr UINT FrameConstantBufferSize{ 64 * 1024 };
 
 	UINT frameIndex{ 0 };
+	bool isInitialized{ false };
 
 	std::unique_ptr<RenderDevice> device;
 	std::unique_ptr<RenderContext> context;
@@ -43,5 +44,6 @@ private:
 
 	std::unique_ptr<DescriptorAllocator> rtvAllocator;
 	std::unique_ptr<DescriptorAllocator> dsvAllocator;
+	std::unique_ptr<DescriptorAllocator> srvAllocator;
 	std::array<std::unique_ptr<UploadBuffer>, BackBufferCount> uploadBuffers;
 };

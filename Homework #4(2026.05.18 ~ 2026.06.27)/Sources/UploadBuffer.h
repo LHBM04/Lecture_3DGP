@@ -6,13 +6,20 @@
 
 #include <d3d12.h>
 
+class UploadBufferOptions final
+{
+public:
+	ID3D12Device* device;
+	UINT bufferSize;
+};
+
 class UploadBuffer
 {
 public:
 	UploadBuffer() noexcept = default;
 	~UploadBuffer() noexcept = default;
 
-	bool Initialize(ID3D12Device* device_, UINT bufferSize_);
+	bool Initialize(const UploadBufferOptions& options_);
 	void Release();
 
 	void Reset();

@@ -20,6 +20,6 @@ private:
 template <class TInstance>
 inline TInstance& Singleton<TInstance>::GetInstance()
 {
-	static TInstance* instance{ new TInstance() };
+	static TInstance instance{};
 	return instance;
 }

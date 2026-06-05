@@ -1,5 +1,4 @@
 ﻿#include "Precompiled.h"
-
 #include "Framework.h"
 
 INT APIENTRY wWinMain(
@@ -11,29 +10,21 @@ INT APIENTRY wWinMain(
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	Framework framework;
+	Framework& framework{ Framework::GetInstance() };
 
-	framework.SetOption(L"App.Instance", hInstance);
-	framework.SetOption(L"App.Show", nCmdShow);
+	framework.SetOption<HINSTANCE>(L"App.Instance", hInstance);
+	framework.SetOption<int>(L"App.Show", nCmdShow);
 
-	framework.SetOption(L"Window.Title", L"Homework #4(2026.05.18 ~ 2026.06.27)");
-	framework.SetOption(L"Window.Width", 800U);
-	framework.SetOption(L"Window.Height", 600U);
+	framework.SetOption<LPCWSTR>(L"Window.Title", L"Homework #4(2026.05.18 ~ 2026.06.27)");
+	framework.SetOption<int>(L"Window.Width", 800);
+	framework.SetOption<int>(L"Window.Height", 600);
 	
-	framework.SetOption(L"Renderer.EnableVSync", false);
+	framework.SetOption<bool>(L"Renderer.EnableVSync", false);
 	
-	try
+	if (!framework.Initialize())
 	{
-		if (!Framework::GetInstance().Initialize())
-		{
-			return -1;
-		}
-
-		return Framework::GetInstance().Run();
-	}
-	catch (const std::exception& ex_)
-	{
-		::MessageBoxW(nullptr, L"Error", L"Oops!", MB_OK | MB_ICONERROR);
 		return -1;
 	}
+
+	return framework.Run();
 }

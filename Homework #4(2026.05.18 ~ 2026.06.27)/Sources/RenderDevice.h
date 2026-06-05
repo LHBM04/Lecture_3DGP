@@ -14,8 +14,8 @@ public:
 	bool Initialize();
 	void Release();
 
-	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
-	[[nodiscard]] IDXGIFactory4* GetFactory() const noexcept;
+	[[nodiscard]] ID3D12Device& GetDevice() const noexcept;
+	[[nodiscard]] IDXGIFactory4& GetFactory() const noexcept;
 
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;

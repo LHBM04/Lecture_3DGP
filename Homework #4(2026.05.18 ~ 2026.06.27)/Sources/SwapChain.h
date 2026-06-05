@@ -9,14 +9,33 @@
 
 class DescriptorAllocator;
 
+class SwapChainOptions final
+{
+public:
+	IDXGIFactory4* factory;
+	ID3D12Device* device;
+	ID3D12CommandQueue* commandQueue;
+	HWND window;
+	UINT backBufferCount;
+	DescriptorAllocator* rtvAllocator;
+	DescriptorAllocator* dsvAllocator;
+};
+
 class SwapChain
 {
 public:
 	SwapChain() noexcept = default;
 	~SwapChain() noexcept = default;
 
-	bool Initialize(IDXGIFactory4* factory_, ID3D12CommandQueue* commandQueue_, HWND window_);
+	bool Initialize(const SwapChainOptions& options_);
 	void Release();
+
+	[[nodiscard]] IDXGISwapChain3& GetDXGISwapChain() const noexcept;
+	[[nodiscard]] ID3D12Resource& GetCurrentBackBuffer(UINT frameIndex_) const noexcept;
+	[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRtvHandle(UINT frameIndex_) const noexcept;
+	[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetDsvHandle() const noexcept;
+	[[nodiscard]] const D3D12_VIEWPORT& GetViewport() const noexcept;
+	[[nodiscard]] const D3D12_RECT& GetScissorRect() const noexcept;
 
 private:
 	UINT clientWidth{ 0 };
