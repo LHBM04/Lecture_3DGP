@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "Transform.h"
 
+#include "Matrix4x4.h"
+
 void Transform::OnDestroy()
 {
 	if (parent != nullptr)
@@ -141,7 +143,7 @@ void Transform::SetWorldMatrix(const Matrix4x4& matrix_)
 	{
 		Matrix4x4 parentInverse{ parent->GetWorldMatrix().GetInverse() };
 		Matrix4x4 localMatrix{ matrix_ * parentInverse };
-
+		
 		scale = localMatrix.GetScale();
 		rotation = localMatrix.GetRotation();
 		position = localMatrix.GetWorldPosition();

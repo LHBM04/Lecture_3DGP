@@ -8,18 +8,17 @@ class Mesh;
 class MeshRenderer final : public Component
 {
 public:
-	MeshRenderer() noexcept = default;
-	~MeshRenderer() noexcept override = default;
+	MeshRenderer() = default;
+	~MeshRenderer() override = default;
 
+	[[nodiscard]] Mesh* GetMesh() const noexcept;
 	void SetMesh(Mesh* mesh_) noexcept;
-	[[nodiscard]] Mesh* GetMesh() noexcept;
-	[[nodiscard]] const Mesh* GetMesh() const noexcept;
 
+	[[nodiscard]] Material* GetMaterial() const noexcept;
 	void SetMaterial(Material* material_) noexcept;
-	[[nodiscard]] Material* GetMaterial() noexcept;
-	[[nodiscard]] const Material* GetMaterial() const noexcept;
 
-	void OnRender(ID3D12GraphicsCommandList* commandList_) override;
+protected:
+	void OnRender() override;
 
 private:
 	Mesh* mesh{ nullptr };

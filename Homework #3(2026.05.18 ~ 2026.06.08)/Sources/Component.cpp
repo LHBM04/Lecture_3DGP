@@ -1,11 +1,16 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Component.h"
 
 #include "GameObject.h"
 
-Component::~Component() noexcept
+GameObject* Component::GetOwner() const noexcept
 {
-	Destroy();
+	return owner;
+}
+
+void Component::SetOwner(GameObject* owner_) noexcept
+{
+	owner = owner_;
 }
 
 bool Component::IsStarted() const noexcept
@@ -20,7 +25,7 @@ bool Component::IsEnabled() const noexcept
 
 bool Component::IsActive() const noexcept
 {
-	return isEnabled && owner != nullptr && owner->IsActive();
+	return isEnabled && (owner != nullptr) && owner->IsActive();
 }
 
 void Component::SetEnabled(bool isEnabled_)
@@ -29,9 +34,9 @@ void Component::SetEnabled(bool isEnabled_)
 	{
 		return;
 	}
-
 	isEnabled = isEnabled_;
-	if (owner != nullptr && owner->IsActive())
+
+	if ((owner != nullptr) && owner->IsActive())
 	{
 		if (isEnabled)
 		{
@@ -75,16 +80,6 @@ void Component::Update()
 	OnUpdate();
 }
 
-void Component::LateUpdate()
-{
-	if (!isEnabled)
-	{
-		return;
-	}
-
-	OnLateUpdate();
-}
-
 void Component::FixedUpdate()
 {
 	if (!isEnabled)
@@ -95,16 +90,26 @@ void Component::FixedUpdate()
 	OnFixedUpdate();
 }
 
-void Component::Render(ID3D12GraphicsCommandList* commandList_)
+void Component::LateUpdate()
 {
 	if (!isEnabled)
 	{
 		return;
 	}
 
-	OnPreRender(commandList_);
-	OnRender(commandList_);
-	OnPostRender(commandList_);
+	OnLateUpdate();
+}
+
+void Component::Render()
+{
+	if (!isEnabled)
+	{
+		return;
+	}
+
+	OnPreRender();
+	OnRender();
+	OnPostRender();
 }
 
 void Component::Disable()
@@ -120,6 +125,7 @@ void Component::Destroy()
 	}
 
 	isDestroyed = true;
+
 	if (isEnabled)
 	{
 		Disable();
@@ -130,12 +136,17 @@ void Component::Destroy()
 	isEnabled = false;
 }
 
-const GameObject* Component::GetOwner() const noexcept
+void Component::CollisionEnter(Collider* other_)
 {
-	return owner;
+	OnCollisionEnter(other_);
 }
 
-GameObject* Component::GetOwner() noexcept
+void Component::CollisionStay(Collider* other_)
 {
-	return owner;
+	OnCollisionStay(other_);
+}
+
+void Component::CollisionExit(Collider* other_)
+{
+	OnCollisionExit(other_);
 }

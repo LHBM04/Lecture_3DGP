@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{e99fa44a-de71-40b9-bba0-e7faec2d7267}</ProjectGuid>
+    <ProjectGuid>{88d8e21d-632a-4561-821d-7614d63c1a88}</ProjectGuid>
     <RootNamespace>Homework32026051820260608</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Homework #3(2026.05.18 ~ 2026.06.08)</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -168,27 +167,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\UIObject.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Shaders\GameObject.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="Sources\AnimationClip.cpp" />
+    <ClCompile Include="Sources\Animator.cpp" />
+    <ClCompile Include="Sources\Camera.cpp" />
+    <ClCompile Include="Sources\Collider.cpp" />
     <ClCompile Include="Sources\ColorRGB.cpp" />
     <ClCompile Include="Sources\ColorRGBA.cpp" />
-    <ClCompile Include="Sources\Camera.cpp" />
     <ClCompile Include="Sources\Component.cpp" />
+    <ClCompile Include="Sources\CubeCollider.cpp" />
     <ClCompile Include="Sources\GameObject.cpp" />
-    <ClCompile Include="Sources\Light.cpp" />
-    <ClCompile Include="Sources\Material.cpp" />
+    <ClCompile Include="Sources\InputSystem.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Material.cpp" />
     <ClCompile Include="Sources\Matrix4x4.cpp" />
     <ClCompile Include="Sources\Mesh.cpp" />
     <ClCompile Include="Sources\MeshRenderer.cpp" />
+    <ClCompile Include="Sources\Model.cpp" />
+    <ClCompile Include="Sources\PhysicsSystem.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -200,9 +195,10 @@
     <ClCompile Include="Sources\Resource.cpp" />
     <ClCompile Include="Sources\ResourceSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
-    <ClCompile Include="Sources\Scene_Test.cpp" />
     <ClCompile Include="Sources\SceneSystem.cpp" />
+    <ClCompile Include="Sources\Scene_Level1.cpp" />
     <ClCompile Include="Sources\Shader.cpp" />
+    <ClCompile Include="Sources\SphereCollider.cpp" />
     <ClCompile Include="Sources\TimeSystem.cpp" />
     <ClCompile Include="Sources\Transform.cpp" />
     <ClCompile Include="Sources\Vector2D.cpp" />
@@ -210,11 +206,16 @@
     <ClCompile Include="Sources\Vector4D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\AnimationClip.h" />
+    <ClInclude Include="Sources\Animator.h" />
+    <ClInclude Include="Sources\Camera.h" />
+    <ClInclude Include="Sources\Collider.h" />
     <ClInclude Include="Sources\ColorRGB.h" />
     <ClInclude Include="Sources\ColorRGBA.h" />
-    <ClInclude Include="Sources\Camera.h" />
     <ClInclude Include="Sources\Component.h" />
+    <ClInclude Include="Sources\CubeCollider.h" />
     <ClInclude Include="Sources\GameObject.h" />
+    <ClInclude Include="Sources\InputSystem.h" />
     <ClInclude Include="Sources\Light.h" />
     <ClInclude Include="Sources\Logger.h" />
     <ClInclude Include="Sources\Material.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="Sources\Matrix4x4.h" />
     <ClInclude Include="Sources\Mesh.h" />
     <ClInclude Include="Sources\MeshRenderer.h" />
+    <ClInclude Include="Sources\Model.h" />
     <ClInclude Include="Sources\PhysicsSystem.h" />
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\Quaternion.h" />
@@ -229,15 +231,25 @@
     <ClInclude Include="Sources\Resource.h" />
     <ClInclude Include="Sources\ResourceSystem.h" />
     <ClInclude Include="Sources\Scene.h" />
-    <ClInclude Include="Sources\Scene_Test.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
+    <ClInclude Include="Sources\Scene_Level1.h" />
     <ClInclude Include="Sources\Shader.h" />
     <ClInclude Include="Sources\Singleton.h" />
+    <ClInclude Include="Sources\SphereCollider.h" />
     <ClInclude Include="Sources\TimeSystem.h" />
     <ClInclude Include="Sources\Transform.h" />
     <ClInclude Include="Sources\Vector2D.h" />
     <ClInclude Include="Sources\Vector3D.h" />
     <ClInclude Include="Sources\Vector4D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materials\Floor_Night.bin" />
+    <None Include="Resources\Shaders\Standard.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Meshes\Cube.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

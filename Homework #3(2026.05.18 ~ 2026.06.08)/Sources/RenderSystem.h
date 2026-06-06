@@ -1,39 +1,77 @@
 ﻿#pragma once
 
 #include <array>
-
-#include <wrl.h>
+#include <cstddef>
+#include <cstdint>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#include <wrl.h>
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
 
 #include "Singleton.h"
 
+struct CameraConstants;
+struct LightConstants;
+struct ObjectConstants;
+struct MaterialConstants;
+class Material;
+class Mesh;
+
 class RenderSystem : public Singleton<RenderSystem>
 {
 public:
-	RenderSystem() = default;
-	~RenderSystem() override = default;
+	RenderSystem() noexcept = default;
+	~RenderSystem() noexcept = default;
 
 	bool Initialize(HWND window_);
 	void Release();
 
-	void BeginFrame();
-	void EndFrame();
+	void PreRender();
+	void PostRender();
 
 	void Clear();
 	void Present();
 
+	void SetCameraConstants(const CameraConstants& constants_);
+	void SetLightConstants(const LightConstants& constants_);
+	void SetObjectConstants(const ObjectConstants& constants_);
+	void SetMaterialConstants(const MaterialConstants& constants_);
+
+	void DrawMesh(Mesh* mesh_, Material* material_);
+
 	[[nodiscard]] ID3D12Device* GetDevice() const noexcept;
 	[[nodiscard]] ID3D12GraphicsCommandList* GetCommandList() const noexcept;
-	D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, UINT sizeInBytes_);
+	[[nodiscard]] const D3D12_VIEWPORT& GetViewport() const noexcept;
 
 private:
-	static constexpr UINT BackBufferCount{ 2 };
-	static constexpr UINT FrameConstantBufferSize{ 64 * 1024 };
+	enum class RootParameter : UINT
+	{
+		Camera = 0,
+		Object = 1,
+		Light = 2,
+		Material = 3
+	};
+
+	bool CreateDevice();
+	bool CreateGraphicsRootSignature();
+	bool CreateCommandObjects();
+	bool CreateSwapChain(HWND window_);
+	bool CreateRenderTargetViews();
+	bool CreateDepthStencilView();
+	bool CreateFence();
+	bool CreateConstantBuffers();
+
+	void WaitForGPU();
+	void MoveToNextFrame();
+	[[nodiscard]] D3D12_GPU_VIRTUAL_ADDRESS UploadConstantData(const void* data_, UINT sizeInBytes_);
+	[[nodiscard]] static UINT AlignConstantBufferSize(UINT sizeInBytes_) noexcept;
+
+	static constexpr std::size_t BackBufferCount{ 2 };
+	static constexpr std::size_t MaxConstantBufferSize{ 1024 * 1024 * 8 }; // 8MB
 
 	struct FrameConstantBuffer final
 	{
@@ -43,59 +81,36 @@ private:
 		UINT currentOffset{ 0 };
 	};
 
-	void WaitForGpu();
-	void MoveToNextFrame();
-	[[nodiscard]] D3D12_RESOURCE_BARRIER CreateTransitionBarrier(
-		ID3D12Resource* resource_,
-		D3D12_RESOURCE_STATES before_,
-		D3D12_RESOURCE_STATES after_) const noexcept;
-
-	HRESULT CreateDevice();
-	HRESULT CreateCommandObjects();
-	HRESULT CreateSwapChain(HWND hWnd_);
-	HRESULT CreateDescriptorHeaps();
-	HRESULT CreateSyncObjects();
-	HRESULT CreateConstantBuffers();
-
-	HRESULT CreateRenderTargetViews();
-	HRESULT CreateDepthStencilView();
-
-	static UINT AlignConstantBufferSize(UINT sizeInBytes_) noexcept;
-
-	Microsoft::WRL::ComPtr<IDXGIFactory4> factory;
+	Microsoft::WRL::ComPtr<IDXGIFactory7> factory;
 
 	Microsoft::WRL::ComPtr<ID3D12Device> device;
-
-	bool isEnableMsaa4x{ false };
-	UINT msaa4xQualityLevels{ 0 };
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> graphicsRootSignature;
 
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
 	std::array<Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, BackBufferCount> commandAllocators;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain;
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, BackBufferCount> backBuffers;
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
-
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-	std::array<UINT64, BackBufferCount> fenceValues{ 0 };
-	HANDLE fenceEvent{ nullptr };
-
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2]{};
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{};
-
 	UINT frameIndex{ 0 };
-	UINT clientWidth{ 0 };
-	UINT clientHeight{ 0 };
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+	uint32_t rtvDescriptorSize{ 0 };
+	
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
+	uint32_t dsvDescriptorSize{ 0 };
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap;
+	uint32_t srvDescriptorSize{ 0 };
+
+	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, BackBufferCount> renderTargets;
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilBuffer;
 
 	D3D12_VIEWPORT viewport{};
 	D3D12_RECT scissorRect{};
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
-	UINT rtvDescriptorSize{ 0 };
+	Microsoft::WRL::ComPtr<ID3D12Fence> fence;
+	std::array<std::uint64_t, BackBufferCount> fenceValues;
+	HANDLE fenceEvent{ nullptr };
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
-	UINT dsvDescriptorSize{ 0 };
-
-	std::array<FrameConstantBuffer, BackBufferCount> frameConstantBuffers;
+	std::array<FrameConstantBuffer, BackBufferCount> constantBuffers;
 };

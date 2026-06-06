@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-// ==== [Standard] ====
+// ---- Standard ----
 #include <algorithm>
 #include <array>
 #include <bit>
@@ -48,7 +48,7 @@
 #include <utility>
 #include <vector>
 
-// ==== [Windows API] ====
+// ---- Windows API ----
 #include <sdkddkver.h>
 
 #define WIN32_LEAN_AND_MEAN
@@ -56,11 +56,15 @@
 #include <windows.h>
 #include <windowsx.h>
 
-// ==== [COM] ====
+#include <mmsystem.h>
+
 #include <wrl.h>
 
-// ==== [DirectX 12] ====
+// ---- DirectX API----
+#include <d3dcommon.h>
+
 #include <d3d12.h>
+#include <d3d12sdklayers.h>
 
 #include <dxgi1_6.h>
 

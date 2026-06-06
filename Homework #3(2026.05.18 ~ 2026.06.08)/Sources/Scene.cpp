@@ -1,8 +1,14 @@
 ﻿#include "Precompiled.h"
 #include "Scene.h"
 
+#include <unordered_map>
+#include <format>
 #include "Camera.h"
 #include "Light.h"
+#include "Logger.h"
+#include "MeshRenderer.h"
+#include "Model.h"
+#include "Quaternion.h"
 #include "RenderSystem.h"
 #include "Transform.h"
 
@@ -25,136 +31,137 @@ void Scene::Unload()
 	}
 
 	OnUnload();
+
+	gameObjects.clear();
+	cameras.clear();
+	lights.clear();
+	destroyQueue.clear();
+
 	isLoaded = false;
 }
 
 void Scene::Update()
 {
-	OnUpdate();
-
-	for (const auto& gameObject : gameObjects)
+	if (!isLoaded)
 	{
+		return;
+	}
+
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	{
+		if (gameObject->IsDestroyed())
+		{
+			continue;
+		}
+
 		gameObject->Update();
 	}
+
+	ProcessDestroyQueue();
 }
 
 void Scene::LateUpdate()
 {
-	OnLateUpdate();
-
-	for (const auto& gameObject : gameObjects)
+	if (!isLoaded)
 	{
+		return;
+	}
+
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	{
+		if (gameObject->IsDestroyed())
+		{
+			continue;
+		}
+
 		gameObject->LateUpdate();
 	}
 }
 
 void Scene::FixedUpdate()
 {
-	OnFixedUpdate();
-
-	for (auto gameObject{ gameObjects.begin() }; gameObject != gameObjects.end(); )
-	{
-		(*gameObject)->FixedUpdate();
-
-		if ((*gameObject)->IsDestroyed())
-		{
-			gameObject->reset();
-			gameObject = gameObjects.erase(gameObject);
-		}
-		else
-		{
-			++gameObject;
-		}
-	}
-}
-
-void Scene::Render(ID3D12GraphicsCommandList* commandList_)
-{
-	if (commandList_ == nullptr)
+	if (!isLoaded)
 	{
 		return;
 	}
 
-	RenderSystem& renderSystem{ RenderSystem::GetInstance() };
-	CameraConstants cameraConstants{};
-	if (!cameras.empty())
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 	{
-		const Camera* const camera{ cameras.front() };
-		cameraConstants.viewMatrix = camera->GetViewMatrix();
-		cameraConstants.projectionMatrix = camera->GetProjectionMatrix();
-		cameraConstants.viewProjectionMatrix = cameraConstants.viewMatrix * cameraConstants.projectionMatrix;
-	}
-
-	const D3D12_GPU_VIRTUAL_ADDRESS cameraGpuAddress{
-		renderSystem.UploadConstantData(&cameraConstants, sizeof(cameraConstants))
-	};
-	if (cameraGpuAddress != 0)
-	{
-		commandList_->SetGraphicsRootConstantBufferView(0, cameraGpuAddress);
-	}
-
-	LightConstants lightConstants{};
-	if (!lights.empty())
-	{
-		const Light* const light{ lights.front() };
-		lightConstants.lightColor = light->GetColor() * light->GetIntensity();
-
-		if (const GameObject* const owner{ light->GetOwner() }; owner != nullptr)
+		if (gameObject->IsDestroyed())
 		{
-			if (const Transform* const transform{ owner->GetTransform() }; transform != nullptr)
-			{
-				const Vector3D direction{ transform->GetWorldMatrix().GetForward().GetNormalized() };
-				lightConstants.lightDirection = Vector4D(direction.x, direction.y, direction.z, 0.0f);
-			}
+			continue;
 		}
+
+		gameObject->FixedUpdate();
+	}
+}
+
+void Scene::Render()
+{
+	if (!isLoaded)
+	{
+		return;
 	}
 
-	const D3D12_GPU_VIRTUAL_ADDRESS lightGpuAddress{
-		renderSystem.UploadConstantData(&lightConstants, sizeof(lightConstants))
-	};
-	if (lightGpuAddress != 0)
+	Camera* const camera{ cameras.empty() ? nullptr : cameras.front() };
+	if (camera != nullptr)
 	{
-		commandList_->SetGraphicsRootConstantBufferView(1, lightGpuAddress);
+		CameraConstants cameraData{};
+		cameraData.viewMatrix = camera->GetViewMatrix();
+		cameraData.projectionMatrix = camera->GetProjectionMatrix();
+		cameraData.viewProjectionMatrix = camera->GetViewProjectionMatrix();
+		RenderSystem::GetInstance().SetCameraConstants(cameraData);
 	}
 
-	OnRender(commandList_);
+	LightConstants lightData{};
+	lightData.lightDirection = Vector4D(0.0f, -1.0f, 1.0f, 0.0f);
+	lightData.lightColor = ColorRGBA::GetWhite();
+	RenderSystem::GetInstance().SetLightConstants(lightData);
 
-	for (const auto& gameObject : gameObjects)
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
 	{
-		gameObject->Render(commandList_);
+		if (gameObject == nullptr || gameObject->IsDestroyed())
+		{
+			continue;
+		}
+
+		gameObject->Render();
 	}
 }
 
 GameObject* Scene::Instantiate()
 {
 	std::unique_ptr<GameObject> newObject{ std::make_unique<GameObject>() };
-	newObject->currentScene = this;
+	newObject->scene = this;
 	newObject->SetName(L"New GameObject");
 	newObject->SetTag(L"Untagged");
 
-	Transform* const transform{ newObject->AddComponent<Transform>() };
-	if (transform != nullptr)
-	{
-		transform->SetLocalPosition(Vector3D::GetZero());
-		transform->SetLocalRotation(Quaternion::GetIdentity());
-		transform->SetLocalScale(Vector3D::GetOne());
-		transform->SetParent(nullptr);
-	}
+	Transform* transform{ newObject->AddComponent<Transform>() };
+	transform->SetLocalPosition(Vector3D::GetZero());
+	transform->SetLocalRotation(Quaternion::GetIdentity());
+	transform->SetLocalScale(Vector3D::GetOne());
+	transform->SetParent(nullptr);
 
-	GameObject* const newObjectPtr{ newObject.get() };
+	GameObject* newObjectPtr{ newObject.get() };
 	gameObjects.push_back(std::move(newObject));
+	Logger::Trace(
+		L"[Scene] Instantiate: scene_ptr=0x{:X}, object_ptr=0x{:X}, name={}",
+		static_cast<unsigned long long>(reinterpret_cast<std::uintptr_t>(this)),
+		static_cast<unsigned long long>(reinterpret_cast<std::uintptr_t>(newObjectPtr)),
+		newObjectPtr->GetName());
+
 	return newObjectPtr;
 }
 
 GameObject* Scene::Instantiate(const Vector3D& position_, const Quaternion& rotation_)
 {
-	GameObject* const newObject{ Instantiate() };
+	GameObject* newObject{ Instantiate() };
 	if (newObject == nullptr)
 	{
 		return nullptr;
 	}
 
-	if (Transform* const transform{ newObject->GetTransform() }; transform != nullptr)
+	if (Transform* transform{ newObject->GetComponent<Transform>() }; transform != nullptr)
 	{
 		transform->SetWorldPosition(position_);
 		transform->SetWorldRotation(rotation_);
@@ -174,13 +181,13 @@ GameObject* Scene::Instantiate(const Quaternion& rotation_)
 
 GameObject* Scene::Instantiate(Transform* parent_)
 {
-	GameObject* const newObject{ Instantiate() };
+	GameObject* newObject{ Instantiate() };
 	if (newObject == nullptr)
 	{
 		return nullptr;
 	}
 
-	if (Transform* const transform{ newObject->GetTransform() }; transform != nullptr)
+	if (Transform* transform{ newObject->GetComponent<Transform>() }; transform != nullptr)
 	{
 		transform->SetParent(parent_);
 	}
@@ -189,104 +196,376 @@ GameObject* Scene::Instantiate(Transform* parent_)
 
 GameObject* Scene::Instantiate(const Vector3D& position_, const Quaternion& rotation_, Transform* parent_)
 {
-	GameObject* const newObject{ Instantiate(position_, rotation_) };
+	GameObject* newObject{ Instantiate(position_, rotation_) };
 	if (newObject == nullptr)
 	{
 		return nullptr;
 	}
 
-	if (Transform* const transform{ newObject->GetTransform() }; transform != nullptr)
+	if (Transform* transform{ newObject->GetComponent<Transform>() }; transform != nullptr)
 	{
 		transform->SetParent(parent_);
 	}
 	return newObject;
 }
 
-void Scene::AddCamera(Camera* camera_)
+GameObject* Scene::Instantiate(const Model* model_)
 {
-	if (camera_ != nullptr && !std::ranges::contains(cameras, camera_))
+	if (model_ == nullptr)
 	{
-		cameras.push_back(camera_);
+		return nullptr;
 	}
-}
 
-void Scene::RemoveCamera(Camera* camera_)
-{
-	std::erase(cameras, camera_);
-}
-
-void Scene::AddLight(Light* light_)
-{
-	if (light_ != nullptr && !std::ranges::contains(lights, light_))
+	const std::vector<ModelNodeData>& nodes{ model_->GetNodes() };
+	if (nodes.empty())
 	{
-		lights.push_back(light_);
+		Logger::Critical(L"[Scene] Instantiate failed: model has no nodes. model={}", model_->GetModelName());
+		return nullptr;
 	}
+
+	std::vector<GameObject*> createdObjects(nodes.size(), nullptr);
+
+	for (std::size_t i{ 0 }; i < nodes.size(); ++i)
+	{
+		const ModelNodeData& node{ nodes[i] };
+
+		GameObject* const gameObject{ Instantiate() };
+		if (gameObject == nullptr)
+		{
+			Logger::Critical(L"[Scene] Instantiate failed: Instantiate returned null. model={}, node={}", model_->GetModelName(), node.name);
+			return nullptr;
+		}
+
+		gameObject->SetName(node.name);
+		createdObjects[i] = gameObject;
+	}
+
+	for (std::size_t i{ 0 }; i < nodes.size(); ++i)
+	{
+		const ModelNodeData& node{ nodes[i] };
+		GameObject* const gameObject{ createdObjects[i] };
+		Transform* const transform{ gameObject->GetComponent<Transform>() };
+		if (transform == nullptr)
+		{
+			Logger::Critical(L"[Scene] Instantiate failed: node has no Transform. model={}, node={}", model_->GetModelName(), node.name);
+			return nullptr;
+		}
+
+		if (node.parentIndex >= 0)
+		{
+			const std::size_t parentIndex{ static_cast<std::size_t>(node.parentIndex) };
+			if (parentIndex >= createdObjects.size() || createdObjects[parentIndex] == nullptr)
+			{
+				Logger::Critical(L"[Scene] Instantiate failed: invalid parent index. model={}, node={}, parent={}", model_->GetModelName(), node.name, node.parentIndex);
+				return nullptr;
+			}
+
+			Transform* const parentTransform{ createdObjects[parentIndex]->GetComponent<Transform>() };
+			transform->SetParent(parentTransform);
+		}
+
+		transform->SetLocalPosition(node.localPosition);
+		transform->SetLocalRotation(node.localRotation);
+		transform->SetLocalScale(node.localScale);
+
+		for (std::size_t rendererIndex{ 0 }; rendererIndex < node.renderers.size(); ++rendererIndex)
+		{
+			const ModelRendererData& renderer{ node.renderers[rendererIndex] };
+
+			GameObject* const rendererObject{ Instantiate(transform) };
+			if (rendererObject == nullptr)
+			{
+				Logger::Critical(L"[Scene] Instantiate failed: renderer object creation failed. model={}, node={}", model_->GetModelName(), node.name);
+				return nullptr;
+			}
+
+			rendererObject->SetName(std::format(L"{}_Renderer{}", node.name, rendererIndex));
+
+			MeshRenderer* const meshRenderer{ rendererObject->AddComponent<MeshRenderer>() };
+			meshRenderer->SetMesh(renderer.mesh);
+			meshRenderer->SetMaterial(renderer.material);
+		}
+	}
+
+	for (GameObject* object : createdObjects)
+	{
+		if (object == nullptr)
+		{
+			continue;
+		}
+
+		Transform* const transform{ object->GetComponent<Transform>() };
+		if (transform != nullptr && transform->GetParent() == nullptr)
+		{
+			return object;
+		}
+	}
+
+	return createdObjects.front();
 }
 
-void Scene::RemoveLight(Light* light_)
+GameObject* Scene::Instantiate(const Model* model_, const Vector3D& position_, const Quaternion& rotation_)
 {
-	std::erase(lights, light_);
+	GameObject* const root{ Instantiate(model_) };
+	if (root == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (Transform* const transform{ root->GetComponent<Transform>() }; transform != nullptr)
+	{
+		transform->SetWorldPosition(position_);
+		transform->SetWorldRotation(rotation_);
+	}
+
+	return root;
 }
 
-const std::vector<Camera*>& Scene::GetCameras() const noexcept
+GameObject* Scene::Instantiate(const Model* model_, const Vector3D& position_)
 {
-	return cameras;
+	return Instantiate(model_, position_, Quaternion::GetIdentity());
 }
 
-const std::vector<Light*>& Scene::GetLights() const noexcept
+GameObject* Scene::Instantiate(const Model* model_, const Quaternion& rotation_)
 {
-	return lights;
+	return Instantiate(model_, Vector3D::GetZero(), rotation_);
+}
+
+GameObject* Scene::Instantiate(const Model* model_, Transform* parent_)
+{
+	GameObject* const root{ Instantiate(model_) };
+	if (root == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (Transform* const transform{ root->GetComponent<Transform>() }; transform != nullptr)
+	{
+		transform->SetParent(parent_);
+	}
+
+	return root;
+}
+
+GameObject* Scene::Instantiate(const Model* model_, const Vector3D& position_, const Quaternion& rotation_, Transform* parent_)
+{
+	GameObject* const root{ Instantiate(model_, position_, rotation_) };
+	if (root == nullptr)
+	{
+		return nullptr;
+	}
+
+	if (Transform* const transform{ root->GetComponent<Transform>() }; transform != nullptr)
+	{
+		transform->SetParent(parent_);
+	}
+
+	return root;
+}
+
+void Scene::Destroy(GameObject* gameObject_)
+{
+	if (gameObject_ == nullptr || gameObject_->IsDestroyed())
+	{
+		return;
+	}
+
+	std::vector<GameObject*> pending;
+	pending.emplace_back(gameObject_);
+
+	while (!pending.empty())
+	{
+		GameObject* current{ pending.back() };
+		pending.pop_back();
+
+		if (current == nullptr || current->IsDestroyed())
+		{
+			continue;
+		}
+
+		if (Transform* transform{ current->GetComponent<Transform>() }; transform != nullptr)
+		{
+			for (Transform* childTransform : transform->GetChildren())
+			{
+				if (childTransform == nullptr)
+				{
+					continue;
+				}
+
+				GameObject* childOwner{ childTransform->GetOwner() };
+				if (childOwner != nullptr && !childOwner->IsDestroyed())
+				{
+					pending.emplace_back(childOwner);
+				}
+			}
+		}
+
+		current->Destroy();
+		if (std::find(destroyQueue.begin(), destroyQueue.end(), current) == destroyQueue.end())
+		{
+			destroyQueue.emplace_back(current);
+		}
+	}
 }
 
 GameObject* Scene::FindObjectWithName(std::wstring_view name_)
 {
-	auto iter{ std::ranges::find_if(gameObjects, [name_](const auto& gameObject)
-		{
-			return gameObject->GetName() == name_;
-		}) };
-	if (iter != gameObjects.end())
+	std::vector<std::unique_ptr<GameObject>>::iterator result{ std::ranges::find_if(gameObjects, 
+		[name_](const std::unique_ptr<GameObject>& go) { return go->GetName() == name_; }) };
+	
+	if (result != gameObjects.end())
 	{
-		return iter->get();
+		return result->get();
 	}
 
 	return nullptr;
 }
 
-auto Scene::FindObjectsWithName(std::wstring_view name_)
+std::vector<GameObject*> Scene::FindObjectsWithName(std::wstring_view name_)
 {
-	return gameObjects
-		| std::views::filter([name_](const auto& gameObject)
-			{
-				return gameObject->GetName() == name_;
-			})
-		| std::views::transform([](const auto& gameObject)
-			{
-				return gameObject.get();
-			});
+	std::vector<GameObject*> results;
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects
+		| std::views::filter([name_](const std::unique_ptr<GameObject>& go)
+		{
+			return go != nullptr && !go->IsDestroyed() && go->GetName() == name_;
+		}))
+	{
+		results.emplace_back(gameObject.get());
+	}
+
+	return results;
+}
+
+std::vector<const GameObject*> Scene::FindObjectsWithName(std::wstring_view name_) const
+{
+	std::vector<const GameObject*> results;
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects
+		| std::views::filter([name_](const std::unique_ptr<GameObject>& go)
+		{
+			return go != nullptr && !go->IsDestroyed() && go->GetName() == name_;
+		}))
+	{
+		results.emplace_back(gameObject.get());
+	}
+
+	return results;
 }
 
 GameObject* Scene::FindObjectWithTag(std::wstring_view tag_)
 {
-	auto iter{ std::ranges::find_if(gameObjects, [tag_](const auto& gameObject)
-		{
-			return gameObject->GetTag() == tag_;
-		}) };
-	if (iter != gameObjects.end())
+	std::vector<std::unique_ptr<GameObject>>::iterator found{ std::ranges::find_if(gameObjects,
+		[tag_](const std::unique_ptr<GameObject>& go) { return go->GetTag() == tag_; }) };
+
+	if (found != gameObjects.end())
 	{
-		return iter->get();
+		return found->get();
 	}
 	return nullptr;
 }
 
-auto Scene::FindObjectsWithTag(std::wstring_view tag_)
+std::vector<GameObject*> Scene::FindObjectsWithTag(std::wstring_view tag_)
 {
-	return gameObjects
-		| std::views::filter([tag_](const auto& gameObject)
-			{
-				return gameObject->GetTag() == tag_;
-			})
-		| std::views::transform([](const auto& gameObject)
-			{
-				return gameObject.get();
-			});
+	std::vector<GameObject*> results;
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects
+		| std::views::filter([tag_](const std::unique_ptr<GameObject>& go)
+		{
+			return go != nullptr && !go->IsDestroyed() && go->GetTag() == tag_;
+		}))
+	{
+		results.emplace_back(gameObject.get());
+	}
+
+	return results;
 }
+
+std::vector<const GameObject*> Scene::FindObjectsWithTag(std::wstring_view tag_) const
+{
+	std::vector<const GameObject*> results;
+	for (const std::unique_ptr<GameObject>& gameObject : gameObjects
+		| std::views::filter([tag_](const std::unique_ptr<GameObject>& go)
+		{
+			return go != nullptr && !go->IsDestroyed() && go->GetTag() == tag_;
+		}))
+	{
+		results.emplace_back(gameObject.get());
+	}
+
+	return results;
+}
+
+std::span<const std::unique_ptr<GameObject>> Scene::GetGameObjects() const noexcept
+{
+	return gameObjects;
+}
+
+std::span<Camera* const> Scene::GetCameras()
+{
+	return cameras;
+}
+
+std::span<const Camera* const> Scene::GetCameras() const
+{
+	return cameras;
+}
+
+std::span<Light* const> Scene::GetLights()
+{
+	return lights;
+}
+
+std::span<const Light* const> Scene::GetLights() const
+{
+	return lights;
+}
+
+void Scene::AddCamera(Camera* camera_)
+{
+	cameras.push_back(camera_);
+}
+
+void Scene::RemoveCamera(Camera* camera_)
+{
+	cameras.erase(std::remove(cameras.begin(), cameras.end(), camera_), cameras.end());
+}
+
+void Scene::AddLight(Light* light_)
+{
+	lights.push_back(light_);
+}
+
+void Scene::RemoveLight(Light* light_)
+{
+	lights.erase(std::remove(lights.begin(), lights.end(), light_), lights.end());
+}
+
+void Scene::ProcessDestroyQueue()
+{
+	if (destroyQueue.empty())
+	{
+		return;
+	}
+
+	for (GameObject* gameObject : destroyQueue)
+	{
+		if (gameObject == nullptr)
+		{
+			continue;
+		}
+
+		cameras.erase(std::remove_if(cameras.begin(), cameras.end(),
+			[gameObject](Camera* camera) { return camera == nullptr || camera->GetOwner() == gameObject; }),
+			cameras.end());
+
+		lights.erase(std::remove_if(lights.begin(), lights.end(),
+			[gameObject](Light* light) { return light == nullptr || light->GetOwner() == gameObject; }),
+			lights.end());
+	}
+
+	std::erase_if(gameObjects, [](const std::unique_ptr<GameObject>& go)
+	{
+		return go == nullptr || go->IsDestroyed();
+	});
+
+	destroyQueue.clear();
+}
+

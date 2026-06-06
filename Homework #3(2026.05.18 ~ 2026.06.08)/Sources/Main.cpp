@@ -1,68 +1,69 @@
 ﻿#include "Precompiled.h"
 
+#include <fcntl.h>
+#include <io.h>
+
+#include "InputSystem.h"
 #include "Logger.h"
+#include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "ResourceSystem.h"
-#include "Scene_Test.h"
+#include "Scene_Level1.h"
 #include "SceneSystem.h"
 #include "TimeSystem.h"
 
-LRESULT CALLBACK WindowProc(
-	_In_ HWND hwnd,
+LRESULT CALLBACK WndProc(
+	_In_ HWND hWnd,
 	_In_ UINT uMsg,
 	_In_ WPARAM wParam,
 	_In_ LPARAM lParam)
 {
-	switch (uMsg)
+	if (uMsg == WM_DESTROY)
 	{
-	case WM_DESTROY:
 		::PostQuitMessage(0);
 		return 0;
-	default:
-		return ::DefWindowProcW(hwnd, uMsg, wParam, lParam);
 	}
 
-	std::unreachable();
+	return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
+HWND mainWindow{ nullptr };
 constexpr LPCWSTR WindowClassName{ L"Homework #3 Class" };
-
 constexpr LPCWSTR WindowTitle{ L"Homework #3(2026.05.18 ~ 2026.06.08)" };
 constexpr int WindowWidth{ 800 };
 constexpr int WindowHeight{ 600 };
-constexpr DWORD WindowStyle{ WS_OVERLAPPEDWINDOW };
-HWND mainWindow{ nullptr };
+constexpr DWORD WindowStyle{ WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX };
+
+bool isRunning{ false };
 
 INT APIENTRY wWinMain(
-	_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR lpCmdLine,
-	_In_ INT nCmdShow)
+    _In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ PWSTR pCmdLine,
+    _In_ INT nCmdShow)
 {
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(pCmdLine);
+
 #if defined(_DEBUG)
-	if (!::AllocConsole())
-	{
-		::MessageBoxW(nullptr, L"Cannot open the console stream!", L"Oops!", NULL);
-		return -1;
-	}
+	assert(::AllocConsole());
 
 	FILE* consoleStream{ nullptr };
 	freopen_s(&consoleStream, "CONOUT$", "w", stdout);
 	freopen_s(&consoleStream, "CONOUT$", "w", stderr);
+
+	Logger::Info(L"콘솔 출력 초기화가 완료되었습니다.");
 #endif
 
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
-	
 	WNDCLASSEXW wndClass{};
 	wndClass.cbSize = sizeof(WNDCLASSEXW);
 	wndClass.style = CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc = WindowProc;
+	wndClass.lpfnWndProc = WndProc;
 	wndClass.hInstance = hInstance;
-	wndClass.hIcon = ::LoadIconW(nullptr, IDI_APPLICATION);
-	wndClass.hCursor = ::LoadCursorW(nullptr, IDC_ARROW);
+	wndClass.hIcon = LoadIconW(nullptr, IDI_APPLICATION);
+	wndClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
 	wndClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-	wndClass.lpszClassName = TEXT("Homework #3 Class");
+	wndClass.lpszClassName = WindowClassName;
 	::RegisterClassExW(&wndClass);
 
 	const int screenWidth{ ::GetSystemMetrics(SM_CXSCREEN) };
@@ -71,80 +72,101 @@ INT APIENTRY wWinMain(
 	const int windowPosY{ (screenHeight - WindowHeight) / 2 };
 
 	mainWindow = ::CreateWindowExW(
-		0,
-		L"Homework #3 Class",
-		L"Homework #3(2026.05.18 ~ 2026.06.08)",
+		0, 
+		WindowClassName, 
+		WindowTitle, 
 		WindowStyle,
-		windowPosX, windowPosY,
+		windowPosX, windowPosY, 
 		WindowWidth, WindowHeight,
-		nullptr,
-		nullptr,
-		hInstance,
+		nullptr, 
+		nullptr, 
+		hInstance, 
 		nullptr);
 
 	if (mainWindow == nullptr)
 	{
-		Logger::Critical(L"[Init] CreateWindowExW failed");
+		Logger::Critical(L"메인 윈도우를 생성하지 못했습니다.");
 		return -1;
 	}
 
-	::ShowWindow(mainWindow, nCmdShow);
-	::UpdateWindow(mainWindow);
+	if (!::IsWindowVisible(mainWindow))
+	{
+		::ShowWindow(mainWindow, nCmdShow);
+		::UpdateWindow(mainWindow);
+	}
 
+	Logger::Info(L"RenderSystem 초기화를 시작합니다.");
 	if (!RenderSystem::GetInstance().Initialize(mainWindow))
 	{
-		::MessageBoxW(mainWindow, L"Failed to initialize Render System.", L"Error", MB_OK | MB_ICONERROR);
+		Logger::Critical(L"RenderSystem 초기화에 실패했습니다. 프로그램을 종료합니다.");
 		return -1;
 	}
+	Logger::Info(L"RenderSystem 초기화가 완료되었습니다.");
 
+	Logger::Info(L"ResourceSystem 초기화를 시작합니다.");
 	ResourceSystem::GetInstance().Initialize();
-	SceneSystem::GetInstance().AddScene<Scene_Test>(L"Scene_Test");
-	SceneSystem::GetInstance().LoadScene(L"Scene_Test");
+	Logger::Info(L"ResourceSystem 초기화가 완료되었습니다.");
 
+	SceneSystem::GetInstance().AddScene(L"Level1", std::make_unique<Scene_Level1>());
+	SceneSystem::GetInstance().LoadScene(L"Level1");
+
+	Logger::Info(L"InputSystem 초기화를 시작합니다.");
+	InputSystem::GetInstance().Reset();
+	Logger::Info(L"InputSystem 초기화가 완료되었습니다.");
+
+	Logger::Info(L"TimeSystem 초기화를 시작합니다.");
 	TimeSystem::GetInstance().Reset();
+	Logger::Info(L"TimeSystem 초기화가 완료되었습니다.");
+
+	isRunning = true;
 
 	MSG msg;
-	while (true)
+	while (isRunning)
 	{
-		if (::PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+		while (::PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
 			{
+				isRunning = false;
 				break;
 			}
+
 			::TranslateMessage(&msg);
 			::DispatchMessageW(&msg);
 		}
-		else
+
+		if (!isRunning)
 		{
-			TimeSystem::GetInstance().Tick();
-
-			while (TimeSystem::GetInstance().ConsumeFixedUpdate())
-			{
-				SceneSystem::GetInstance().FixedUpdate();
-			}
-
-			SceneSystem::GetInstance().Update();
-			SceneSystem::GetInstance().LateUpdate();
-
-			RenderSystem::GetInstance().BeginFrame();
-			RenderSystem::GetInstance().Clear();
-			SceneSystem::GetInstance().Render(RenderSystem::GetInstance().GetCommandList());
-			RenderSystem::GetInstance().EndFrame();
-			RenderSystem::GetInstance().Present();
+			break;
 		}
+
+		TimeSystem& timeSystem{ TimeSystem::GetInstance() };
+		timeSystem.Tick();
+
+		while (timeSystem.GetFixedTime() >= timeSystem.GetFixedDeltaTime())
+		{
+			PhysicsSystem::GetInstance().Update();
+			SceneSystem::GetInstance().FixedUpdate();
+
+			timeSystem.GetFixedTime() -= timeSystem.GetFixedDeltaTime();
+		}
+
+		InputSystem::GetInstance().Update();
+		SceneSystem::GetInstance().Update();
+		SceneSystem::GetInstance().Render();
 	}
 
+	SceneSystem::GetInstance().Release();
 	ResourceSystem::GetInstance().Release();
 	RenderSystem::GetInstance().Release();
 
-	if (!::DestroyWindow(mainWindow))
+	if (mainWindow != nullptr && ::IsWindow(mainWindow))
 	{
-		Logger::Critical(L"[Release] DestroyWindow failed");
-		return -1;
+		::DestroyWindow(mainWindow);
+		mainWindow = nullptr;
 	}
 
-	::UnregisterClassW(WindowClassName, hInstance);
+	::UnregisterClassW(wndClass.lpszClassName, wndClass.hInstance);
 
-	return static_cast<int>(msg.wParam);
+	return 0;
 }

@@ -2,61 +2,59 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
-      <UniqueIdentifier>{dff85101-764e-4380-8cfd-be316448e74c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resources\Shaders">
-      <UniqueIdentifier>{2c53b42f-74ec-42cb-b5c1-769b6af15c56}</UniqueIdentifier>
+      <UniqueIdentifier>{f30b85ff-627f-4da7-9555-9f33019213e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources">
-      <UniqueIdentifier>{de1d95d0-e30f-42ce-9cf4-d04ac4f0249b}</UniqueIdentifier>
+      <UniqueIdentifier>{552518bb-1e8c-47a5-bc67-880a02c3bf59}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Header Files">
-      <UniqueIdentifier>{4059a74c-156c-46cd-8383-9461cefa337e}</UniqueIdentifier>
+      <UniqueIdentifier>{9a8cb2fc-1d37-4920-ac36-79feb9ea979f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Source Files">
-      <UniqueIdentifier>{85995595-5c89-402f-b931-1d493645b5da}</UniqueIdentifier>
+      <UniqueIdentifier>{d30a1a80-925e-429e-9461-73cb310e402b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{ef795c5c-9dff-4d56-9d37-3ab965ccedf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes">
+      <UniqueIdentifier>{1dce1b01-01db-4574-9b47-dedf5fdb95cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials">
+      <UniqueIdentifier>{f04b5e07-d4c5-4fb6-afaa-a8c53f5846e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\UIObject.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\GameObject.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Sources\Precompiled.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Main.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\RenderSystem.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Vector3D.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Vector4D.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Vector2D.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Quaternion.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Matrix4x4.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\ColorRGB.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\ColorRGBA.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Camera.cpp">
+    <ClCompile Include="Sources\Vector4D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Vector3D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Matrix4x4.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Precompiled.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Quaternion.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Vector2D.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ColorRGB.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\InputSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\RenderSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Scene.cpp">
@@ -68,66 +66,66 @@
     <ClCompile Include="Sources\GameObject.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Material.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Light.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\TimeSystem.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Transform.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Camera.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Resource.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ResourceSystem.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Mesh.cpp">
-      <Filter>Sources\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\MeshRenderer.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SceneSystem.cpp">
+    <ClCompile Include="Sources\CubeCollider.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\PhysicsSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ResourceSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Shader.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Test.cpp">
+    <ClCompile Include="Sources\SceneSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Material.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\SphereCollider.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Collider.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Mesh.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TimeSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Level1.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Model.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Animator.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\AnimationClip.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Precompiled.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Singleton.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Logger.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Camera.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Material.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\RenderSystem.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scene.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\GameObject.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\SceneSystem.h">
+    <ClInclude Include="Sources\ColorRGBA.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Vector3D.h">
@@ -142,31 +140,43 @@
     <ClInclude Include="Sources\Quaternion.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MathF.h">
+    <ClInclude Include="Sources\Precompiled.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Matrix4x4.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\MathF.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\ColorRGB.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ColorRGBA.h">
+    <ClInclude Include="Sources\Singleton.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PhysicsSystem.h">
+    <ClInclude Include="Sources\InputSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Light.h">
+    <ClInclude Include="Sources\RenderSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\TimeSystem.h">
+    <ClInclude Include="Sources\Scene.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Component.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\GameObject.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Transform.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Light.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Resource.h">
@@ -175,17 +185,58 @@
     <ClInclude Include="Sources\ResourceSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Mesh.h">
+    <ClInclude Include="Sources\SceneSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Material.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\MeshRenderer.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\PhysicsSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Mesh.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SphereCollider.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Shader.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Test.h">
+    <ClInclude Include="Sources\CubeCollider.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Collider.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TimeSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Level1.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Model.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\AnimationClip.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Animator.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Meshes\Cube.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Resources\Materials\Floor_Night.bin">
+      <Filter>Resources\Materials</Filter>
+    </None>
   </ItemGroup>
 </Project>

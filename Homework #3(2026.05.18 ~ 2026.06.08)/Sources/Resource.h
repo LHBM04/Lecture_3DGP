@@ -1,33 +1,39 @@
-#pragma once
+﻿#pragma once
 
-#include <filesystem>
+#include <fstream>
 #include <string>
 #include <string_view>
 
 class Resource
 {
 public:
-	Resource(std::wstring_view resourceName_ = {}, std::filesystem::path sourcePath_ = {});
+	Resource() = default;
 	virtual ~Resource() = default;
+
+	Resource(const Resource&) = delete;
+	Resource& operator=(const Resource&) = delete;
 
 	virtual bool Load() = 0;
 	virtual void Unload() = 0;
 
+	[[nodiscard]] const std::wstring& GetPath() const noexcept;
+	void SetPath(std::wstring_view path_);
+
 	[[nodiscard]] const std::wstring& GetName() const noexcept;
-	void SetName(std::wstring_view resourceName_);
-
-	[[nodiscard]] const std::filesystem::path& GetSourcePath() const noexcept;
-	void SetSourcePath(std::filesystem::path sourcePath_);
-	[[nodiscard]] const std::filesystem::path& GetPath() const noexcept;
-	void SetPath(std::filesystem::path sourcePath_);
-
-	[[nodiscard]] bool IsLoaded() const noexcept;
+	void SetName(std::wstring_view name_);
 
 protected:
-	void MarkLoaded(bool isLoaded_) noexcept;
+	[[nodiscard]] bool HasTag(std::ifstream& file_, std::string_view expectedTag_) const;
+	[[nodiscard]] std::string ReadTag(std::ifstream& file_) const;
+	[[nodiscard]] std::wstring ReadString(std::ifstream& file_) const;
+	[[nodiscard]] std::wstring ReadRemainingString(std::ifstream& file_) const;
 
-private:
-	std::wstring resourceName;
-	std::filesystem::path sourcePath;
-	bool isLoaded{ false };
+	template <class TValue>
+	bool ReadValue(std::ifstream& file_, TValue& value_) const
+	{
+		return static_cast<bool>(file_.read(reinterpret_cast<char*>(&value_), sizeof(TValue)));
+	}
+
+	std::wstring path;
+	std::wstring name;
 };

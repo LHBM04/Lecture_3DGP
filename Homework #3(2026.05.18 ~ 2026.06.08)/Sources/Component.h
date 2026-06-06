@@ -2,7 +2,6 @@
 
 class Collider;
 class GameObject;
-struct ID3D12GraphicsCommandList;
 
 class Component
 {
@@ -10,25 +9,33 @@ class Component
 
 public:
 	Component() noexcept = default;
-	virtual ~Component() noexcept;
+	virtual ~Component() noexcept = default;
 
-	[[nodiscard]] GameObject* GetOwner() noexcept;
-	[[nodiscard]] const GameObject* GetOwner() const noexcept;
+	[[nodiscard]] GameObject* GetOwner() const noexcept;
+	void SetOwner(GameObject* owner_) noexcept;
 
 	[[nodiscard]] bool IsStarted() const noexcept;
-	[[nodiscard]] bool IsEnabled() const noexcept;
 	[[nodiscard]] bool IsActive() const noexcept;
+
+	[[nodiscard]] bool IsEnabled() const noexcept;
 	void SetEnabled(bool isEnabled_);
 
 	void Awake();
 	void Enable();
 	void Start();
+
 	void Update();
-	void LateUpdate();
 	void FixedUpdate();
-	void Render(ID3D12GraphicsCommandList* commandList_);
+	void LateUpdate();
+
+	void Render();
+
 	void Disable();
 	void Destroy();
+
+	void CollisionEnter(Collider* other_);
+	void CollisionStay(Collider* other_);
+	void CollisionExit(Collider* other_);
 
 protected:
 	virtual void OnAwake() {}
@@ -36,12 +43,12 @@ protected:
 	virtual void OnStart() {}
 
 	virtual void OnUpdate() {}
-	virtual void OnLateUpdate() {}
 	virtual void OnFixedUpdate() {}
+	virtual void OnLateUpdate() {}
 
-	virtual void OnPreRender(ID3D12GraphicsCommandList* commandList_) {}
-	virtual void OnRender(ID3D12GraphicsCommandList* commandList_) {}
-	virtual void OnPostRender(ID3D12GraphicsCommandList* commandList_) {}
+	virtual void OnPreRender() {}
+	virtual void OnRender() {}
+	virtual void OnPostRender() {}
 
 	virtual void OnDisable() {}
 	virtual void OnDestroy() {}

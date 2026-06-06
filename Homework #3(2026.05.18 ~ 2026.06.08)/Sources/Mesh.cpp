@@ -1,145 +1,168 @@
 #include "Precompiled.h"
+
 #include "Mesh.h"
 
 #include "RenderSystem.h"
 
-Mesh::Mesh(std::wstring_view resourceName_, std::filesystem::path sourcePath_)
-	: Resource(resourceName_, std::move(sourcePath_))
+Mesh::~Mesh()
 {
+	Unload();
 }
 
 bool Mesh::Load()
 {
-	if (IsLoaded())
-	{
-		return true;
-	}
-
-	if (GetPath().empty())
+	if (path.empty())
 	{
 		return false;
 	}
 
-	std::ifstream file(GetPath(), std::ios::binary);
+	std::ifstream file(path, std::ios::binary);
 	if (!file.is_open())
 	{
 		return false;
 	}
 
-	if (!ReadTag(file, "<BoundingBox>:"))
+	const std::streampos beginPosition{ file.tellg() };
+	const std::string firstTag{ ReadTag(file) };
+	if (firstTag == "<Mesh>:" || firstTag == "<SkinnedMesh>:")
 	{
-		return false;
+		if (!ReadValue(file, sourceVertexCount))
+		{
+			return false;
+		}
+
+		meshName = ReadString(file);
+	}
+	else
+	{
+		file.clear();
+		file.seekg(beginPosition);
 	}
 
-	ReadVector3(file, boundsMin);
-	ReadVector3(file, boundsMax);
-
-	if (!ReadTag(file, "<Positions>:"))
+	while (file.peek() != EOF)
 	{
-		return false;
+		const std::string tag{ ReadTag(file) };
+		if (tag.empty())
+		{
+			break;
+		}
+
+		if (tag == "<Bounds>:")
+		{
+			ReadVector3(file, boundsCenter);
+			ReadVector3(file, boundsExtents);
+			UpdateBoundsFromCenterExtents();
+		}
+		else if (tag == "<BoundingBox>:")
+		{
+			ReadVector3(file, boundsMin);
+			ReadVector3(file, boundsMax);
+			UpdateBoundsFromMinMax();
+		}
+		else if (tag == "<Positions>:")
+		{
+			uint32_t count{ 0 };
+			if (!ReadValue(file, count)) return false;
+
+			positions.resize(count);
+			for (Vector3D& position : positions)
+			{
+				ReadVector3(file, position);
+			}
+		}
+		else if (tag == "<Colors>:")
+		{
+			uint32_t count{ 0 };
+			if (!ReadValue(file, count)) return false;
+
+			colors.resize(count);
+			for (ColorRGBA& color : colors)
+			{
+				ReadColor(file, color);
+			}
+		}
+		else if (tag == "<Normals>:")
+		{
+			uint32_t count{ 0 };
+			if (!ReadValue(file, count)) return false;
+
+			normals.resize(count);
+			for (Vector3D& normal : normals)
+			{
+				ReadVector3(file, normal);
+			}
+		}
+		else if (tag == "<TextureCoords>:")
+		{
+			uint32_t count{ 0 };
+			if (!ReadValue(file, count)) return false;
+
+			textureCoordinates.resize(count);
+			for (Vector2D& uv : textureCoordinates)
+			{
+				ReadVector2(file, uv);
+			}
+		}
+		else if (tag == "<SubMeshes>:")
+		{
+			uint32_t subMeshCount{ 0 };
+			if (!ReadValue(file, subMeshCount)) return false;
+
+			subMeshes.clear();
+			subMeshes.resize(subMeshCount);
+		}
+		else if (tag == "<SubMesh>:")
+		{
+			uint32_t subMeshIndex{ 0 };
+			uint32_t indexCount{ 0 };
+			if (!ReadValue(file, subMeshIndex)) return false;
+			if (!ReadValue(file, indexCount)) return false;
+
+			if (subMeshes.size() <= subMeshIndex)
+			{
+				subMeshes.resize(subMeshIndex + 1);
+			}
+
+			std::vector<uint32_t>& subMeshIndices{ subMeshes[subMeshIndex] };
+			subMeshIndices.resize(indexCount);
+			if (!static_cast<bool>(file.read(reinterpret_cast<char*>(subMeshIndices.data()), sizeof(uint32_t) * indexCount)))
+			{
+				return false;
+			}
+		}
+		else if (tag == "<Indices>:")
+		{
+			uint32_t indexCount{ 0 };
+			if (!ReadValue(file, indexCount)) return false;
+
+			indices.resize(indexCount);
+			if (!static_cast<bool>(file.read(reinterpret_cast<char*>(indices.data()), sizeof(uint32_t) * indexCount)))
+			{
+				return false;
+			}
+		}
+		else if (tag == "</Mesh>")
+		{
+			break;
+		}
+		else
+		{
+			break;
+		}
 	}
 
-	uint32_t positionCount{ 0 };
-	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&positionCount), sizeof(positionCount))))
+	if (sourceVertexCount == 0)
 	{
-		return false;
+		sourceVertexCount = static_cast<uint32_t>(positions.size());
 	}
 
-	std::vector<Vector3D> positions(positionCount);
-	for (Vector3D& position : positions)
+	RebuildVertices();
+	if (indices.empty())
 	{
-		ReadVector3(file, position);
+		RebuildFlattenedIndices();
 	}
 
-	if (!ReadTag(file, "<Normals>:"))
-	{
-		return false;
-	}
-
-	uint32_t normalCount{ 0 };
-	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&normalCount), sizeof(normalCount))))
-	{
-		return false;
-	}
-
-	std::vector<Vector3D> normals(normalCount);
-	for (Vector3D& normal : normals)
-	{
-		ReadVector3(file, normal);
-	}
-
-	if (!ReadTag(file, "<TextureCoords>:"))
-	{
-		return false;
-	}
-
-	uint32_t texCoordCount{ 0 };
-	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&texCoordCount), sizeof(texCoordCount))))
-	{
-		return false;
-	}
-
-	file.seekg(static_cast<std::streamoff>(sizeof(float) * 2ull * texCoordCount), std::ios::cur);
-
-	if (!ReadTag(file, "<Indices>:"))
-	{
-		return false;
-	}
-
-	uint32_t loadedIndexCount{ 0 };
-	if (!static_cast<bool>(file.read(reinterpret_cast<char*>(&loadedIndexCount), sizeof(loadedIndexCount))))
-	{
-		return false;
-	}
-
-	std::vector<uint32_t> indices(loadedIndexCount);
-	if (loadedIndexCount > 0 &&
-		!static_cast<bool>(file.read(reinterpret_cast<char*>(indices.data()), sizeof(uint32_t) * loadedIndexCount)))
-	{
-		return false;
-	}
-
-	std::vector<Vertex> vertices(positionCount);
-	for (uint32_t vertexIndex{ 0 }; vertexIndex < positionCount; ++vertexIndex)
-	{
-		vertices[vertexIndex].position = positions[vertexIndex];
-		vertices[vertexIndex].normal = (vertexIndex < normalCount) ? normals[vertexIndex] : Vector3D::GetUp();
-	}
-
-	if (!Create(std::span<const Vertex>(vertices), std::span<const uint32_t>(indices)))
-	{
-		return false;
-	}
-
-	MarkLoaded(true);
-	return true;
-}
-
-void Mesh::Unload()
-{
-	Release();
-}
-
-bool Mesh::Create(
-	std::span<const std::byte> vertexData_,
-	UINT vertexStride_,
-	UINT vertexCount_,
-	std::span<const uint32_t> indices_)
-{
-	Release();
-
-	if (vertexData_.empty() || vertexStride_ == 0 || vertexCount_ == 0)
-	{
-		return false;
-	}
-
-	cpuVertexData.assign(vertexData_.begin(), vertexData_.end());
-	cpuIndices.assign(indices_.begin(), indices_.end());
-	vertexStride = vertexStride_;
-	vertexCount = vertexCount_;
-	indexCount = static_cast<UINT>(cpuIndices.size());
-
-	ID3D12Device* const device{ RenderSystem::GetInstance().GetDevice() };
+	ID3D12Device* device{ RenderSystem::GetInstance().GetDevice() };
 	if (device == nullptr)
 	{
 		return true;
@@ -148,130 +171,83 @@ bool Mesh::Create(
 	return CreateBuffers(device);
 }
 
-bool Mesh::CreateBuffers(ID3D12Device* device_)
+void Mesh::Unload()
 {
-	if (device_ == nullptr || cpuVertexData.empty() || vertexStride == 0 || vertexCount == 0)
-	{
-		return false;
-	}
+	meshName.clear();
+	sourceVertexCount = 0;
 
-	if (HasGpuBuffers())
-	{
-		return true;
-	}
+	vertices.clear();
+	indices.clear();
+	positions.clear();
+	normals.clear();
+	textureCoordinates.clear();
+	colors.clear();
+	subMeshes.clear();
 
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	vertexBuffer.Reset();
+	indexBuffer.Reset();
+	vertexBufferView = {};
+	indexBufferView = {};
 
-	D3D12_RESOURCE_DESC vertexBufferDesc{};
-	vertexBufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexBufferDesc.Width = cpuVertexData.size();
-	vertexBufferDesc.Height = 1;
-	vertexBufferDesc.DepthOrArraySize = 1;
-	vertexBufferDesc.MipLevels = 1;
-	vertexBufferDesc.SampleDesc.Count = 1;
-	vertexBufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	if (FAILED(device_->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&vertexBufferDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer))))
-	{
-		return false;
-	}
-
-	void* mappedVertexData{ nullptr };
-	if (FAILED(vertexBuffer->Map(0, nullptr, &mappedVertexData)))
-	{
-		Release();
-		return false;
-	}
-
-	std::memcpy(mappedVertexData, cpuVertexData.data(), cpuVertexData.size());
-	vertexBuffer->Unmap(0, nullptr);
-
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.SizeInBytes = static_cast<UINT>(cpuVertexData.size());
-	vertexBufferView.StrideInBytes = vertexStride;
-
-	if (!cpuIndices.empty())
-	{
-		D3D12_RESOURCE_DESC indexBufferDesc{};
-		indexBufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		indexBufferDesc.Width = cpuIndices.size() * sizeof(uint32_t);
-		indexBufferDesc.Height = 1;
-		indexBufferDesc.DepthOrArraySize = 1;
-		indexBufferDesc.MipLevels = 1;
-		indexBufferDesc.SampleDesc.Count = 1;
-		indexBufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-		if (FAILED(device_->CreateCommittedResource(
-			&uploadHeapProperties,
-			D3D12_HEAP_FLAG_NONE,
-			&indexBufferDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(&indexBuffer))))
-		{
-			Release();
-			return false;
-		}
-
-		void* mappedIndexData{ nullptr };
-		if (FAILED(indexBuffer->Map(0, nullptr, &mappedIndexData)))
-		{
-			Release();
-			return false;
-		}
-
-		std::memcpy(mappedIndexData, cpuIndices.data(), cpuIndices.size() * sizeof(uint32_t));
-		indexBuffer->Unmap(0, nullptr);
-
-		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-		indexBufferView.SizeInBytes = static_cast<UINT>(cpuIndices.size() * sizeof(uint32_t));
-		indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	}
-
-	MarkLoaded(true);
-	return true;
+	boundsCenter = {};
+	boundsExtents = {};
+	boundsMin = {};
+	boundsMax = {};
 }
 
-void Mesh::Bind(ID3D12GraphicsCommandList* commandList_) const
+void Mesh::SetVertices(std::vector<Vertex>&& vertices_)
 {
-	if (commandList_ == nullptr || !IsLoaded())
-	{
-		return;
-	}
-
-	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
-	if (indexCount > 0)
-	{
-		commandList_->IASetIndexBuffer(&indexBufferView);
-	}
+	vertices = std::move(vertices_);
 }
 
-void Mesh::Draw(ID3D12GraphicsCommandList* commandList_) const
+void Mesh::SetIndices(std::vector<uint32_t>&& indices_)
 {
-	if (commandList_ == nullptr || !IsLoaded())
-	{
-		return;
-	}
-
-	if (indexCount > 0)
-	{
-		commandList_->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
-		return;
-	}
-
-	commandList_->DrawInstanced(vertexCount, 1, 0, 0);
+	indices = std::move(indices_);
 }
 
-UINT Mesh::GetVertexCount() const noexcept
+const std::vector<Vertex>& Mesh::GetVertices() const noexcept
 {
-	return vertexCount;
+	return vertices;
+}
+
+const std::vector<uint32_t>& Mesh::GetIndices() const noexcept
+{
+	return indices;
+}
+
+const std::vector<ColorRGBA>& Mesh::GetColors() const noexcept
+{
+	return colors;
+}
+
+const std::vector<Vector2D>& Mesh::GetTextureCoordinates() const noexcept
+{
+	return textureCoordinates;
+}
+
+const std::vector<std::vector<uint32_t>>& Mesh::GetSubMeshes() const noexcept
+{
+	return subMeshes;
+}
+
+const std::wstring& Mesh::GetMeshName() const noexcept
+{
+	return meshName;
+}
+
+uint32_t Mesh::GetSourceVertexCount() const noexcept
+{
+	return sourceVertexCount;
+}
+
+const Vector3D& Mesh::GetBoundsCenter() const noexcept
+{
+	return boundsCenter;
+}
+
+const Vector3D& Mesh::GetBoundsExtents() const noexcept
+{
+	return boundsExtents;
 }
 
 const Vector3D& Mesh::GetBoundsMin() const noexcept
@@ -284,14 +260,29 @@ const Vector3D& Mesh::GetBoundsMax() const noexcept
 	return boundsMax;
 }
 
-UINT Mesh::GetIndexCount() const noexcept
+ID3D12Resource* Mesh::GetVertexBuffer() const noexcept
 {
-	return indexCount;
+	return vertexBuffer.Get();
 }
 
-UINT Mesh::GetVertexStride() const noexcept
+const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView() const noexcept
 {
-	return vertexStride;
+	return vertexBufferView;
+}
+
+ID3D12Resource* Mesh::GetIndexBuffer() const noexcept
+{
+	return indexBuffer.Get();
+}
+
+const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView() const noexcept
+{
+	return indexBufferView;
+}
+
+uint32_t Mesh::GetIndexCount() const noexcept
+{
+	return static_cast<uint32_t>(indices.size());
 }
 
 bool Mesh::HasGpuBuffers() const noexcept
@@ -299,36 +290,152 @@ bool Mesh::HasGpuBuffers() const noexcept
 	return vertexBuffer != nullptr;
 }
 
-void Mesh::Release()
+bool Mesh::CreateBuffers(ID3D12Device* device_)
 {
-	vertexBuffer.Reset();
-	indexBuffer.Reset();
+	if (device_ == nullptr)
+	{
+		return false;
+	}
 
-	vertexBufferView = {};
-	indexBufferView = {};
-	MarkLoaded(false);
+	if (HasGpuBuffers())
+	{
+		return true;
+	}
+
+	if (vertices.empty())
+	{
+		return false;
+	}
+
+	{
+		const UINT bufferSize{ static_cast<UINT>(sizeof(Vertex) * vertices.size()) };
+
+		D3D12_HEAP_PROPERTIES heapProps{};
+		heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+		D3D12_RESOURCE_DESC bufferDesc{};
+		bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		bufferDesc.Width = bufferSize;
+		bufferDesc.Height = 1;
+		bufferDesc.DepthOrArraySize = 1;
+		bufferDesc.MipLevels = 1;
+		bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+		bufferDesc.SampleDesc.Count = 1;
+		bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+		if (FAILED(device_->CreateCommittedResource(
+			&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexBuffer))))
+		{
+			return false;
+		}
+
+		void* mappedData{ nullptr };
+		if (FAILED(vertexBuffer->Map(0, nullptr, &mappedData)))
+		{
+			return false;
+		}
+		std::memcpy(mappedData, vertices.data(), bufferSize);
+		vertexBuffer->Unmap(0, nullptr);
+
+		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+		vertexBufferView.StrideInBytes = sizeof(Vertex);
+		vertexBufferView.SizeInBytes = bufferSize;
+	}
+
+	if (!indices.empty())
+	{
+		const UINT bufferSize{ static_cast<UINT>(sizeof(uint32_t) * indices.size()) };
+
+		D3D12_HEAP_PROPERTIES heapProps{};
+		heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+		D3D12_RESOURCE_DESC bufferDesc{};
+		bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		bufferDesc.Width = bufferSize;
+		bufferDesc.Height = 1;
+		bufferDesc.DepthOrArraySize = 1;
+		bufferDesc.MipLevels = 1;
+		bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+		bufferDesc.SampleDesc.Count = 1;
+		bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+		if (FAILED(device_->CreateCommittedResource(
+			&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&indexBuffer))))
+		{
+			return false;
+		}
+
+		void* mappedData{ nullptr };
+		if (FAILED(indexBuffer->Map(0, nullptr, &mappedData)))
+		{
+			return false;
+		}
+		std::memcpy(mappedData, indices.data(), bufferSize);
+		indexBuffer->Unmap(0, nullptr);
+
+		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
+		indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+		indexBufferView.SizeInBytes = bufferSize;
+	}
+
+	return true;
 }
 
-bool Mesh::ReadTag(std::ifstream& file_, const std::string& expectedTag_)
+void Mesh::ReadVector2(std::ifstream& file_, Vector2D& vector_)
 {
-	uint8_t tagLength{ 0 };
-	if (!static_cast<bool>(file_.read(reinterpret_cast<char*>(&tagLength), sizeof(tagLength))))
-	{
-		return false;
-	}
-
-	std::string tag(tagLength, '\0');
-	if (!static_cast<bool>(file_.read(tag.data(), tagLength)))
-	{
-		return false;
-	}
-
-	return tag == expectedTag_;
+	ReadValue(file_, vector_.x);
+	ReadValue(file_, vector_.y);
 }
 
 void Mesh::ReadVector3(std::ifstream& file_, Vector3D& vector_)
 {
-	file_.read(reinterpret_cast<char*>(&vector_.x), sizeof(float));
-	file_.read(reinterpret_cast<char*>(&vector_.y), sizeof(float));
-	file_.read(reinterpret_cast<char*>(&vector_.z), sizeof(float));
+	ReadValue(file_, vector_.x);
+	ReadValue(file_, vector_.y);
+	ReadValue(file_, vector_.z);
+}
+
+void Mesh::ReadColor(std::ifstream& file_, ColorRGBA& color_)
+{
+	ReadValue(file_, color_.x);
+	ReadValue(file_, color_.y);
+	ReadValue(file_, color_.z);
+	ReadValue(file_, color_.w);
+}
+
+void Mesh::UpdateBoundsFromCenterExtents() noexcept
+{
+	boundsMin = boundsCenter - boundsExtents;
+	boundsMax = boundsCenter + boundsExtents;
+}
+
+void Mesh::UpdateBoundsFromMinMax() noexcept
+{
+	boundsCenter = (boundsMin + boundsMax) * 0.5f;
+	boundsExtents = (boundsMax - boundsMin) * 0.5f;
+}
+
+void Mesh::RebuildVertices()
+{
+	vertices.resize(positions.size());
+	for (std::size_t i{ 0 }; i < positions.size(); ++i)
+	{
+		vertices[i].position = positions[i];
+		vertices[i].normal = (i < normals.size()) ? normals[i] : Vector3D::GetUp();
+	}
+}
+
+void Mesh::RebuildFlattenedIndices()
+{
+	if (subMeshes.empty())
+	{
+		return;
+	}
+
+	indices.clear();
+	for (const std::vector<uint32_t>& subMeshIndices : subMeshes)
+	{
+		indices.insert(indices.end(), subMeshIndices.begin(), subMeshIndices.end());
+	}
 }

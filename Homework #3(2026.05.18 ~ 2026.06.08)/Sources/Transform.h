@@ -1,18 +1,17 @@
-﻿#pragma once
+#pragma once
 
 #include <span>
-#include <vector>
 
 #include "Component.h"
-#include "Matrix4x4.h"
-#include "Quaternion.h"
 #include "Vector3D.h"
+#include "Quaternion.h"
+#include "Matrix4x4.h"
 
-class Transform : public Component
+class Transform final : public Component
 {
 public:
-	Transform() noexcept = default;
-	~Transform() noexcept override = default;
+	Transform() = default;
+	~Transform() override = default;
 
 	void OnDestroy() override;
 
@@ -26,7 +25,7 @@ public:
 	void SetLocalScale(const Vector3D& scale_);
 
 	[[nodiscard]] Matrix4x4 GetLocalMatrix() const noexcept;
-
+	
 	[[nodiscard]] Vector3D GetWorldPosition() const noexcept;
 	void SetWorldPosition(const Vector3D& position_);
 
@@ -41,14 +40,14 @@ public:
 
 	[[nodiscard]] Transform* GetParent() noexcept;
 	[[nodiscard]] const Transform* GetParent() const noexcept;
-	void SetParent(Transform* const parent_);
-
 	[[nodiscard]] std::span<Transform* const> GetChildren() noexcept;
 	[[nodiscard]] std::span<Transform* const> GetChildren() const noexcept;
+	void SetParent(Transform* const parent_);
 
 private:
 	void UpdateMatrices();
 
+private:
 	Vector3D position{ Vector3D::GetZero() };
 	Quaternion rotation{ Quaternion::GetIdentity() };
 	Vector3D scale{ Vector3D::GetOne() };

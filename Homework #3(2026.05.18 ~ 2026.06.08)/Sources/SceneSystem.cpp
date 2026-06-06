@@ -1,126 +1,111 @@
 #include "Precompiled.h"
 #include "SceneSystem.h"
 
-#include "Scene.h"
+#include "RenderSystem.h"
 
-SceneSystem::~SceneSystem() = default;
-
-bool SceneSystem::AddSceneInternal(std::wstring_view sceneName_, std::unique_ptr<Scene> scene_)
+void SceneSystem::Release()
 {
-	if (sceneName_.empty() || scene_ == nullptr)
+	if (currentScene != nullptr)
 	{
-		return false;
-	}
-
-	const std::wstring sceneName{ sceneName_ };
-	if (scenes.contains(sceneName))
-	{
-		return false;
-	}
-
-	scenes.emplace(sceneName, std::move(scene_));
-	return true;
-}
-
-bool SceneSystem::RemoveSceneInternal(std::wstring_view sceneName_)
-{
-	const auto iter{ scenes.find(std::wstring(sceneName_)) };
-	if (iter == scenes.end())
-	{
-		return false;
-	}
-
-	if (iter->second.get() == currentScene)
-	{
-		UnloadScene();
+		currentScene->Unload();
 		currentScene = nullptr;
 	}
 
-	if (iter->second.get() == nextScene)
-	{
-		nextScene = nullptr;
-	}
-
-	scenes.erase(iter);
-	return true;
-}
-
-bool SceneSystem::LoadScene(std::wstring_view sceneName_)
-{
-	const auto iter{ scenes.find(std::wstring(sceneName_)) };
-	if (iter == scenes.end())
-	{
-		return false;
-	}
-
-	nextScene = iter->second.get();
-	return true;
-}
-
-void SceneSystem::UnloadScene()
-{
-	if (currentScene == nullptr)
-	{
-		return;
-	}
-
-	currentScene->Unload();
+	nextScene = nullptr;
+	scenes.clear();
 }
 
 void SceneSystem::Update()
 {
-	if (nextScene != nullptr && nextScene != currentScene)
+	if (nextScene != nullptr)
 	{
-		UnloadScene();
+		if (currentScene != nullptr)
+		{
+			currentScene->Unload();
+		}
+
 		currentScene = nextScene;
-		currentScene->Load();
 		nextScene = nullptr;
+
+		currentScene->Load();
 	}
 
-	if (currentScene == nullptr)
+	if (currentScene != nullptr)
 	{
-		return;
+		currentScene->Update();
 	}
-
-	currentScene->Update();
-}
-
-void SceneSystem::LateUpdate()
-{
-	if (currentScene == nullptr)
-	{
-		return;
-	}
-
-	currentScene->LateUpdate();
 }
 
 void SceneSystem::FixedUpdate()
 {
+	if (currentScene != nullptr)
+	{
+		currentScene->FixedUpdate();
+	}
+}
+
+void SceneSystem::Render()
+{
 	if (currentScene == nullptr)
 	{
 		return;
 	}
 
-	currentScene->FixedUpdate();
+	RenderSystem::GetInstance().PreRender();
+	RenderSystem::GetInstance().Clear();
+	currentScene->Render();
+	RenderSystem::GetInstance().PostRender();
+	RenderSystem::GetInstance().Present();
 }
 
-void SceneSystem::Render(ID3D12GraphicsCommandList* commandList_)
+void SceneSystem::AddScene(std::wstring_view sceneName_, std::unique_ptr<Scene> scene_)
 {
-	if (currentScene == nullptr || commandList_ == nullptr)
+	scenes.emplace(sceneName_, std::move(scene_));
+}
+
+void SceneSystem::RemoveScene(std::wstring_view sceneName_)
+{
+	const std::unordered_map<std::wstring, std::unique_ptr<Scene>>::iterator it{ scenes.find(std::wstring(sceneName_)) };
+	if (it != scenes.end())
 	{
-		return;
+		if (currentScene == it->second.get())
+		{
+			currentScene->Unload();
+			currentScene = nullptr;
+		}
+
+		if (nextScene == it->second.get())
+		{
+			nextScene = nullptr;
+		}
+
+		scenes.erase(it);
 	}
-
-	currentScene->Render(commandList_);
 }
 
-Scene* SceneSystem::GetCurrentScene() noexcept
+void SceneSystem::LoadScene(std::wstring_view sceneName_)
 {
-	return currentScene;
+	const std::unordered_map<std::wstring, std::unique_ptr<Scene>>::iterator it{ scenes.find(std::wstring(sceneName_)) };
+	if (it != scenes.end())
+	{
+		nextScene = it->second.get();
+	}
 }
 
-const Scene* SceneSystem::GetCurrentScene() const noexcept
+void SceneSystem::UnloadScene(std::wstring_view sceneName_)
 {
-	return currentScene;
+	const std::unordered_map<std::wstring, std::unique_ptr<Scene>>::iterator it{ scenes.find(std::wstring(sceneName_)) };
+	if (it != scenes.end())
+	{
+		if (currentScene == it->second.get())
+		{
+			currentScene->Unload();
+			currentScene = nullptr;
+		}
+
+		if (nextScene == it->second.get())
+		{
+			nextScene = nullptr;
+		}
+	}
 }

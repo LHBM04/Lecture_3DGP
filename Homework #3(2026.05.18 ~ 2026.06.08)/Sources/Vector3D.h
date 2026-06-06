@@ -14,7 +14,7 @@ class Vector3D : public DirectX::XMFLOAT3
 public:
     Vector3D() noexcept;
     explicit Vector3D(float value_) noexcept;
-    explicit Vector3D(float x_, float y_, float z_) noexcept;
+    Vector3D(float x_, float y_, float z_) noexcept;
 	explicit Vector3D(const Vector2D& vector_, float z_ = 0.0f) noexcept;
 	explicit Vector3D(const Vector4D& vector_) noexcept;
 	explicit Vector3D(DirectX::XMVECTOR vector_) noexcept;
