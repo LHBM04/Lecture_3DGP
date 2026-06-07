@@ -12,6 +12,7 @@ class Matrix4x4;
 class SphereCollider;
 class Vector2D;
 class Vector3D;
+class Matrix4x4;
 
 struct alignas(256) CameraConstants final
 {
@@ -72,6 +73,7 @@ public:
 
 	[[nodiscard]] bool IsInFrustum(const SphereCollider* collider_) const;
 	[[nodiscard]] bool IsInFrustum(const CubeCollider* collider_) const;
+	[[nodiscard]] bool IsInFrustum(const DirectX::BoundingBox& bounds_, const Matrix4x4& worldMatrix_) const;
 
 	void ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const;
 

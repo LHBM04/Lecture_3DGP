@@ -1,5 +1,4 @@
-#include "Precompiled.h"
-
+﻿#include "Precompiled.h"
 #include "Model.h"
 
 #include "GameObject.h"
@@ -51,7 +50,7 @@ bool Model::Load()
 	modelName = ReadString(file);
 	if (modelName.empty())
 	{
-		Logger::Critical(L"[Model] Load failed: model name is empty. path={}", path);
+		Logger::Critical(L"[Model] Load failed: prefab name is empty. path={}", path);
 		return false;
 	}
 

@@ -22,6 +22,15 @@
     <Filter Include="Resources\Materials">
       <UniqueIdentifier>{f04b5e07-d4c5-4fb6-afaa-a8c53f5846e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\Terrains">
+      <UniqueIdentifier>{a80ebf56-c4d0-4123-8f56-536d4a8b2670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Animations">
+      <UniqueIdentifier>{b97f4947-62d6-44f7-8e3c-e0e3ed42ce8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models">
+      <UniqueIdentifier>{c99fdbc5-452a-4f85-be95-60dc67c30595}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Main.cpp">
@@ -52,6 +61,9 @@
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\InputSystem.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Light.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\RenderSystem.cpp">
@@ -111,7 +123,13 @@
     <ClCompile Include="Sources\Scene_Level1.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Model.cpp">
+    <ClCompile Include="Sources\Scene_Level2.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Level3.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Stage.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Animator.cpp">
@@ -120,7 +138,37 @@
     <ClCompile Include="Sources\AnimationClip.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
+    <ClCompile Include="Sources\CameraController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\PlayerController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\PlayerProjectile.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\EnemyController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\EnemyProjectile.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ExplodeParticle.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Terrain.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TerrainRenderer.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Scene_Title.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TitleController.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Logger.h">
       <Filter>Sources\Header Files</Filter>
@@ -218,7 +266,13 @@
     <ClInclude Include="Sources\Scene_Level1.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Model.h">
+    <ClInclude Include="Sources\Scene_Level2.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Level3.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Stage.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\AnimationClip.h">
@@ -227,15 +281,873 @@
     <ClInclude Include="Sources\Animator.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\CameraController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PlayerController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PlayerProjectile.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\EnemyController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\EnemyProjectile.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ExplodeParticle.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Terrain.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TerrainRenderer.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Model.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Title.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TitleController.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Meshes\Cube.bin">
-      <Filter>Resources\Meshes</Filter>
-    </None>
     <None Include="Resources\Shaders\Standard.hlsl">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="Resources\Materials\Floor_Night.bin">
+    <None Include="Resources\Terrains\HeightMap.raw">
+      <Filter>Resources\Terrains</Filter>
+    </None>
+    <None Include="Resources\Meshes\Back_Rotor_Back_Rotor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_1_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_2_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_3_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_4_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_5_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_6_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_7_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_8_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_9_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_10_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_11_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_12_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_13_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\black_m_black_m.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\BODY_ALPHA_BODY_ALPHA.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\BODY_BODY.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\body_low_body_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\breaklight_bulb_breaklight_bulb.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\bumper_base_bumper_base.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\bumper_low_bumper_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\bumperbase_low_bumperbase_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\bumperR_low_bumperR_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\cannon_cannon.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Canon_LOD0_Canon_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Canon_LOD1_Canon_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Canon_LOD2_Canon_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\caterpillar_ALPHA_L_caterpillar_ALPHA_L.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\caterpillar_ALPHA_R_caterpillar_ALPHA_R.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\caterpillar_L_caterpillar_L.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\caterpillar_R_caterpillar_R.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD0_Cockpit_LOD0_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD0_Cockpit_LOD0_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD0_Cockpit_LOD0_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD0_Cockpit_LOD0_SM3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD1_Cockpit_LOD1_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD1_Cockpit_LOD1_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD1_Cockpit_LOD1_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD2_Cockpit_LOD2_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cockpit_LOD2_Cockpit_LOD2_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Collider_WeaponsSupport_Collider_WeaponsSupport.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderBladeL_ColliderBladeL.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderBladeR_ColliderBladeR.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderCanon_ColliderCanon.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderCanopy_ColliderCanopy.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderEngine_ColliderEngine.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderFuselage_ColliderFuselage.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderLandingL_ColliderLandingL.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderLandingR_ColliderLandingR.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderMainRotor_ColliderMainRotor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderRadar_ColliderRadar.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTailRotor1_ColliderTailRotor1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTailRotor2_ColliderTailRotor2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTorque0_ColliderTorque0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTorque1_ColliderTorque1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTorque2_ColliderTorque2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTorque3_ColliderTorque3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\ColliderTurret_ColliderTurret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\dash_label_dash_label.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\dashboard_low_dashboard_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_LF_door_LF_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_LF_door_LF_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_LF_door_LF_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_LR_door_LR_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_LR_door_LR_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_LR_door_LR_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_RF_door_RF_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_RF_door_RF_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_RF_door_RF_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_RR_door_RR_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_RR_door_RR_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\door_RR_door_RR_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\doot_livery_LF_doot_livery_LF.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\doot_livery_LR_doot_livery_LR.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\doot_livery_RF_doot_livery_RF.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\doot_livery_RR_doot_livery_RR.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\FakeMainRotorBlade_FakeMainRotorBlade.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\FakeTailRotor_FakeTailRotor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fender_low_fender_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fenderR_low_fenderR_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fg_bulb_front_fg_bulb_front.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fg_bulb_roof_fg_bulb_roof.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fg_glass_front_fg_glass_front.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\floor_low_floor_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\foglight_primary_foglight_primary.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fooglight_roof_bulb_fooglight_roof_bulb.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\fooglight_roof_glass_fooglight_roof_glass.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Front_Wheel_Front_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD0_Fuselage_LOD0_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD0_Fuselage_LOD0_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD0_Fuselage_LOD0_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD1_Fuselage_LOD1_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD1_Fuselage_LOD1_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD1_Fuselage_LOD1_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD2_Fuselage_LOD2_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD2_Fuselage_LOD2_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Fuselage_LOD2_Fuselage_LOD2_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\glass_F_glass_F.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\glass_glass.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\gold_gold.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\gum_gum.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\gun_gun_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\gun_gun_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\gun2_gun2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD0_GunnerDoor_LOD0_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD0_GunnerDoor_LOD0_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD0_GunnerDoor_LOD0_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD1_GunnerDoor_LOD1_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD1_GunnerDoor_LOD1_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD1_GunnerDoor_LOD1_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD2_GunnerDoor_LOD2_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD2_GunnerDoor_LOD2_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\GunnerDoor_LOD2_GunnerDoor_LOD2_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Gunship_Gunship.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\headlight_bulb_headlight_bulb.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\headlights_low_headlights_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hellfire_Missile_Hellfire_Missile.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\hood_low_hood_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\idler_wheel_L_idler_wheel_L.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\idler_wheel_R_idler_wheel_R.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\L_Back_Wheel_L_Back_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\L_Cover_L_Cover.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\livery_livery.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MainRotor_LOD0_MainRotor_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MainRotor_LOD1_MainRotor_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MainRotor_LOD2_MainRotor_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MainRotorBlade_LOD0_MainRotorBlade_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MainRotorBlade_LOD1_MainRotorBlade_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MainRotorBlade_LOD2_MainRotorBlade_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mi24_Body.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK1_SF_Light_MK1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK2_SF_Medium_MK2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK3_SF_Heavy_MK3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK4_SF_Heavy_MK4.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK5_SF_Medium_MK5.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK6_SF_Heavy_MK6.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK7_SF_Medium_MK7.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MK8_SF_Radar_MK8.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\MX6_SF_MX6.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Nacelles_Missiles_LOD0_Nacelles_Missiles_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Nacelles_Missiles_LOD1_Nacelles_Missiles_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Nacelles_Missiles_LOD2_Nacelles_Missiles_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Nacelles_Rockets_LOD0_Nacelles_Rockets_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Nacelles_Rockets_LOD1_Nacelles_Rockets_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Nacelles_Rockets_LOD2_Nacelles_Rockets_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD0_PilotDoor_LOD0_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD0_PilotDoor_LOD0_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD0_PilotDoor_LOD0_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD0_PilotDoor_LOD0_SM3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD1_PilotDoor_LOD1_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD1_PilotDoor_LOD1_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD1_PilotDoor_LOD1_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD2_PilotDoor_LOD2_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD2_PilotDoor_LOD2_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PilotDoor_LOD2_PilotDoor_LOD2_SM2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\pole_pole.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\R_Back_Wheel_R_Back_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\R_Cover_R_Cover.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rack_rack.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Radar_LOD0_Radar_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Radar_LOD1_Radar_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Radar_LOD2_Radar_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\radiator_low_radiator_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_1_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_2_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_3_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_4_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_5_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_6_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_7_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_8_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_9_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\rocket_rocket.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_L1_roller_L1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_L2_roller_L2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_L3_roller_L3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_L4_roller_L4.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_L5_roller_L5.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_R1_roller_R1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_R2_roller_R2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_R3_roller_R3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_R4_roller_R4.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roller_R5_roller_R5.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roof_low_roof_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roof_rail_roof_rail.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\roofint_low_roofint_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Rotor_Rotor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\seat_low_seat_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK1_Turret_SF_MK1_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK1_Weaponry_SF_MK1_Weaponry.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK2_Turret_SF_MK2_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK2_Weaponry_SF_MK2_Weaponry.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK3_Turret_SF_MK3_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK3_Weaponry_SF_MK3_Weaponry.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK4_Turret_SF_MK4_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK4_Weaponry_SF_MK4_Weaponry.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK5_Turret_SF_MK5_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK5_Weaponry_SF_MK5_Weaponry.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK6_Turret_SF_MK6_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK6_Weaponry_SF_MK6_Weaponry.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK7_Radar_SF_MK7_Radar.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MK7_Turret_SF_MK7_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX4_BL_Wheel_SF_MX4_BL_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX4_BR_Wheel_SF_MX4_BR_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX4_FL_Wheel_SF_MX4_FL_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX4_FR_Wheel_SF_MX4_FR_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX4_SF_MX4.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX4_weapon_SF_MX4_weapon.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_BL_Wheel_SF_MX6_BL_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_BR_Wheel_SF_MX6_BR_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_Door_SF_MX6_Door.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_FL_Wheel_SF_MX6_FL_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_FR_Wheel_SF_MX6_FR_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_ML_Wheel_SF_MX6_ML_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_MR_Wheel_SF_MX6_MR_Wheel.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_MX6_Turret_SF_MX6_Turret.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SF_RadarTurret_MK8_SF_RadarTurret_MK8.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\shield_shield_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\shield_shield_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\side_side.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\signal_bulb_LF_signal_bulb_LF.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\signal_bulb_LR_signal_bulb_LR.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\signal_bulb_RF_signal_bulb_RF.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\signal_bulb_RR_signal_bulb_RR.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\silver_silver.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\skin_skin.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Spaceship_Spaceship.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\sprocket_wheel_L_sprocket_wheel_L.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\sprocket_wheel_R_sprocket_wheel_R.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\steeringwheel_low_steeringwheel_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\suspension_low_suspension_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Tail_Rotor_Tail_Rotor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\PlayerProjectile.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Particle.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\TailRotor_LOD0_TailRotor_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\TailRotor_LOD1_TailRotor_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\TailRotor_LOD2_TailRotor_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Top_Rotor_Top_Rotor.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Tourelle_LOD0_Tourelle_LOD0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Tourelle_LOD1_Tourelle_LOD1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Tourelle_LOD2_Tourelle_LOD2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\TURRET_TURRET_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\TURRET_TURRET_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\undercarriage_low_undercarriage_low.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_L1_wheel_L1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_L2_wheel_L2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_L3_wheel_L3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_L4_wheel_L4.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_L5_wheel_L5.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_L6_wheel_L6.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_LF_wheel_LF_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_LF_wheel_LF_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_LR_wheel_LR_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_LR_wheel_LR_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_R1_wheel_R1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_R2_wheel_R2.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_R3_wheel_R3.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_R4_wheel_R4.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_R5_wheel_R5.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_R6_wheel_R6.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_rail_wheel_rail.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Wheel_RF_Wheel_RF_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Wheel_RF_Wheel_RF_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_RR_wheel_RR_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_RR_wheel_RR_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_spare_wheel_spare_SM0.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\wheel_spare_wheel_spare_SM1.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Title_Logo.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Title_Message.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Tutorial_Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Level_1_Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Level_2_Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Level_3_Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Start_Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\End_Button.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Materials\UI.bin">
       <Filter>Resources\Materials</Filter>
     </None>
   </ItemGroup>

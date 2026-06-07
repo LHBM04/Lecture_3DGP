@@ -193,6 +193,14 @@ bool Camera::IsInFrustum(const CubeCollider* collider_) const
 	return collider_->IsIntersects(frustum);
 }
 
+bool Camera::IsInFrustum(const DirectX::BoundingBox& bounds_, const Matrix4x4& worldMatrix_) const
+{
+	DirectX::BoundingOrientedBox orientedBounds{};
+	DirectX::BoundingOrientedBox::CreateFromBoundingBox(orientedBounds, bounds_);
+	orientedBounds.Transform(orientedBounds, Matrix4x4::Load(worldMatrix_));
+	return frustum.Intersects(orientedBounds);
+}
+
 void Camera::ScreenPointToRay(const Vector2D& screenPoint_, Vector3D& rayOrigin_, Vector3D& rayDir_) const
 {
 	const Vector4D viewport{ GetViewportPixelRect() };

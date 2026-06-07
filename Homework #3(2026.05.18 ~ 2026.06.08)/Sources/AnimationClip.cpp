@@ -13,10 +13,11 @@ bool AnimationClip::Load()
 	std::ifstream file{ path, std::ios::binary };
 	if (!file.is_open())
 	{
+		Logger::Critical(L"[Animation] Load failed: cannot open file. path={}", path);
 		return false;
 	}
 
-	if (!ReadTag(file, "<Animation>:"))
+	if (!HasTag(file, "<Animation>:"))
 	{
 		Logger::Critical(L"[Animation] Load failed: <Animation>: tag not found. path={}", path);
 		return false;
@@ -30,7 +31,7 @@ bool AnimationClip::Load()
 		return false;
 	}
 
-	if (!ReadTag(file, "<Tracks>:"))
+	if (!HasTag(file, "<Tracks>:"))
 	{
 		Logger::Critical(L"[Animation] Load failed: <Tracks>: tag not found. path={}", path);
 		return false;
@@ -43,10 +44,11 @@ bool AnimationClip::Load()
 		return false;
 	}
 
+	tracks.clear();
 	tracks.reserve(trackCount);
 	for (uint32_t i{ 0 }; i < trackCount; ++i)
 	{
-		if (!ReadTag(file, "<Track>:"))
+		if (!HasTag(file, "<Track>:"))
 		{
 			Logger::Critical(L"[Animation] Load failed: <Track>: tag not found. path={}", path);
 			return false;
@@ -55,7 +57,7 @@ bool AnimationClip::Load()
 		AnimationTrack track{};
 		track.nodeName = ReadString(file);
 
-		if (!ReadTag(file, "<Keyframes>:"))
+		if (!HasTag(file, "<Keyframes>:"))
 		{
 			Logger::Critical(L"[Animation] Load failed: <Keyframes>: tag not found. path={}, node={}", path, track.nodeName);
 			return false;
@@ -115,37 +117,4 @@ float AnimationClip::GetTicksPerSecond() const noexcept
 const std::vector<AnimationTrack>& AnimationClip::GetTracks() const noexcept
 {
 	return tracks;
-}
-
-bool AnimationClip::ReadTag(std::ifstream& file_, const std::string& expectedTag_)
-{
-	uint8_t tagLength{ 0 };
-	if (!ReadValue(file_, tagLength)) return false;
-
-	std::string tag(tagLength, '\0');
-	if (!file_.read(&tag[0], tagLength)) return false;
-
-	return tag == expectedTag_;
-}
-
-std::string AnimationClip::ReadTag(std::ifstream& file_)
-{
-	uint8_t tagLength{ 0 };
-	if (!ReadValue(file_, tagLength)) return "";
-
-	std::string tag(tagLength, '\0');
-	if (!file_.read(&tag[0], tagLength)) return "";
-
-	return tag;
-}
-
-std::wstring AnimationClip::ReadString(std::ifstream& file_)
-{
-	uint8_t strLength{ 0 };
-	if (!ReadValue(file_, strLength)) return L"";
-
-	std::string str(strLength, '\0');
-	if (!file_.read(&str[0], strLength)) return L"";
-
-	return std::wstring(str.begin(), str.end());
 }

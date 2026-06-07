@@ -81,13 +81,15 @@ protected:
 	virtual void OnUnload() = 0;
 
 private:
-	void ProcessDestroyQueue();
+	void FlushPendingObjects();
+	void FlushDestroyObjects();
 
 protected:
 	bool isLoaded{ false };
 
 	std::vector<std::unique_ptr<GameObject>> gameObjects;
-	std::vector<GameObject*> destroyQueue;
+	std::vector<std::unique_ptr<GameObject>> addObjects;
+	std::vector<GameObject*> destroyObjects;
 	std::vector<Camera*> cameras;
 	std::vector<Light*> lights;
 };

@@ -21,6 +21,8 @@ enum class KeyCode : std::uint8_t
 	Shift = 0x10,
 	Control = 0x11,
 	Alt = 0x12,
+	LeftShift = 0xA0,
+	LeftControl = 0xA2,
 	Escape = 0x1B,
 	Space = 0x20,
 

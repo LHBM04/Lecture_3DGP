@@ -198,6 +198,31 @@ void Mesh::Unload()
 void Mesh::SetVertices(std::vector<Vertex>&& vertices_)
 {
 	vertices = std::move(vertices_);
+
+	if (vertices.empty())
+	{
+		boundsCenter = {};
+		boundsExtents = {};
+		boundsMin = {};
+		boundsMax = {};
+		return;
+	}
+
+	boundsMin = vertices.front().position;
+	boundsMax = vertices.front().position;
+
+	for (const Vertex& vertex : vertices)
+	{
+		boundsMin.x = std::min(boundsMin.x, vertex.position.x);
+		boundsMin.y = std::min(boundsMin.y, vertex.position.y);
+		boundsMin.z = std::min(boundsMin.z, vertex.position.z);
+
+		boundsMax.x = std::max(boundsMax.x, vertex.position.x);
+		boundsMax.y = std::max(boundsMax.y, vertex.position.y);
+		boundsMax.z = std::max(boundsMax.z, vertex.position.z);
+	}
+
+	UpdateBoundsFromMinMax();
 }
 
 void Mesh::SetIndices(std::vector<uint32_t>&& indices_)

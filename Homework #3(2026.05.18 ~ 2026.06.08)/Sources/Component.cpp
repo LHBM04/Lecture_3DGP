@@ -5,6 +5,7 @@
 
 GameObject* Component::GetOwner() const noexcept
 {
+	assert(owner != nullptr && "Component must have an owner!");
 	return owner;
 }
 

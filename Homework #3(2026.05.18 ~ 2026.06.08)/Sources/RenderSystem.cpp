@@ -6,6 +6,7 @@
 #include "Light.h"
 #include "Logger.h"
 #include "Material.h"
+#include "Matrix4x4.h"
 #include "Mesh.h"
 #include "Shader.h"
 
@@ -88,6 +89,19 @@ void RenderSystem::Release()
 		constantBuffer.currentOffset = 0;
 	}
 
+	for (FrameInstanceBuffer& instanceBuffer : instanceBuffers)
+	{
+		if (instanceBuffer.resource != nullptr && instanceBuffer.mappedData != nullptr)
+		{
+			instanceBuffer.resource->Unmap(0, nullptr);
+			instanceBuffer.mappedData = nullptr;
+		}
+
+		instanceBuffer.resource.Reset();
+		instanceBuffer.gpuAddress = 0;
+		instanceBuffer.currentOffset = 0;
+	}
+
 	depthStencilBuffer.Reset();
 	for (Microsoft::WRL::ComPtr<ID3D12Resource>& renderTarget : renderTargets)
 	{
@@ -138,6 +152,8 @@ void RenderSystem::PreRender()
 	commandList->Reset(commandAllocators[frameIndex].Get(), nullptr);
 
 	constantBuffers[frameIndex].currentOffset = 0;
+	instanceBuffers[frameIndex].currentOffset = 0;
+	renderRequests.clear();
 
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -266,48 +282,140 @@ void RenderSystem::SetMaterialConstants(const MaterialConstants& constants_)
 	}
 }
 
-void RenderSystem::DrawMesh(Mesh* mesh_, Material* material_)
+void RenderSystem::SubmitRenderRequest(Mesh* mesh_, Material* material_, const Matrix4x4& worldMatrix_)
+{
+	if (mesh_ == nullptr || material_ == nullptr)
+	{
+		return;
+	}
+
+	RenderRequest& request{ renderRequests.emplace_back() };
+	request.mesh = mesh_;
+	request.material = material_;
+	request.worldMatrix = worldMatrix_;
+}
+
+void RenderSystem::DrawMesh(Mesh* mesh_, Material* material_, const Matrix4x4& worldMatrix_)
+{
+	const std::array<Matrix4x4, 1> worldMatrices{ worldMatrix_ };
+	DrawMeshInstanced(mesh_, material_, worldMatrices);
+}
+
+void RenderSystem::DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span<const Matrix4x4> worldMatrices_)
 {
 	if (mesh_ == nullptr || material_ == nullptr || device == nullptr || commandList == nullptr || graphicsRootSignature == nullptr)
 	{
-		Logger::Error(L"DrawMesh 실패: 메시, 머터리얼, 디바이스, 커맨드 리스트, 루트 시그니처 중 초기화되지 않은 항목이 있습니다.");
+		Logger::Error(L"DrawMeshInstanced 실패: 메시, 머터리얼, 디바이스, 커맨드 리스트, 루트 시그니처 중 초기화되지 않은 항목이 있습니다.");
+		return;
+	}
+
+	if (worldMatrices_.empty())
+	{
+		Logger::Error(L"DrawMeshInstanced 실패: 인스턴스 월드 행렬이 비어 있습니다.");
 		return;
 	}
 
 	Shader* const shader{ material_->GetShader() };
 	if (shader == nullptr)
 	{
-		Logger::Critical(L"DrawMesh 실패: 머터리얼에 셰이더가 없습니다.");
+		Logger::Critical(L"DrawMeshInstanced 실패: 머터리얼에 셰이더가 없습니다.");
 		return;
 	}
 
 	if (!shader->HasPipelineState() && !shader->CreatePipelineState(device.Get(), graphicsRootSignature.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_D24_UNORM_S8_UINT))
 	{
-		Logger::Critical(L"DrawMesh 실패: 셰이더 PSO 생성에 실패했습니다. 셰이더={}", shader->GetPath());
+		Logger::Critical(L"DrawMeshInstanced 실패: 셰이더 PSO 생성에 실패했습니다. 셰이더={}", shader->GetPath());
 		return;
 	}
 
 	if (!mesh_->HasGpuBuffers() && !mesh_->CreateBuffers(device.Get()))
 	{
-		Logger::Critical(L"DrawMesh 실패: 메시 GPU 버퍼 생성에 실패했습니다. 메시={}", mesh_->GetPath());
+		Logger::Critical(L"DrawMeshInstanced 실패: 메시 GPU 버퍼 생성에 실패했습니다. 메시={}", mesh_->GetPath());
+		return;
+	}
+
+	const D3D12_VERTEX_BUFFER_VIEW instanceBufferView{ UploadInstanceWorldMatrices(worldMatrices_) };
+	if (instanceBufferView.BufferLocation == 0 || instanceBufferView.SizeInBytes == 0)
+	{
+		Logger::Critical(L"DrawMeshInstanced 실패: 인스턴스 버퍼 업로드에 실패했습니다.");
 		return;
 	}
 
 	commandList->SetPipelineState(shader->GetPipelineState());
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView{ mesh_->GetVertexBufferView() };
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViews[2]
+	{
+		mesh_->GetVertexBufferView(),
+		instanceBufferView
+	};
+	commandList->IASetVertexBuffers(0, static_cast<UINT>(std::size(vertexBufferViews)), vertexBufferViews);
 
 	if (mesh_->GetIndexCount() > 0)
 	{
 		const D3D12_INDEX_BUFFER_VIEW& indexBufferView{ mesh_->GetIndexBufferView() };
 		commandList->IASetIndexBuffer(&indexBufferView);
-		commandList->DrawIndexedInstanced(mesh_->GetIndexCount(), 1, 0, 0, 0);
+		commandList->DrawIndexedInstanced(mesh_->GetIndexCount(), static_cast<UINT>(worldMatrices_.size()), 0, 0, 0);
 	}
 	else
 	{
-		commandList->DrawInstanced(static_cast<UINT>(mesh_->GetVertices().size()), 1, 0, 0);
+		commandList->DrawInstanced(static_cast<UINT>(mesh_->GetVertices().size()), static_cast<UINT>(worldMatrices_.size()), 0, 0);
+	}
+}
+
+void RenderSystem::Render()
+{
+	if (renderRequests.empty())
+	{
+		return;
+	}
+
+	std::ranges::sort(renderRequests, [](const RenderRequest& lhs_, const RenderRequest& rhs_)
+	{
+		if (lhs_.mesh != rhs_.mesh)
+		{
+			return std::less<Mesh*>{}(lhs_.mesh, rhs_.mesh);
+		}
+
+		return std::less<Material*>{}(lhs_.material, rhs_.material);
+	});
+
+	for (std::size_t beginIndex{ 0 }; beginIndex < renderRequests.size();)
+	{
+		const RenderRequest& firstRequest{ renderRequests[beginIndex] };
+		std::size_t endIndex{ beginIndex + 1 };
+		while (endIndex < renderRequests.size()
+			&& renderRequests[endIndex].mesh == firstRequest.mesh
+			&& renderRequests[endIndex].material == firstRequest.material)
+		{
+			++endIndex;
+		}
+
+		MaterialConstants materialData{};
+		materialData.baseColor = firstRequest.material->GetBaseColor();
+		materialData.emissiveColor = firstRequest.material->GetEmissiveColor();
+		materialData.metallic = firstRequest.material->GetMetallic();
+		materialData.roughness = firstRequest.material->GetRoughness();
+		SetMaterialConstants(materialData);
+
+		if (endIndex - beginIndex == 1)
+		{
+			DrawMesh(firstRequest.mesh, firstRequest.material, firstRequest.worldMatrix);
+		}
+		else
+		{
+			batchedWorldMatrices.clear();
+			batchedWorldMatrices.reserve(endIndex - beginIndex);
+
+			for (std::size_t requestIndex{ beginIndex }; requestIndex < endIndex; ++requestIndex)
+			{
+				batchedWorldMatrices.emplace_back(renderRequests[requestIndex].worldMatrix);
+			}
+
+			DrawMeshInstanced(firstRequest.mesh, firstRequest.material, batchedWorldMatrices);
+		}
+
+		beginIndex = endIndex;
 	}
 }
 
@@ -368,9 +476,9 @@ bool RenderSystem::CreateGraphicsRootSignature()
 	}
 
 	D3D12_ROOT_PARAMETER rootParameters[4]{};
-	rootParameters[static_cast<UINT>(RootParameter::Camera)].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[static_cast<UINT>(RootParameter::Camera)].Descriptor.ShaderRegister = 1;
-	rootParameters[static_cast<UINT>(RootParameter::Camera)].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParameters[std::to_underlying(RootParameter::Camera)].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[std::to_underlying(RootParameter::Camera)].Descriptor.ShaderRegister = 1;
+	rootParameters[std::to_underlying(RootParameter::Camera)].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	rootParameters[static_cast<UINT>(RootParameter::Object)].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[static_cast<UINT>(RootParameter::Object)].Descriptor.ShaderRegister = 2;
@@ -688,7 +796,72 @@ bool RenderSystem::CreateConstantBuffers()
 		constantBuffer.currentOffset = 0;
 	}
 
+	for (FrameInstanceBuffer& instanceBuffer : instanceBuffers)
+	{
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+		D3D12_RESOURCE_DESC resourceDesc{};
+		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		resourceDesc.Width = MaxInstanceBufferSize;
+		resourceDesc.Height = 1;
+		resourceDesc.DepthOrArraySize = 1;
+		resourceDesc.MipLevels = 1;
+		resourceDesc.SampleDesc.Count = 1;
+		resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+		if (FAILED(device->CreateCommittedResource(
+			&heapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&resourceDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&instanceBuffer.resource))))
+		{
+			Logger::Critical(L"인스턴스 버퍼 리소스 생성에 실패했습니다.");
+			return false;
+		}
+
+		if (FAILED(instanceBuffer.resource->Map(0, nullptr, reinterpret_cast<void**>(&instanceBuffer.mappedData))))
+		{
+			Logger::Critical(L"인스턴스 버퍼 매핑에 실패했습니다.");
+			return false;
+		}
+
+		instanceBuffer.gpuAddress = instanceBuffer.resource->GetGPUVirtualAddress();
+		instanceBuffer.currentOffset = 0;
+	}
+
 	return true;
+}
+
+D3D12_VERTEX_BUFFER_VIEW RenderSystem::UploadInstanceWorldMatrices(std::span<const Matrix4x4> worldMatrices_)
+{
+	D3D12_VERTEX_BUFFER_VIEW bufferView{};
+	if (worldMatrices_.empty())
+	{
+		return bufferView;
+	}
+
+	FrameInstanceBuffer& instanceBuffer{ instanceBuffers[frameIndex] };
+	const UINT sizeInBytes{ static_cast<UINT>(sizeof(Matrix4x4) * worldMatrices_.size()) };
+	const UINT alignedSize{ AlignBufferSize(sizeInBytes, 16) };
+	if (instanceBuffer.mappedData == nullptr || instanceBuffer.currentOffset + alignedSize > MaxInstanceBufferSize)
+	{
+		Logger::Error(
+			L"[RenderSystem] 인스턴스 버퍼 업로드 실패: 버퍼가 매핑되지 않았거나 공간이 부족합니다. 요청 크기={}, 현재 오프셋={}, 최대 크기={}",
+			alignedSize, instanceBuffer.currentOffset, MaxInstanceBufferSize);
+		return bufferView;
+	}
+
+	std::memcpy(instanceBuffer.mappedData + instanceBuffer.currentOffset, worldMatrices_.data(), sizeInBytes);
+
+	bufferView.BufferLocation = instanceBuffer.gpuAddress + instanceBuffer.currentOffset;
+	bufferView.StrideInBytes = sizeof(Matrix4x4);
+	bufferView.SizeInBytes = sizeInBytes;
+
+	instanceBuffer.currentOffset += alignedSize;
+	return bufferView;
 }
 
 void RenderSystem::WaitForGPU()
@@ -757,4 +930,9 @@ D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantData(const void* data_, UI
 UINT RenderSystem::AlignConstantBufferSize(UINT sizeInBytes_) noexcept
 {
 	return (sizeInBytes_ + 255u) & ~255u;
+}
+
+UINT RenderSystem::AlignBufferSize(UINT sizeInBytes_, UINT alignment_) noexcept
+{
+	return (sizeInBytes_ + (alignment_ - 1u)) & ~(alignment_ - 1u);
 }

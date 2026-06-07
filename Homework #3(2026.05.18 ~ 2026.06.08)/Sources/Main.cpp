@@ -9,6 +9,9 @@
 #include "RenderSystem.h"
 #include "ResourceSystem.h"
 #include "Scene_Level1.h"
+#include "Scene_Level2.h"
+#include "Scene_Level3.h"
+#include "Scene_Title.h"
 #include "SceneSystem.h"
 #include "TimeSystem.h"
 
@@ -107,12 +110,19 @@ INT APIENTRY wWinMain(
 	ResourceSystem::GetInstance().Initialize();
 	Logger::Info(L"ResourceSystem 초기화가 완료되었습니다.");
 
+	SceneSystem::GetInstance().AddScene(L"Title", std::make_unique<Scene_Title>());
 	SceneSystem::GetInstance().AddScene(L"Level1", std::make_unique<Scene_Level1>());
-	SceneSystem::GetInstance().LoadScene(L"Level1");
+	SceneSystem::GetInstance().AddScene(L"Level2", std::make_unique<Scene_Level2>());
+	SceneSystem::GetInstance().AddScene(L"Level3", std::make_unique<Scene_Level3>());
+	SceneSystem::GetInstance().LoadScene(L"Title");
 
 	Logger::Info(L"InputSystem 초기화를 시작합니다.");
 	InputSystem::GetInstance().Reset();
 	Logger::Info(L"InputSystem 초기화가 완료되었습니다.");
+
+	Logger::Info(L"PhysicsSystem 초기화를 시작합니다.");
+	PhysicsSystem::GetInstance().Reset();
+	Logger::Info(L"PhysicsSystem 초기화가 완료되었습니다.");
 
 	Logger::Info(L"TimeSystem 초기화를 시작합니다.");
 	TimeSystem::GetInstance().Reset();

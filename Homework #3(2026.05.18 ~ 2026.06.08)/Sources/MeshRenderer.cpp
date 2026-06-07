@@ -2,6 +2,7 @@
 
 #include "MeshRenderer.h"
 
+#include "Camera.h"
 #include "GameObject.h"
 #include "Logger.h"
 #include "Material.h"
@@ -17,7 +18,6 @@ void MeshRenderer::OnRender()
 		return;
 	}
 
-	RenderSystem& rs{ RenderSystem::GetInstance() };
 	const Transform* const transform{ GetOwner()->GetComponent<Transform>() };
 	if (transform == nullptr)
 	{
@@ -25,19 +25,25 @@ void MeshRenderer::OnRender()
 	}
 
 	const Matrix4x4& worldMatrix{ transform->GetWorldMatrix() };
-	
-	ObjectConstants objectData{};
-	objectData.worldMatrix = worldMatrix;
-	rs.SetObjectConstants(objectData);
+	Scene* const scene{ GetOwner()->GetScene() };
+	if (scene != nullptr)
+	{
+		const std::span<Camera* const> cameras{ scene->GetCameras() };
+		Camera* const camera{ cameras.empty() ? nullptr : cameras.front() };
+		if (camera != nullptr)
+		{
+			DirectX::BoundingBox bounds{};
+			bounds.Center = mesh->GetBoundsCenter();
+			bounds.Extents = mesh->GetBoundsExtents();
 
-	MaterialConstants materialData{};
-	materialData.baseColor = material->GetBaseColor();
-	materialData.emissiveColor = material->GetEmissiveColor();
-	materialData.metallic = material->GetMetallic();
-	materialData.roughness = material->GetRoughness();
-	rs.SetMaterialConstants(materialData);
+			if (!camera->IsInFrustum(bounds, worldMatrix))
+			{
+				return;
+			}
+		}
 
-	rs.DrawMesh(mesh, material);
+		RenderSystem::GetInstance().SubmitRenderRequest(mesh, material, worldMatrix);
+	}
 }
 
 Mesh* MeshRenderer::GetMesh() const noexcept
@@ -52,6 +58,7 @@ void MeshRenderer::SetMesh(Mesh* mesh_) noexcept
 
 Material* MeshRenderer::GetMaterial() const noexcept
 {
+	assert(material != nullptr && "MeshRenderer must have a material!");
 	return material;
 }
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -37,16 +36,6 @@ public:
 	[[nodiscard]] const std::vector<AnimationTrack>& GetTracks() const noexcept;
 
 private:
-	bool ReadTag(std::ifstream& file_, const std::string& expectedTag_);
-	std::string ReadTag(std::ifstream& file_);
-	std::wstring ReadString(std::ifstream& file_);
-
-	template <typename T>
-	bool ReadValue(std::ifstream& file_, T& value_)
-	{
-		return static_cast<bool>(file_.read(reinterpret_cast<char*>(&value_), sizeof(T)));
-	}
-
 	std::wstring animationName;
 	float duration{ 0.0f };
 	float ticksPerSecond{ 30.0f };

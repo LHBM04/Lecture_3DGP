@@ -1,5 +1,6 @@
-﻿#pragma once
+#pragma once
 
+#include <cassert>
 #include <memory>
 #include <string>
 #include <vector>
@@ -56,6 +57,12 @@ public:
 	const TComponent* GetComponent() const;
 
 	template <class TComponent>
+	bool TryGetComponent(TComponent** component_);
+
+	template <class TComponent>
+	bool TryGetComponent(const TComponent** component_) const;
+
+	template <class TComponent>
 	void RemoveComponent();
 
 private:
@@ -99,12 +106,13 @@ inline TComponent* GameObject::GetComponent()
 {
 	for (const std::unique_ptr<Component>& component : components)
 	{
-		if (TComponent* casted{ static_cast<TComponent*>(component.get()) }; casted != nullptr)
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
 		{
 			return casted;
 		}
 	}
 
+	assert(false && "Required component missing!");
 	return nullptr;
 }
 
@@ -113,12 +121,58 @@ inline const TComponent* GameObject::GetComponent() const
 {
 	for (const std::unique_ptr<Component>& component : components)
 	{
-		if (const TComponent* casted{ static_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
 		{
 			return casted;
 		}
 	}
+
+	assert(false && "Required component missing!");
 	return nullptr;
+}
+
+template <class TComponent>
+inline bool GameObject::TryGetComponent(TComponent** component_)
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	if (component_ != nullptr)
+	{
+		*component_ = nullptr;
+	}
+	return false;
+}
+
+template <class TComponent>
+inline bool GameObject::TryGetComponent(const TComponent** component_) const
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	if (component_ != nullptr)
+	{
+		*component_ = nullptr;
+	}
+	return false;
 }
 
 template <class TComponent>
@@ -126,6 +180,6 @@ inline void GameObject::RemoveComponent()
 {
 	std::erase_if(components, [](const std::unique_ptr<Component>& component)
 	{
-		return static_cast<TComponent*>(component.get()) != nullptr;
+		return dynamic_cast<TComponent*>(component.get()) != nullptr;
 	});
 }

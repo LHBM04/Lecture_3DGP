@@ -133,6 +133,42 @@ bool Shader::CreatePipelineState(
 			.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 			.InstanceDataStepRate = 0,
 		},
+		{
+			.SemanticName = "INSTANCE_WORLD",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			.InputSlot = 1,
+			.AlignedByteOffset = 0,
+			.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,
+			.InstanceDataStepRate = 1,
+		},
+		{
+			.SemanticName = "INSTANCE_WORLD",
+			.SemanticIndex = 1,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			.InputSlot = 1,
+			.AlignedByteOffset = sizeof(float) * 4,
+			.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,
+			.InstanceDataStepRate = 1,
+		},
+		{
+			.SemanticName = "INSTANCE_WORLD",
+			.SemanticIndex = 2,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			.InputSlot = 1,
+			.AlignedByteOffset = sizeof(float) * 8,
+			.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,
+			.InstanceDataStepRate = 1,
+		},
+		{
+			.SemanticName = "INSTANCE_WORLD",
+			.SemanticIndex = 3,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			.InputSlot = 1,
+			.AlignedByteOffset = sizeof(float) * 12,
+			.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,
+			.InstanceDataStepRate = 1,
+		},
 	};
 
 	D3D12_RASTERIZER_DESC rasterizerDesc{};

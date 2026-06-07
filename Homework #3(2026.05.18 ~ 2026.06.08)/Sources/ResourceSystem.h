@@ -1,5 +1,6 @@
-﻿#pragma once
+#pragma once
 
+#include <cassert>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -66,6 +67,7 @@ inline TResource* ResourceSystem::GetResource(std::wstring_view path_)
 	}
 
 	Logger::Trace(L"GetResource miss: {}", std::wstring(path_));
+	assert(false && "Required resource missing!");
 	return nullptr;
 }
 

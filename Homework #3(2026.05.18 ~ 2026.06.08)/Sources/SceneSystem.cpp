@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "SceneSystem.h"
 
 #include "RenderSystem.h"
@@ -33,6 +33,7 @@ void SceneSystem::Update()
 	if (currentScene != nullptr)
 	{
 		currentScene->Update();
+		currentScene->LateUpdate();
 	}
 }
 
@@ -54,6 +55,7 @@ void SceneSystem::Render()
 	RenderSystem::GetInstance().PreRender();
 	RenderSystem::GetInstance().Clear();
 	currentScene->Render();
+	RenderSystem::GetInstance().Render();
 	RenderSystem::GetInstance().PostRender();
 	RenderSystem::GetInstance().Present();
 }

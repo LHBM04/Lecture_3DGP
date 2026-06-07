@@ -7,11 +7,6 @@ cbuffer cbCameraInfo : register(b1)
     float4x4 gViewProjectionMatrix;
 };
 
-cbuffer cbGameObjectInfo : register(b2)
-{
-    float4x4 gWorldMatrix;
-};
-
 cbuffer cbMaterialInfo : register(b3)
 {
     float4 gBaseColor;
@@ -31,6 +26,10 @@ struct VSInput
 {
     float3 position : POSITION;
     float3 normal : NORMAL;
+    float4 instanceWorld0 : INSTANCE_WORLD0;
+    float4 instanceWorld1 : INSTANCE_WORLD1;
+    float4 instanceWorld2 : INSTANCE_WORLD2;
+    float4 instanceWorld3 : INSTANCE_WORLD3;
 };
 
 struct VSOutput
@@ -42,10 +41,15 @@ struct VSOutput
 VSOutput VSMain(VSInput input)
 {
     VSOutput output;
+    const float4x4 worldMatrix = float4x4(
+        input.instanceWorld0,
+        input.instanceWorld1,
+        input.instanceWorld2,
+        input.instanceWorld3);
 
-    const float4 worldPosition = mul(float4(input.position, 1.0f), gWorldMatrix);
+    const float4 worldPosition = mul(float4(input.position, 1.0f), worldMatrix);
     output.position = mul(worldPosition, gViewProjectionMatrix);
-    output.normal = normalize(mul(float4(input.normal, 0.0f), gWorldMatrix).xyz);
+    output.normal = normalize(mul(float4(input.normal, 0.0f), worldMatrix).xyz);
 
     return output;
 }

@@ -14,6 +14,13 @@ void PhysicsSystem::Reset()
 
 void PhysicsSystem::Update()
 {
+	if (!isGridInitialized
+		|| static_cast<int>(grid.size()) != gridHeight
+		|| (grid.empty() == false && static_cast<int>(grid.front().size()) != gridWidth))
+	{
+		Reset();
+	}
+
 	isProcessingPhysics = true;
 	ProcessPhysics();
 	isProcessingPhysics = false;

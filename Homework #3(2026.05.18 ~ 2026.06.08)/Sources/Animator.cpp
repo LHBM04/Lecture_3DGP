@@ -76,7 +76,6 @@ void Animator::OnUpdate()
 		currentTime = 0.0f;
 	}
 
-	// Logger::Info(L"[Animator] Update: currentTime={}, isLooping={}", currentTime, isLooping);
 	ApplyAnimation(currentTime);
 }
 
@@ -101,7 +100,6 @@ void Animator::BuildNodeMap()
 		return;
 	}
 
-	// 람다를 이용해 자식 Transform들을 재귀적으로 순회하며 맵에 등록
 	auto traverse = [&](this auto& self, Transform* current_) -> void
 	{
 		if (current_ == nullptr || current_->GetOwner() == nullptr)
@@ -134,34 +132,47 @@ void Animator::ApplyAnimation(float time_)
 			continue;
 		}
 
-		auto it{ nodeMap.find(track.nodeName) };
-		if (it == nodeMap.end() || it->second == nullptr)
+		Transform* targetTransform{ nullptr };
+		
+		if (track.nodeName == L"Self")
+		{
+			targetTransform = GetOwner()->GetComponent<Transform>();
+		}
+		else
+		{
+			auto it{ nodeMap.find(track.nodeName) };
+			if (it != nodeMap.end())
+			{
+				targetTransform = it->second;
+			}
+		}
+
+		if (targetTransform == nullptr)
 		{
 			continue;
 		}
-
-		Transform* const targetTransform{ it->second };
 
 		if (HasPositionChanged(track.keyframes))
 		{
 			targetTransform->SetLocalPosition(InterpolatePosition(track.keyframes, time_));
 		}
 		
-		if (HasRotationChanged(track.keyframes))
-		{
-			targetTransform->SetLocalRotation(InterpolateRotation(track.keyframes, time_));
-		}
-
 		if (HasScaleChanged(track.keyframes))
 		{
 			targetTransform->SetLocalScale(InterpolateScale(track.keyframes, time_));
 		}
+
+		targetTransform->SetLocalRotation(InterpolateRotation(track.keyframes, time_));
 	}
 }
 
 bool Animator::HasPositionChanged(const std::vector<KeyframeData>& keys_) const
 {
-	if (keys_.size() <= 1) return false;
+	if (keys_.size() <= 1)
+	{
+		return false;
+	}
+
 	const Vector3D& first{ keys_.front().position };
 	for (std::size_t i{ 1 }; i < keys_.size(); ++i)
 	{
@@ -170,12 +181,17 @@ bool Animator::HasPositionChanged(const std::vector<KeyframeData>& keys_) const
 			return true;
 		}
 	}
+
 	return false;
 }
 
 bool Animator::HasRotationChanged(const std::vector<KeyframeData>& keys_) const
 {
-	if (keys_.size() <= 1) return false;
+	if (keys_.size() <= 1)
+	{
+		return false;
+	}
+
 	const Quaternion& first{ keys_.front().rotation };
 	for (std::size_t i{ 1 }; i < keys_.size(); ++i)
 	{
@@ -184,12 +200,17 @@ bool Animator::HasRotationChanged(const std::vector<KeyframeData>& keys_) const
 			return true;
 		}
 	}
+
 	return false;
 }
 
 bool Animator::HasScaleChanged(const std::vector<KeyframeData>& keys_) const
 {
-	if (keys_.size() <= 1) return false;
+	if (keys_.size() <= 1)
+	{
+		return false;
+	}
+
 	const Vector3D& first{ keys_.front().scale };
 	for (std::size_t i{ 1 }; i < keys_.size(); ++i)
 	{
@@ -198,14 +219,26 @@ bool Animator::HasScaleChanged(const std::vector<KeyframeData>& keys_) const
 			return true;
 		}
 	}
+
 	return false;
 }
 
 Vector3D Animator::InterpolatePosition(const std::vector<KeyframeData>& keys_, float time_) const
 {
-	if (keys_.empty()) return Vector3D::GetZero();
-	if (keys_.size() == 1 || time_ <= keys_.front().time) return keys_.front().position;
-	if (time_ >= keys_.back().time) return keys_.back().position;
+	if (keys_.empty())
+	{
+		return Vector3D::GetZero();
+	}
+
+	if (keys_.size() == 1 || time_ <= keys_.front().time)
+	{
+		return keys_.front().position;
+	}
+
+	if (time_ >= keys_.back().time)
+	{
+		return keys_.back().position;
+	}
 
 	for (std::size_t i{ 0 }; i < keys_.size() - 1; ++i)
 	{
@@ -224,9 +257,20 @@ Vector3D Animator::InterpolatePosition(const std::vector<KeyframeData>& keys_, f
 
 Quaternion Animator::InterpolateRotation(const std::vector<KeyframeData>& keys_, float time_) const
 {
-	if (keys_.empty()) return Quaternion::GetIdentity();
-	if (keys_.size() == 1 || time_ <= keys_.front().time) return keys_.front().rotation;
-	if (time_ >= keys_.back().time) return keys_.back().rotation;
+	if (keys_.empty())
+	{
+		return Quaternion::GetIdentity();
+	}
+
+	if (keys_.size() == 1 || time_ <= keys_.front().time)
+	{
+		return keys_.front().rotation;
+	}
+
+	if (time_ >= keys_.back().time)
+	{
+		return keys_.back().rotation;
+	}
 
 	for (std::size_t i{ 0 }; i < keys_.size() - 1; ++i)
 	{
@@ -245,9 +289,20 @@ Quaternion Animator::InterpolateRotation(const std::vector<KeyframeData>& keys_,
 
 Vector3D Animator::InterpolateScale(const std::vector<KeyframeData>& keys_, float time_) const
 {
-	if (keys_.empty()) return Vector3D::GetOne();
-	if (keys_.size() == 1 || time_ <= keys_.front().time) return keys_.front().scale;
-	if (time_ >= keys_.back().time) return keys_.back().scale;
+	if (keys_.empty())
+	{
+		return Vector3D::GetOne();
+	}
+
+	if (keys_.size() == 1 || time_ <= keys_.front().time)
+	{
+		return keys_.front().scale;
+	}
+
+	if (time_ >= keys_.back().time)
+	{
+		return keys_.back().scale;
+	}
 
 	for (std::size_t i{ 0 }; i < keys_.size() - 1; ++i)
 	{

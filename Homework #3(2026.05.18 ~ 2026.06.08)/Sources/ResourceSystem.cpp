@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "ResourceSystem.h"
 
@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "Model.h"
 #include "Shader.h"
+#include "Terrain.h"
 #include "Vector4D.h"
 #include "Logger.h"
 
@@ -19,6 +20,7 @@ void ResourceSystem::Initialize()
 	std::size_t materialCount{ 0 };
 	std::size_t meshCount{ 0 };
 	std::size_t modelCount{ 0 };
+	std::size_t terrainCount{ 0 };
 	std::size_t shaderCount{ 0 };
 	std::size_t animationCount{ 0 };
 
@@ -29,6 +31,7 @@ void ResourceSystem::Initialize()
 		std::vector<std::filesystem::path> materialPaths;
 		std::vector<std::filesystem::path> meshPaths;
 		std::vector<std::filesystem::path> modelPaths;
+		std::vector<std::filesystem::path> terrainPaths;
 		std::vector<std::filesystem::path> animationPaths;
 
 		for (const std::filesystem::directory_entry& entry : std::filesystem::recursive_directory_iterator("Resources"))
@@ -58,6 +61,13 @@ void ResourceSystem::Initialize()
 						animationPaths.emplace_back(path);
 					}
 				}
+				else if (extension == L".raw")
+				{
+					if (parentFolder == L"Terrains")
+					{
+						terrainPaths.emplace_back(path);
+					}
+				}
 				else if (extension == L".hlsl")
 				{
 					if (parentFolder == L"Shaders")
@@ -72,6 +82,7 @@ void ResourceSystem::Initialize()
 		std::ranges::sort(materialPaths);
 		std::ranges::sort(meshPaths);
 		std::ranges::sort(modelPaths);
+		std::ranges::sort(terrainPaths);
 		std::ranges::sort(animationPaths);
 
 		for (const std::filesystem::path& path : shaderPaths)
@@ -106,6 +117,14 @@ void ResourceSystem::Initialize()
 			}
 		}
 
+		for (const std::filesystem::path& path : terrainPaths)
+		{
+			if (LoadResource<Terrain>(path) != nullptr)
+			{
+				++terrainCount;
+			}
+		}
+
 		for (const std::filesystem::path& path : animationPaths)
 		{
 			if (LoadResource<AnimationClip>(path) != nullptr)
@@ -120,8 +139,8 @@ void ResourceSystem::Initialize()
 	}
 
 	Logger::Info(
-		L"초기화 완료. 머터리얼={}, 메쉬={}, 모델={}, 애니메이션={}, 쉐이더={}, 총 리소스={}",
-		materialCount, meshCount, modelCount, animationCount, shaderCount, resources.size());
+		L"초기화 완료. 머터리얼={}, 메쉬={}, 모델={}, 지형={}, 애니메이션={}, 쉐이더={}, 총 리소스={}",
+		materialCount, meshCount, modelCount, terrainCount, animationCount, shaderCount, resources.size());
 }
 
 void ResourceSystem::Release()

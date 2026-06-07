@@ -1,11 +1,13 @@
 ﻿#include "Precompiled.h"
 #include "Scene.h"
 
+#include <cstdint>
 #include <unordered_map>
 #include <format>
 #include "Camera.h"
 #include "Light.h"
 #include "Logger.h"
+#include "Material.h"
 #include "MeshRenderer.h"
 #include "Model.h"
 #include "Quaternion.h"
@@ -33,9 +35,10 @@ void Scene::Unload()
 	OnUnload();
 
 	gameObjects.clear();
+	addObjects.clear();
 	cameras.clear();
 	lights.clear();
-	destroyQueue.clear();
+	destroyObjects.clear();
 
 	isLoaded = false;
 }
@@ -47,8 +50,15 @@ void Scene::Update()
 		return;
 	}
 
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	const std::size_t gameObjectCount{ gameObjects.size() };
+	for (std::size_t index{ 0 }; index < gameObjectCount; ++index)
 	{
+		if (index >= gameObjects.size())
+		{
+			break;
+		}
+
+		GameObject* const gameObject{ gameObjects[index].get() };
 		if (gameObject->IsDestroyed())
 		{
 			continue;
@@ -57,7 +67,6 @@ void Scene::Update()
 		gameObject->Update();
 	}
 
-	ProcessDestroyQueue();
 }
 
 void Scene::LateUpdate()
@@ -67,8 +76,15 @@ void Scene::LateUpdate()
 		return;
 	}
 
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	const std::size_t gameObjectCount{ gameObjects.size() };
+	for (std::size_t index{ 0 }; index < gameObjectCount; ++index)
 	{
+		if (index >= gameObjects.size())
+		{
+			break;
+		}
+
+		GameObject* const gameObject{ gameObjects[index].get() };
 		if (gameObject->IsDestroyed())
 		{
 			continue;
@@ -85,8 +101,18 @@ void Scene::FixedUpdate()
 		return;
 	}
 
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	FlushPendingObjects();
+	FlushDestroyObjects();
+
+	const std::size_t gameObjectCount{ gameObjects.size() };
+	for (std::size_t index{ 0 }; index < gameObjectCount; ++index)
 	{
+		if (index >= gameObjects.size())
+		{
+			break;
+		}
+
+		GameObject* const gameObject{ gameObjects[index].get() };
 		if (gameObject->IsDestroyed())
 		{
 			continue;
@@ -106,6 +132,8 @@ void Scene::Render()
 	Camera* const camera{ cameras.empty() ? nullptr : cameras.front() };
 	if (camera != nullptr)
 	{
+		camera->UpdateFrustum();
+
 		CameraConstants cameraData{};
 		cameraData.viewMatrix = camera->GetViewMatrix();
 		cameraData.projectionMatrix = camera->GetProjectionMatrix();
@@ -114,12 +142,22 @@ void Scene::Render()
 	}
 
 	LightConstants lightData{};
-	lightData.lightDirection = Vector4D(0.0f, -1.0f, 1.0f, 0.0f);
-	lightData.lightColor = ColorRGBA::GetWhite();
+	if (!lights.empty() && lights.front() != nullptr)
+	{
+		lightData.lightDirection = lights.front()->GetLightDirection();
+		lightData.lightColor = lights.front()->GetColor();
+	}
 	RenderSystem::GetInstance().SetLightConstants(lightData);
 
-	for (const std::unique_ptr<GameObject>& gameObject : gameObjects)
+	const std::size_t gameObjectCount{ gameObjects.size() };
+	for (std::size_t index{ 0 }; index < gameObjectCount; ++index)
 	{
+		if (index >= gameObjects.size())
+		{
+			break;
+		}
+
+		GameObject* const gameObject{ gameObjects[index].get() };
 		if (gameObject == nullptr || gameObject->IsDestroyed())
 		{
 			continue;
@@ -143,7 +181,7 @@ GameObject* Scene::Instantiate()
 	transform->SetParent(nullptr);
 
 	GameObject* newObjectPtr{ newObject.get() };
-	gameObjects.push_back(std::move(newObject));
+	addObjects.push_back(std::move(newObject));
 	Logger::Trace(
 		L"[Scene] Instantiate: scene_ptr=0x{:X}, object_ptr=0x{:X}, name={}",
 		static_cast<unsigned long long>(reinterpret_cast<std::uintptr_t>(this)),
@@ -401,9 +439,9 @@ void Scene::Destroy(GameObject* gameObject_)
 		}
 
 		current->Destroy();
-		if (std::find(destroyQueue.begin(), destroyQueue.end(), current) == destroyQueue.end())
+		if (std::find(destroyObjects.begin(), destroyObjects.end(), current) == destroyObjects.end())
 		{
-			destroyQueue.emplace_back(current);
+			destroyObjects.emplace_back(current);
 		}
 	}
 }
@@ -538,14 +576,37 @@ void Scene::RemoveLight(Light* light_)
 	lights.erase(std::remove(lights.begin(), lights.end(), light_), lights.end());
 }
 
-void Scene::ProcessDestroyQueue()
+void Scene::FlushPendingObjects()
 {
-	if (destroyQueue.empty())
+	if (addObjects.empty())
 	{
 		return;
 	}
 
-	for (GameObject* gameObject : destroyQueue)
+	for (std::unique_ptr<GameObject>& gameObject : addObjects)
+	{
+		if (gameObject == nullptr)
+		{
+			continue;
+		}
+	}
+
+	for (std::unique_ptr<GameObject>& gameObject : addObjects)
+	{
+		gameObjects.push_back(std::move(gameObject));
+	}
+
+	addObjects.clear();
+}
+
+void Scene::FlushDestroyObjects()
+{
+	if (destroyObjects.empty())
+	{
+		return;
+	}
+
+	for (GameObject* gameObject : destroyObjects)
 	{
 		if (gameObject == nullptr)
 		{
@@ -561,11 +622,16 @@ void Scene::ProcessDestroyQueue()
 			lights.end());
 	}
 
-	std::erase_if(gameObjects, [](const std::unique_ptr<GameObject>& go)
+	std::erase_if(gameObjects, [](const std::unique_ptr<GameObject>& gameObject)
 	{
-		return go == nullptr || go->IsDestroyed();
+		return gameObject == nullptr || gameObject->IsDestroyed();
 	});
 
-	destroyQueue.clear();
+	std::erase_if(addObjects, [](const std::unique_ptr<GameObject>& gameObject)
+	{
+		return gameObject == nullptr || gameObject->IsDestroyed();
+	});
+
+	destroyObjects.clear();
 }
 
