@@ -30,7 +30,6 @@ void PlayerController::OnStart()
 	Transform* const rootTransform{ owner->GetComponent<Transform>() };
 	if (rootTransform == nullptr) return;
 
-	// 'skin' 노드(기수 부분)를 찾아 발사 지점으로 설정합니다.
 	auto findNode = [&](this auto& self, Transform* current_, std::wstring_view name_) -> Transform*
 	{
 		if (current_->GetOwner() != nullptr && current_->GetOwner()->GetName() == name_)
@@ -174,7 +173,6 @@ void PlayerController::OnUpdate()
 		{
 			const Vector3D projectileDirection{ (rotation * Vector3D::GetForward()).GetNormalized() };
 			
-			// headTransform(기수 부분)이 있으면 그 위치를 기준으로 발사합니다.
 			const Vector3D baseSpawnPos{ headTransform != nullptr ? headTransform->GetWorldPosition() : transform->GetWorldPosition() };
 			const Vector3D spawnPosition{ baseSpawnPos + projectileDirection * 5.0f };
 
