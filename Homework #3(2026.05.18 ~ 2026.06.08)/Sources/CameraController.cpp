@@ -103,7 +103,6 @@ void CameraController::OnLateUpdate()
 	{
 		const Vector3D targetPosition{ target->GetWorldPosition() + (targetRotation * firstPersonOffset) };
 		transform->SetWorldPosition(targetPosition);
-		// 1인칭에서는 타겟의 회전을 오차 없이 그대로 따라갑니다.
 		transform->SetWorldRotation(targetRotation);
 		return;
 	}
@@ -121,12 +120,9 @@ void CameraController::OnLateUpdate()
 
 	transform->SetWorldPosition(smoothedPosition);
 
-	// 3인칭에서도 타겟의 회전을 기본으로 하되, 
-	// 살짝 뒤쳐진 위치에서 타겟을 정확히 중앙에 놓기 위해 LookRotation을 보강합니다.
 	const Vector3D toTarget{ target->GetWorldPosition() - transform->GetWorldPosition() };
 	if (toTarget.GetSqrMagnitude() > Mathf::Epsilon)
 	{
-		// 타겟의 Up 방향을 유지하면서 타겟을 정면으로 바라봅니다.
 		transform->SetWorldRotation(Quaternion::LookRotation(toTarget.GetNormalized(), targetRotation * Vector3D::GetUp()));
 	}
 	else
