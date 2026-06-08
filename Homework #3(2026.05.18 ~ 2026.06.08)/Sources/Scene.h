@@ -16,6 +16,7 @@ class GameObject;
 class Light;
 class Transform;
 class Quaternion;
+class Model;
 
 class Scene
 {
@@ -45,12 +46,12 @@ public:
 	GameObject* Instantiate(Transform* parent_);
 	GameObject* Instantiate(const Vector3D& position_, const Quaternion& rotation_, Transform* parent_);
 
-	GameObject* Instantiate(const class Model* model_);
-	GameObject* Instantiate(const class Model* model_, const Vector3D& position_, const Quaternion& rotation_);
-	GameObject* Instantiate(const class Model* model_, const Vector3D& position_);
-	GameObject* Instantiate(const class Model* model_, const Quaternion& rotation_);
-	GameObject* Instantiate(const class Model* model_, Transform* parent_);
-	GameObject* Instantiate(const class Model* model_, const Vector3D& position_, const Quaternion& rotation_, Transform* parent_);
+	GameObject* Instantiate(const Model* model_);
+	GameObject* Instantiate(const Model* model_, const Vector3D& position_, const Quaternion& rotation_);
+	GameObject* Instantiate(const Model* model_, const Vector3D& position_);
+	GameObject* Instantiate(const Model* model_, const Quaternion& rotation_);
+	GameObject* Instantiate(const Model* model_, Transform* parent_);
+	GameObject* Instantiate(const Model* model_, const Vector3D& position_, const Quaternion& rotation_, Transform* parent_);
 
 	void Destroy(GameObject* gameObject_);
 
