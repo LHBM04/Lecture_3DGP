@@ -1,6 +1,8 @@
 #include "Precompiled.h"
 #include "Scene_Stage.h"
 
+#include <algorithm>
+
 #include "AnimationClip.h"
 #include "Animator.h"
 #include "Camera.h"
@@ -26,6 +28,8 @@ void Scene_Stage::OnLoad()
 	stageClearTriggered = false;
 	initialEnemySpawnCount = GetEnemySpawnCount();
 
+	CreateTerrain();
+
 	GameObject* const playerObject{ CreatePlayer() };
 	if (playerObject == nullptr)
 	{
@@ -39,9 +43,8 @@ void Scene_Stage::OnLoad()
 		return;
 	}
 
-	CreateEnemies();
 	CreateLight();
-	CreateTerrain();
+	CreateEnemies();
 	PlayPlayerIdleAnimation(playerObject);
 	CreateCamera(playerTransform);
 }
@@ -89,7 +92,7 @@ Vector3D Scene_Stage::GetEnemyColliderCenter() const noexcept
 
 Vector3D Scene_Stage::GetEnemySpawnerPosition() const noexcept
 {
-	return Vector3D(0.0f, 200.0f, 0.0f);
+	return Vector3D(0.0f, 30.0f, 0.0f);
 }
 
 float Scene_Stage::GetEnemyMinDistanceFromPlayer() const noexcept
@@ -109,12 +112,12 @@ Vector3D Scene_Stage::GetCameraSpawnPosition() const noexcept
 
 Vector3D Scene_Stage::GetCameraOffset() const noexcept
 {
-	return Vector3D(0.0f, 60.0f, -150.0f);
+	return Vector3D(0.0f, 10.0f, -25.0f);
 }
 
 Vector3D Scene_Stage::GetFirstPersonOffset() const noexcept
 {
-	return Vector3D(0.0f, 10.0f, 20.0f);
+	return Vector3D(0.0f, 1.0f, 2.0f);
 }
 
 ColorRGBA Scene_Stage::GetSkyColor() const noexcept
@@ -157,8 +160,8 @@ void Scene_Stage::SpawnEnemy(const Vector3D& position_)
 
 	if (Transform* const enemyTransform{ enemyObject->GetComponent<Transform>() }; enemyTransform != nullptr)
 	{
-		enemyTransform->SetWorldPosition(position_);
-		enemyTransform->SetLocalScale(Vector3D(20.0f, 20.0f, 20.0f));
+		enemyTransform->SetWorldPosition(ResolveEnemySpawnPosition(position_));
+		enemyTransform->SetLocalScale(Vector3D::GetOne());
 	}
 
 	enemyObject->AddComponent<EnemyController>();
@@ -201,8 +204,8 @@ GameObject* Scene_Stage::CreatePlayer()
 		return nullptr;
 	}
 
-	playerTransform->SetWorldPosition(GetPlayerSpawnPosition());
-	playerTransform->SetLocalScale(Vector3D(10.0f, 10.0f, 10.0f));
+	playerTransform->SetWorldPosition(ResolvePlayerSpawnPosition());
+	playerTransform->SetLocalScale(Vector3D::GetOne());
 	playerObject->AddComponent<PlayerController>();
 
 	CubeCollider* const playerCollider{ playerObject->AddComponent<CubeCollider>() };
@@ -214,6 +217,54 @@ GameObject* Scene_Stage::CreatePlayer()
 	return playerObject;
 }
 
+Vector3D Scene_Stage::ResolvePlayerSpawnPosition() const
+{
+	Vector3D spawnPosition{ GetPlayerSpawnPosition() };
+
+	Terrain* const terrain{ ResourceSystem::GetInstance().GetResource<Terrain>(GetTerrainPath()) };
+	if (terrain == nullptr || !terrain->ContainsLocalPosition(spawnPosition.x, spawnPosition.z))
+	{
+		return spawnPosition;
+	}
+
+	const float terrainHeight{ terrain->SampleHeightAtLocalPosition(spawnPosition.x, spawnPosition.z) };
+	const Vector3D colliderSize{ GetPlayerColliderSize() };
+	const Vector3D colliderCenter{ GetPlayerColliderCenter() };
+	const float colliderBottomOffset{ colliderCenter.y - (colliderSize.y * 0.5f) };
+	const float minimumVisualClearance{ 22.0f };
+	const float minimumSafeY{ terrainHeight - colliderBottomOffset + minimumVisualClearance };
+
+	if (spawnPosition.y < minimumSafeY)
+	{
+		spawnPosition.y = minimumSafeY;
+	}
+
+	return spawnPosition;
+}
+
+Vector3D Scene_Stage::ResolveEnemySpawnPosition(Vector3D spawnPosition_) const
+{
+	Terrain* const terrain{ ResourceSystem::GetInstance().GetResource<Terrain>(GetTerrainPath()) };
+	if (terrain == nullptr || !terrain->ContainsLocalPosition(spawnPosition_.x, spawnPosition_.z))
+	{
+		return spawnPosition_;
+	}
+
+	const float terrainHeight{ terrain->SampleHeightAtLocalPosition(spawnPosition_.x, spawnPosition_.z) };
+	const Vector3D colliderSize{ GetEnemyColliderSize() };
+	const Vector3D colliderCenter{ GetEnemyColliderCenter() };
+	const float colliderBottomOffset{ colliderCenter.y - (colliderSize.y * 0.5f) };
+	const float minimumVisualClearance{ 24.0f };
+	const float minimumSafeY{ terrainHeight - colliderBottomOffset + minimumVisualClearance };
+
+	if (spawnPosition_.y < minimumSafeY)
+	{
+		spawnPosition_.y = minimumSafeY;
+	}
+
+	return spawnPosition_;
+}
+
 void Scene_Stage::CreateEnemies()
 {
 	const int spawnCount{ initialEnemySpawnCount };
@@ -222,12 +273,13 @@ void Scene_Stage::CreateEnemies()
 		return;
 	}
 
-	Vector3D playerPos{ GetPlayerSpawnPosition() };
+	Vector3D playerPos{ ResolvePlayerSpawnPosition() };
 	const Vector3D spawnerPos{ GetEnemySpawnerPosition() };
+	const std::vector<Vector3D> spawnPositions{ GenerateEnemySpawnPositions(spawnerPos, playerPos, spawnCount) };
 
-	for (int index{ 0 }; index < spawnCount; ++index)
+	for (const Vector3D& spawnPosition : spawnPositions)
 	{
-		SpawnEnemy(GenerateSpawnPosition(spawnerPos, &playerPos));
+		SpawnEnemy(spawnPosition);
 	}
 }
 
@@ -255,9 +307,9 @@ void Scene_Stage::CreateLight()
 
 	if (Transform* const lightTransform{ lightObject->GetComponent<Transform>() }; lightTransform != nullptr)
 	{
-		lightTransform->SetWorldPosition(Vector3D(0.0f, 500.0f, 0.0f));
-		lightTransform->SetWorldRotation(
-			Quaternion::LookRotation(Vector3D(-0.5f, -1.0f, 0.5f).GetNormalized(), Vector3D::GetUp()));
+		const Vector3D lightDirection{ GetLightDirection().GetNormalized() };
+		lightTransform->SetWorldPosition(lightDirection * -200.0f);
+		lightTransform->SetWorldRotation(Quaternion::LookRotation(lightDirection, Vector3D::GetUp()));
 	}
 
 	Light* const mainLight{ lightObject->AddComponent<Light>() };
@@ -282,6 +334,11 @@ void Scene_Stage::CreateTerrain()
 
 	GameObject* const terrainObject{ Instantiate() };
 	terrainObject->SetName(std::wstring(GetTerrainObjectName()));
+
+	if (Transform* const terrainTransform{ terrainObject->GetComponent<Transform>() }; terrainTransform != nullptr)
+	{
+		terrainTransform->SetWorldPosition(Vector3D::GetZero());
+	}
 
 	TerrainRenderer* const terrainRenderer{ terrainObject->AddComponent<TerrainRenderer>() };
 	terrainRenderer->SetTerrain(terrain);
@@ -325,70 +382,81 @@ void Scene_Stage::PlayPlayerIdleAnimation(GameObject* playerObject_)
 	animator->Play(playerIdleAnim, true);
 }
 
-Vector3D Scene_Stage::GenerateSpawnPosition(const Vector3D& center_, const Vector3D* playerPosition_) noexcept
+std::vector<Vector3D> Scene_Stage::GenerateEnemySpawnPositions(
+	const Vector3D& center_,
+	const Vector3D& playerPosition_,
+	int spawnCount_)
 {
+	std::vector<Vector3D> spawnPositions{};
+	if (spawnCount_ <= 0)
+	{
+		return spawnPositions;
+	}
+
 	const Vector3D halfExtents{ GetEnemySpawnHalfExtents() };
 	const float minDistance{ GetEnemyMinDistanceFromPlayer() };
+	const float minSqrDistance{ minDistance * minDistance };
+	const int gridColumns{ static_cast<int>(std::ceil(std::sqrt(static_cast<float>(spawnCount_) * 2.0f))) };
+	const int gridRows{ gridColumns };
+	const float cellWidth{ (halfExtents.x * 2.0f) / static_cast<float>(gridColumns) };
+	const float cellDepth{ (halfExtents.z * 2.0f) / static_cast<float>(gridRows) };
+	const float jitterX{ cellWidth * 0.28f };
+	const float jitterZ{ cellDepth * 0.28f };
 
-	std::uniform_real_distribution<float> xDistribution(-halfExtents.x, halfExtents.x);
-	std::uniform_real_distribution<float> zDistribution(-halfExtents.z, halfExtents.z);
+	std::uniform_real_distribution<float> xJitterDistribution(-jitterX, jitterX);
+	std::uniform_real_distribution<float> zJitterDistribution(-jitterZ, jitterZ);
+	std::vector<Vector3D> candidates{};
+	candidates.reserve(static_cast<std::size_t>(gridColumns * gridRows));
+	std::vector<Vector3D> rejectedCandidates{};
+	rejectedCandidates.reserve(static_cast<std::size_t>(gridColumns * gridRows));
 
-	Vector3D spawnPosition{ center_ };
-	Vector3D farthestPosition{ center_ };
-	float farthestSqrDistance{ -1.0f };
-
-	for (int attempts{ 0 }; attempts < 64; ++attempts)
+	for (int row{ 0 }; row < gridRows; ++row)
 	{
-		spawnPosition = Vector3D(
-			center_.x + xDistribution(randomEngine),
-			center_.y,
-			center_.z + zDistribution(randomEngine));
-
-		if (playerPosition_ == nullptr)
+		for (int column{ 0 }; column < gridColumns; ++column)
 		{
-			return spawnPosition;
-		}
-
-		const Vector3D horizontalOffset{
-			spawnPosition.x - playerPosition_->x,
-			0.0f,
-			spawnPosition.z - playerPosition_->z };
-
-		const float sqrDistance{ horizontalOffset.GetSqrMagnitude() };
-		if (sqrDistance > farthestSqrDistance)
-		{
-			farthestSqrDistance = sqrDistance;
-			farthestPosition = spawnPosition;
-		}
-
-		if (horizontalOffset.GetMagnitude() >= minDistance)
-		{
-			return spawnPosition;
+			const float x{ center_.x - halfExtents.x + (static_cast<float>(column) + 0.5f) * cellWidth + xJitterDistribution(randomEngine) };
+			const float z{ center_.z - halfExtents.z + (static_cast<float>(row) + 0.5f) * cellDepth + zJitterDistribution(randomEngine) };
+			candidates.emplace_back(x, center_.y, z);
 		}
 	}
 
-	const Vector3D candidates[4]
-	{
-		Vector3D(center_.x - halfExtents.x, center_.y, center_.z - halfExtents.z),
-		Vector3D(center_.x - halfExtents.x, center_.y, center_.z + halfExtents.z),
-		Vector3D(center_.x + halfExtents.x, center_.y, center_.z - halfExtents.z),
-		Vector3D(center_.x + halfExtents.x, center_.y, center_.z + halfExtents.z)
-	};
-
+	std::shuffle(candidates.begin(), candidates.end(), randomEngine);
 	for (const Vector3D& candidate : candidates)
 	{
 		const Vector3D horizontalOffset{
-			candidate.x - playerPosition_->x,
+			candidate.x - playerPosition_.x,
 			0.0f,
-			candidate.z - playerPosition_->z };
+			candidate.z - playerPosition_.z };
 
-		const float sqrDistance{ horizontalOffset.GetSqrMagnitude() };
-		if (sqrDistance > farthestSqrDistance)
+		if (horizontalOffset.GetSqrMagnitude() < minSqrDistance)
 		{
-			farthestSqrDistance = sqrDistance;
-			farthestPosition = candidate;
+			rejectedCandidates.push_back(candidate);
+			continue;
+		}
+
+		spawnPositions.push_back(candidate);
+		if (static_cast<int>(spawnPositions.size()) >= spawnCount_)
+		{
+			return spawnPositions;
 		}
 	}
 
-	return farthestPosition;
+	std::sort(rejectedCandidates.begin(), rejectedCandidates.end(), [&playerPosition_](const Vector3D& left_, const Vector3D& right_)
+	{
+		const Vector3D leftOffset{ left_.x - playerPosition_.x, 0.0f, left_.z - playerPosition_.z };
+		const Vector3D rightOffset{ right_.x - playerPosition_.x, 0.0f, right_.z - playerPosition_.z };
+		return leftOffset.GetSqrMagnitude() > rightOffset.GetSqrMagnitude();
+	});
+
+	for (const Vector3D& candidate : rejectedCandidates)
+	{
+		if (static_cast<int>(spawnPositions.size()) >= spawnCount_)
+		{
+			break;
+		}
+
+		spawnPositions.push_back(candidate);
+	}
+
+	return spawnPositions;
 }

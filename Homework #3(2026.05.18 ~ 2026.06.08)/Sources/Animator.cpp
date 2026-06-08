@@ -3,36 +3,41 @@
 
 #include "AnimationClip.h"
 #include "GameObject.h"
-#include "Logger.h"
 #include "MathF.h"
+#include "ResourceSystem.h"
 #include "TimeSystem.h"
 #include "Transform.h"
 
 void Animator::Play(AnimationClip* clip_, bool loop_)
 {
-	if (clip_ == nullptr)
+	if (currentClip == clip_ && isPlaying)
 	{
-		Stop();
 		return;
 	}
 
-	if (nodeMap.empty())
-	{
-		BuildNodeMap();
-	}
-
 	currentClip = clip_;
-	currentTime = 0.0f;
 	isLooping = loop_;
-	isPlaying = true;
-
-	ApplyAnimation(currentTime);
+	currentTime = 0.0f;
+	isPlaying = (currentClip != nullptr);
 }
 
 void Animator::Stop()
 {
 	isPlaying = false;
 	currentTime = 0.0f;
+}
+
+void Animator::Pause()
+{
+	isPlaying = false;
+}
+
+void Animator::Resume()
+{
+	if (currentClip != nullptr)
+	{
+		isPlaying = true;
+	}
 }
 
 bool Animator::IsPlaying() const noexcept
@@ -45,6 +50,11 @@ AnimationClip* Animator::GetCurrentClip() const noexcept
 	return currentClip;
 }
 
+void Animator::OnAwake()
+{
+	RefreshNodeMap();
+}
+
 void Animator::OnUpdate()
 {
 	if (!isPlaying || currentClip == nullptr)
@@ -52,28 +62,20 @@ void Animator::OnUpdate()
 		return;
 	}
 
-	const float deltaTime{ TimeSystem::GetInstance().GetDeltaTime() };
-	currentTime += deltaTime;
+	currentTime += TimeSystem::GetInstance().GetDeltaTime();
 
-	const float duration{ currentClip->GetDuration() };
-	if (duration > 0.0f)
+	float duration{ currentClip->GetDuration() };
+	if (currentTime >= duration)
 	{
-		if (currentTime >= duration)
+		if (isLooping)
 		{
-			if (isLooping)
-			{
-				currentTime = std::fmod(currentTime, duration);
-			}
-			else
-			{
-				currentTime = duration;
-				isPlaying = false;
-			}
+			currentTime = std::fmod(currentTime, duration);
 		}
-	}
-	else
-	{
-		currentTime = 0.0f;
+		else
+		{
+			currentTime = duration;
+			isPlaying = false;
+		}
 	}
 
 	ApplyAnimation(currentTime);
@@ -84,30 +86,21 @@ void Animator::OnDisable()
 	Stop();
 }
 
-void Animator::BuildNodeMap()
+void Animator::RefreshNodeMap()
 {
 	nodeMap.clear();
 
 	GameObject* const owner{ GetOwner() };
-	if (owner == nullptr)
-	{
-		return;
-	}
-
 	Transform* const rootTransform{ owner->GetComponent<Transform>() };
-	if (rootTransform == nullptr)
-	{
-		return;
-	}
 
 	auto traverse = [&](this auto& self, Transform* current_) -> void
 	{
-		if (current_ == nullptr || current_->GetOwner() == nullptr)
+		if (current_ == nullptr)
 		{
 			return;
 		}
 
-		nodeMap[current_->GetOwner()->GetName()] = current_;
+		this->nodeMap[current_->GetOwner()->GetName()] = current_;
 
 		for (Transform* child : current_->GetChildren())
 		{
@@ -179,7 +172,7 @@ bool Animator::HasPositionChanged(const std::vector<KeyframeData>& keys_) const
 	const Vector3D& first{ keys_.front().position };
 	for (std::size_t i{ 1 }; i < keys_.size(); ++i)
 	{
-		if (Vector3D::Distance(first, keys_[i].position) > Mathf::Epsilon)
+		if (Vector3D::Distance(first, keys_[i].position) > 0.001f)
 		{
 			return true;
 		}
@@ -198,7 +191,7 @@ bool Animator::HasRotationChanged(const std::vector<KeyframeData>& keys_) const
 	const Quaternion& first{ keys_.front().rotation };
 	for (std::size_t i{ 1 }; i < keys_.size(); ++i)
 	{
-		if (Quaternion::Angle(first, keys_[i].rotation) > Mathf::Epsilon)
+		if (Quaternion::Angle(first, keys_[i].rotation) > 0.001f)
 		{
 			return true;
 		}
@@ -217,7 +210,7 @@ bool Animator::HasScaleChanged(const std::vector<KeyframeData>& keys_) const
 	const Vector3D& first{ keys_.front().scale };
 	for (std::size_t i{ 1 }; i < keys_.size(); ++i)
 	{
-		if (Vector3D::Distance(first, keys_[i].scale) > Mathf::Epsilon)
+		if (Vector3D::Distance(first, keys_[i].scale) > 0.001f)
 		{
 			return true;
 		}

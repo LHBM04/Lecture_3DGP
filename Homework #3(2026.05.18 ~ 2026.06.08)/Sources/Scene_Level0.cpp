@@ -3,7 +3,7 @@
 
 std::wstring_view Scene_Level0::GetTerrainPath() const noexcept
 {
-	return L"Resources/Terrains/HeightMap1.raw";
+	return L"Resources/Terrains/HeightMap0.raw";
 }
 
 std::wstring_view Scene_Level0::GetTerrainMaterialPath() const noexcept
@@ -23,12 +23,12 @@ Vector3D Scene_Level0::GetPlayerSpawnPosition() const noexcept
 
 Vector3D Scene_Level0::GetPlayerColliderSize() const noexcept
 {
-	return Vector3D(30.0f, 18.0f, 82.0f);
+	return Vector3D(4.0f, 4.5f, 24.0f);
 }
 
 Vector3D Scene_Level0::GetPlayerColliderCenter() const noexcept
 {
-	return Vector3D(2.0f, 1.4f, -28.0f);
+	return Vector3D(0.0f, 2.0f, -6.5f);
 }
 
 Vector3D Scene_Level0::GetEnemySpawnHalfExtents() const noexcept
@@ -43,5 +43,5 @@ int Scene_Level0::GetEnemySpawnCount() const noexcept
 
 Vector3D Scene_Level0::GetLightDirection() const noexcept
 {
-	return Vector3D(0.0f, -1.0f, 1.0f);
+	return Vector3D(-0.78f, -0.22f, 0.58f);
 }

@@ -18,22 +18,22 @@ std::wstring_view Scene_Level3::GetTerrainObjectName() const noexcept
 
 Vector3D Scene_Level3::GetPlayerSpawnPosition() const noexcept
 {
-	return Vector3D(0.0f, 200.0f, 50.0f);
+	return Vector3D(0.0f, 30.0f, 50.0f);
 }
 
 Vector3D Scene_Level3::GetPlayerColliderSize() const noexcept
 {
-	return Vector3D(30.0f, 18.0f, 82.0f);
+	return Vector3D(4.0f, 4.5f, 24.0f);
 }
 
 Vector3D Scene_Level3::GetPlayerColliderCenter() const noexcept
 {
-	return Vector3D(2.0f, 1.4f, -28.0f);
+	return Vector3D(0.0f, 2.0f, -6.5f);
 }
 
 Vector3D Scene_Level3::GetEnemySpawnHalfExtents() const noexcept
 {
-	return Vector3D(360.0f, 0.0f, 360.0f);
+	return Vector3D(180.0f, 0.0f, 180.0f);
 }
 
 int Scene_Level3::GetEnemySpawnCount() const noexcept
@@ -43,7 +43,7 @@ int Scene_Level3::GetEnemySpawnCount() const noexcept
 
 Vector3D Scene_Level3::GetLightDirection() const noexcept
 {
-	return Vector3D(-0.2f, -1.0f, 0.4f);
+	return Vector3D(-0.68f, -0.18f, 0.71f);
 }
 
 ColorRGBA Scene_Level3::GetLightColor() const noexcept

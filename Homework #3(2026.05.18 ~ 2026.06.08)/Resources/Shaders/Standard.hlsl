@@ -58,10 +58,11 @@ float4 PSMain(VSOutput input) : SV_TARGET
 {
     const float3 lightDirection = normalize(-gLightDirection.xyz);
     const float diffuse = saturate(dot(normalize(input.normal), lightDirection));
-    const float roughAmbient = lerp(0.08f, 0.24f, saturate(gRoughness));
+    const float shapedDiffuse = pow(diffuse, 1.15f);
+    const float roughAmbient = lerp(0.03f, 0.10f, saturate(gRoughness));
     const float metallicAttenuation = lerp(1.0f, 0.6f, saturate(gMetallic));
     const float3 ambient = gBaseColor.rgb * roughAmbient;
-    const float3 direct = gBaseColor.rgb * gLightColor.rgb * diffuse * metallicAttenuation;
+    const float3 direct = gBaseColor.rgb * gLightColor.rgb * shapedDiffuse * 1.35f * metallicAttenuation;
     const float3 lit = ambient + direct + gEmissiveColor.rgb;
 
     return float4(lit, gBaseColor.a);

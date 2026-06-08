@@ -111,8 +111,7 @@ void TitleController::OnUpdate()
 
 	if (clickedObject == tutorialButtonObject)
 	{
-		Logger::Info(L"튜토리얼 맵을 로드합니다.");
-		SceneSystem::GetInstance().LoadScene(L"Level0");
+		SelectLevel(L"Level0", tutorialButtonObject);
 		return;
 	}
 
@@ -275,6 +274,7 @@ void TitleController::SelectLevel(std::wstring_view sceneName_, GameObject* butt
 		animator->Play(isSelected_ ? selectedAnimation : normalAnimation, true);
 	};
 
+	applyAnimation(tutorialButtonObject, sceneName_ == L"Level0");
 	applyAnimation(level1ButtonObject, sceneName_ == L"Level1");
 	applyAnimation(level2ButtonObject, sceneName_ == L"Level2");
 	applyAnimation(level3ButtonObject, sceneName_ == L"Level3");

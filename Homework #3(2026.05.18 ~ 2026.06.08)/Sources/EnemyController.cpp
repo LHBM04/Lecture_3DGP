@@ -326,7 +326,7 @@ void EnemyController::SpawnExplosionParticles(const Vector3D& center_)
 
 		if (Transform* const particleTransform{ particle->GetComponent<Transform>() }; particleTransform != nullptr)
 		{
-			particleTransform->SetLocalScale(Vector3D(4.0f, 4.0f, 4.0f));
+			particleTransform->SetLocalScale(Vector3D(1.0f, 1.0f, 1.0f));
 		}
 
 		MeshRenderer* const meshRenderer{ particle->AddComponent<MeshRenderer>() };

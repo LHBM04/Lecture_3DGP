@@ -20,16 +20,19 @@ public:
 
 	void Play(AnimationClip* clip_, bool loop_ = true);
 	void Stop();
+	void Pause();
+	void Resume();
 
 	[[nodiscard]] bool IsPlaying() const noexcept;
 	[[nodiscard]] AnimationClip* GetCurrentClip() const noexcept;
 
 protected:
+	void OnAwake() override;
 	void OnUpdate() override;
 	void OnDisable() override;
 
 private:
-	void BuildNodeMap();
+	void RefreshNodeMap();
 	void ApplyAnimation(float time_);
 
 	[[nodiscard]] bool HasPositionChanged(const std::vector<KeyframeData>& keys_) const;

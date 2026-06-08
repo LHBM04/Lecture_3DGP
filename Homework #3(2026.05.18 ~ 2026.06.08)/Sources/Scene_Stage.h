@@ -2,6 +2,7 @@
 
 #include <random>
 #include <string_view>
+#include <vector>
 
 #include "ColorRGBA.h"
 #include "Scene.h"
@@ -54,8 +55,13 @@ private:
 	void CreateCamera(Transform* playerTransform_);
 	void PlayPlayerIdleAnimation(GameObject* playerObject_);
 	void CheckStageClear();
+	[[nodiscard]] Vector3D ResolvePlayerSpawnPosition() const;
+	[[nodiscard]] Vector3D ResolveEnemySpawnPosition(Vector3D spawnPosition_) const;
 
-	[[nodiscard]] Vector3D GenerateSpawnPosition(const Vector3D& center_, const Vector3D* playerPosition_) noexcept;
+	[[nodiscard]] std::vector<Vector3D> GenerateEnemySpawnPositions(
+		const Vector3D& center_,
+		const Vector3D& playerPosition_,
+		int spawnCount_);
 
 	std::mt19937 randomEngine{ std::random_device{}() };
 	bool stageClearTriggered{ false };
