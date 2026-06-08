@@ -8,7 +8,7 @@ public class ModelExporter : MonoBehaviour
     [SerializeField] private string outputFolderName = "Homework3Export";
     [SerializeField] private string shaderPath = "Resources/Shaders/Standard.hlsl";
     [SerializeField] private bool exportOnStart = true;
-    [SerializeField] private float animationSampleFps = 30f; // C++ 엔진과 맞출 애니메이션 FPS
+    [SerializeField] private float animationSampleFps = 30f;
 
     private sealed class RendererResourceRecord
     {
@@ -27,7 +27,6 @@ public class ModelExporter : MonoBehaviour
         public readonly List<RendererResourceRecord> Renderers = new List<RendererResourceRecord>();
     }
 
-    // C++ 엔진의 Track / Keyframe 구조와 매핑하기 위한 내부 레코드
     private sealed class KeyframeRecord
     {
         public float Time;
@@ -69,7 +68,6 @@ public class ModelExporter : MonoBehaviour
         int exportedMeshCount = 0;
         int exportedMaterialCount = 0;
 
-        // 1. 모델 노드 트리 및 메쉬/머티리얼 추출
         ExportFrameRecursive(
             transform,
             -1,
@@ -83,24 +81,20 @@ public class ModelExporter : MonoBehaviour
         string modelPath = Path.Combine(modelDirectory, SanitizeName(transform.name) + ".bin");
         WriteModelResource(modelPath, transform.name, modelNodes);
 
-        // 2. 애니메이션 클립 추출 (Animator 기반)
         int exportedAnimCount = 0;
         Animator animator = GetComponent<Animator>();
         if (animator != null)
         {
 #if UNITY_EDITOR
-            // Animator의 Controller에서 모든 AnimationClip 목록을 안전하게 가져옴
             var controller = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
             if (controller != null)
             {
-                // 중복 처리를 위해 HashSet 사용
                 HashSet<AnimationClip> uniqueClips = new HashSet<AnimationClip>();
                 foreach (var layer in controller.layers)
                 {
                     GetClipsFromStateGroup(layer.stateMachine, uniqueClips);
                 }
 
-                // 기존 트랜스폼 상태 백업 (샘플링 후 원래 자세로 돌려놓기 위함)
                 Dictionary<Transform, (Vector3 p, Quaternion r, Vector3 s)> transformBackup = BackupTransforms(transform);
 
                 foreach (AnimationClip clip in uniqueClips)
@@ -113,7 +107,6 @@ public class ModelExporter : MonoBehaviour
                     exportedAnimCount++;
                 }
 
-                // 백업해둔 트랜스폼 상태 원상 복구
                 RestoreTransforms(transformBackup);
 #endif
             }
@@ -134,7 +127,6 @@ public class ModelExporter : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // 스테이트 머신 내부를 순회하며 모든 애니메이션 클립을 수집하는 함수
     private void GetClipsFromStateGroup(UnityEditor.Animations.AnimatorStateMachine stateMachine, HashSet<AnimationClip> clips)
     {
         foreach (var state in stateMachine.states)
@@ -150,8 +142,6 @@ public class ModelExporter : MonoBehaviour
         }
     }
 #endif
-
-    // 애니메이션 재생 시간에 따라 각 프레임의 노드 트랜스폼을 샘플링하는 핵심 로직
     private AnimationClipRecord CaptureAnimationClip(GameObject rootObject, AnimationClip clip, float fps)
     {
         AnimationClipRecord clipRecord = new AnimationClipRecord
@@ -161,7 +151,6 @@ public class ModelExporter : MonoBehaviour
             FrameRate = fps
         };
 
-        // 씬 내부의 모든 자식 트랜스폼(뼈대 노드들) 배열 확보
         Transform[] allTransforms = rootObject.GetComponentsInChildren<Transform>(true);
         foreach (var t in allTransforms)
         {
@@ -171,13 +160,10 @@ public class ModelExporter : MonoBehaviour
         float timeStep = 1f / fps;
         float currentTime = 0f;
 
-        // 0초부터 애니메이션 끝 시간까지 한 프레임씩 전진하며 샘플링
         while (currentTime <= clip.length)
         {
-            // 유니티 엔진 기능을 이용해 해당 시간의 애니메이션 포즈를 모델에 강제 적용
             clip.SampleAnimation(rootObject, currentTime);
 
-            // 그 순간의 모든 자식 Local 트랜스폼 상태를 기록
             for (int i = 0; i < allTransforms.Length; i++)
             {
                 Transform t = allTransforms[i];
@@ -411,7 +397,6 @@ public class ModelExporter : MonoBehaviour
         }
     }
 
-    // C++ 애니메이션 파일 바이너리 쓰기 함수
     private void WriteAnimationResource(string path, AnimationClipRecord clip)
     {
         using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
