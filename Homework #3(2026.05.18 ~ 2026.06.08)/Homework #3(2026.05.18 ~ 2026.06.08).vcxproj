@@ -203,6 +203,7 @@
     <ClCompile Include="Sources\ResourceSystem.cpp" />
     <ClCompile Include="Sources\Scene.cpp" />
     <ClCompile Include="Sources\SceneSystem.cpp" />
+    <ClCompile Include="Sources\Scene_Level0.cpp" />
     <ClCompile Include="Sources\Scene_Level1.cpp" />
     <ClCompile Include="Sources\Scene_Level2.cpp" />
     <ClCompile Include="Sources\Scene_Level3.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="Sources\ResourceSystem.h" />
     <ClInclude Include="Sources\Scene.h" />
     <ClInclude Include="Sources\SceneSystem.h" />
+    <ClInclude Include="Sources\Scene_Level0.h" />
     <ClInclude Include="Sources\Scene_Level1.h" />
     <ClInclude Include="Sources\Scene_Level2.h" />
     <ClInclude Include="Sources\Scene_Level3.h" />

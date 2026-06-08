@@ -105,6 +105,9 @@
     <ClCompile Include="Sources\SceneSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Scene_Level0.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Material.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
@@ -261,6 +264,9 @@
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\TimeSystem.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene_Level0.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene_Level1.h">

@@ -79,6 +79,8 @@ public:
 protected:
 	virtual void OnLoad() = 0;
 	virtual void OnUnload() = 0;
+	virtual void OnUpdate();
+	virtual void OnFixedUpdate();
 
 private:
 	void FlushPendingObjects();

@@ -24,6 +24,8 @@ public:
 	[[nodiscard]] float GetCellSize() const noexcept;
 	[[nodiscard]] float GetHeightScale() const noexcept;
 	[[nodiscard]] float GetHeightAt(uint32_t x_, uint32_t z_) const noexcept;
+	[[nodiscard]] bool ContainsLocalPosition(float localX_, float localZ_) const noexcept;
+	[[nodiscard]] float SampleHeightAtLocalPosition(float localX_, float localZ_) const noexcept;
 
 private:
 	[[nodiscard]] bool BuildMesh();
@@ -33,8 +35,8 @@ private:
 private:
 	uint32_t width{ 0 };
 	uint32_t height{ 0 };
-	float cellSize{ 1.0f };
-	float heightScale{ 30.0f };
+	float cellSize{ 4.0f };
+	float heightScale{ 120.0f };
 	bool is16Bit{ false };
 
 	std::vector<uint16_t> samples;

@@ -8,6 +8,7 @@
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "ResourceSystem.h"
+#include "Scene_Level0.h"
 #include "Scene_Level1.h"
 #include "Scene_Level2.h"
 #include "Scene_Level3.h"
@@ -111,6 +112,7 @@ INT APIENTRY wWinMain(
 	Logger::Info(L"ResourceSystem 초기화가 완료되었습니다.");
 
 	SceneSystem::GetInstance().AddScene(L"Title", std::make_unique<Scene_Title>());
+	SceneSystem::GetInstance().AddScene(L"Level0", std::make_unique<Scene_Level0>());
 	SceneSystem::GetInstance().AddScene(L"Level1", std::make_unique<Scene_Level1>());
 	SceneSystem::GetInstance().AddScene(L"Level2", std::make_unique<Scene_Level2>());
 	SceneSystem::GetInstance().AddScene(L"Level3", std::make_unique<Scene_Level3>());
@@ -156,13 +158,35 @@ INT APIENTRY wWinMain(
 		while (timeSystem.GetFixedTime() >= timeSystem.GetFixedDeltaTime())
 		{
 			PhysicsSystem::GetInstance().Update();
+			if (SceneSystem::GetInstance().IsQuitRequested())
+			{
+				isRunning = false;
+				break;
+			}
+
 			SceneSystem::GetInstance().FixedUpdate();
+			if (SceneSystem::GetInstance().IsQuitRequested())
+			{
+				isRunning = false;
+				break;
+			}
 
 			timeSystem.GetFixedTime() -= timeSystem.GetFixedDeltaTime();
 		}
 
+		if (!isRunning)
+		{
+			break;
+		}
+
 		InputSystem::GetInstance().Update();
 		SceneSystem::GetInstance().Update();
+		if (SceneSystem::GetInstance().IsQuitRequested())
+		{
+			isRunning = false;
+			break;
+		}
+
 		SceneSystem::GetInstance().Render();
 	}
 

@@ -14,6 +14,8 @@ void PhysicsSystem::Reset()
 
 void PhysicsSystem::Update()
 {
+	ApplyPendingColliderChanges();
+
 	if (!isGridInitialized
 		|| static_cast<int>(grid.size()) != gridHeight
 		|| (grid.empty() == false && static_cast<int>(grid.front().size()) != gridWidth))
@@ -21,54 +23,23 @@ void PhysicsSystem::Update()
 		Reset();
 	}
 
-	isProcessingPhysics = true;
 	ProcessPhysics();
-	isProcessingPhysics = false;
+	
+	// 물리 연산 중 발생한 파괴(Destroy) 요청을 즉시 처리하여, 
+	// 이후 Scene::FixedUpdate에서 메모리가 해제되기 전에 활성 목록에서 깔끔하게 제거합니다.
 	ApplyPendingColliderChanges();
 }
 
 void PhysicsSystem::AddCollider(Collider* collider_)
 {
 	assert(collider_ != nullptr);
-
-	if (isProcessingPhysics)
-	{
-		pendingAddColliders.emplace_back(collider_);
-		return;
-	}
-
-	if (std::find(colliders.begin(), colliders.end(), collider_) == colliders.end())
-	{
-		colliders.emplace_back(collider_);
-		
-		if (collider_->IsStatic())
-		{
-			RegisterStaticObjectsToGrid();
-		}
-	}
+	pendingAddColliders.emplace_back(collider_);
 }
 
 void PhysicsSystem::RemoveCollider(Collider* collider_)
 {
 	assert(collider_ != nullptr);
-
-	if (isProcessingPhysics)
-	{
-		pendingRemoveColliders.emplace_back(collider_);
-		return;
-	}
-
-	std::vector<Collider*>::iterator it{ std::find(colliders.begin(), colliders.end(), collider_) };
-	if (it != colliders.end())
-	{
-		colliders.erase(it);
-		RemoveColliderFromCollisionHistory(collider_);
-
-		if (collider_->IsStatic())
-		{
-			RegisterStaticObjectsToGrid();
-		}
-	}
+	pendingRemoveColliders.emplace_back(collider_);
 }
 
 bool PhysicsSystem::CheckCollision(Collider* collider_) const
@@ -78,7 +49,7 @@ bool PhysicsSystem::CheckCollision(Collider* collider_) const
 
 bool PhysicsSystem::IsCollidingWithStatic(Collider* collider_) const
 {
-	if (collider_ == nullptr || collider_->GetOwner() == nullptr)
+	if (collider_ == nullptr)
 	{
 		return false;
 	}
@@ -98,12 +69,18 @@ bool PhysicsSystem::IsCollidingWithStatic(Collider* collider_) const
 			{
 				for (Collider* staticCol : grid[z][x].staticColliders)
 				{
-					if (staticCol == nullptr || staticCol == collider_ || staticCol->GetOwner() == nullptr)
+					if (staticCol == nullptr || staticCol == collider_)
 					{
 						continue;
 					}
 
-					const std::wstring& name{ staticCol->GetOwner()->GetName() };
+					GameObject* const staticOwner{ staticCol->GetOwner() };
+					if (staticOwner == nullptr || staticOwner->IsDestroyed())
+					{
+						continue;
+					}
+
+					const std::wstring& name{ staticOwner->GetName() };
 					if (name.find(L"Wall") != std::wstring::npos || name.find(L"Stair") != std::wstring::npos)
 					{
 						if (collider_->IsIntersects(staticCol))
@@ -197,10 +174,31 @@ void PhysicsSystem::Clear()
 
 void PhysicsSystem::ApplyPendingColliderChanges()
 {
+	bool needsGridUpdate{ false };
+
+	if (pendingAddColliders.empty() == false)
+	{
+		for (Collider* collider : pendingAddColliders)
+		{
+			if (collider == nullptr)
+			{
+				continue;
+			}
+
+			if (std::find(colliders.begin(), colliders.end(), collider) == colliders.end())
+			{
+				if (collider->IsStatic())
+				{
+					needsGridUpdate = true;
+				}
+				colliders.emplace_back(collider);
+			}
+		}
+		pendingAddColliders.clear();
+	}
+
 	if (pendingRemoveColliders.empty() == false)
 	{
-		std::sort(pendingRemoveColliders.begin(), pendingRemoveColliders.end());
-		pendingRemoveColliders.erase(std::unique(pendingRemoveColliders.begin(), pendingRemoveColliders.end()), pendingRemoveColliders.end());
 		for (Collider* collider : pendingRemoveColliders)
 		{
 			if (collider == nullptr)
@@ -208,41 +206,23 @@ void PhysicsSystem::ApplyPendingColliderChanges()
 				continue;
 			}
 
-			std::vector<Collider*>::iterator it{ std::find(colliders.begin(), colliders.end(), collider) };
+			auto it{ std::find(colliders.begin(), colliders.end(), collider) };
 			if (it != colliders.end())
 			{
-				const bool wasStatic{ (*it)->IsStatic() };
+				if (collider->IsStatic())
+				{
+					needsGridUpdate = true;
+				}
 				colliders.erase(it);
 				RemoveColliderFromCollisionHistory(collider);
-				if (wasStatic)
-				{
-					RegisterStaticObjectsToGrid();
-				}
 			}
 		}
 		pendingRemoveColliders.clear();
 	}
 
-	if (pendingAddColliders.empty() == false)
+	if (needsGridUpdate)
 	{
-		std::sort(pendingAddColliders.begin(), pendingAddColliders.end());
-		pendingAddColliders.erase(std::unique(pendingAddColliders.begin(), pendingAddColliders.end()), pendingAddColliders.end());
-		for (Collider* collider : pendingAddColliders)
-		{
-			if (collider == nullptr)
-			{
-				continue;
-			}
-			if (std::find(colliders.begin(), colliders.end(), collider) == colliders.end())
-			{
-				colliders.emplace_back(collider);
-				if (collider->IsStatic())
-				{
-					RegisterStaticObjectsToGrid();
-				}
-			}
-		}
-		pendingAddColliders.clear();
+		RegisterStaticObjectsToGrid();
 	}
 }
 
@@ -270,6 +250,8 @@ void PhysicsSystem::ProcessPhysics()
 	}
 	
 	std::vector<Collider*> dynamicColliders;
+	std::vector<Collider*> outOfGridDynamicColliders;
+
 	for (Collider* col : colliders)
 	{
 		if (col == nullptr || col->GetOwner() == nullptr || col->GetOwner()->IsDestroyed() || col->GetOwner()->IsActive() == false)
@@ -288,6 +270,7 @@ void PhysicsSystem::ProcessPhysics()
 			const int maxX{ static_cast<int>((aabb.Center.x + aabb.Extents.x - gridOrigin.x) / cellSize) };
 			const int maxZ{ static_cast<int>((aabb.Center.z + aabb.Extents.z - gridOrigin.z) / cellSize) };
 
+			bool addedToGrid{ false };
 			for (int z{ minZ }; z <= maxZ; ++z)
 			{
 				for (int x{ minX }; x <= maxX; ++x)
@@ -295,8 +278,14 @@ void PhysicsSystem::ProcessPhysics()
 					if (x >= 0 && x < gridWidth && z >= 0 && z < gridHeight)
 					{
 						grid[z][x].dynamicColliders.emplace_back(col);
+						addedToGrid = true;
 					}
 				}
+			}
+
+			if (!addedToGrid)
+			{
+				outOfGridDynamicColliders.emplace_back(col);
 			}
 		}
 	}
@@ -304,7 +293,7 @@ void PhysicsSystem::ProcessPhysics()
 	std::set<ColliderPair> currentCollisions;
 	for (Collider* col1 : dynamicColliders)
 	{
-		if (col1 == nullptr || col1->GetOwner() == nullptr)
+		if (col1 == nullptr)
 		{
 			continue;
 		}
@@ -323,7 +312,7 @@ void PhysicsSystem::ProcessPhysics()
 				{
 					for (Collider* col2 : grid[z][x].dynamicColliders)
 					{
-						if (col2 == nullptr || col2->GetOwner() == nullptr)
+						if (col2 == nullptr)
 						{
 							continue;
 						}
@@ -338,7 +327,7 @@ void PhysicsSystem::ProcessPhysics()
 					}
 					for (Collider* col2 : grid[z][x].staticColliders)
 					{
-						if (col2 == nullptr || col2->GetOwner() == nullptr)
+						if (col2 == nullptr)
 						{
 							continue;
 						}
@@ -352,11 +341,30 @@ void PhysicsSystem::ProcessPhysics()
 				}
 			}
 		}
+
+		// 그리드를 벗어난 객체들과의 충돌도 반드시 검사해야 합니다.
+		for (Collider* col2 : outOfGridDynamicColliders)
+		{
+			if (col2 == nullptr || col1 == col2)
+			{
+				continue;
+			}
+
+			if (reinterpret_cast<uintptr_t>(col1) <= reinterpret_cast<uintptr_t>(col2))
+			{
+				continue;
+			}
+
+			if (col1->IsIntersects(col2))
+			{
+				currentCollisions.insert({col1, col2});
+			}
+		}
 	}
 	
 	for (const ColliderPair& pair : currentCollisions)
 	{
-		if (pair.c1 == nullptr || pair.c2 == nullptr || pair.c1->GetOwner() == nullptr || pair.c2->GetOwner() == nullptr)
+		if (pair.c1 == nullptr || pair.c2 == nullptr)
 		{
 			continue;
 		}
@@ -371,32 +379,41 @@ void PhysicsSystem::ProcessPhysics()
 		if (previousCollisions.find(pair) != previousCollisions.end())
 		{
 			owner1->NotifyCollisionStay(pair.c2);
-			if (pair.c2->GetOwner() != nullptr && pair.c2->GetOwner()->IsDestroyed() == false)
+			GameObject* const otherOwner{ pair.c2->GetOwner() };
+			if (otherOwner != nullptr && otherOwner->IsDestroyed() == false)
 			{
-				pair.c2->GetOwner()->NotifyCollisionStay(pair.c1);
+				otherOwner->NotifyCollisionStay(pair.c1);
 			}
 		}
 		else
 		{
 			owner1->NotifyCollisionEnter(pair.c2);
-			if (pair.c2->GetOwner() != nullptr && pair.c2->GetOwner()->IsDestroyed() == false)
+			GameObject* const otherOwner{ pair.c2->GetOwner() };
+			if (otherOwner != nullptr && otherOwner->IsDestroyed() == false)
 			{
-				pair.c2->GetOwner()->NotifyCollisionEnter(pair.c1);
+				otherOwner->NotifyCollisionEnter(pair.c1);
 			}
 		}
 	}
 
 	for (const ColliderPair& pair : previousCollisions)
 	{
-		if (pair.c1 == nullptr || pair.c2 == nullptr || pair.c1->GetOwner() == nullptr || pair.c2->GetOwner() == nullptr)
+		if (pair.c1 == nullptr || pair.c2 == nullptr)
 		{
 			continue;
 		}
 
 		if (currentCollisions.find(pair) == currentCollisions.end())
 		{
-			pair.c1->GetOwner()->NotifyCollisionExit(pair.c2);
-			pair.c2->GetOwner()->NotifyCollisionExit(pair.c1);
+			GameObject* const owner1{ pair.c1->GetOwner() };
+			GameObject* const owner2{ pair.c2->GetOwner() };
+			if (owner1 == nullptr || owner2 == nullptr || owner1->IsDestroyed() || owner2->IsDestroyed())
+			{
+				continue;
+			}
+
+			owner1->NotifyCollisionExit(pair.c2);
+			owner2->NotifyCollisionExit(pair.c1);
 		}
 	}
 
@@ -413,7 +430,13 @@ std::vector<Collider*> PhysicsSystem::OverlapBox(const Vector3D& center_, const 
 
 	for (Collider* col : colliders)
 	{
-		if (col == nullptr || col->GetOwner() == nullptr || col->GetOwner()->IsActive() == false)
+		if (col == nullptr)
+		{
+			continue;
+		}
+
+		GameObject* const owner{ col->GetOwner() };
+		if (owner == nullptr || owner->IsDestroyed() || owner->IsActive() == false)
 		{
 			continue;
 		}
@@ -444,7 +467,13 @@ void PhysicsSystem::RegisterStaticObjectsToGrid()
 
 	for (Collider* col : colliders)
 	{
-		if (col == nullptr || col->GetOwner() == nullptr || col->GetOwner()->IsActive() == false)
+		if (col == nullptr)
+		{
+			continue;
+		}
+
+		GameObject* const owner{ col->GetOwner() };
+		if (owner == nullptr || owner->IsDestroyed() || owner->IsActive() == false)
 		{
 			continue;
 		}
@@ -475,7 +504,7 @@ void PhysicsSystem::RegisterStaticObjectsToGrid()
 std::vector<Collider*> PhysicsSystem::GetNearbyStaticColliders(Collider* collider_) const
 {
 	std::vector<Collider*> result;
-	if (collider_ == nullptr || collider_->GetOwner() == nullptr)
+	if (collider_ == nullptr)
 	{
 		return result;
 	}
@@ -501,7 +530,13 @@ std::vector<Collider*> PhysicsSystem::GetNearbyStaticColliders(Collider* collide
 				{
 					for (Collider* staticCol : grid[z][x].staticColliders)
 					{
-						if (staticCol == nullptr || staticCol == collider_ || staticCol->GetOwner() == nullptr)
+						if (staticCol == nullptr || staticCol == collider_)
+						{
+							continue;
+						}
+
+						GameObject* const staticOwner{ staticCol->GetOwner() };
+						if (staticOwner == nullptr || staticOwner->IsDestroyed())
 						{
 							continue;
 						}
@@ -512,12 +547,17 @@ std::vector<Collider*> PhysicsSystem::GetNearbyStaticColliders(Collider* collide
 		}
 	}
 
-	// Fallback: If target is outside grid or grid query yields nothing, scan all static colliders.
 	if (outOfGrid || result.empty())
 	{
 		for (Collider* staticCol : colliders)
 		{
-			if (staticCol == nullptr || staticCol == collider_ || staticCol->GetOwner() == nullptr)
+			if (staticCol == nullptr || staticCol == collider_)
+			{
+				continue;
+			}
+
+			GameObject* const staticOwner{ staticCol->GetOwner() };
+			if (staticOwner == nullptr || staticOwner->IsDestroyed())
 			{
 				continue;
 			}

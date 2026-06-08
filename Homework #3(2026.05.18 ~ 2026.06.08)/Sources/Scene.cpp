@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "MeshRenderer.h"
 #include "Model.h"
+#include "PhysicsSystem.h"
 #include "Quaternion.h"
 #include "RenderSystem.h"
 #include "Transform.h"
@@ -67,6 +68,7 @@ void Scene::Update()
 		gameObject->Update();
 	}
 
+	OnUpdate();
 }
 
 void Scene::LateUpdate()
@@ -120,6 +122,8 @@ void Scene::FixedUpdate()
 
 		gameObject->FixedUpdate();
 	}
+
+	OnFixedUpdate();
 }
 
 void Scene::Render()
@@ -165,6 +169,14 @@ void Scene::Render()
 
 		gameObject->Render();
 	}
+}
+
+void Scene::OnUpdate()
+{
+}
+
+void Scene::OnFixedUpdate()
+{
 }
 
 GameObject* Scene::Instantiate()
@@ -438,7 +450,8 @@ void Scene::Destroy(GameObject* gameObject_)
 			}
 		}
 
-		current->Destroy();
+		current->isDestroyPending = true;
+		current->SetActive(false);
 		if (std::find(destroyObjects.begin(), destroyObjects.end(), current) == destroyObjects.end())
 		{
 			destroyObjects.emplace_back(current);
@@ -606,6 +619,8 @@ void Scene::FlushDestroyObjects()
 		return;
 	}
 
+	PhysicsSystem::GetInstance().ApplyPendingColliderChanges();
+
 	for (GameObject* gameObject : destroyObjects)
 	{
 		if (gameObject == nullptr)
@@ -613,23 +628,17 @@ void Scene::FlushDestroyObjects()
 			continue;
 		}
 
-		cameras.erase(std::remove_if(cameras.begin(), cameras.end(),
-			[gameObject](Camera* camera) { return camera == nullptr || camera->GetOwner() == gameObject; }),
-			cameras.end());
-
-		lights.erase(std::remove_if(lights.begin(), lights.end(),
-			[gameObject](Light* light) { return light == nullptr || light->GetOwner() == gameObject; }),
-			lights.end());
+		gameObject->Destroy();
 	}
 
 	std::erase_if(gameObjects, [](const std::unique_ptr<GameObject>& gameObject)
 	{
-		return gameObject == nullptr || gameObject->IsDestroyed();
+		return gameObject == nullptr || gameObject->IsDestroyPending() || gameObject->IsDestroyed();
 	});
 
 	std::erase_if(addObjects, [](const std::unique_ptr<GameObject>& gameObject)
 	{
-		return gameObject == nullptr || gameObject->IsDestroyed();
+		return gameObject == nullptr || gameObject->IsDestroyPending() || gameObject->IsDestroyed();
 	});
 
 	destroyObjects.clear();

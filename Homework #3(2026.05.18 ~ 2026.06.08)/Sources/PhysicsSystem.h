@@ -48,10 +48,10 @@ public:
 
 	void RegisterStaticObjectsToGrid();
 	void Clear();
+	void ApplyPendingColliderChanges();
 
 private:
 	void ProcessPhysics();
-	void ApplyPendingColliderChanges();
 	void RemoveColliderFromCollisionHistory(Collider* collider_);
 
 private:
@@ -79,11 +79,10 @@ private:
 	std::set<ColliderPair> previousCollisions;
 
 	std::vector<std::vector<Cell>> grid;
-	Vector3D gridOrigin{ -100.0f, 0.0f, -100.0f };
+	Vector3D gridOrigin{ -300.0f, 0.0f, -300.0f };
 	float cellSize{ 10.0f };
-	int gridWidth{ 20 };
-	int gridHeight{ 20 };
+	int gridWidth{ 60 };
+	int gridHeight{ 60 };
 
 	bool isGridInitialized{ false };
-	bool isProcessingPhysics{ false };
 };

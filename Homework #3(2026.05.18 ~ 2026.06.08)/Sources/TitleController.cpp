@@ -7,6 +7,7 @@
 #include "AnimationClip.h"
 #include "Animator.h"
 #include "Camera.h"
+#include "CubeCollider.h"
 #include "ExplodeParticle.h"
 #include "GameObject.h"
 #include "InputSystem.h"
@@ -18,7 +19,6 @@
 #include "ResourceSystem.h"
 #include "Scene.h"
 #include "SceneSystem.h"
-#include "TimeSystem.h"
 #include "Transform.h"
 #include "Vector3D.h"
 
@@ -111,7 +111,8 @@ void TitleController::OnUpdate()
 
 	if (clickedObject == tutorialButtonObject)
 	{
-		Logger::Info(L"튜토리얼은 아직 구현되지 않았습니다.");
+		Logger::Info(L"튜토리얼 맵을 로드합니다.");
+		SceneSystem::GetInstance().LoadScene(L"Level0");
 		return;
 	}
 
@@ -137,7 +138,7 @@ void TitleController::OnUpdate()
 	{
 		if (selectedSceneName.empty())
 		{
-			Logger::Info(L"스테이지를 선택해주세요.");
+			Logger::Info(L"스테이지를 먼저 선택해 주세요.");
 			return;
 		}
 
@@ -149,7 +150,7 @@ void TitleController::OnUpdate()
 	if (clickedObject == endButtonObject)
 	{
 		Logger::Info(L"게임을 종료합니다.");
-		::PostQuitMessage(0);
+		SceneSystem::GetInstance().RequestQuit();
 	}
 }
 
@@ -200,7 +201,13 @@ void TitleController::ExplodeTitleLogo()
 		return;
 	}
 
-	const Vector3D origin{ logoTransform->GetWorldPosition() };
+	Vector3D origin{ logoTransform->GetWorldPosition() };
+	if (CubeCollider* const logoCollider{ titleLogoObject->GetComponent<CubeCollider>() }; logoCollider != nullptr)
+	{
+		logoCollider->UpdateVolume();
+		const DirectX::BoundingOrientedBox& logoVolume{ logoCollider->GetVolume() };
+		origin = Vector3D(logoVolume.Center.x, logoVolume.Center.y, logoVolume.Center.z);
+	}
 
 	std::uniform_real_distribution<float> speedDistribution(18.0f, 32.0f);
 	std::uniform_real_distribution<float> upwardDistribution(8.0f, 18.0f);
@@ -248,22 +255,31 @@ void TitleController::ExplodeTitleLogo()
 
 void TitleController::SelectLevel(std::wstring_view sceneName_, GameObject* buttonObject_)
 {
-	ResourceSystem& rs = ResourceSystem::GetInstance();
-	AnimationClip* normalAnim = rs.GetResource<AnimationClip>(L"Resources/Animations/Normal.bin");
-	AnimationClip* selectedAnim = rs.GetResource<AnimationClip>(L"Resources/Animations/Selected.bin");
+	ResourceSystem& resourceSystem{ ResourceSystem::GetInstance() };
+	AnimationClip* const normalAnimation{ resourceSystem.GetResource<AnimationClip>(L"Resources/Animations/Normal.bin") };
+	AnimationClip* const selectedAnimation{ resourceSystem.GetResource<AnimationClip>(L"Resources/Animations/Selected.bin") };
 
-	auto applyAnim = [&](GameObject* obj_, bool isSelected_)
+	auto applyAnimation = [&](GameObject* object_, bool isSelected_) -> void
 	{
-		if (obj_ == nullptr) return;
-		
-		Animator* const animator{ obj_->GetComponent<Animator>() };
-		animator->Play(isSelected_ ? selectedAnim : normalAnim, true);
+		if (object_ == nullptr)
+		{
+			return;
+		}
+
+		Animator* const animator{ object_->GetComponent<Animator>() };
+		if (animator == nullptr)
+		{
+			return;
+		}
+
+		animator->Play(isSelected_ ? selectedAnimation : normalAnimation, true);
 	};
 
-	applyAnim(level1ButtonObject, sceneName_ == L"Level1");
-	applyAnim(level2ButtonObject, sceneName_ == L"Level2");
-	applyAnim(level3ButtonObject, sceneName_ == L"Level3");
+	applyAnimation(level1ButtonObject, sceneName_ == L"Level1");
+	applyAnimation(level2ButtonObject, sceneName_ == L"Level2");
+	applyAnimation(level3ButtonObject, sceneName_ == L"Level3");
 
 	selectedSceneName = sceneName_;
 	Logger::Info(L"선택된 스테이지: {}", selectedSceneName);
+	(void)buttonObject_;
 }

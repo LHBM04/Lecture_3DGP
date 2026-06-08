@@ -1,4 +1,4 @@
-﻿#include "Precompiled.h"
+#include "Precompiled.h"
 
 #include "ResourceSystem.h"
 
@@ -26,7 +26,6 @@ void ResourceSystem::Initialize()
 
 	if (std::filesystem::exists("Resources"))
 	{
-		// ... (keep logic same)
 		std::vector<std::filesystem::path> shaderPaths;
 		std::vector<std::filesystem::path> materialPaths;
 		std::vector<std::filesystem::path> meshPaths;

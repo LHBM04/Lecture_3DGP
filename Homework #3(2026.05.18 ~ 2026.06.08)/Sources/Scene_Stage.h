@@ -19,6 +19,7 @@ public:
 protected:
 	void OnLoad() override;
 	void OnUnload() override;
+	void OnFixedUpdate() override;
 
 	virtual std::wstring_view GetPlayerModelPath() const noexcept;
 	virtual std::wstring_view GetEnemyModelPath() const noexcept;
@@ -30,6 +31,8 @@ protected:
 	virtual Vector3D GetPlayerSpawnPosition() const noexcept = 0;
 	virtual Vector3D GetPlayerColliderSize() const noexcept = 0;
 	virtual Vector3D GetPlayerColliderCenter() const noexcept;
+	virtual Vector3D GetEnemyColliderSize() const noexcept;
+	virtual Vector3D GetEnemyColliderCenter() const noexcept;
 	virtual Vector3D GetEnemySpawnerPosition() const noexcept;
 	virtual Vector3D GetEnemySpawnHalfExtents() const noexcept = 0;
 	virtual float GetEnemyMinDistanceFromPlayer() const noexcept;
@@ -38,6 +41,8 @@ protected:
 	virtual ColorRGBA GetLightColor() const noexcept;
 	virtual Vector3D GetCameraSpawnPosition() const noexcept;
 	virtual Vector3D GetCameraOffset() const noexcept;
+	virtual Vector3D GetFirstPersonOffset() const noexcept;
+	virtual ColorRGBA GetSkyColor() const noexcept;
 
 	void SpawnEnemy(const Vector3D& position_);
 
@@ -48,8 +53,11 @@ private:
 	void CreateTerrain();
 	void CreateCamera(Transform* playerTransform_);
 	void PlayPlayerIdleAnimation(GameObject* playerObject_);
+	void CheckStageClear();
 
 	[[nodiscard]] Vector3D GenerateSpawnPosition(const Vector3D& center_, const Vector3D* playerPosition_) noexcept;
 
 	std::mt19937 randomEngine{ std::random_device{}() };
+	bool stageClearTriggered{ false };
+	int initialEnemySpawnCount{ 0 };
 };

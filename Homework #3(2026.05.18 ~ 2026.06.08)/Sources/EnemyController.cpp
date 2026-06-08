@@ -217,7 +217,6 @@ void EnemyController::FaceDirection(Transform* transform_, const Vector3D& direc
 		return;
 	}
 
-	// 수평 방향만 고려하여 몸체가 위아래로 기울어지는 현상을 방지합니다.
 	Vector3D horizontalDir{ direction_.x, 0.0f, direction_.z };
 	if (horizontalDir.IsZero())
 	{
@@ -227,7 +226,6 @@ void EnemyController::FaceDirection(Transform* transform_, const Vector3D& direc
 	const Quaternion targetRotation{ Quaternion::LookRotation(horizontalDir.GetNormalized(), Vector3D::GetUp()) };
 	const Quaternion visualOffset{ Quaternion::Euler(0.0f, visualYawOffsetDegrees, 0.0f) };
 	
-	// Apply visual offset (local) then look rotation (world)
 	const Quaternion finalTarget{ visualOffset * targetRotation };
 	
 	const float deltaTime{ TimeSystem::GetInstance().GetDeltaTime() };
@@ -293,10 +291,6 @@ void EnemyController::FireProjectile(Transform* transform_, const Vector3D& dire
 void EnemyController::SpawnExplosionParticles(const Vector3D& center_)
 {
 	GameObject* const owner{ GetOwner() };
-	if (owner == nullptr)
-	{
-		return;
-	}
 
 	Scene* const scene{ owner->GetScene() };
 	if (scene == nullptr)
@@ -311,12 +305,12 @@ void EnemyController::SpawnExplosionParticles(const Vector3D& center_)
 		return;
 	}
 
-	constexpr int particleCount{ 24 };
+	constexpr int particleCount{ 64 };
 	for (int index = 0; index < particleCount; ++index)
 	{
 		std::uniform_real_distribution<float> angleDist(0.0f, Mathf::Pi * 2.0f);
-		std::uniform_real_distribution<float> speedDist(15.0f, 25.0f);
-		std::uniform_real_distribution<float> verticalDist(8.0f, 18.0f);
+		std::uniform_real_distribution<float> speedDist(20.0f, 40.0f);
+		std::uniform_real_distribution<float> verticalDist(10.0f, 30.0f);
 
 		const float angle{ angleDist(randomEngine) };
 		const float speed{ speedDist(randomEngine) };
@@ -332,7 +326,7 @@ void EnemyController::SpawnExplosionParticles(const Vector3D& center_)
 
 		if (Transform* const particleTransform{ particle->GetComponent<Transform>() }; particleTransform != nullptr)
 		{
-			particleTransform->SetLocalScale(Vector3D(2.0f, 2.0f, 2.0f));
+			particleTransform->SetLocalScale(Vector3D(4.0f, 4.0f, 4.0f));
 		}
 
 		MeshRenderer* const meshRenderer{ particle->AddComponent<MeshRenderer>() };
@@ -341,7 +335,7 @@ void EnemyController::SpawnExplosionParticles(const Vector3D& center_)
 
 		ExplodeParticle* const explodeParticle{ particle->AddComponent<ExplodeParticle>() };
 		explodeParticle->SetVelocity(velocity);
-		explodeParticle->SetLifeTime(0.75f);
-		explodeParticle->SetGravity(-22.0f);
+		explodeParticle->SetLifeTime(1.0f);
+		explodeParticle->SetGravity(-25.0f);
 	}
 }

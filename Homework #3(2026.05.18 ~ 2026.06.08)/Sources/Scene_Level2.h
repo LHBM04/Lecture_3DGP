@@ -14,7 +14,9 @@ protected:
 	[[nodiscard]] std::wstring_view GetTerrainObjectName() const noexcept override;
 	[[nodiscard]] Vector3D GetPlayerSpawnPosition() const noexcept override;
 	[[nodiscard]] Vector3D GetPlayerColliderSize() const noexcept override;
+	[[nodiscard]] Vector3D GetPlayerColliderCenter() const noexcept override;
 	[[nodiscard]] Vector3D GetEnemySpawnHalfExtents() const noexcept override;
 	[[nodiscard]] int GetEnemySpawnCount() const noexcept override;
 	[[nodiscard]] Vector3D GetLightDirection() const noexcept override;
+	[[nodiscard]] ColorRGBA GetSkyColor() const noexcept override;
 };

@@ -5,7 +5,6 @@
 
 GameObject* Component::GetOwner() const noexcept
 {
-	assert(owner != nullptr && "Component must have an owner!");
 	return owner;
 }
 
@@ -52,22 +51,37 @@ void Component::SetEnabled(bool isEnabled_)
 
 void Component::Awake()
 {
+	if (owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnAwake();
 }
 
 void Component::Enable()
 {
+	if (owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnEnable();
 }
 
 void Component::Start()
 {
+	if (owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnStart();
 }
 
 void Component::Update()
 {
-	if (!isEnabled)
+	if (!isEnabled || owner == nullptr || isDestroyed)
 	{
 		return;
 	}
@@ -83,7 +97,7 @@ void Component::Update()
 
 void Component::FixedUpdate()
 {
-	if (!isEnabled)
+	if (!isEnabled || owner == nullptr || isDestroyed)
 	{
 		return;
 	}
@@ -93,7 +107,7 @@ void Component::FixedUpdate()
 
 void Component::LateUpdate()
 {
-	if (!isEnabled)
+	if (!isEnabled || owner == nullptr || isDestroyed)
 	{
 		return;
 	}
@@ -103,7 +117,7 @@ void Component::LateUpdate()
 
 void Component::Render()
 {
-	if (!isEnabled)
+	if (!isEnabled || owner == nullptr || isDestroyed)
 	{
 		return;
 	}
@@ -115,6 +129,11 @@ void Component::Render()
 
 void Component::Disable()
 {
+	if (owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnDisable();
 }
 
@@ -125,13 +144,12 @@ void Component::Destroy()
 		return;
 	}
 
-	isDestroyed = true;
-
 	if (isEnabled)
 	{
-		Disable();
+		OnDisable();
 	}
 
+	isDestroyed = true;
 	OnDestroy();
 	owner = nullptr;
 	isEnabled = false;
@@ -139,15 +157,30 @@ void Component::Destroy()
 
 void Component::CollisionEnter(Collider* other_)
 {
+	if (!isEnabled || owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnCollisionEnter(other_);
 }
 
 void Component::CollisionStay(Collider* other_)
 {
+	if (!isEnabled || owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnCollisionStay(other_);
 }
 
 void Component::CollisionExit(Collider* other_)
 {
+	if (!isEnabled || owner == nullptr || isDestroyed)
+	{
+		return;
+	}
+
 	OnCollisionExit(other_);
 }

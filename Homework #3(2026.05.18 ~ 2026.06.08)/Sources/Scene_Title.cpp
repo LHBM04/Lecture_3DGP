@@ -35,7 +35,6 @@ void Scene_Title::OnLoad()
 
 	GameObject* const lightObject{ Instantiate() };
 	lightObject->SetName(L"Title Light");
-
 	lightObject->AddComponent<Light>();
 	Transform* const lightTransform{ lightObject->GetComponent<Transform>() };
 	lightTransform->SetLocalRotation(Quaternion::Euler(35.0f, 180.0f, 0.0f));
@@ -46,136 +45,119 @@ void Scene_Title::OnLoad()
 
 	Material* const uiMaterial{ resourceSystem.GetResource<Material>(L"Resources/Materials/UI.bin") };
 	
-	GameObject* const titleLogoObject{ Instantiate(Vector3D(4.5f, 3.5f, 0.0f)) };
-	titleLogoObject->SetName(L"Title Logo");
+	constexpr float uiZ{ 10.0f };
+	constexpr float logoScale{ 0.6f };
+	constexpr float messageScale{ 0.4f };
+	constexpr float tutorialScale{ 0.48f };
+	constexpr float levelScale{ 0.44f };
+	constexpr float actionScale{ 0.5f };
 
+	GameObject* const titleLogoObject{ Instantiate(Vector3D(10.01f * logoScale, 4.8f, uiZ)) };
+	titleLogoObject->SetName(L"Title Logo");
 	MeshRenderer* const logoRenderer{ titleLogoObject->AddComponent<MeshRenderer>() };
 	logoRenderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/3D_GAME_PROGRAMMING_1.bin"));
 	logoRenderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const logoCollider{ titleLogoObject->AddComponent<CubeCollider>() };
-	logoCollider->SetSize(Vector3D(24.0f, 8.0f, 2.0f));
-
+	logoCollider->SetCenter(Vector3D(-10.01f, -0.5f, 0.0f));
+	logoCollider->SetSize(Vector3D(22.0f, 3.0f, 2.0f));
 	titleLogoObject->AddComponent<Animator>();
-
 	Transform* const logoTransform{ titleLogoObject->GetComponent<Transform>() };
 	logoTransform->SetLocalRotation(Quaternion::GetIdentity());
-	logoTransform->SetLocalScale(Vector3D(0.12f, 0.12f, 0.12f));
+	logoTransform->SetLocalScale(Vector3D(logoScale, logoScale, logoScale));
 
-	GameObject* const messageObject{ Instantiate(Vector3D(2.42f, 2.0f, 0.0f)) };
+	GameObject* const messageObject{ Instantiate(Vector3D(2.42f * messageScale, 3.35f, uiZ)) };
 	messageObject->SetName(L"Title Message");
-
 	MeshRenderer* const messageRenderer{ messageObject->AddComponent<MeshRenderer>() };
 	messageRenderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/Title_Message.bin"));
 	messageRenderer->SetMaterial(uiMaterial);
-
 	messageObject->AddComponent<Animator>();
-
 	Transform* const messageTransform{ messageObject->GetComponent<Transform>() };
 	messageTransform->SetLocalRotation(Quaternion::GetIdentity());
-	messageTransform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	messageTransform->SetLocalScale(Vector3D(messageScale, messageScale, messageScale));
 
-	constexpr float btnPivotX{ 1.86f };
-	constexpr float levelY{ -1.2f };
-	constexpr float levelSpacing{ 3.5f };
-	constexpr float bottomY{ -3.0f };
-	constexpr float sideX{ 4.5f };
+	constexpr float tutorialY{ 1.1f };
+	constexpr float levelY{ -1.25f };
+	constexpr float actionY{ -4.2f };
+	constexpr float levelSpacing{ 4.7f };
+	constexpr float actionSpacing{ 3.0f };
 
-	GameObject* const tutorialButtonObject{ Instantiate(Vector3D(btnPivotX, 0.5f, 0.0f)) };
+	GameObject* const tutorialButtonObject{ Instantiate(Vector3D(3.67f * tutorialScale, tutorialY, uiZ)) };
 	tutorialButtonObject->SetName(L"Tutorial Button");
-
 	MeshRenderer* const tutorialRenderer{ tutorialButtonObject->AddComponent<MeshRenderer>() };
 	tutorialRenderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/TUTORIAL.bin"));
 	tutorialRenderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const tutorialCollider{ tutorialButtonObject->AddComponent<CubeCollider>() };
-	tutorialCollider->SetSize(Vector3D(15.0f, 4.0f, 2.0f));
-
+	tutorialCollider->SetCenter(Vector3D(-3.67f, -0.5f, 0.0f));
+	tutorialCollider->SetSize(Vector3D(8.6f, 2.0f, 2.0f));
 	tutorialButtonObject->AddComponent<Animator>();
-
 	Transform* const tutorialTransform{ tutorialButtonObject->GetComponent<Transform>() };
 	tutorialTransform->SetLocalRotation(Quaternion::GetIdentity());
-	tutorialTransform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	tutorialTransform->SetLocalScale(Vector3D(tutorialScale, tutorialScale, tutorialScale));
 
-	GameObject* const level1ButtonObject{ Instantiate(Vector3D(-levelSpacing + btnPivotX, levelY, 0.0f)) };
+	GameObject* const level1ButtonObject{ Instantiate(Vector3D(-levelSpacing + 2.84f * levelScale, levelY, uiZ)) };
 	level1ButtonObject->SetName(L"Level1 Button");
-
 	MeshRenderer* const level1Renderer{ level1ButtonObject->AddComponent<MeshRenderer>() };
 	level1Renderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/LEVEL_1.bin"));
 	level1Renderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const level1Collider{ level1ButtonObject->AddComponent<CubeCollider>() };
-	level1Collider->SetSize(Vector3D(8.0f, 3.0f, 2.0f));
-
+	level1Collider->SetCenter(Vector3D(-2.84f, -0.5f, 0.0f));
+	level1Collider->SetSize(Vector3D(6.8f, 2.0f, 2.0f));
 	level1ButtonObject->AddComponent<Animator>();
-
 	Transform* const level1Transform{ level1ButtonObject->GetComponent<Transform>() };
 	level1Transform->SetLocalRotation(Quaternion::GetIdentity());
-	level1Transform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	level1Transform->SetLocalScale(Vector3D(levelScale, levelScale, levelScale));
 
-	GameObject* const level2ButtonObject{ Instantiate(Vector3D(btnPivotX, levelY, 0.0f)) };
+	GameObject* const level2ButtonObject{ Instantiate(Vector3D(2.83f * levelScale, levelY, uiZ)) };
 	level2ButtonObject->SetName(L"Level2 Button");
-
 	MeshRenderer* const level2Renderer{ level2ButtonObject->AddComponent<MeshRenderer>() };
 	level2Renderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/LEVEL_2.bin"));
 	level2Renderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const level2Collider{ level2ButtonObject->AddComponent<CubeCollider>() };
-	level2Collider->SetSize(Vector3D(8.0f, 3.0f, 2.0f));
-
+	level2Collider->SetCenter(Vector3D(-2.83f, -0.5f, 0.0f));
+	level2Collider->SetSize(Vector3D(6.8f, 2.0f, 2.0f));
 	level2ButtonObject->AddComponent<Animator>();
-
 	Transform* const level2Transform{ level2ButtonObject->GetComponent<Transform>() };
 	level2Transform->SetLocalRotation(Quaternion::GetIdentity());
-	level2Transform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	level2Transform->SetLocalScale(Vector3D(levelScale, levelScale, levelScale));
 
-	GameObject* const level3ButtonObject{ Instantiate(Vector3D(levelSpacing + btnPivotX, levelY, 0.0f)) };
+	GameObject* const level3ButtonObject{ Instantiate(Vector3D(levelSpacing + 2.83f * levelScale, levelY, uiZ)) };
 	level3ButtonObject->SetName(L"Level3 Button");
-
 	MeshRenderer* const level3Renderer{ level3ButtonObject->AddComponent<MeshRenderer>() };
 	level3Renderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/LEVEL_3.bin"));
 	level3Renderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const level3Collider{ level3ButtonObject->AddComponent<CubeCollider>() };
-	level3Collider->SetSize(Vector3D(8.0f, 3.0f, 2.0f));
-
+	level3Collider->SetCenter(Vector3D(-2.83f, -0.5f, 0.0f));
+	level3Collider->SetSize(Vector3D(6.8f, 2.0f, 2.0f));
 	level3ButtonObject->AddComponent<Animator>();
-
 	Transform* const level3Transform{ level3ButtonObject->GetComponent<Transform>() };
 	level3Transform->SetLocalRotation(Quaternion::GetIdentity());
-	level3Transform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	level3Transform->SetLocalScale(Vector3D(levelScale, levelScale, levelScale));
 
-	GameObject* const startButtonObject{ Instantiate(Vector3D(-sideX + btnPivotX, bottomY, 0.0f)) };
+	GameObject* const startButtonObject{ Instantiate(Vector3D(-actionSpacing + 2.27f * actionScale, actionY, uiZ)) };
 	startButtonObject->SetName(L"Start Button");
-
 	MeshRenderer* const startRenderer{ startButtonObject->AddComponent<MeshRenderer>() };
 	startRenderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/START.bin"));
 	startRenderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const startCollider{ startButtonObject->AddComponent<CubeCollider>() };
-	startCollider->SetSize(Vector3D(8.0f, 3.0f, 2.0f));
-
+	startCollider->SetCenter(Vector3D(-2.27f, -0.5f, 0.0f));
+	startCollider->SetSize(Vector3D(5.8f, 2.0f, 2.0f));
 	startButtonObject->AddComponent<Animator>();
-
 	Transform* const startTransform{ startButtonObject->GetComponent<Transform>() };
 	startTransform->SetLocalRotation(Quaternion::GetIdentity());
-	startTransform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	startTransform->SetLocalScale(Vector3D(actionScale, actionScale, actionScale));
 
-	GameObject* const endButtonObject{ Instantiate(Vector3D(sideX + btnPivotX, bottomY, 0.0f)) };
+	GameObject* const endButtonObject{ Instantiate(Vector3D(actionSpacing + 1.46f * actionScale, actionY, uiZ)) };
 	endButtonObject->SetName(L"End Button");
-
 	MeshRenderer* const endRenderer{ endButtonObject->AddComponent<MeshRenderer>() };
 	endRenderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/END.bin"));
 	endRenderer->SetMaterial(uiMaterial);
-
 	CubeCollider* const endCollider{ endButtonObject->AddComponent<CubeCollider>() };
-	endCollider->SetSize(Vector3D(8.0f, 3.0f, 2.0f));
-
+	endCollider->SetCenter(Vector3D(-1.46f, -0.5f, 0.0f));
+	endCollider->SetSize(Vector3D(4.2f, 2.0f, 2.0f));
 	endButtonObject->AddComponent<Animator>();
-
 	Transform* const endTransform{ endButtonObject->GetComponent<Transform>() };
 	endTransform->SetLocalRotation(Quaternion::GetIdentity());
-	endTransform->SetLocalScale(Vector3D(0.08f, 0.08f, 0.08f));
+	endTransform->SetLocalScale(Vector3D(actionScale, actionScale, actionScale));
 
 	controller->SetTitleLogoObject(titleLogoObject);
 	controller->SetTutorialButtonObject(tutorialButtonObject);

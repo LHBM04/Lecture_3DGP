@@ -1,6 +1,7 @@
 ﻿#include "Precompiled.h"
 #include "SceneSystem.h"
 
+#include "PhysicsSystem.h"
 #include "RenderSystem.h"
 
 void SceneSystem::Release()
@@ -13,6 +14,7 @@ void SceneSystem::Release()
 
 	nextScene = nullptr;
 	scenes.clear();
+	quitRequested = false;
 }
 
 void SceneSystem::Update()
@@ -27,6 +29,7 @@ void SceneSystem::Update()
 		currentScene = nextScene;
 		nextScene = nullptr;
 
+		PhysicsSystem::GetInstance().Clear();
 		currentScene->Load();
 	}
 
@@ -110,4 +113,14 @@ void SceneSystem::UnloadScene(std::wstring_view sceneName_)
 			nextScene = nullptr;
 		}
 	}
+}
+
+void SceneSystem::RequestQuit() noexcept
+{
+	quitRequested = true;
+}
+
+bool SceneSystem::IsQuitRequested() const noexcept
+{
+	return quitRequested;
 }

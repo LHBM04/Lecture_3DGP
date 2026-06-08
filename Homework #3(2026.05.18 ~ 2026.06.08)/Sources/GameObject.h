@@ -44,6 +44,7 @@ public:
 	void SetActive(bool isActive_);
 
 	[[nodiscard]] bool IsDestroyed() const noexcept;
+	[[nodiscard]] bool IsDestroyPending() const noexcept;
 
 	[[nodiscard]] Scene* GetScene() const noexcept;
 
@@ -77,6 +78,7 @@ private:
 
 	bool isActive{ true };
 	bool isDestroyed{ false };
+	bool isDestroyPending{ false };
 
 	Scene* scene{ nullptr };
 	

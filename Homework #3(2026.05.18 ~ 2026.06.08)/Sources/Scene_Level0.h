@@ -1,12 +1,12 @@
-﻿#pragma once
+#pragma once
 
 #include "Scene_Stage.h"
 
-class Scene_Level1 final : public Scene_Stage
+class Scene_Level0 final : public Scene_Stage
 {
 public:
-	Scene_Level1() noexcept = default;
-	~Scene_Level1() noexcept override = default;
+	Scene_Level0() noexcept = default;
+	~Scene_Level0() noexcept override = default;
 
 protected:
 	[[nodiscard]] std::wstring_view GetTerrainPath() const noexcept override;
@@ -18,5 +18,4 @@ protected:
 	[[nodiscard]] Vector3D GetEnemySpawnHalfExtents() const noexcept override;
 	[[nodiscard]] int GetEnemySpawnCount() const noexcept override;
 	[[nodiscard]] Vector3D GetLightDirection() const noexcept override;
-	[[nodiscard]] ColorRGBA GetSkyColor() const noexcept override;
 };

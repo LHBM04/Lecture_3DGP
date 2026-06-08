@@ -27,10 +27,13 @@ public:
 
 	void LoadScene(std::wstring_view sceneName_);
 	void UnloadScene(std::wstring_view sceneName_);
+	void RequestQuit() noexcept;
+	[[nodiscard]] bool IsQuitRequested() const noexcept;
 
 private:
 	std::unordered_map<std::wstring, std::unique_ptr<Scene>> scenes;
 
 	Scene* nextScene{ nullptr };
 	Scene* currentScene{ nullptr };
+	bool quitRequested{ false };
 };

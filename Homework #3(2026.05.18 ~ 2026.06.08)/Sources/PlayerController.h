@@ -4,6 +4,7 @@
 #include "Vector3D.h"
 
 class CubeCollider;
+class Terrain;
 class Transform;
 
 class PlayerController final : public Component
@@ -19,15 +20,21 @@ protected:
 
 private:
 	[[nodiscard]] bool IsColliding(bool ignoreFloor_);
+	void CacheTerrain();
+	[[nodiscard]] bool IsCollidingWithTerrain() const;
+	void TriggerGameOver(std::wstring_view causeName_, std::wstring_view causeTag_);
 
 	Transform* headTransform{ nullptr };
-	float moveSpeed{ 10.0f };
-	float altitudeSpeed{ 10.0f };
+	Terrain* terrain{ nullptr };
+	Transform* terrainTransform{ nullptr };
+	float moveSpeed{ 40.0f };
+	float altitudeSpeed{ 30.0f };
 	float rotationSpeed{ 180.0f };
 
 	float fireTimer{ 0.0f };
 	float fireCooldown{ 0.2f };
-	float projectileSpeed{ 80.0f };
-	float projectileLifetime{ 2.0f };
+	float projectileSpeed{ 150.0f };
+	float projectileLifetime{ 4.0f };
+	float terrainCrashMargin{ 0.25f };
 	bool gameOverTriggered{ false };
 };

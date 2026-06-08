@@ -38,7 +38,7 @@ private:
 	float attackTimer{ 0.0f };
 
 	float moveSpeed{ 8.0f };
-	float detectionRange{ 120.0f };
+	float detectionRange{ 180.0f };
 	float chaseStopDistance{ 35.0f };
 	float attackRange{ 60.0f };
 	float attackCooldown{ 1.0f };

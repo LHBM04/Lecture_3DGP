@@ -162,7 +162,10 @@ void Animator::ApplyAnimation(float time_)
 			targetTransform->SetLocalScale(InterpolateScale(track.keyframes, time_));
 		}
 
-		targetTransform->SetLocalRotation(InterpolateRotation(track.keyframes, time_));
+		if (HasRotationChanged(track.keyframes))
+		{
+			targetTransform->SetLocalRotation(InterpolateRotation(track.keyframes, time_));
+		}
 	}
 }
 

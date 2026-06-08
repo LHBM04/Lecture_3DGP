@@ -51,7 +51,12 @@ void GameObject::SetActive(bool isActive_)
 
 bool GameObject::IsDestroyed() const noexcept
 {
-	return isDestroyed;
+	return isDestroyed || isDestroyPending;
+}
+
+bool GameObject::IsDestroyPending() const noexcept
+{
+	return isDestroyPending;
 }
 
 void GameObject::Destroy()
@@ -60,6 +65,8 @@ void GameObject::Destroy()
 	{
 		return;
 	}
+
+	isDestroyPending = false;
 	isDestroyed = true;
 
 	for (const std::unique_ptr<Component>& component : components)

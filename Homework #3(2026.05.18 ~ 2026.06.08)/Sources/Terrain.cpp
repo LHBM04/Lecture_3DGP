@@ -129,6 +129,53 @@ float Terrain::GetHeightAt(uint32_t x_, uint32_t z_) const noexcept
 	return SampleHeight(x_, z_);
 }
 
+bool Terrain::ContainsLocalPosition(float localX_, float localZ_) const noexcept
+{
+	if (width < 2 || height < 2)
+	{
+		return false;
+	}
+
+	const float halfWidth{ (static_cast<float>(width) - 1.0f) * cellSize * 0.5f };
+	const float halfHeight{ (static_cast<float>(height) - 1.0f) * cellSize * 0.5f };
+
+	return localX_ >= -halfWidth && localX_ <= halfWidth
+		&& localZ_ >= -halfHeight && localZ_ <= halfHeight;
+}
+
+float Terrain::SampleHeightAtLocalPosition(float localX_, float localZ_) const noexcept
+{
+	if (width < 2 || height < 2 || samples.empty())
+	{
+		return 0.0f;
+	}
+
+	const float halfWidth{ (static_cast<float>(width) - 1.0f) * cellSize * 0.5f };
+	const float halfHeight{ (static_cast<float>(height) - 1.0f) * cellSize * 0.5f };
+
+	const float gridXUnclamped{ (localX_ + halfWidth) / cellSize };
+	const float gridZUnclamped{ (localZ_ + halfHeight) / cellSize };
+	const float gridX{ std::clamp(gridXUnclamped, 0.0f, static_cast<float>(width - 1)) };
+	const float gridZ{ std::clamp(gridZUnclamped, 0.0f, static_cast<float>(height - 1)) };
+
+	const uint32_t x0{ static_cast<uint32_t>(std::floor(gridX)) };
+	const uint32_t z0{ static_cast<uint32_t>(std::floor(gridZ)) };
+	const uint32_t x1{ std::min(x0 + 1, width - 1) };
+	const uint32_t z1{ std::min(z0 + 1, height - 1) };
+
+	const float tx{ gridX - static_cast<float>(x0) };
+	const float tz{ gridZ - static_cast<float>(z0) };
+
+	const float h00{ SampleHeight(x0, z0) };
+	const float h10{ SampleHeight(x1, z0) };
+	const float h01{ SampleHeight(x0, z1) };
+	const float h11{ SampleHeight(x1, z1) };
+
+	const float h0{ h00 + (h10 - h00) * tx };
+	const float h1{ h01 + (h11 - h01) * tx };
+	return h0 + (h1 - h0) * tz;
+}
+
 bool Terrain::BuildMesh()
 {
 	if (width < 2 || height < 2 || samples.empty())
