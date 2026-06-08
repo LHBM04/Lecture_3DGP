@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <memory>
 #include <string>
@@ -67,6 +68,9 @@ public:
 	void RemoveComponent();
 
 private:
+	void FlushPendingComponents();
+	[[nodiscard]] bool IsComponentPendingRemoval(const Component* component_) const noexcept;
+
 	GameObject(const GameObject&) = delete;
 	GameObject& operator=(const GameObject&) = delete;
 
@@ -83,6 +87,8 @@ private:
 	Scene* scene{ nullptr };
 	
 	std::vector<std::unique_ptr<Component>> components;
+	std::vector<std::unique_ptr<Component>> addComponents;
+	std::vector<Component*> removeComponents;
 };
 
 template <class TComponent>
@@ -92,13 +98,7 @@ inline TComponent* GameObject::AddComponent()
 	component->owner = this;
 	
 	TComponent* componentPtr{ component.get() };
-	components.emplace_back(std::move(component));
-	
-	componentPtr->Awake();
-	if (isActive)
-	{
-		componentPtr->Enable();
-	}
+	addComponents.emplace_back(std::move(component));
 
 	return componentPtr;
 }
@@ -107,6 +107,19 @@ template <class TComponent>
 inline TComponent* GameObject::GetComponent()
 {
 	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
 	{
 		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
 		{
@@ -123,6 +136,19 @@ inline const TComponent* GameObject::GetComponent() const
 {
 	for (const std::unique_ptr<Component>& component : components)
 	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
+	{
 		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
 		{
 			return casted;
@@ -137,6 +163,23 @@ template <class TComponent>
 inline bool GameObject::TryGetComponent(TComponent** component_)
 {
 	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
 	{
 		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
 		{
@@ -160,6 +203,23 @@ inline bool GameObject::TryGetComponent(const TComponent** component_) const
 {
 	for (const std::unique_ptr<Component>& component : components)
 	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
+	{
 		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
 		{
 			if (component_ != nullptr)
@@ -180,8 +240,27 @@ inline bool GameObject::TryGetComponent(const TComponent** component_) const
 template <class TComponent>
 inline void GameObject::RemoveComponent()
 {
-	std::erase_if(components, [](const std::unique_ptr<Component>& component)
+	std::erase_if(addComponents, [](const std::unique_ptr<Component>& component)
 	{
-		return dynamic_cast<TComponent*>(component.get()) != nullptr;
+		if (dynamic_cast<TComponent*>(component.get()) == nullptr)
+		{
+			return false;
+		}
+
+		component->Destroy();
+		return true;
 	});
+
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (dynamic_cast<TComponent*>(component.get()) == nullptr)
+		{
+			continue;
+		}
+
+		if (std::ranges::find(removeComponents, component.get()) == removeComponents.end())
+		{
+			removeComponents.emplace_back(component.get());
+		}
+	}
 }

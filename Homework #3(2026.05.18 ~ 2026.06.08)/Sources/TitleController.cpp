@@ -19,6 +19,7 @@
 #include "ResourceSystem.h"
 #include "Scene.h"
 #include "SceneSystem.h"
+#include "TimeSystem.h"
 #include "Transform.h"
 #include "Vector3D.h"
 
@@ -64,6 +65,8 @@ void TitleController::OnStart()
 
 void TitleController::OnUpdate()
 {
+	UpdateTitleLogoRotation();
+
 	if (!InputSystem::GetInstance().IsButtonPressed(ButtonCode::Left))
 	{
 		return;
@@ -137,20 +140,38 @@ void TitleController::OnUpdate()
 	{
 		if (selectedSceneName.empty())
 		{
-			Logger::Info(L"스테이지를 먼저 선택해 주세요.");
+			Logger::Info(L"Select a stage first.");
 			return;
 		}
 
-		Logger::Info(L"{} 씬을 로드합니다.", selectedSceneName);
+		Logger::Info(L"Loading scene: {}", selectedSceneName);
 		SceneSystem::GetInstance().LoadScene(selectedSceneName);
 		return;
 	}
 
 	if (clickedObject == endButtonObject)
 	{
-		Logger::Info(L"게임을 종료합니다.");
+		Logger::Info(L"Exiting game.");
 		SceneSystem::GetInstance().RequestQuit();
 	}
+}
+
+void TitleController::UpdateTitleLogoRotation()
+{
+	if (titleLogoObject == nullptr || titleLogoObject->IsDestroyed())
+	{
+		return;
+	}
+
+	Transform* const logoTransform{ titleLogoObject->GetComponent<Transform>() };
+	if (logoTransform == nullptr)
+	{
+		return;
+	}
+
+	constexpr float rotationSpeed{ 35.0f };
+	const Quaternion rotationDelta{ Quaternion::Euler(0.0f, rotationSpeed * TimeSystem::GetInstance().GetDeltaTime(), 0.0f) };
+	logoTransform->SetLocalRotation(logoTransform->GetLocalRotation() * rotationDelta);
 }
 
 void TitleController::RevealMenuButtons()
@@ -194,7 +215,7 @@ void TitleController::ExplodeTitleLogo()
 	Material* const particleMaterial{ resourceSystem.GetResource<Material>(L"Resources/Materials/ExplodeParticle.bin") };
 	if (particleMesh == nullptr || particleMaterial == nullptr)
 	{
-		Logger::Warning(L"타이틀 로고 폭발 파티클 리소스를 찾지 못했습니다.");
+		Logger::Warning(L"Title logo explosion particle resource not found.");
 		scene->Destroy(titleLogoObject);
 		titleLogoObject = nullptr;
 		return;
@@ -265,6 +286,14 @@ void TitleController::SelectLevel(std::wstring_view sceneName_, GameObject* butt
 			return;
 		}
 
+		if (!isSelected_)
+		{
+			if (Transform* const transform{ object_->GetComponent<Transform>() }; transform != nullptr)
+			{
+				transform->SetLocalRotation(Quaternion::GetIdentity());
+			}
+		}
+
 		Animator* const animator{ object_->GetComponent<Animator>() };
 		if (animator == nullptr)
 		{
@@ -280,6 +309,6 @@ void TitleController::SelectLevel(std::wstring_view sceneName_, GameObject* butt
 	applyAnimation(level3ButtonObject, sceneName_ == L"Level3");
 
 	selectedSceneName = sceneName_;
-	Logger::Info(L"선택된 스테이지: {}", selectedSceneName);
+	Logger::Info(L"Selected stage: {}", selectedSceneName);
 	(void)buttonObject_;
 }

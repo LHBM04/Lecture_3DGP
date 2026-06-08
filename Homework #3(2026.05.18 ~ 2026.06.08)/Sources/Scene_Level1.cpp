@@ -48,5 +48,5 @@ Vector3D Scene_Level1::GetLightDirection() const noexcept
 
 ColorRGBA Scene_Level1::GetSkyColor() const noexcept
 {
-	return ColorRGBA(0.53f, 0.81f, 0.92f, 1.0f); // Bright Sky Blue
+	return ColorRGBA(0.45f, 0.78f, 1.0f, 1.0f);
 }

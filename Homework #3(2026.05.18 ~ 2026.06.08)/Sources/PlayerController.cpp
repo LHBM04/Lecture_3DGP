@@ -371,7 +371,7 @@ void PlayerController::OnCollisionEnter(Collider* other_)
 	const std::wstring& otherName{ other_->GetOwner()->GetName() };
 
 	// 디버깅을 위한 로그 추가
-	Logger::Info(L"충돌 발생! 대상 이름: {}, 태그: {}", otherName, otherTag);
+	Logger::Info(L"Collision detected. targetName={}, tag={}", otherName, otherTag);
 
 	if (otherTag == L"Enemy" || otherTag == L"EnemyProjectile")
 	{

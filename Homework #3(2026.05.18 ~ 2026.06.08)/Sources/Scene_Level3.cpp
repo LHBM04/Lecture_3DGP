@@ -53,5 +53,5 @@ ColorRGBA Scene_Level3::GetLightColor() const noexcept
 
 ColorRGBA Scene_Level3::GetSkyColor() const noexcept
 {
-	return ColorRGBA(0.05f, 0.05f, 0.15f, 1.0f); // Dark Night Sky
+	return ColorRGBA(0.02f, 0.03f, 0.08f, 1.0f);
 }

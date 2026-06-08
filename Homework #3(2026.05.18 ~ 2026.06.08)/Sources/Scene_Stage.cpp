@@ -10,6 +10,7 @@
 #include "CubeCollider.h"
 #include "EnemyController.h"
 #include "GameObject.h"
+#include "InputSystem.h"
 #include "Light.h"
 #include "Logger.h"
 #include "Material.h"
@@ -53,6 +54,14 @@ void Scene_Stage::OnUnload()
 {
 	stageClearTriggered = false;
 	initialEnemySpawnCount = 0;
+}
+
+void Scene_Stage::OnUpdate()
+{
+	if (InputSystem::GetInstance().IsKeyPressed(KeyCode::LeftControl))
+	{
+		DestroyOneEnemyForDebug();
+	}
 }
 
 void Scene_Stage::OnFixedUpdate()
@@ -117,7 +126,7 @@ Vector3D Scene_Stage::GetCameraOffset() const noexcept
 
 Vector3D Scene_Stage::GetFirstPersonOffset() const noexcept
 {
-	return Vector3D(0.0f, 1.0f, 2.0f);
+	return Vector3D(0.0f, 4.5f, 12.0f);
 }
 
 ColorRGBA Scene_Stage::GetSkyColor() const noexcept
@@ -298,6 +307,18 @@ void Scene_Stage::CheckStageClear()
 	stageClearTriggered = true;
 	MessageBoxW(nullptr, L"Game Clear!", L"Clear", MB_OK | MB_ICONINFORMATION);
 	SceneSystem::GetInstance().LoadScene(L"Title");
+}
+
+void Scene_Stage::DestroyOneEnemyForDebug()
+{
+	const std::vector<GameObject*> enemies{ FindObjectsWithTag(L"Enemy") };
+	if (enemies.empty())
+	{
+		return;
+	}
+
+	Destroy(enemies.front());
+	Logger::Info(L"[Scene_Stage] Debug destroyed one enemy. remaining={}", enemies.size() - 1);
 }
 
 void Scene_Stage::CreateLight()

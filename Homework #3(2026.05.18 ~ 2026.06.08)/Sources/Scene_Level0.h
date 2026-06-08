@@ -9,6 +9,8 @@ public:
 	~Scene_Level0() noexcept override = default;
 
 protected:
+	void OnUpdate() override;
+
 	[[nodiscard]] std::wstring_view GetTerrainPath() const noexcept override;
 	[[nodiscard]] std::wstring_view GetTerrainMaterialPath() const noexcept override;
 	[[nodiscard]] std::wstring_view GetTerrainObjectName() const noexcept override;
@@ -18,4 +20,5 @@ protected:
 	[[nodiscard]] Vector3D GetEnemySpawnHalfExtents() const noexcept override;
 	[[nodiscard]] int GetEnemySpawnCount() const noexcept override;
 	[[nodiscard]] Vector3D GetLightDirection() const noexcept override;
+	[[nodiscard]] ColorRGBA GetSkyColor() const noexcept override;
 };

@@ -15,7 +15,7 @@
 
 void ResourceSystem::Initialize()
 {
-	Logger::Trace(L"초기화를 시작합니다. 현재 경로={}", std::filesystem::current_path().wstring());
+	Logger::Trace(L"Initialization started. cwd={}", std::filesystem::current_path().wstring());
 
 	std::size_t materialCount{ 0 };
 	std::size_t meshCount{ 0 };
@@ -134,17 +134,17 @@ void ResourceSystem::Initialize()
 	}
 	else
 	{
-		Logger::Critical(L"Resources 폴더를 찾을 수 없습니다.");
+		Logger::Critical(L"Resources folder not found.");
 	}
 
 	Logger::Info(
-		L"초기화 완료. 머터리얼={}, 메쉬={}, 모델={}, 지형={}, 애니메이션={}, 쉐이더={}, 총 리소스={}",
+		L"Initialization completed. materials={}, meshes={}, models={}, terrains={}, animations={}, shaders={}, totalResources={}",
 		materialCount, meshCount, modelCount, terrainCount, animationCount, shaderCount, resources.size());
 }
 
 void ResourceSystem::Release()
 {
-	Logger::Trace(L"리소스를 해제합니다. 개수={}", resources.size());
+	Logger::Trace(L"Releasing resources. count={}", resources.size());
 	for (std::pair<const std::wstring, std::unique_ptr<Resource>>& pair : resources)
 	{
 		if (pair.second != nullptr)
@@ -153,7 +153,7 @@ void ResourceSystem::Release()
 		}
 	}
 	resources.clear();
-	Logger::Trace(L"리소스 해제가 완료되었습니다.");
+	Logger::Trace(L"Resource release completed.");
 }
 
 void ResourceSystem::UnloadResource(const std::filesystem::path& path_)

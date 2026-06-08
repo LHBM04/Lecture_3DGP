@@ -10,20 +10,20 @@ bool Material::Load()
 {
 	if (path.empty())
 	{
-		Logger::Critical(L"[Material] 로드 실패: 경로가 비어 있습니다.");
+		Logger::Critical(L"[Material] Load failed: path is empty.");
 		return false;
 	}
 
 	std::ifstream file{ path, std::ios::binary };
 	if (!file.is_open())
 	{
-		Logger::Critical(L"[Material] 로드 실패: 파일을 열지 못했습니다. 경로={}", path);
+		Logger::Critical(L"[Material] Load failed: cannot open file. path={}", path);
 		return false;
 	}
 
 	if (!HasTag(file, "<Material>:"))
 	{
-		Logger::Critical(L"[Material] 로드 실패: <Material>: 태그가 없습니다. 경로={}", path);
+		Logger::Critical(L"[Material] Load failed: <Material>: tag not found. path={}", path);
 		return false;
 	}
 
@@ -43,7 +43,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, albedoColor))
 			{
-				Logger::Critical(L"[Material] 로드 실패: AlbedoColor를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read AlbedoColor. path={}", path);
 				return false;
 			}
 		}
@@ -51,7 +51,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, emissiveColor))
 			{
-				Logger::Critical(L"[Material] 로드 실패: EmissiveColor를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read EmissiveColor. path={}", path);
 				return false;
 			}
 		}
@@ -59,7 +59,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, specularColor))
 			{
-				Logger::Critical(L"[Material] 로드 실패: SpecularColor를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read SpecularColor. path={}", path);
 				return false;
 			}
 		}
@@ -67,7 +67,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, glossiness))
 			{
-				Logger::Critical(L"[Material] 로드 실패: Glossiness를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read Glossiness. path={}", path);
 				return false;
 			}
 			hasGlossiness = true;
@@ -76,7 +76,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, smoothness))
 			{
-				Logger::Critical(L"[Material] 로드 실패: Smoothness를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read Smoothness. path={}", path);
 				return false;
 			}
 			hasSmoothness = true;
@@ -85,7 +85,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, metallic))
 			{
-				Logger::Critical(L"[Material] 로드 실패: Metallic을 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read Metallic. path={}", path);
 				return false;
 			}
 		}
@@ -93,7 +93,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, specularHighlight))
 			{
-				Logger::Critical(L"[Material] 로드 실패: SpecularHighlight를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read SpecularHighlight. path={}", path);
 				return false;
 			}
 		}
@@ -101,7 +101,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, glossyReflection))
 			{
-				Logger::Critical(L"[Material] 로드 실패: GlossyReflection를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read GlossyReflection. path={}", path);
 				return false;
 			}
 		}
@@ -109,7 +109,7 @@ bool Material::Load()
 		{
 			if (!ReadValue(file, roughness))
 			{
-				Logger::Critical(L"[Material] 로드 실패: Roughness를 읽지 못했습니다. 경로={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read Roughness. path={}", path);
 				return false;
 			}
 			hasRoughness = true;
@@ -121,7 +121,7 @@ bool Material::Load()
 			const std::wstring shaderPath{ ReadRemainingString(file) };
 			if (shaderPath.empty())
 			{
-				Logger::Critical(L"[Material] 로드 실패: 셰이더 경로를 읽지 못했습니다. 머터리얼={}", path);
+				Logger::Critical(L"[Material] Load failed: cannot read shader path. material={}", path);
 				return false;
 			}
 
@@ -129,7 +129,7 @@ bool Material::Load()
 			if (shader == nullptr)
 			{
 				Logger::Critical(
-					L"[Material] 로드 실패: 셰이더를 찾지 못했습니다. 머터리얼={}, 셰이더={}",
+					L"[Material] Load failed: shader not found. material={}, shader={}",
 					path, shaderPath);
 				return false;
 			}
@@ -137,7 +137,7 @@ bool Material::Load()
 		else
 		{
 			Logger::Warning(
-				L"[Material] 알 수 없는 태그를 만났습니다. 머터리얼={}, 태그={}",
+				L"[Material] Unknown tag found. material={}, tag={}",
 				path, std::wstring(tag.begin(), tag.end()));
 			break;
 		}
@@ -145,7 +145,7 @@ bool Material::Load()
 
 	if (!hasShaderTag)
 	{
-		Logger::Critical(L"[Material] 로드 실패: <Shader>: 태그가 없습니다. 경로={}", path);
+		Logger::Critical(L"[Material] Load failed: <Shader>: tag not found. path={}", path);
 		return false;
 	}
 

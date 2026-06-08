@@ -1,6 +1,17 @@
 #include "Precompiled.h"
 #include "Scene_Level0.h"
 
+#include "InputSystem.h"
+#include "SceneSystem.h"
+
+void Scene_Level0::OnUpdate()
+{
+	if (InputSystem::GetInstance().IsKeyPressed(KeyCode::Escape))
+	{
+		SceneSystem::GetInstance().LoadScene(L"Title");
+	}
+}
+
 std::wstring_view Scene_Level0::GetTerrainPath() const noexcept
 {
 	return L"Resources/Terrains/HeightMap0.raw";
@@ -44,4 +55,9 @@ int Scene_Level0::GetEnemySpawnCount() const noexcept
 Vector3D Scene_Level0::GetLightDirection() const noexcept
 {
 	return Vector3D(-0.78f, -0.22f, 0.58f);
+}
+
+ColorRGBA Scene_Level0::GetSkyColor() const noexcept
+{
+	return ColorRGBA(0.45f, 0.78f, 1.0f, 1.0f);
 }

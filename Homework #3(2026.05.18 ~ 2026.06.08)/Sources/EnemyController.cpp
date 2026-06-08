@@ -223,10 +223,9 @@ void EnemyController::FaceDirection(Transform* transform_, const Vector3D& direc
 		return;
 	}
 
-	const Quaternion targetRotation{ Quaternion::LookRotation(horizontalDir.GetNormalized(), Vector3D::GetUp()) };
-	const Quaternion visualOffset{ Quaternion::Euler(0.0f, visualYawOffsetDegrees, 0.0f) };
-	
-	const Quaternion finalTarget{ visualOffset * targetRotation };
+	horizontalDir.Normalize();
+	const float yawDegrees{ std::atan2(horizontalDir.x, horizontalDir.z) * Mathf::Rad2Deg };
+	const Quaternion finalTarget{ Quaternion::Euler(0.0f, yawDegrees + visualYawOffsetDegrees, 0.0f) };
 	
 	const float deltaTime{ TimeSystem::GetInstance().GetDeltaTime() };
 	const Quaternion currentRotation{ transform_->GetWorldRotation() };

@@ -48,5 +48,5 @@ Vector3D Scene_Level2::GetLightDirection() const noexcept
 
 ColorRGBA Scene_Level2::GetSkyColor() const noexcept
 {
-	return ColorRGBA(0.85f, 0.78f, 0.65f, 1.0f); // Dusty Desert Yellow
+	return ColorRGBA(0.82f, 0.68f, 0.42f, 1.0f);
 }

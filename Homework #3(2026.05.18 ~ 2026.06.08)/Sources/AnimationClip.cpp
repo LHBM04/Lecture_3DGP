@@ -88,7 +88,7 @@ bool AnimationClip::Load()
 		tracks.emplace_back(std::move(track));
 	}
 
-	Logger::Trace(L"[Animation] 로드 완료. 경로={}, 이름={}, 트랙수={}, 시간={}", path, animationName, tracks.size(), duration);
+	Logger::Trace(L"[Animation] Loaded. path={}, name={}, tracks={}, duration={}", path, animationName, tracks.size(), duration);
 	return true;
 }
 

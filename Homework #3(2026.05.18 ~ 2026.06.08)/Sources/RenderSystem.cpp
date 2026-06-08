@@ -2,6 +2,7 @@
 #include "RenderSystem.h"
 
 #include "Camera.h"
+#include "ColorRGBA.h"
 #include "GameObject.h"
 #include "Light.h"
 #include "Logger.h"
@@ -14,51 +15,51 @@ bool RenderSystem::Initialize(HWND window_)
 {
 	assert(window_ != nullptr);
 
-	Logger::Info(L"초기화를 시작합니다.");
+	Logger::Info(L"Initialization started.");
 
 	if (!CreateDevice())
 	{
-		Logger::Critical(L"초기화 실패: 디바이스 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating the device.");
 		return false;
 	}
 	if (!CreateGraphicsRootSignature())
 	{
-		Logger::Critical(L"초기화 실패: 루트 시그니처 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating the root signature.");
 		return false;
 	}
 	if (!CreateCommandObjects())
 	{
-		Logger::Critical(L"초기화 실패: 커맨드 오브젝트 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating command objects.");
 		return false;
 	}
 	if (!CreateSwapChain(window_))
 	{
-		Logger::Critical(L"초기화 실패: 스왑체인 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating the swap chain.");
 		return false;
 	}
 	if (!CreateRenderTargetViews())
 	{
-		Logger::Critical(L"초기화 실패: 렌더 타겟 뷰 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating render target views.");
 		return false;
 	}
 	if (!CreateDepthStencilView())
 	{
-		Logger::Critical(L"초기화 실패: 깊이 스텐실 뷰 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating the depth stencil view.");
 		return false;
 	}
 	if (!CreateFence())
 	{
-		Logger::Critical(L"초기화 실패: 펜스 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating the fence.");
 		return false;
 	}
 	if (!CreateConstantBuffers())
 	{
-		Logger::Critical(L"초기화 실패: 상수 버퍼 생성 단계에서 중단되었습니다.");
+		Logger::Critical(L"Initialization failed: stopped while creating constant buffers.");
 		return false;
 	}
 
 	WaitForGPU();
-	Logger::Info(L"초기화가 완료되었습니다.");
+	Logger::Info(L"Initialization completed.");
 
 	return true;
 }
@@ -138,13 +139,13 @@ void RenderSystem::PreRender()
 {
 	if (commandAllocators[frameIndex] == nullptr || commandList == nullptr)
 	{
-		Logger::Error(L"PreRender 실패: 커맨드 할당자 또는 커맨드 리스트가 초기화되지 않았습니다.");
+		Logger::Error(L"PreRender failed: command allocator or command list is not initialized.");
 		return;
 	}
 
 	if (renderTargets[frameIndex] == nullptr || rtvHeap == nullptr)
 	{
-		Logger::Error(L"PreRender 실패: 현재 프레임의 렌더 타겟 또는 RTV 힙이 없습니다.");
+		Logger::Error(L"PreRender failed: current frame render target or RTV heap is missing.");
 		return;
 	}
 
@@ -178,7 +179,7 @@ void RenderSystem::PreRender()
 	}
 	else
 	{
-		Logger::Error(L"PreRender 실패: 그래픽스 루트 시그니처가 초기화되지 않았습니다.");
+		Logger::Error(L"PreRender failed: graphics root signature is not initialized.");
 	}
 }
 
@@ -186,13 +187,13 @@ void RenderSystem::PostRender()
 {
 	if (commandList == nullptr || commandQueue == nullptr)
 	{
-		Logger::Error(L"PostRender 실패: 커맨드 리스트 또는 커맨드 큐가 초기화되지 않았습니다.");
+		Logger::Error(L"PostRender failed: command list or command queue is not initialized.");
 		return;
 	}
 
 	if (renderTargets[frameIndex] == nullptr)
 	{
-		Logger::Error(L"PostRender 실패: 현재 프레임의 렌더 타겟이 없습니다.");
+		Logger::Error(L"PostRender failed: current frame render target is missing.");
 		return;
 	}
 
@@ -210,17 +211,17 @@ void RenderSystem::PostRender()
 	commandQueue->ExecuteCommandLists(1, commandLists);
 }
 
-void RenderSystem::Clear()
+void RenderSystem::Clear(const ColorRGBA& clearColor_)
 {
 	if (commandList == nullptr || rtvHeap == nullptr || dsvHeap == nullptr)
 	{
-		Logger::Error(L"Clear 실패: 커맨드 리스트, RTV 힙 또는 DSV 힙이 초기화되지 않았습니다.");
+		Logger::Error(L"Clear failed: command list, RTV heap, or DSV heap is not initialized.");
 		return;
 	}
 
 	if (renderTargets[frameIndex] == nullptr)
 	{
-		Logger::Error(L"Clear 실패: 현재 프레임의 렌더 타겟이 없습니다.");
+		Logger::Error(L"Clear failed: current frame render target is missing.");
 		return;
 	}
 
@@ -229,7 +230,7 @@ void RenderSystem::Clear()
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{ dsvHeap->GetCPUDescriptorHandleForHeapStart() };
 
-	constexpr FLOAT clearColor[]{ 0.1f, 0.15f, 0.2f, 1.0f };
+	const FLOAT clearColor[]{ clearColor_.x, clearColor_.y, clearColor_.z, clearColor_.w };
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 }
@@ -238,7 +239,7 @@ void RenderSystem::Present()
 {
 	if (swapChain == nullptr)
 	{
-		Logger::Error(L"Present 실패: 스왑체인이 초기화되지 않았습니다.");
+		Logger::Error(L"Present failed: swap chain is not initialized.");
 		return;
 	}
 
@@ -305,39 +306,39 @@ void RenderSystem::DrawMeshInstanced(Mesh* mesh_, Material* material_, std::span
 {
 	if (mesh_ == nullptr || material_ == nullptr || device == nullptr || commandList == nullptr || graphicsRootSignature == nullptr)
 	{
-		Logger::Error(L"DrawMeshInstanced 실패: 메시, 머터리얼, 디바이스, 커맨드 리스트, 루트 시그니처 중 초기화되지 않은 항목이 있습니다.");
+		Logger::Error(L"DrawMeshInstanced failed: mesh, material, device, command list, or root signature is not initialized.");
 		return;
 	}
 
 	if (worldMatrices_.empty())
 	{
-		Logger::Error(L"DrawMeshInstanced 실패: 인스턴스 월드 행렬이 비어 있습니다.");
+		Logger::Error(L"DrawMeshInstanced failed: instance world matrix list is empty.");
 		return;
 	}
 
 	Shader* const shader{ material_->GetShader() };
 	if (shader == nullptr)
 	{
-		Logger::Critical(L"DrawMeshInstanced 실패: 머터리얼에 셰이더가 없습니다.");
+		Logger::Critical(L"DrawMeshInstanced failed: material has no shader.");
 		return;
 	}
 
 	if (!shader->HasPipelineState() && !shader->CreatePipelineState(device.Get(), graphicsRootSignature.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_D24_UNORM_S8_UINT))
 	{
-		Logger::Critical(L"DrawMeshInstanced 실패: 셰이더 PSO 생성에 실패했습니다. 셰이더={}", shader->GetPath());
+		Logger::Critical(L"DrawMeshInstanced failed: failed to create shader PSO. shader={}", shader->GetPath());
 		return;
 	}
 
 	if (!mesh_->HasGpuBuffers() && !mesh_->CreateBuffers(device.Get()))
 	{
-		Logger::Critical(L"DrawMeshInstanced 실패: 메시 GPU 버퍼 생성에 실패했습니다. 메시={}", mesh_->GetPath());
+		Logger::Critical(L"DrawMeshInstanced failed: failed to create mesh GPU buffers. mesh={}", mesh_->GetPath());
 		return;
 	}
 
 	const D3D12_VERTEX_BUFFER_VIEW instanceBufferView{ UploadInstanceWorldMatrices(worldMatrices_) };
 	if (instanceBufferView.BufferLocation == 0 || instanceBufferView.SizeInBytes == 0)
 	{
-		Logger::Critical(L"DrawMeshInstanced 실패: 인스턴스 버퍼 업로드에 실패했습니다.");
+		Logger::Critical(L"DrawMeshInstanced failed: failed to upload instance buffer.");
 		return;
 	}
 
@@ -444,23 +445,23 @@ bool RenderSystem::CreateDevice()
 	{
 		factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 		debugController->EnableDebugLayer();
-		Logger::Trace(L"D3D12 디버그 레이어를 활성화했습니다.");
+		Logger::Trace(L"D3D12 debug layer enabled.");
 	}
 	else
 	{
-		Logger::Error(L"디버그 컨트롤러 초기화에 실패했습니다.");
+		Logger::Error(L"Failed to initialize D3D12 debug controller.");
 	}
 #endif
 
 	if (FAILED(::CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&factory))))
 	{
-		Logger::Critical(L"DXGI 팩토리 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create DXGI factory.");
 		return false;
 	}
 
 	if (FAILED(::D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device))))
 	{
-		Logger::Critical(L"D3D12 디바이스 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create D3D12 device.");
 		return false;
 	}
 
@@ -471,7 +472,7 @@ bool RenderSystem::CreateGraphicsRootSignature()
 {
 	if (device == nullptr)
 	{
-		Logger::Critical(L"루트 시그니처 생성 실패: 디바이스가 초기화되지 않았습니다.");
+		Logger::Critical(L"Root signature creation failed: device is not initialized.");
 		return false;
 	}
 
@@ -509,11 +510,11 @@ bool RenderSystem::CreateGraphicsRootSignature()
 		{
 			const char* errorChars{ static_cast<const char*>(errorBlob->GetBufferPointer()) };
 			const std::string errorText(errorChars, errorBlob->GetBufferSize());
-			Logger::Critical(L"그래픽스 루트 시그니처 직렬화에 실패했습니다: {}", std::wstring(errorText.begin(), errorText.end()));
+			Logger::Critical(L"Failed to serialize graphics root signature: {}", std::wstring(errorText.begin(), errorText.end()));
 		}
 		else
 		{
-			Logger::Critical(L"그래픽스 루트 시그니처 직렬화에 실패했습니다.");
+			Logger::Critical(L"Failed to serialize graphics root signature.");
 		}
 		return false;
 	}
@@ -524,7 +525,7 @@ bool RenderSystem::CreateGraphicsRootSignature()
 		signatureBlob->GetBufferSize(),
 		IID_PPV_ARGS(&graphicsRootSignature))))
 	{
-		Logger::Critical(L"그래픽스 루트 시그니처 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create graphics root signature.");
 		return false;
 	}
 
@@ -535,7 +536,7 @@ bool RenderSystem::CreateCommandObjects()
 {
 	if (device == nullptr)
 	{
-		Logger::Critical(L"커맨드 오브젝트 생성 실패: 디바이스가 초기화되지 않았습니다.");
+		Logger::Critical(L"Command object creation failed: device is not initialized.");
 		return false;
 	}
 
@@ -545,7 +546,7 @@ bool RenderSystem::CreateCommandObjects()
 
 	if (FAILED(device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue))))
 	{
-		Logger::Critical(L"커맨드 큐 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create command queue.");
 		return false;
 	}
 
@@ -553,14 +554,14 @@ bool RenderSystem::CreateCommandObjects()
 	{
 		if (FAILED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocators[i]))))
 		{
-			Logger::Critical(L"커맨드 할당자 생성에 실패했습니다. 인덱스={}", i);
+			Logger::Critical(L"Failed to create command allocator. index={}", i);
 			return false;
 		}
 	}
 
 	if (FAILED(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocators[0].Get(), nullptr, IID_PPV_ARGS(&commandList))))
 	{
-		Logger::Critical(L"커맨드 리스트 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create command list.");
 		return false;
 	}
 
@@ -573,13 +574,13 @@ bool RenderSystem::CreateSwapChain(HWND window_)
 {
 	if (window_ == nullptr)
 	{
-		Logger::Critical(L"스왑체인 생성 실패: 윈도우 핸들이 없습니다.");
+		Logger::Critical(L"Swap chain creation failed: window handle is null.");
 		return false;
 	}
 
 	if (factory == nullptr || commandQueue == nullptr)
 	{
-		Logger::Critical(L"스왑체인 생성 실패: 팩토리 또는 커맨드 큐가 초기화되지 않았습니다.");
+		Logger::Critical(L"Swap chain creation failed: factory or command queue is not initialized.");
 		return false;
 	}
 
@@ -618,13 +619,13 @@ bool RenderSystem::CreateSwapChain(HWND window_)
 		nullptr, 
 		&swapChain1)))
 	{
-		Logger::Critical(L"스왑체인 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create swap chain.");
 		return false;
 	}
 
 	if (FAILED(swapChain1.As(&swapChain)))
 	{
-		Logger::Critical(L"IDXGISwapChain3 변환에 실패했습니다.");
+		Logger::Critical(L"Failed to convert swap chain to IDXGISwapChain3.");
 		return false;
 	}
 
@@ -637,7 +638,7 @@ bool RenderSystem::CreateRenderTargetViews()
 {
 	if (device == nullptr || swapChain == nullptr)
 	{
-		Logger::Critical(L"RTV 생성 실패: 디바이스 또는 스왑체인이 초기화되지 않았습니다.");
+		Logger::Critical(L"RTV creation failed: device or swap chain is not initialized.");
 		return false;
 	}
 
@@ -647,7 +648,7 @@ bool RenderSystem::CreateRenderTargetViews()
 
 	if (FAILED(device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&rtvHeap))))
 	{
-		 Logger::Critical(L"RTV 힙 생성에 실패했습니다.");
+		 Logger::Critical(L"Failed to create RTV heap.");
 		 return false;
 	}
 	rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -657,7 +658,7 @@ bool RenderSystem::CreateRenderTargetViews()
 	{
 		if (FAILED(swapChain->GetBuffer(count, IID_PPV_ARGS(&renderTargets[count]))))
 		{
-			Logger::Critical(L"스왑체인 백버퍼 획득에 실패했습니다. 인덱스={}", count);
+			Logger::Critical(L"Failed to get swap chain back buffer. index={}", count);
 			return false;
 		}
 
@@ -672,7 +673,7 @@ bool RenderSystem::CreateDepthStencilView()
 {
 	if (device == nullptr || swapChain == nullptr)
 	{
-		Logger::Critical(L"DSV 생성 실패: 디바이스 또는 스왑체인이 초기화되지 않았습니다.");
+		Logger::Critical(L"DSV creation failed: device or swap chain is not initialized.");
 		return false;
 	}
 
@@ -683,7 +684,7 @@ bool RenderSystem::CreateDepthStencilView()
 
 	if (FAILED(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap))))
 	{
-		Logger::Critical(L"DSV 힙 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create DSV heap.");
 		return false;
 	}
 	dsvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
@@ -717,7 +718,7 @@ bool RenderSystem::CreateDepthStencilView()
 		&depthOptimizedClearValue,
 		IID_PPV_ARGS(&depthStencilBuffer))))
 	{
-		Logger::Critical(L"깊이 스텐실 버퍼 리소스 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create depth stencil buffer resource.");
 		return false;
 	}
 
@@ -730,13 +731,13 @@ bool RenderSystem::CreateFence()
 {
 	if (device == nullptr)
 	{
-		Logger::Critical(L"펜스 생성 실패: 디바이스가 초기화되지 않았습니다.");
+		Logger::Critical(L"Fence creation failed: device is not initialized.");
 		return false;
 	}
 
 	if (FAILED(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence))))
 	{
-		Logger::Critical(L"펜스 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create fence.");
 		return false;
 	}
 
@@ -745,7 +746,7 @@ bool RenderSystem::CreateFence()
 	fenceEvent = ::CreateEventW(nullptr, FALSE, FALSE, nullptr);
 	if (fenceEvent == nullptr)
 	{
-		Logger::Critical(L"펜스 이벤트 생성에 실패했습니다.");
+		Logger::Critical(L"Failed to create fence event.");
 		return false;
 	}
 
@@ -756,7 +757,7 @@ bool RenderSystem::CreateConstantBuffers()
 {
 	if (device == nullptr)
 	{
-		Logger::Critical(L"상수 버퍼 생성 실패: 디바이스가 초기화되지 않았습니다.");
+		Logger::Critical(L"Constant buffer creation failed: device is not initialized.");
 		return false;
 	}
 
@@ -782,13 +783,13 @@ bool RenderSystem::CreateConstantBuffers()
 			nullptr,
 			IID_PPV_ARGS(&constantBuffer.resource))))
 		{
-			Logger::Critical(L"상수 버퍼 리소스 생성에 실패했습니다.");
+			Logger::Critical(L"Failed to create constant buffer resource.");
 			return false;
 		}
 
 		if (FAILED(constantBuffer.resource->Map(0, nullptr, reinterpret_cast<void**>(&constantBuffer.mappedData))))
 		{
-			Logger::Critical(L"상수 버퍼 매핑에 실패했습니다.");
+			Logger::Critical(L"Failed to map constant buffer.");
 			return false;
 		}
 
@@ -818,13 +819,13 @@ bool RenderSystem::CreateConstantBuffers()
 			nullptr,
 			IID_PPV_ARGS(&instanceBuffer.resource))))
 		{
-			Logger::Critical(L"인스턴스 버퍼 리소스 생성에 실패했습니다.");
+			Logger::Critical(L"Failed to create instance buffer resource.");
 			return false;
 		}
 
 		if (FAILED(instanceBuffer.resource->Map(0, nullptr, reinterpret_cast<void**>(&instanceBuffer.mappedData))))
 		{
-			Logger::Critical(L"인스턴스 버퍼 매핑에 실패했습니다.");
+			Logger::Critical(L"Failed to map instance buffer.");
 			return false;
 		}
 
@@ -849,7 +850,7 @@ D3D12_VERTEX_BUFFER_VIEW RenderSystem::UploadInstanceWorldMatrices(std::span<con
 	if (instanceBuffer.mappedData == nullptr || instanceBuffer.currentOffset + alignedSize > MaxInstanceBufferSize)
 	{
 		Logger::Error(
-			L"[RenderSystem] 인스턴스 버퍼 업로드 실패: 버퍼가 매핑되지 않았거나 공간이 부족합니다. 요청 크기={}, 현재 오프셋={}, 최대 크기={}",
+			L"[RenderSystem] Instance buffer upload failed: buffer is not mapped or there is not enough space. requestedSize={}, currentOffset={}, maxSize={}",
 			alignedSize, instanceBuffer.currentOffset, MaxInstanceBufferSize);
 		return bufferView;
 	}
@@ -868,7 +869,7 @@ void RenderSystem::WaitForGPU()
 {
 	if (commandQueue == nullptr || fence == nullptr || fenceEvent == nullptr)
 	{
-		Logger::Critical(L"GPU 대기 실패: 커맨드 큐, 펜스, 이벤트 중 초기화되지 않은 항목이 있습니다.");
+		Logger::Critical(L"GPU wait failed: command queue, fence, or event is not initialized.");
 		return;
 	}
 
@@ -885,7 +886,7 @@ void RenderSystem::MoveToNextFrame()
 {
 	if (commandQueue == nullptr || fence == nullptr || swapChain == nullptr)
 	{
-		Logger::Critical(L"프레임 전환 실패: 커맨드 큐, 펜스, 스왑체인 중 초기화되지 않은 항목이 있습니다.");
+		Logger::Critical(L"Frame advance failed: command queue, fence, or swap chain is not initialized.");
 		return;
 	}
 
@@ -906,7 +907,7 @@ D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantData(const void* data_, UI
 {
 	if (data_ == nullptr || sizeInBytes_ == 0)
 	{
-		Logger::Error(L"상수 데이터 업로드 실패: 데이터 포인터가 없거나 크기가 0입니다.");
+		Logger::Error(L"Constant data upload failed: data pointer is null or size is zero.");
 		return 0;
 	}
 
@@ -915,7 +916,7 @@ D3D12_GPU_VIRTUAL_ADDRESS RenderSystem::UploadConstantData(const void* data_, UI
 	if (constantBuffer.mappedData == nullptr || constantBuffer.currentOffset + alignedSize > MaxConstantBufferSize)
 	{
 		Logger::Error(
-			L"[RenderSystem] 상수 데이터 업로드 실패: 버퍼가 매핑되지 않았거나 공간이 부족합니다. 요청 크기={}, 현재 오프셋={}, 최대 크기={}",
+			L"[RenderSystem] Constant data upload failed: buffer is not mapped or there is not enough space. requestedSize={}, currentOffset={}, maxSize={}",
 			alignedSize, constantBuffer.currentOffset, MaxConstantBufferSize);
 		return 0;
 	}

@@ -21,6 +21,7 @@ struct CameraConstants;
 struct LightConstants;
 struct ObjectConstants;
 struct MaterialConstants;
+class ColorRGBA;
 
 class Material;
 class Mesh;
@@ -38,7 +39,7 @@ public:
 	void Render();
 	void PostRender();
 
-	void Clear();
+	void Clear(const ColorRGBA& clearColor_);
 	void Present();
 
 	void SetCameraConstants(const CameraConstants& constants_);

@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "SceneSystem.h"
 
+#include "Camera.h"
+#include "ColorRGBA.h"
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 
@@ -56,7 +58,15 @@ void SceneSystem::Render()
 	}
 
 	RenderSystem::GetInstance().PreRender();
-	RenderSystem::GetInstance().Clear();
+
+	ColorRGBA clearColor{ 0.1f, 0.15f, 0.2f, 1.0f };
+	const std::span<Camera* const> cameras{ currentScene->GetCameras() };
+	if (!cameras.empty() && cameras.front() != nullptr)
+	{
+		clearColor = cameras.front()->GetClearColor();
+	}
+
+	RenderSystem::GetInstance().Clear(clearColor);
 	currentScene->Render();
 	RenderSystem::GetInstance().Render();
 	RenderSystem::GetInstance().PostRender();

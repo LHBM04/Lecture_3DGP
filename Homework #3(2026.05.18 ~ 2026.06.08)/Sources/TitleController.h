@@ -27,6 +27,7 @@ protected:
 	void OnUpdate() override;
 
 private:
+	void UpdateTitleLogoRotation();
 	void RevealMenuButtons();
 	void HideMenuButtons();
 	void ExplodeTitleLogo();

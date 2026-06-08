@@ -20,6 +20,7 @@ public:
 protected:
 	void OnLoad() override;
 	void OnUnload() override;
+	void OnUpdate() override;
 	void OnFixedUpdate() override;
 
 	virtual std::wstring_view GetPlayerModelPath() const noexcept;
@@ -55,6 +56,7 @@ private:
 	void CreateCamera(Transform* playerTransform_);
 	void PlayPlayerIdleAnimation(GameObject* playerObject_);
 	void CheckStageClear();
+	void DestroyOneEnemyForDebug();
 	[[nodiscard]] Vector3D ResolvePlayerSpawnPosition() const;
 	[[nodiscard]] Vector3D ResolveEnemySpawnPosition(Vector3D spawnPosition_) const;
 

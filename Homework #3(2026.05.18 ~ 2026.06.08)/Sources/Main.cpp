@@ -56,7 +56,7 @@ INT APIENTRY wWinMain(
 	freopen_s(&consoleStream, "CONOUT$", "w", stdout);
 	freopen_s(&consoleStream, "CONOUT$", "w", stderr);
 
-	Logger::Info(L"콘솔 출력 초기화가 완료되었습니다.");
+	Logger::Info(L"Console output initialized.");
 #endif
 
 	WNDCLASSEXW wndClass{};
@@ -89,7 +89,7 @@ INT APIENTRY wWinMain(
 
 	if (mainWindow == nullptr)
 	{
-		Logger::Critical(L"메인 윈도우를 생성하지 못했습니다.");
+		Logger::Critical(L"Failed to create the main window.");
 		return -1;
 	}
 
@@ -99,17 +99,17 @@ INT APIENTRY wWinMain(
 		::UpdateWindow(mainWindow);
 	}
 
-	Logger::Info(L"RenderSystem 초기화를 시작합니다.");
+	Logger::Info(L"RenderSystem initialization started.");
 	if (!RenderSystem::GetInstance().Initialize(mainWindow))
 	{
-		Logger::Critical(L"RenderSystem 초기화에 실패했습니다. 프로그램을 종료합니다.");
+		Logger::Critical(L"RenderSystem initialization failed. Exiting program.");
 		return -1;
 	}
-	Logger::Info(L"RenderSystem 초기화가 완료되었습니다.");
+	Logger::Info(L"RenderSystem initialization completed.");
 
-	Logger::Info(L"ResourceSystem 초기화를 시작합니다.");
+	Logger::Info(L"ResourceSystem initialization started.");
 	ResourceSystem::GetInstance().Initialize();
-	Logger::Info(L"ResourceSystem 초기화가 완료되었습니다.");
+	Logger::Info(L"ResourceSystem initialization completed.");
 
 	SceneSystem::GetInstance().AddScene(L"Title", std::make_unique<Scene_Title>());
 	SceneSystem::GetInstance().AddScene(L"Level0", std::make_unique<Scene_Level0>());
@@ -118,17 +118,17 @@ INT APIENTRY wWinMain(
 	SceneSystem::GetInstance().AddScene(L"Level3", std::make_unique<Scene_Level3>());
 	SceneSystem::GetInstance().LoadScene(L"Title");
 
-	Logger::Info(L"InputSystem 초기화를 시작합니다.");
+	Logger::Info(L"InputSystem initialization started.");
 	InputSystem::GetInstance().Reset();
-	Logger::Info(L"InputSystem 초기화가 완료되었습니다.");
+	Logger::Info(L"InputSystem initialization completed.");
 
-	Logger::Info(L"PhysicsSystem 초기화를 시작합니다.");
+	Logger::Info(L"PhysicsSystem initialization started.");
 	PhysicsSystem::GetInstance().Reset();
-	Logger::Info(L"PhysicsSystem 초기화가 완료되었습니다.");
+	Logger::Info(L"PhysicsSystem initialization completed.");
 
-	Logger::Info(L"TimeSystem 초기화를 시작합니다.");
+	Logger::Info(L"TimeSystem initialization started.");
 	TimeSystem::GetInstance().Reset();
-	Logger::Info(L"TimeSystem 초기화가 완료되었습니다.");
+	Logger::Info(L"TimeSystem initialization completed.");
 
 	isRunning = true;
 
