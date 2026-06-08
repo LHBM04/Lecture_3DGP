@@ -672,6 +672,7 @@
     <None Include="Resources\Meshes\hood_low_hood_low.bin" />
     <None Include="Resources\Meshes\idler_wheel_L_idler_wheel_L.bin" />
     <None Include="Resources\Meshes\idler_wheel_R_idler_wheel_R.bin" />
+    <None Include="Resources\Meshes\LEE_HYEOUN_BEOM.bin" />
     <None Include="Resources\Meshes\LEVEL_1.bin" />
     <None Include="Resources\Meshes\LEVEL_2.bin" />
     <None Include="Resources\Meshes\LEVEL_3.bin" />

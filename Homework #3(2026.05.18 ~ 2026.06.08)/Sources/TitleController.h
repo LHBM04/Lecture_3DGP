@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <random>
 #include <string>
@@ -15,6 +15,7 @@ public:
 	~TitleController() override = default;
 
 	void SetTitleLogoObject(GameObject* titleLogoObject_) noexcept;
+	void SetNameObject(GameObject* nameObject_) noexcept;
 	void SetTutorialButtonObject(GameObject* tutorialButtonObject_) noexcept;
 	void SetLevel1ButtonObject(GameObject* level1ButtonObject_) noexcept;
 	void SetLevel2ButtonObject(GameObject* level2ButtonObject_) noexcept;
@@ -35,6 +36,7 @@ private:
 
 private:
 	GameObject* titleLogoObject{ nullptr };
+	GameObject* nameObject{ nullptr };
 	GameObject* tutorialButtonObject{ nullptr };
 	GameObject* level1ButtonObject{ nullptr };
 	GameObject* level2ButtonObject{ nullptr };

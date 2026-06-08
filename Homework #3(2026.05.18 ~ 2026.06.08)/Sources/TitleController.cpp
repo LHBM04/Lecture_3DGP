@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "TitleController.h"
 
 #include <cmath>
@@ -26,6 +26,11 @@
 void TitleController::SetTitleLogoObject(GameObject* titleLogoObject_) noexcept
 {
 	titleLogoObject = titleLogoObject_;
+}
+
+void TitleController::SetNameObject(GameObject* nameObject_) noexcept
+{
+	nameObject = nameObject_;
 }
 
 void TitleController::SetTutorialButtonObject(GameObject* tutorialButtonObject_) noexcept
@@ -106,6 +111,7 @@ void TitleController::OnUpdate()
 		if (clickedObject == titleLogoObject)
 		{
 			ExplodeTitleLogo();
+			nameObject->SetActive(false);
 			RevealMenuButtons();
 		}
 

@@ -2059,5 +2059,8 @@
     <None Include="Resources\Terrains\HeightMap3.raw">
       <Filter>Resources\Terrains</Filter>
     </None>
+    <None Include="Resources\Meshes\LEE_HYEOUN_BEOM.bin">
+      <Filter>Resources\Meshes</Filter>
+    </None>
   </ItemGroup>
 </Project>

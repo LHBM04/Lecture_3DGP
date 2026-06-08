@@ -92,6 +92,19 @@ void Scene_Title::OnLoad()
 		controller->SetTitleLogoObject(titleLogoObject);
 	}
 
+	// 이름
+	{
+		GameObject* const nameObject{ Instantiate(Vector3D(0.0f, -2.0f, 10.0f)) };
+		nameObject->SetName(L"Name");
+		nameObject->AddComponent<Animator>();
+
+		MeshRenderer* const nameRenderer{ nameObject->AddComponent<MeshRenderer>() };
+		nameRenderer->SetMesh(resourceSystem.GetResource<Mesh>(L"Resources/Meshes/LEE_HYEOUN_BEOM.bin"));
+		nameRenderer->SetMaterial(resourceSystem.GetResource<Material>(L"Resources/Materials/UI.bin"));
+
+		controller->SetNameObject(nameObject);
+	}
+
 	// 튜토리얼
 	{
 		GameObject* const tutorialObject{ Instantiate(Vector3D(-5.0f, 2.5f, 10.0f)) };
