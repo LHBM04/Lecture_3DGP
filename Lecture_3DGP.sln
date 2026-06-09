@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.6.11822.322
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37314.3 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Homework #1(2026.04.06 ~ 2026.04.27)", "Homework #1(2026.04.06 ~ 2026.04.27)\Homework #1(2026.04.06 ~ 2026.04.27).vcxproj", "{154BF441-54B5-4457-A958-8D54196D03C2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Homework #2(2026.05.15 ~ 2026.06.01)", "Homework #2(2026.05.15 ~ 2026.06.01)\Homework #2(2026.05.15 ~ 2026.06.01).vcxproj", "{27C09634-FA24-45EC-80AF-90A17D913E40}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Homework #3(2026.05.18 ~ 2026.06.08)", "Homework #3(2026.05.18 ~ 2026.06.08)\Homework #3(2026.05.18 ~ 2026.06.08).vcxproj", "{88D8E21D-632A-4561-821D-7614D63C1A88}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Homework #4(2026.05.18 ~ 2026.06.17)", "Homework #4(2026.05.18 ~ 2026.06.17)\Homework #4(2026.05.18 ~ 2026.06.17).vcxproj", "{A0634967-D877-421E-89CC-52C02391FFB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{88D8E21D-632A-4561-821D-7614D63C1A88}.Release|x64.Build.0 = Release|x64
 		{88D8E21D-632A-4561-821D-7614D63C1A88}.Release|x86.ActiveCfg = Release|Win32
 		{88D8E21D-632A-4561-821D-7614D63C1A88}.Release|x86.Build.0 = Release|Win32
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Debug|x64.ActiveCfg = Debug|x64
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Debug|x64.Build.0 = Debug|x64
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Debug|x86.ActiveCfg = Debug|Win32
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Debug|x86.Build.0 = Debug|Win32
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Release|x64.ActiveCfg = Release|x64
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Release|x64.Build.0 = Release|x64
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Release|x86.ActiveCfg = Release|Win32
+		{A0634967-D877-421E-89CC-52C02391FFB7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
