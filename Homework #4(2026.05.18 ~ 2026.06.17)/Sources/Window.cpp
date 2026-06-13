@@ -15,7 +15,7 @@ namespace
 		}
 		else if (!options_.isBorderless)
 		{
-			style = WS_POPUP | (options_.isResizable ? WS_THICKFRAME : 0);
+			style = WS_OVERLAPPEDWINDOW | (options_.isResizable ? WS_THICKFRAME | WS_MAXIMIZEBOX : 0);
 		}
 		else if (options_.isResizable)
 		{

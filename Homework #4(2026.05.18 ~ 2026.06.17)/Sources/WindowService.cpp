@@ -3,7 +3,6 @@
 
 namespace
 {
-	// 윈도우 프로시저.
 	LRESULT CALLBACK WindowProc(
 		_In_ HWND hWnd,
 		_In_ UINT uMsg,
@@ -12,15 +11,18 @@ namespace
 	{
 		switch (uMsg)
 		{
-		case WM_DESTROY:
-		{
-			::PostQuitMessage(0);
-			return 0;
-		}
-		default:
-			return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+			case WM_DESTROY:
+			{
+				::PostQuitMessage(0);
+				return 0;
+			}
+			default:
+			{
+				return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+			}
 		}
 
+		// 절대 도달 못함.
 		::std::unreachable();
 	}
 }
