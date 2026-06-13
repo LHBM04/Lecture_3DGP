@@ -55,7 +55,7 @@ inline TService* Framework::AddService()
 
 	std::unique_ptr<TService> service{ std::make_unique<TService>() };
 	TService* const result{ service.get() };
-	if (!result->NotifyAdd(*this))
+	if (!result->NotifyAdd(this))
 	{
 		return nullptr;
 	}
@@ -77,4 +77,17 @@ inline const TService* Framework::GetService() const noexcept
 {
 	const auto result{ services.find(typeid(TService)) };
 	return (result != services.end()) ? static_cast<const TService*>(result->second.get()) : nullptr;
+}
+
+template <std::derived_from<Service> TService>
+inline void Framework::RemoveService() noexcept
+{
+	const auto result{ services.find(typeid(TService)) };
+	if (result == services.end())
+	{
+		return;
+	}
+
+	result->second->NotifyRemove();
+	services.erase(result);
 }
