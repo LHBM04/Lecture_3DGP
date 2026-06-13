@@ -27,6 +27,9 @@
     <ClCompile Include="Sources\Service.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Window.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Precompiled.h">
@@ -36,6 +39,12 @@
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WindowService.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Window.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
