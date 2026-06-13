@@ -5,7 +5,6 @@
 
 namespace
 {
-	// WS_STYLE 빌더
 	[[nodiscard]] DWORD GetStyle(const Window::Options& options_)
 	{
 		DWORD style{ WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX };
@@ -25,7 +24,6 @@ namespace
 		return style;
 	}
 
-	// WS_EX_STYLE 빌더
 	// 일단 얘가 하는 일이 별로 없긴 함. 일관성을 위해 작성.
 	[[nodiscard]] DWORD GetStyleEx(const Window::Options& options_)
 	{
