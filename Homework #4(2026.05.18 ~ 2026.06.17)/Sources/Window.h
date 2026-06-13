@@ -34,6 +34,9 @@ public:
 	Window(Window&&) = delete;
 	Window& operator=(Window&&) = delete;
 
+	bool Initialize(const Options& options_);
+	void Release() noexcept;
+
 	void Show() noexcept;
 	void Hide() noexcept;
 

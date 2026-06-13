@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#include <algorithm>
 #include <cassert>
+#include <ranges>
 #include <utility>
 
 #define WIN32_LEAN_AND_MEAN

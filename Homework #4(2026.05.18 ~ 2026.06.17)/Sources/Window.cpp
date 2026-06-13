@@ -1,6 +1,127 @@
 ﻿#include "Precompiled.h"
 #include "Window.h"
 
+#include "WindowService.h"
+
+namespace
+{
+	// WS_STYLE 빌더
+	[[nodiscard]] DWORD GetStyle(const Window::Options& options_)
+	{
+		DWORD style{ WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX };
+		if (options_.isFullscreen)
+		{
+			style = WS_POPUP;
+		}
+		else if (!options_.isBorderless)
+		{
+			style = WS_POPUP | (options_.isResizable ? WS_THICKFRAME : 0);
+		}
+		else if (options_.isResizable)
+		{
+			style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+		}
+
+		return style;
+	}
+
+	// WS_EX_STYLE 빌더
+	// 일단 얘가 하는 일이 별로 없긴 함. 일관성을 위해 작성.
+	[[nodiscard]] DWORD GetStyleEx(const Window::Options& options_)
+	{
+		// TODO: 지금 당장은 Style Ex 건드리는 설정이 없음.
+		// 나중에 필요하면 채워놓을 것.
+		return WS_EX_OVERLAPPEDWINDOW;
+	}
+}
+
+bool Window::Initialize(const Options& options_)
+{
+	assert(options_.x != 0 || options_.y != 0);
+	assert(options_.width > 0 || options_.height > 0);
+
+	options = options_;
+
+	// TODO: 화면 중앙 위치 가져와서 x, y만큼 이동한 위치에 생성하도록.
+	int x{ CW_USEDEFAULT };
+	int y{ CW_USEDEFAULT };
+	int width{ options.width };
+	int height{ options.height };
+
+	DWORD style{ GetStyle(options_) };
+	DWORD styleEx{ GetStyleEx(options_) };
+
+	if (options.isFullscreen)
+	{
+		const HMONITOR monitor{ ::MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY) };
+		MONITORINFO monitorInfo{ .cbSize = sizeof(MONITORINFO) };
+		if (!::GetMonitorInfoW(monitor, &monitorInfo))
+		{
+			return false;
+		}
+
+		x = monitorInfo.rcMonitor.left;
+		y = monitorInfo.rcMonitor.top;
+		width = monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
+		height = monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
+	}
+	else
+	{
+		RECT rect{ };
+		rect.right = options.width;
+		rect.bottom = options.height;
+
+		if (!::AdjustWindowRectEx(
+			&rect, 
+			style, 
+			FALSE, 
+			styleEx))
+		{
+			return false;
+		}
+
+		width = rect.right - rect.left;
+		height = rect.bottom - rect.top;
+	}
+
+	// 이거 WindowService 내 필드 사용하게끔 사용하게 바꾸기.
+	hWnd = ::CreateWindowExW(
+		styleEx,
+		L"Framework Window Class",
+		options.title.c_str(),
+		style,
+		x,
+		y,
+		width,
+		height,
+		nullptr,
+		nullptr,
+		::GetModuleHandleW(nullptr),
+		this);
+
+	if (hWnd == nullptr)
+	{
+		return false;
+	}
+
+	if (!::IsWindowVisible(hWnd))
+	{
+		::ShowWindow(hWnd, SW_SHOW);
+		::UpdateWindow(hWnd);
+	}
+
+	return true;
+}
+
+void Window::Release() noexcept
+{
+	if (hWnd != nullptr)
+	{
+		::DestroyWindow(hWnd);
+		hWnd = nullptr;
+	}
+}
+
 void Window::Show() noexcept
 {
 	if (hWnd != nullptr)
@@ -74,13 +195,14 @@ void Window::SetSize(SIZE size_) noexcept
 		rect.right = options.width;
 		rect.bottom = options.height;
 
-		DWORD style{ WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX };
-		if (options.isFullscreen) style = WS_POPUP;
-		else if (!options.isBorderless) style = WS_POPUP | (options.isResizable ? WS_THICKFRAME : 0);
-		else if (options.isResizable) style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+		DWORD style{ GetStyle(options) };
+		DWORD styleEx{ GetStyleEx(options) };
 
-		constexpr DWORD exStyle{ WS_EX_APPWINDOW };
-		if (::AdjustWindowRectEx(&rect, style, FALSE, exStyle))
+		if (::AdjustWindowRectEx(
+			&rect, 
+			style, 
+			FALSE, 
+			styleEx))
 		{
 			::SetWindowPos(
 				hWnd,
@@ -132,7 +254,7 @@ void Window::SetY(int y_) noexcept
 
 void Window::SetPosition(POINT position_) noexcept
 {
-	assert(position_.x != 0 && position_.y != 0);
+	assert(position_.x != 0 || position_.y != 0);
 
 	if (hWnd != nullptr)
 	{
@@ -161,14 +283,18 @@ void Window::SetFullscreen(bool fullscreen_) noexcept
 	{
 		options.isFullscreen = fullscreen_;
 
-		DWORD style{ WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX };
-		if (options.isFullscreen) style = WS_POPUP;
-		else if (!options.isBorderless) style = WS_POPUP | (options.isResizable ? WS_THICKFRAME : 0);
-		else if (options.isResizable) style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+		DWORD style{ GetStyle(options) };
+		::SetWindowLongPtrW(
+			hWnd, 
+			GWL_STYLE, 
+			static_cast<LONG_PTR>(style));
 
-		constexpr DWORD exStyle{ WS_EX_APPWINDOW };
-		::SetWindowLongPtrW(hWnd, GWL_STYLE, static_cast<LONG_PTR>(style));
-		::SetWindowLongPtrW(hWnd, GWL_EXSTYLE, static_cast<LONG_PTR>(exStyle));
+		DWORD styleEx{ GetStyleEx(options) };
+		::SetWindowLongPtrW(
+			hWnd, 
+			GWL_EXSTYLE, 
+			static_cast<LONG_PTR>(styleEx));
+		
 		::SetWindowPos(
 			hWnd,
 			nullptr,
@@ -191,14 +317,18 @@ void Window::SetResizable(bool resizable_) noexcept
 	{
 		options.isResizable = resizable_;
 
-		DWORD style{ WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX };
-		if (options.isFullscreen) style = WS_POPUP;
-		else if (!options.isBorderless) style = WS_POPUP | (options.isResizable ? WS_THICKFRAME : 0);
-		else if (options.isResizable) style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+		DWORD style{ GetStyle(options) };
+		::SetWindowLongPtrW(
+			hWnd, 
+			GWL_STYLE, 
+			static_cast<LONG_PTR>(style));
 
-		constexpr DWORD exStyle{ WS_EX_APPWINDOW };
-		::SetWindowLongPtrW(hWnd, GWL_STYLE, static_cast<LONG_PTR>(style));
-		::SetWindowLongPtrW(hWnd, GWL_EXSTYLE, static_cast<LONG_PTR>(exStyle));
+		DWORD styleEx{ GetStyleEx(options) };
+		::SetWindowLongPtrW(
+			hWnd, 
+			GWL_EXSTYLE, 
+			static_cast<LONG_PTR>(styleEx));
+
 		::SetWindowPos(
 			hWnd,
 			nullptr,
@@ -221,14 +351,18 @@ void Window::SetBorderless(bool decorated_) noexcept
 	{
 		options.isBorderless = decorated_;
 
-		DWORD style{ WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX };
-		if (options.isFullscreen) style = WS_POPUP;
-		else if (!options.isBorderless) style = WS_POPUP | (options.isResizable ? WS_THICKFRAME : 0);
-		else if (options.isResizable) style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+		DWORD style{ GetStyle(options) };
+		::SetWindowLongPtrW(
+			hWnd, 
+			GWL_STYLE, 
+			static_cast<LONG_PTR>(style));
 
-		constexpr DWORD exStyle{ WS_EX_APPWINDOW };
-		::SetWindowLongPtrW(hWnd, GWL_STYLE, static_cast<LONG_PTR>(style));
-		::SetWindowLongPtrW(hWnd, GWL_EXSTYLE, static_cast<LONG_PTR>(exStyle));
+		DWORD styleEx{ GetStyleEx(options) };
+		::SetWindowLongPtrW(
+			hWnd, 
+			GWL_EXSTYLE, 
+			static_cast<LONG_PTR>(styleEx));
+
 		::SetWindowPos(
 			hWnd,
 			nullptr,

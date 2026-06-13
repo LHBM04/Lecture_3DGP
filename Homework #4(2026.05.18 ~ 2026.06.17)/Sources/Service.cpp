@@ -3,6 +3,7 @@
 
 void Service::NotifyAdd(Framework* framework_)
 {
+	// TODO: assert()로 framework_ == nullptr 상황 방지.
 	framework = framework_;
 	OnAdd();
 }

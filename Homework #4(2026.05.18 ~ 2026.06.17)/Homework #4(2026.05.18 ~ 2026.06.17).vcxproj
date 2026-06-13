@@ -164,6 +164,7 @@
     <ClCompile Include="Sources\Precompiled.cpp" />
     <ClCompile Include="Sources\Service.cpp" />
     <ClCompile Include="Sources\Window.cpp" />
+    <ClCompile Include="Sources\WindowService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework.h" />
