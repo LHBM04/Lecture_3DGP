@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\Framework.h" />
     <ClInclude Include="Sources\Precompiled.h" />
+    <ClInclude Include="Sources\RenderService.h" />
     <ClInclude Include="Sources\Service.h" />
     <ClInclude Include="Sources\Window.h" />
     <ClInclude Include="Sources\WindowService.h" />
