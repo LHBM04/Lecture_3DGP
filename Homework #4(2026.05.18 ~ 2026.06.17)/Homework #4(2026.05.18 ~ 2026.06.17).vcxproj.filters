@@ -18,18 +18,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\Standard.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\Unlit.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Sources\Main.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Precompiled.cpp">
+      <Filter>Sources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Service.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -37,5 +32,16 @@
     <ClInclude Include="Sources\Precompiled.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Service.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

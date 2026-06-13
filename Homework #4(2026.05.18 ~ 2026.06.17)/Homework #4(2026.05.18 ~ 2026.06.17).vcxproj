@@ -155,8 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\Standard.hlsl" />
-    <FxCompile Include="Resources\Shaders\Unlit.hlsl" />
+    <None Include="Resources\Shaders\Standard.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Main.cpp" />

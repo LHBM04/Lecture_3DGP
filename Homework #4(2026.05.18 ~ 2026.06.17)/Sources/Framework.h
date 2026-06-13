@@ -1,9 +1,8 @@
 ﻿#pragma once
 
 #include <concepts>
-#include <flat_set>
+#include <flat_map>
 #include <memory>
-#include <type_traits>
 #include <typeindex>
 
 #include "Service.h"
@@ -11,83 +10,105 @@
 class Framework
 {
 public:
-	Framework() noexcept = default;
-	~Framework() noexcept = default;
+    Framework() = default;
+    ~Framework() = default;
 
-	template <std::derived_from<Service> TService>
-	TService* AddService();
+    Framework(const Framework&) = delete;
+    Framework& operator=(const Framework&) = delete;
 
-	template <std::derived_from<Service> TService>
-	[[nodiscard]] bool HasService() const;
+    Framework(Framework&&) = delete;
+    Framework& operator=(Framework&&) = delete;
 
-	template <std::derived_from<Service> TService>
-	[[nodiscard]] TService* GetService();
+    template <std::derived_from<Service> TService>
+    TService* AddService();
 
-	template <std::derived_from<Service> TService>
-	[[nodiscard]] const TService* GetService() const;
+    template <std::derived_from<Service> TService>
+    [[nodiscard]] bool HasService() const;
 
-	template <std::derived_from<Service> TService>
-	bool TryGetService(TService*& service_) const;
+    template <std::derived_from<Service> TService>
+    [[nodiscard]] TService* GetService();
 
-	template <std::derived_from<Service> TService>
-	void RemoveService();
+    template <std::derived_from<Service> TService>
+    [[nodiscard]] const TService* GetService() const;
+
+    template <std::derived_from<Service> TService>
+    void RemoveService();
 
 private:
-	// 복사 방지.
-	Framework(const Framework&) noexcept = default;
-	Framework& operator=(const Framework&) noexcept = default;
-
-	// 이동 금지.
-	Framework(Framework&&) noexcept = default;
-	Framework& operator=(Framework&&) noexcept = default;
-
-	std::flat_set<std::type_index, std::unique_ptr<Service>> services;
+    std::flat_map<std::type_index, std::unique_ptr<Service>> services;
 };
 
 template <std::derived_from<Service> TService>
 inline TService* Framework::AddService()
 {
-	const std::type_index index{ typeid(TSystem) };
-	if (const auto result{ services.find(index) }; result != services.end())
-	{
-		return static_cast<TService*>(result->second.get());
-	}
+    const std::type_index index{ typeid(TService) };
 
-	std::unique_ptr<TService> service{ std::make_unique<TService>() };
-	TService* const result{ service.get() };
-	if (!result->NotifyAdd(this))
-	{
-		return nullptr;
-	}
+    if (const auto result{ services.find(index) }; result != services.end())
+    {
+        return static_cast<TService*>(result->second.get());
+    }
 
-	services.emplace(index, std::move(service));
+    auto service{ std::make_unique<TService>() };
+    TService* const result{ service.get() };
 
-	return result;
+    const auto [result, isInserted] = services.emplace(index, std::move(service));
+
+    if (!isInserted)
+    {
+        return static_cast<TService*>(result->second.get());
+    }
+
+    if (!result->NotifyAdd(this))
+    {
+        services.erase(result);
+        return nullptr;
+    }
+
+    return result;
 }
 
 template <std::derived_from<Service> TService>
-inline TService* Framework::GetService() noexcept
+inline bool Framework::HasService() const
 {
-	const auto result{ services.find(typeid(TService)) };
-	return !(result != services.end()) ? static_cast<TService*>(result->second.get()) : nullptr;
+    return services.contains(std::type_index{ typeid(TService) });
 }
 
 template <std::derived_from<Service> TService>
-inline const TService* Framework::GetService() const noexcept
+inline TService* Framework::GetService()
 {
-	const auto result{ services.find(typeid(TService)) };
-	return (result != services.end()) ? static_cast<const TService*>(result->second.get()) : nullptr;
+    const auto result{ services.find(std::type_index{ typeid(TService) }) };
+
+    if (result == services.end())
+    {
+        return nullptr;
+    }
+
+    return static_cast<TService*>(result->second.get());
 }
 
 template <std::derived_from<Service> TService>
-inline void Framework::RemoveService() noexcept
+inline const TService* Framework::GetService() const
 {
-	const auto result{ services.find(typeid(TService)) };
-	if (result == services.end())
-	{
-		return;
-	}
+    const auto result{ services.find(std::type_index{ typeid(TService) }) };
 
-	result->second->NotifyRemove();
-	services.erase(result);
+    if (result == services.end())
+    {
+        return nullptr;
+    }
+
+    return static_cast<const TService*>(result->second.get());
+}
+
+template <std::derived_from<Service> TService>
+inline void Framework::RemoveService()
+{
+    const auto result{ services.find(std::type_index{ typeid(TService) }) };
+
+    if (result == services.end())
+    {
+        return;
+    }
+
+    result->second->NotifyRemove();
+    services.erase(result);
 }
