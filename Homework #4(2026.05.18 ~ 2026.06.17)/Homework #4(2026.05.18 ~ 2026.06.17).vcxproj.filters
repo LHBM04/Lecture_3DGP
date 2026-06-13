@@ -50,6 +50,9 @@
     <ClInclude Include="Sources\Window.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\RenderService.h">
+      <Filter>Sources\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Standard.hlsl">
