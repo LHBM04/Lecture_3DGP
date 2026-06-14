@@ -1,6 +1,5 @@
 ﻿#include "Precompiled.h"
 
-#include "Window.h"
 #include "WindowService.h"
 
 INT APIENTRY wWinMain(
@@ -12,17 +11,12 @@ INT APIENTRY wWinMain(
 	WindowService windowService;
 	windowService.NotifyAdd(nullptr);
 
-	Window::Options options{};
+	WindowService::Options options{};
 	options.title = L"New Window";
 	options.width = 800;
 	options.height = 600;
 
-	Window* window{ windowService.AddWindow(options) };
-	if (window == nullptr)
-	{
-		::MessageBoxW(nullptr, L"창이 안 떠", L"Oops!", NULL);
-		return -1;
-	}
+	windowService.Initialize(options);
 
 	MSG msg;
 	while (true)
