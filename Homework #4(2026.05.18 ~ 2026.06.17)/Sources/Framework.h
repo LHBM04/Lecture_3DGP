@@ -1,8 +1,11 @@
 ﻿#pragma once
 
+#include <any>
 #include <concepts>
 #include <flat_map>
 #include <memory>
+#include <string>
+#include <string_view>
 #include <typeindex>
 
 #include "Service.h"
@@ -18,6 +21,17 @@ public:
 
     Framework(Framework&&) = delete;
     Framework& operator=(Framework&&) = delete;
+
+    bool Initialize();
+    
+    int Run();
+    void Quit(int exitCode_);
+
+    template <class TOption>
+    void SetOption(std::string_view key_, TOption value_);
+
+    template <class TOption>
+    TOption GetOption(std::string_view key_, TOption default_);
 
     template <std::derived_from<Service> TService>
     TService* AddService();
@@ -35,8 +49,27 @@ public:
     void RemoveService();
 
 private:
+    std::flat_map<std::string, std::any> options;
     std::flat_map<std::type_index, std::unique_ptr<Service>> services;
 };
+
+template <class TOption>
+inline TOption Framework::GetOption(std::string_view key_, TOption default_)
+{
+    std::string key{ key_ };
+    if (!options.contains(key))
+    {
+        return default_;
+    }
+
+    return std::any_cast<TOption>(options[key]);
+}
+
+template <class TOption>
+inline void Framework::SetOption(std::string_view key_, TOption value_)
+{
+    options[std::string(key_)] = value_;
+}
 
 template <std::derived_from<Service> TService>
 inline TService* Framework::AddService()
@@ -48,23 +81,10 @@ inline TService* Framework::AddService()
         return static_cast<TService*>(result->second.get());
     }
 
-    auto service{ std::make_unique<TService>() };
-    TService* const result{ service.get() };
+    const auto [result, isInserted] { services.emplace(index, std::make_unique<TService>())};
 
-    const auto [result, isInserted] = services.emplace(index, std::move(service));
-
-    if (!isInserted)
-    {
-        return static_cast<TService*>(result->second.get());
-    }
-
-    if (!result->NotifyAdd(this))
-    {
-        services.erase(result);
-        return nullptr;
-    }
-
-    return result;
+    result->second->NotifyAdd(this);
+    return static_cast<TService*>(result->second.get());
 }
 
 template <std::derived_from<Service> TService>

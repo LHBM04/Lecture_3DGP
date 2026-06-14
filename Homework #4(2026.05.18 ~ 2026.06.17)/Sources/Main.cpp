@@ -1,35 +1,42 @@
 ﻿#include "Precompiled.h"
+#include "Framework.h"
 
-#include "WindowService.h"
-
-INT APIENTRY wWinMain(
+INT APIENTRY WinMain(
 	_In_ HINSTANCE hInstance, 
 	_In_opt_ HINSTANCE hPrevInstance, 
-	_In_ PWSTR lpCmdLine, 
+	_In_ LPSTR lpCmdLine, 
 	_In_ INT nCmdShow)
 {
-	WindowService windowService;
-	windowService.NotifyAdd(nullptr);
+#ifdef _DEBUG
+	assert(::AllocConsole());
 
-	WindowService::Options options{};
-	options.title = L"New Window";
-	options.width = 800;
-	options.height = 600;
+	FILE* consoleStream{ nullptr };
+	freopen_s(&consoleStream, "CONOUT$", "w", stdout);
+	freopen_s(&consoleStream, "CONOUT$", "w", stderr);
 
-	windowService.Initialize(options);
+	Debugger::LogInfo("Console output initialized.");
+#endif
 
-	MSG msg;
-	while (true)
+	try
 	{
-		if (::PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+		Framework framework;
+
+		// 창 설정
+		framework.SetOption("Window.Title", "Homework #4(2026.05.18 ~ 2026.06.17)");
+		framework.SetOption("Window.Width", 1280);
+		framework.SetOption("Window.Height", 720);
+
+		if (!framework.Initialize())
 		{
-			if (msg.message == WM_QUIT)
-				break;
-
-			::TranslateMessage(&msg);
-			::DispatchMessageW(&msg);
+			::MessageBox(nullptr, "프로그램이 망했어요", "Oops!", NULL);
+			return -1;
 		}
-	}
 
-	return static_cast<INT>(msg.wParam);
+		return framework.Run();
+	}
+	catch (std::exception ex)
+	{
+		::MessageBox(nullptr, "프로그램이 망했어요", "Oops!", NULL);
+		return -1;
+	}
 }

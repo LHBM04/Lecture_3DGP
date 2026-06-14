@@ -3,18 +3,22 @@
 
 void Service::NotifyAdd(Framework* framework_)
 {
-	// TODO: assert()로 framework_ == nullptr 상황 방지.
+	assert(framework_ != nullptr);
+
 	framework = framework_;
 	OnAdd();
 }
 
 void Service::NotifyRemove()
 {
+	assert(framework != nullptr);
+
 	OnRemove();
 	framework = nullptr;
 }
 
 Framework* Service::GetFramework() const noexcept
 {
+	assert(framework != nullptr);
 	return framework;
 }

@@ -18,7 +18,7 @@ class WindowService : public Service
 public:
 	struct Options final
 	{
-		std::wstring title;
+		std::string title;
 		int x;
 		int y;
 		int width;
@@ -39,8 +39,8 @@ public:
 	[[nodiscard]] HWND GetHWND() const noexcept;
 	[[nodiscard]] HINSTANCE GetHINSTANCE() const noexcept;
 
-	[[nodiscard]] const std::wstring& GetTitle() const noexcept;
-	void SetTitle(std::wstring_view title_) noexcept;
+	[[nodiscard]] const std::string& GetTitle() const noexcept;
+	void SetTitle(std::string_view title_) noexcept;
 
 	[[nodiscard]] int GetWidth() const noexcept;
 	void SetWidth(int width_) noexcept;

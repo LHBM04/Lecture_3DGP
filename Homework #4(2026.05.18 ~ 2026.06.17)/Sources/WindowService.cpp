@@ -18,7 +18,7 @@ namespace
 			}
 			default:
 			{
-				return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+				return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 			}
 		}
 
@@ -45,7 +45,6 @@ namespace
 		return style;
 	}
 
-	// 일단 얘가 하는 일이 별로 없긴 함. 일관성을 위해 작성.
 	[[nodiscard]] DWORD GetStyleEx(const WindowService::Options& options_)
 	{
 		// TODO: 지금 당장은 Style Ex 건드리는 설정이 없음.
@@ -56,7 +55,7 @@ namespace
 
 bool WindowService::Initialize(const Options& options_)
 {
-	assert(options_.x != 0 || options_.y != 0);
+	// assert(options_.x != 0 || options_.y != 0);
 	assert(options_.width > 0 || options_.height > 0);
 
 	options = options_;
@@ -74,7 +73,7 @@ bool WindowService::Initialize(const Options& options_)
 	{
 		const HMONITOR monitor{ ::MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY) };
 		MONITORINFO monitorInfo{ .cbSize = sizeof(MONITORINFO) };
-		if (!::GetMonitorInfoW(monitor, &monitorInfo))
+		if (!::GetMonitorInfo(monitor, &monitorInfo))
 		{
 			return false;
 		}
@@ -103,10 +102,9 @@ bool WindowService::Initialize(const Options& options_)
 		height = rect.bottom - rect.top;
 	}
 
-	// 이거 WindowService 내 필드 사용하게끔 사용하게 바꾸기.
-	hWnd = ::CreateWindowExW(
+	hWnd = ::CreateWindowEx(
 		styleEx,
-		L"Framework Window Class",
+		"Framework Window Class",
 		options.title.c_str(),
 		style,
 		x,
@@ -115,7 +113,7 @@ bool WindowService::Initialize(const Options& options_)
 		height,
 		nullptr,
 		nullptr,
-		::GetModuleHandleW(nullptr),
+		hInstance,
 		nullptr);
 
 	if (hWnd == nullptr)
@@ -167,17 +165,17 @@ HINSTANCE WindowService::GetHINSTANCE() const noexcept
 	return hInstance;
 }
 
-const std::wstring& WindowService::GetTitle() const noexcept
+const std::string& WindowService::GetTitle() const noexcept
 {
 	return options.title;
 }
 
-void WindowService::SetTitle(std::wstring_view title_) noexcept
+void WindowService::SetTitle(std::string_view title_) noexcept
 {
 	if (hWnd != nullptr)
 	{
 		options.title = std::move(title_);
-		::SetWindowTextW(hWnd, options.title.data());
+		::SetWindowText(hWnd, options.title.data());
 	}
 }
 
@@ -208,7 +206,7 @@ SIZE WindowService::GetSize() const noexcept
 
 void WindowService::SetSize(SIZE size_) noexcept
 {
-	assert(width_ > 0 || height > 0);
+	assert(size_.cx > 0 || size_.cy > 0);
 
 	options.width = size_.cx;
 	options.height = size_.cy;
@@ -308,13 +306,13 @@ void WindowService::SetFullscreen(bool fullscreen_) noexcept
 		options.isFullscreen = fullscreen_;
 
 		DWORD style{ GetStyle(options) };
-		::SetWindowLongPtrW(
+		::SetWindowLongPtr(
 			hWnd,
 			GWL_STYLE,
 			static_cast<LONG_PTR>(style));
 
 		DWORD styleEx{ GetStyleEx(options) };
-		::SetWindowLongPtrW(
+		::SetWindowLongPtr(
 			hWnd,
 			GWL_EXSTYLE,
 			static_cast<LONG_PTR>(styleEx));
@@ -342,13 +340,13 @@ void WindowService::SetResizable(bool resizable_) noexcept
 		options.isResizable = resizable_;
 
 		DWORD style{ GetStyle(options) };
-		::SetWindowLongPtrW(
+		::SetWindowLongPtr(
 			hWnd,
 			GWL_STYLE,
 			static_cast<LONG_PTR>(style));
 
 		DWORD styleEx{ GetStyleEx(options) };
-		::SetWindowLongPtrW(
+		::SetWindowLongPtr(
 			hWnd,
 			GWL_EXSTYLE,
 			static_cast<LONG_PTR>(styleEx));
@@ -376,13 +374,13 @@ void WindowService::SetBorderless(bool decorated_) noexcept
 		options.isBorderless = decorated_;
 
 		DWORD style{ GetStyle(options) };
-		::SetWindowLongPtrW(
+		::SetWindowLongPtr(
 			hWnd,
 			GWL_STYLE,
 			static_cast<LONG_PTR>(style));
 
 		DWORD styleEx{ GetStyleEx(options) };
-		::SetWindowLongPtrW(
+		::SetWindowLongPtr(
 			hWnd,
 			GWL_EXSTYLE,
 			static_cast<LONG_PTR>(styleEx));
@@ -430,32 +428,30 @@ void WindowService::OnAdd()
 	// 일단은 이미 hInstance가 있으면 초기화된 걸로 간주.
 	if (hInstance != nullptr)
 	{
+		Debugger::LogWarning("Initialized WNDCLASS already!!");
 		return;
 	}
 
-	// hInstance 획득.
-	// 인자로 받는 것보다 이게 더 깔끔함.
-	hInstance = ::GetModuleHandleW(nullptr);
+	hInstance = ::GetModuleHandle(nullptr); // 인자로 받는 것보다 이게 더 깔끔함.
 
-	// WNDCLASSEXW 초기화.
-	WNDCLASSEXW wc{};
-	wc.cbSize = sizeof(WNDCLASSEXW);
+	WNDCLASSEX wc{};
+	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
-	wc.hIcon = ::LoadIconW(hInstance, IDI_APPLICATION);
-	wc.hCursor = ::LoadCursorW(hInstance, IDC_ARROW);
+	wc.hIcon = ::LoadIcon(hInstance, IDI_APPLICATION);
+	wc.hCursor = ::LoadCursor(hInstance, IDC_ARROW);
 	wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
 	wc.lpszMenuName = nullptr;
-	wc.lpszClassName = L"Framework Window Class";
-	wc.hIconSm = ::LoadIconW(hInstance, IDI_APPLICATION);
-	::RegisterClassExW(&wc);
+	wc.lpszClassName = "Framework Window Class";
+	wc.hIconSm = ::LoadIcon(hInstance, IDI_APPLICATION);
+	::RegisterClassEx(&wc);
 }
 
 void WindowService::OnRemove()
 {
-	::UnregisterClassW(L"Framework Window Class", hInstance);
+	::UnregisterClass("Framework Window Class", hInstance);
 	hInstance = nullptr;
 }
