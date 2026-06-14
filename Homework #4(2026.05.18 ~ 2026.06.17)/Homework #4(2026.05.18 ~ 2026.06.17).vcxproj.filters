@@ -27,10 +27,10 @@
     <ClCompile Include="Sources\Service.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Window.cpp">
+    <ClCompile Include="Sources\WindowService.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\WindowService.cpp">
+    <ClCompile Include="Sources\Framework.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,9 +45,6 @@
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\WindowService.h">
-      <Filter>Sources\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Window.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sources\RenderService.h">

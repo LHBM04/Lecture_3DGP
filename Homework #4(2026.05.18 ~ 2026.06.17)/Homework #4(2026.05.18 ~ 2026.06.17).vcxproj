@@ -160,10 +160,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp" />
     <ClCompile Include="Sources\Service.cpp" />
-    <ClCompile Include="Sources\Window.cpp" />
     <ClCompile Include="Sources\WindowService.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,7 +171,6 @@
     <ClInclude Include="Sources\Precompiled.h" />
     <ClInclude Include="Sources\RenderService.h" />
     <ClInclude Include="Sources\Service.h" />
-    <ClInclude Include="Sources\Window.h" />
     <ClInclude Include="Sources\WindowService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
