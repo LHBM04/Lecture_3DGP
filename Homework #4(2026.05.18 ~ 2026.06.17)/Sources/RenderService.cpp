@@ -24,13 +24,7 @@ bool RenderService::Initialize(const Options& options_)
         return false;
 	}
 
-	if (HRESULT result{ CreateDevice() }; FAILED(result))
-	{
-		std::string errorMessage{ std::system_category().message(result) };
-		std::cout << "Error Message: " << errorMessage << std::endl;
-
-		return false;
-	}
+    Debugger::ThrowIfFailed(CreateDevice());
 
 	return true;
 }
@@ -55,7 +49,7 @@ void RenderService::OnRemove()
 
 }
 
-HRESULT RenderService::CreateDevice()
+void RenderService::CreateDevice()
 {
 	assert(factory != nullptr);
 
@@ -75,7 +69,7 @@ HRESULT RenderService::CreateDevice()
         result = ::D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device));
         if (SUCCEEDED(result))
         {
-            return {};
+            return;
         }
     }
 
@@ -86,10 +80,22 @@ HRESULT RenderService::CreateDevice()
             result = ::D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device));
             if (SUCCEEDED(result))
             {
-                return {};
+                return;
             }
         }
     }
-
-    return result;
 }
+
+void RenderService::CreateSwapChain()
+{
+
+}
+
+void RenderService::CreateCommandObjects()
+{}
+
+void RenderService::CreateDescriptorHeaps()
+{}
+
+void RenderService::CreateSyncObjects()
+{}
