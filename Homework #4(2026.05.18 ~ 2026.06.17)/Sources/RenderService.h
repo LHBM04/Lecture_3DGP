@@ -43,7 +43,12 @@ protected:
 	void OnRemove() override;
 
 private:
-	HRESULT CreateDevice();
+	void CreateDevice();
+	void CreateSwapChain();
+	void CreateCommandObjects();
+	void CreateDescriptorHeaps();
+	void CreateSyncObjects();
+	void BuildGraphicsRootSignature();
 
 	Options options;
 
