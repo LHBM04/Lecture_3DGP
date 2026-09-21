@@ -615,8 +615,6 @@ iOSInjectionProject/
 *.suo
 *.user
 *.userosscache
-*.sln
-*.slnx
 *.sln.docstates
 
 # User-specific files (MonoDevelop/Xamarin Studio)
