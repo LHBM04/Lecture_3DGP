@@ -13,10 +13,16 @@
     <Filter Include="Sources\Public\Framework">
       <UniqueIdentifier>{cab99d51-64bb-4da6-98e3-915a970dd8f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Public\Framework\Core">
+      <UniqueIdentifier>{9f4d616d-55a3-47eb-a0d6-abc955b2742a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Private\Precompiled.h">
       <Filter>Sources\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Core\Engine.h">
+      <Filter>Sources\Public\Framework\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Private\Precompiled.h" />
+    <ClInclude Include="Sources\Public\Framework\Core\Engine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Private\Precompiled.cpp">
