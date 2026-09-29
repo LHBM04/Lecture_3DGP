@@ -42,6 +42,9 @@
     <ClInclude Include="Sources\Public\Framework\Platform\WindowOptions.h">
       <Filter>Sources\Public\Framework\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Platform.h">
+      <Filter>Sources\Public\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Private\Precompiled.cpp">
