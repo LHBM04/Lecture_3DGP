@@ -1,9 +1,4 @@
-﻿#include <iostream>
-#include <print>
-
-#include "Framework/Platform.h"
-
-using namespace TUK::Framework;
+﻿#include "Precompiled.h"
 
 int main(int, char*[])
 {

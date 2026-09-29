@@ -45,6 +45,9 @@
     <ClInclude Include="Sources\Public\Framework\Platform.h">
       <Filter>Sources\Public\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Core.h">
+      <Filter>Sources\Public\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Private\Precompiled.cpp">
