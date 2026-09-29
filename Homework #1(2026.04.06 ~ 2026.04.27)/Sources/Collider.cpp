@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Collider.hpp"
 
 bool Collider::Intersects(const Collider& other_) const

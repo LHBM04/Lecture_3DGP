@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "ObstacleSpawner.hpp"
 
 #include "Mesh.hpp"

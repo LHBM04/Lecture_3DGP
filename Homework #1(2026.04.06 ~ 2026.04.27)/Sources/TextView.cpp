@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "TextView.hpp"
 
 #include "Renderer.hpp"

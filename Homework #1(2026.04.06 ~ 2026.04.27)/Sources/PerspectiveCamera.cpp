@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "PerspectiveCamera.hpp"
 
 float PerspectiveCamera::GetFieldOfView() const

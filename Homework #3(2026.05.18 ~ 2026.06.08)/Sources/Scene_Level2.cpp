@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "Scene_Level2.h"
 
 std::wstring_view Scene_Level2::GetTerrainPath() const noexcept

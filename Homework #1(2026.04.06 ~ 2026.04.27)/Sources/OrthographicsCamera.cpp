@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "OrthographicsCamera.hpp"
 
 float OrthographicsCamera::GetOrthographicSize() const

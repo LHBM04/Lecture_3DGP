@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "StairCollider.h"
 
 #include "CubeCollider.h"
