@@ -167,6 +167,8 @@
     <ClInclude Include="Sources\Private\Precompiled.h" />
     <ClInclude Include="Sources\Public\Framework\Core\Engine.h" />
     <ClInclude Include="Sources\Public\Framework\Platform\Window.h" />
+    <ClInclude Include="Sources\Public\Framework\Platform\WindowFlags.h" />
+    <ClInclude Include="Sources\Public\Framework\Platform\WindowOptions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Private\Platform\Window.cpp" />

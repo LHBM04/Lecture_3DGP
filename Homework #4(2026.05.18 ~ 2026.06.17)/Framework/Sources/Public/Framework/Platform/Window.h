@@ -33,5 +33,6 @@ namespace TUK::Framework
 		virtual void SetPositionY(int positionY) noexcept = 0;
 	};
 
-	Window* AddWindow();
+	struct WindowOptions;
+	Window* AddWindow(const WindowOptions& options);
 }

@@ -1,18 +1,20 @@
 ﻿#include "Precompiled.h"
 #include "Framework/Platform/Window.h"
 
+#include "Framework/Platform/WindowFlags.h"
+#include "Framework/Platform/WindowOptions.h"
 #include "Platform/WindowInternal.h"
 
 namespace TUK::Framework
 {
-	Window* AddWindow()
+	Window* AddWindow(const WindowOptions& options)
 	{
 		HWND hWnd = CreateWindowExW(
 			0,
 			L"STATIC",
-			L"New Window",
+			options.title.data(),
 			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-			CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+			options.positionX, options.positionY, options.sizeX, options.sizeY,
 			nullptr,
 			nullptr,
 			GetModuleHandle(nullptr),
