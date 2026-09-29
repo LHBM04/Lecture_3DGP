@@ -1,8 +1,16 @@
-﻿#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+﻿#include <iostream>
+#include <print>
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+#include "Framework/Platform/Window.h"
+
+int main(int, char*[])
 {
-	// Your application code here
-	return 0;
+	TUK::Framework::Window* window = TUK::Framework::AddWindow();
+
+	std::println("새 창을 생성했습니다.");
+	std::println("창의 타이틀: {}", "new title");
+	std::println("창의 위치: x={}, y={}", window->GetPositionX(), window->GetPositionY());
+	std::println("창의 크기: width={}, height={}", window->GetSizeX(), window->GetSizeY());
+	
+	std::cin.get();
 }

@@ -13,16 +13,16 @@
 #include <dxgi1_6.h>
 
 #ifdef NDEBUG
-	#define ASSERT(condition, message) ((void)0)
+	#define ASSERT(condition, message) (static_cast<void>(0))
 #else
     #define ASSERT(condition, message) \
             do { \
                 if (!(condition)) { \
-                    std::cerr << "Assertion failed: " << #condition \
-                              << ", message: " << message \
-                              << ", file: " << __FILE__ \
-                              << ", line: " << __LINE__ << std::endl; \
+                    std::wcerr << L"Assertion failed: " << #condition \
+                               << L", message: " << message \
+                               << L", file: " << __FILE__ \
+                               << L", line: " << __LINE__ << std::endl; \
                     std::abort(); \
                 } \
-            } while (0)
+            } while (false)
 #endif

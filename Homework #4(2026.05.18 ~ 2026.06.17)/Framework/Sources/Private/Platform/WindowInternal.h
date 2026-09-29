@@ -10,24 +10,31 @@ namespace TUK::Framework
 	class WindowInternal : public Window
 	{
 	public:
-		explicit WindowInternal() noexcept = delete;
 		explicit WindowInternal(HWND hWnd) noexcept;
-		virtual ~WindowInternal() noexcept;
+		~WindowInternal() noexcept override;
 
-		[[nodiscard]] std::wstring GetTitle() const override;
-		void SetTitle(std::wstring_view title) override;
+		WindowInternal(const WindowInternal&) = delete;
+		WindowInternal& operator=(const WindowInternal&) = delete;
 
-		[[nodiscard]] int GetSizeX() const override;
-		void SetSizeX(int sizeX) override;
+		WindowInternal(WindowInternal&&) = delete;
+		WindowInternal& operator=(WindowInternal&&) = delete;
 
-		[[nodiscard]] int GetSizeY() const override;
-		void SetSizeY(int sizeY) override;
+		[[nodiscard]] std::wstring GetTitle() const noexcept override;
+		void SetTitle(std::wstring_view title) noexcept override;
 
-		[[nodiscard]] int GetPositionX() const override;
-		void SetPositionX(int positionX) override;
+		[[nodiscard]] int GetSizeX() const noexcept override;
+		void SetSizeX(int sizeX) noexcept override;
 
-		[[nodiscard]] int GetPositionY() const override;
-		void SetPositionY(int positionY) override;
+		[[nodiscard]] int GetSizeY() const noexcept override;
+		void SetSizeY(int sizeY) noexcept override;
+
+		[[nodiscard]] int GetPositionX() const noexcept override;
+		void SetPositionX(int positionX) noexcept override;
+
+		[[nodiscard]] int GetPositionY() const noexcept override;
+		void SetPositionY(int positionY) noexcept override;
+
+		[[nodiscard]] HWND GetHWND() const noexcept;
 
 	private:
 		HWND hWnd;
