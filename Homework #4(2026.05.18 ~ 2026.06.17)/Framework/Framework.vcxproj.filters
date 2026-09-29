@@ -16,6 +16,12 @@
     <Filter Include="Sources\Public\Framework\Core">
       <UniqueIdentifier>{9f4d616d-55a3-47eb-a0d6-abc955b2742a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Private\Platform">
+      <UniqueIdentifier>{9a858c04-49a7-45fe-ae40-ac0047566fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Public\Framework\Platform">
+      <UniqueIdentifier>{e3e6fc70-6fa6-49a8-8c08-ba5ad51ad965}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Private\Precompiled.h">
@@ -24,10 +30,22 @@
     <ClInclude Include="Sources\Public\Framework\Core\Engine.h">
       <Filter>Sources\Public\Framework\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Private\Platform\WindowInternal.h">
+      <Filter>Sources\Private\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Platform\Window.h">
+      <Filter>Sources\Public\Framework\Platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Private\Precompiled.cpp">
       <Filter>Sources\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Private\Platform\WindowInternal.cpp">
+      <Filter>Sources\Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Private\Platform\Window.cpp">
+      <Filter>Sources\Private\Platform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

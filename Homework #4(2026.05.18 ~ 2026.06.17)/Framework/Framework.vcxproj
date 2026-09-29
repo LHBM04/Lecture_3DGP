@@ -163,10 +163,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Private\Platform\WindowInternal.h" />
     <ClInclude Include="Sources\Private\Precompiled.h" />
     <ClInclude Include="Sources\Public\Framework\Core\Engine.h" />
+    <ClInclude Include="Sources\Public\Framework\Platform\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Private\Platform\Window.cpp" />
+    <ClCompile Include="Sources\Private\Platform\WindowInternal.cpp" />
     <ClCompile Include="Sources\Private\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Precompiled.h</PrecompiledHeaderFile>
