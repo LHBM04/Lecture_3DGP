@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <type_traits>
+
 namespace TUK::Framework
 {
 	class Subsystem
@@ -13,5 +15,8 @@ namespace TUK::Framework
 
 		Subsystem(Subsystem&&) = delete;
 		Subsystem& operator=(Subsystem&&) = delete;
+
+		virtual void OnStartup() = 0;
+		virtual void OnShutdown() = 0;
 	};
 }

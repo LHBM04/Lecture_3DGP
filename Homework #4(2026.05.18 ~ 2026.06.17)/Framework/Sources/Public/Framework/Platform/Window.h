@@ -32,7 +32,4 @@ namespace TUK::Framework
 		[[nodiscard]] virtual int GetPositionY() const noexcept = 0;
 		virtual void SetPositionY(int positionY) noexcept = 0;
 	};
-
-	struct WindowOptions;
-	Window* AddWindow(const WindowOptions& options);
 }

@@ -168,6 +168,11 @@
     <ClInclude Include="Sources\Public\Framework\Core.h" />
     <ClInclude Include="Sources\Public\Framework\Core\Engine.h" />
     <ClInclude Include="Sources\Public\Framework\Core\Subsystem.h" />
+    <ClInclude Include="Sources\Public\Framework\Core\System.h" />
+    <ClInclude Include="Sources\Public\Framework\Graphics.h" />
+    <ClInclude Include="Sources\Public\Framework\Graphics\CommandBuffer.h" />
+    <ClInclude Include="Sources\Public\Framework\Graphics\Renderer.h" />
+    <ClInclude Include="Sources\Public\Framework\Graphics\RenderSubsystem.h" />
     <ClInclude Include="Sources\Public\Framework\Platform.h" />
     <ClInclude Include="Sources\Public\Framework\Platform\Window.h" />
     <ClInclude Include="Sources\Public\Framework\Platform\WindowFlags.h" />
@@ -175,7 +180,13 @@
     <ClInclude Include="Sources\Public\Framework\Platform\WindowSubsystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Private\Platform\Window.cpp" />
+    <ClCompile Include="Sources\Private\Core\System.cpp" />
+    <ClInclude Include="Sources\Private\Graphics\GraphicsDeviceInternal.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClCompile Include="Sources\Private\Graphics\GraphicsDeviceInternal.cpp" />
+    <ClCompile Include="Sources\Private\Graphics\Renderer.cpp" />
+    <ClCompile Include="Sources\Private\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Sources\Private\Platform\WindowInternal.cpp" />
     <ClCompile Include="Sources\Private\Platform\WindowSubsystem.cpp" />
     <ClCompile Include="Sources\Private\Precompiled.cpp">
@@ -188,6 +199,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClInclude Include="Sources\Public\Framework\Graphics\GraphicsDevice.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -22,6 +22,15 @@
     <Filter Include="Sources\Public\Framework\Platform">
       <UniqueIdentifier>{e3e6fc70-6fa6-49a8-8c08-ba5ad51ad965}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Private\Core">
+      <UniqueIdentifier>{433d5dfc-b022-4bc3-be89-eccf001a8e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Public\Framework\Graphics">
+      <UniqueIdentifier>{2b36722a-c749-44db-8d11-1e2a961e4fda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Private\Graphics">
+      <UniqueIdentifier>{a9ecc50b-0686-4904-a07d-72dd8abe5877}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Private\Precompiled.h">
@@ -54,6 +63,27 @@
     <ClInclude Include="Sources\Public\Framework\Platform\WindowSubsystem.h">
       <Filter>Sources\Public\Framework\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Core\System.h">
+      <Filter>Sources\Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Graphics\RenderSubsystem.h">
+      <Filter>Sources\Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Graphics.h">
+      <Filter>Sources\Public\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Graphics\GraphicsDevice.h">
+      <Filter>Sources\Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Graphics\Renderer.h">
+      <Filter>Sources\Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Private\Graphics\GraphicsDeviceInternal.h">
+      <Filter>Sources\Private\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Public\Framework\Graphics\CommandBuffer.h">
+      <Filter>Sources\Public\Framework\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Private\Precompiled.cpp">
@@ -62,11 +92,20 @@
     <ClCompile Include="Sources\Private\Platform\WindowInternal.cpp">
       <Filter>Sources\Private\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Private\Platform\Window.cpp">
-      <Filter>Sources\Private\Platform</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Private\Platform\WindowSubsystem.cpp">
       <Filter>Sources\Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Private\Core\System.cpp">
+      <Filter>Sources\Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Private\Graphics\RenderSubsystem.cpp">
+      <Filter>Sources\Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Private\Graphics\Renderer.cpp">
+      <Filter>Sources\Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Private\Graphics\GraphicsDeviceInternal.cpp">
+      <Filter>Sources\Private\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
