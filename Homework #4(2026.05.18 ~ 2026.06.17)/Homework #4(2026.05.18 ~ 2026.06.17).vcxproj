@@ -163,6 +163,10 @@
     <ClCompile Include="Sources\Framework\Core\Subsystem.cpp" />
     <ClCompile Include="Sources\Framework\Entities\SceneSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Fence.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\Pipeline.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\ComputePipeline.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\Buffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp" />
@@ -185,6 +189,10 @@
     <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.h" />
     <ClInclude Include="Sources\Framework\Entities\Scene.h" />
     <ClInclude Include="Sources\Framework\Graphics\Fence.h" />
+    <ClInclude Include="Sources\Framework\Graphics\Pipeline.h" />
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.h" />
+    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.h" />
+    <ClInclude Include="Sources\Framework\Graphics\Buffer.h" />
     <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.h" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.h" />
     <ClInclude Include="Sources\Framework\Graphics\SwapChain.h" />

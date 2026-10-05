@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "RenderContext.h"
 #include "SwapChain.h"
+#include "Pipeline.h"
+#include "Buffer.h"
 
 #include <cassert>
 #include <vector>
@@ -118,16 +120,10 @@ namespace TUK::Framework
 		return {};
 	}
 
-	void RenderContext::SetPipelineState(ID3D12PipelineState& pipelineState)
+	void RenderContext::SetPipeline(const Pipeline& pipeline)
 	{
 		AssertInitialized();
-		commandList->SetPipelineState(&pipelineState);
-	}
-
-	void RenderContext::SetRootSignature(ID3D12RootSignature& rootSignature)
-	{
-		AssertInitialized();
-		commandList->SetGraphicsRootSignature(&rootSignature);
+		pipeline.Bind(*commandList.Get());
 	}
 
 	void RenderContext::SetDescriptorHeaps(std::span<const std::reference_wrapper<ID3D12DescriptorHeap>> heaps)
@@ -207,10 +203,88 @@ namespace TUK::Framework
 		commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, baseVertex, startInstance);
 	}
 
+	void RenderContext::SetComputeRootDescriptorTable(UINT parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE descriptor)
+	{
+		AssertInitialized();
+		commandList->SetComputeRootDescriptorTable(parameterIndex, descriptor);
+	}
+
+	void RenderContext::SetComputeRootConstantBufferView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
+	{
+		AssertInitialized();
+		commandList->SetComputeRootConstantBufferView(parameterIndex, address);
+	}
+
+	void RenderContext::SetComputeRootShaderResourceView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
+	{
+		AssertInitialized();
+		commandList->SetComputeRootShaderResourceView(parameterIndex, address);
+	}
+
+	void RenderContext::SetComputeRootUnorderedAccessView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
+	{
+		AssertInitialized();
+		commandList->SetComputeRootUnorderedAccessView(parameterIndex, address);
+	}
+
+	void RenderContext::SetComputeRoot32BitConstants(UINT parameterIndex, std::span<const std::uint32_t> values, UINT offset)
+	{
+		AssertInitialized();
+		commandList->SetComputeRoot32BitConstants(parameterIndex, static_cast<UINT>(values.size()), values.data(), offset);
+	}
+
+	void RenderContext::Dispatch(UINT groupCountX, UINT groupCountY, UINT groupCountZ)
+	{
+		AssertInitialized();
+		commandList->Dispatch(groupCountX, groupCountY, groupCountZ);
+	}
+
 	void RenderContext::ResourceBarriers(std::span<const D3D12_RESOURCE_BARRIER> barriers)
 	{
 		AssertInitialized();
 		commandList->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
+	}
+
+	void RenderContext::TransitionBuffer(const Buffer& buffer, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after)
+	{
+		AssertInitialized();
+		if (before == after)
+		{
+			return;
+		}
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Transition.pResource = &buffer.GetResource();
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		barrier.Transition.StateBefore = before;
+		barrier.Transition.StateAfter = after;
+		commandList->ResourceBarrier(1, &barrier);
+	}
+
+	std::expected<void, std::string> RenderContext::CopyBuffer(const Buffer& destination, UINT64 destinationOffset,
+		const Buffer& source, UINT64 sourceOffset, UINT64 size)
+	{
+		AssertInitialized();
+		if (!isRecording)
+		{
+			return std::unexpected(std::string{ "명령 기록 중에만 버퍼를 복사할 수 있습니다." });
+		}
+		if (destinationOffset > destination.GetSize() || size > destination.GetSize() - destinationOffset
+			|| sourceOffset > source.GetSize() || size > source.GetSize() - sourceOffset)
+		{
+			return std::unexpected(std::string{ "버퍼 복사 범위를 벗어났습니다." });
+		}
+		if (size == 0)
+		{
+			return {};
+		}
+		if (&destination.GetResource() == &source.GetResource())
+		{
+			return std::unexpected(std::string{ "CopyBuffer에는 서로 다른 버퍼가 필요합니다." });
+		}
+		commandList->CopyBufferRegion(&destination.GetResource(), destinationOffset,
+			&source.GetResource(), sourceOffset, size);
+		return {};
 	}
 
 	void RenderContext::CopyResource(ID3D12Resource& destination, ID3D12Resource& source)

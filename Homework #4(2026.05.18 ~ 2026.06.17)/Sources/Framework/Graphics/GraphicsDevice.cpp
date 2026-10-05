@@ -147,7 +147,7 @@ namespace TUK::Framework
 		return resource;
 	}
 
-	std::expected<Microsoft::WRL::ComPtr<ID3D12Resource>, std::string> GraphicsDevice::CreateBuffer(
+	std::expected<Buffer, std::string> GraphicsDevice::CreateBuffer(
 		UINT64 size, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initialState, D3D12_RESOURCE_FLAGS flags) const
 	{
 		D3D12_RESOURCE_DESC description{};
@@ -159,7 +159,12 @@ namespace TUK::Framework
 		description.SampleDesc.Count = 1;
 		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 		description.Flags = flags;
-		return CreateResource(description, heapType, initialState, nullptr);
+		auto resource = CreateResource(description, heapType, initialState, nullptr);
+		if (!resource)
+		{
+			return std::unexpected(resource.error());
+		}
+		return Buffer(std::move(*resource), size, heapType);
 	}
 
 	std::expected<Microsoft::WRL::ComPtr<ID3D12Resource>, std::string> GraphicsDevice::CreateTexture(
@@ -200,5 +205,47 @@ namespace TUK::Framework
 			return std::unexpected(result.error());
 		}
 		return fence;
+	}
+
+	std::expected<Microsoft::WRL::ComPtr<ID3D12RootSignature>, std::string> GraphicsDevice::CreateRootSignature(
+		std::span<const std::byte> serializedSignature) const
+	{
+		assert(device);
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> signature;
+		const auto result = CheckDeviceResult(device->CreateRootSignature(0, serializedSignature.data(),
+			serializedSignature.size(), IID_PPV_ARGS(signature.GetAddressOf())), "루트 시그니처 생성");
+		if (!result)
+		{
+			return std::unexpected(result.error());
+		}
+		return signature;
+	}
+
+	std::expected<GraphicsPipeline, std::string> GraphicsDevice::CreateGraphicsPipeline(
+		const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description) const
+	{
+		assert(device && description.pRootSignature);
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> state;
+		const auto result = CheckDeviceResult(device->CreateGraphicsPipelineState(&description,
+			IID_PPV_ARGS(state.GetAddressOf())), "그래픽 파이프라인 생성");
+		if (!result)
+		{
+			return std::unexpected(result.error());
+		}
+		return GraphicsPipeline(std::move(state), *description.pRootSignature);
+	}
+
+	std::expected<ComputePipeline, std::string> GraphicsDevice::CreateComputePipeline(
+		const D3D12_COMPUTE_PIPELINE_STATE_DESC& description) const
+	{
+		assert(device && description.pRootSignature);
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> state;
+		const auto result = CheckDeviceResult(device->CreateComputePipelineState(&description,
+			IID_PPV_ARGS(state.GetAddressOf())), "컴퓨트 파이프라인 생성");
+		if (!result)
+		{
+			return std::unexpected(result.error());
+		}
+		return ComputePipeline(std::move(state), *description.pRootSignature);
 	}
 }

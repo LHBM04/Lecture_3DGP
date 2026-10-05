@@ -54,6 +54,18 @@
     <ClCompile Include="Sources\Framework\Graphics\Fence.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\Pipeline.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\ComputePipeline.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\Buffer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
@@ -99,6 +111,18 @@
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Fence.h">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Pipeline.h">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.h">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.h">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Buffer.h">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.h">
