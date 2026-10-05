@@ -1,7 +1,11 @@
-#include "Precompiled.h"
+ï»¿#include "Precompiled.h"
 
-#include "Application.h"
-#include "Logger.h"
+#include "Framework/Core/System.h"
+
+#include "Framework/Platform/WindowSubsystem.h"
+#include "Framework/Graphics/RenderSubsystem.h"
+
+using namespace TUK::Framework;
 
 INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -12,22 +16,41 @@ INT APIENTRY wWinMain(
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-#if defined(_DEBUG)
-	AllocConsole();
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	AllocConsole();
 	FILE* consoleStream = nullptr;
 	freopen_s(&consoleStream, "CONOUT$", "w", stdout);
 	freopen_s(&consoleStream, "CONOUT$", "w", stderr);
-
-	LOGTRACE("·Î±× ÃÊ±âÈ­ ¿Ï·á!");
 #endif
-	Application::Options options{};
-	options.title = TEXT("Homework #4(2026.05.18 ~ 2026.06.17)");
-	options.x = CW_USEDEFAULT;
-	options.y = CW_USEDEFAULT;
-	options.width = 1280;
-	options.height = 720;
-	options.style = WS_OVERLAPPEDWINDOW;
 
-	return Application::Run(options);
+	System system;
+	WindowOptions windowOptions;
+	windowOptions.title = L"Homework #4";
+	const auto option = system.AddOption<WindowOptions>("Window.Options", std::move(windowOptions));
+	if (!option)
+	{
+		OutputDebugStringA(option.error().c_str());
+		return EXIT_FAILURE;
+	}
+
+	if (const auto renderOption = system.AddOption<UINT>("Renderer.BufferCount", 2); !renderOption)
+	{
+		OutputDebugStringA(renderOption.error().c_str());
+		return EXIT_FAILURE;
+	}
+
+	if (const auto window = system.AddSubsystem<WindowSubsystem>(); !window)
+	{
+		OutputDebugStringA(window.error().c_str());
+		return EXIT_FAILURE;
+	}
+	if (const auto render = system.AddSubsystem<RenderSubsystem>(); !render)
+	{
+		OutputDebugStringA(render.error().c_str());
+		return EXIT_FAILURE;
+	}
+
+	return system.Run();
 }
