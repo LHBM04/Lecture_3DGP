@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -163,10 +163,12 @@
     <ClCompile Include="Sources\Framework\Core\Subsystem.cpp" />
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\RenderTarget.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Renderer.cpp" />
     <ClCompile Include="Sources\Framework\Platform\Window.cpp" />
     <ClCompile Include="Sources\Framework\Platform\WindowSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -179,12 +181,15 @@
     <ClInclude Include="Sources\Framework\Core\System.h" />
     <ClInclude Include="Sources\Framework\Core\Subsystem.h" />
     <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.h" />
+    <ClInclude Include="Sources\Framework\Entities\Scene.h" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.h" />
-    <ClInclude Include="Sources\Framework\Graphics\RenderTarget.h" />
+    <ClInclude Include="Sources\Framework\Graphics\SwapChain.h" />
     <ClInclude Include="Sources\Framework\Graphics\Renderer.h" />
     <ClInclude Include="Sources\Framework\Platform\Window.h" />
     <ClInclude Include="Sources\Framework\Platform\WindowOptions.h" />
     <ClInclude Include="Sources\Framework\Platform\WindowSubsystem.h" />
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.h" />
+    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.h" />
     <ClInclude Include="Sources\Precompiled.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

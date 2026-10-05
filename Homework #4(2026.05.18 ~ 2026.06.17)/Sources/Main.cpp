@@ -3,6 +3,8 @@
 #include "Framework/Core/System.h"
 
 #include "Framework/Platform/WindowSubsystem.h"
+#include "Framework/Platform/TimeSubsystem.h"
+#include "Framework/Platform/EventSubsystem.h"
 #include "Framework/Graphics/RenderSubsystem.h"
 
 using namespace TUK::Framework;
@@ -38,6 +40,18 @@ INT APIENTRY wWinMain(
 	if (const auto renderOption = system.AddOption<UINT>("Renderer.BufferCount", 2); !renderOption)
 	{
 		OutputDebugStringA(renderOption.error().c_str());
+		return EXIT_FAILURE;
+	}
+
+	if (const auto time = system.AddSubsystem<TimeSubsystem>(); !time)
+	{
+		OutputDebugStringA(time.error().c_str());
+		return EXIT_FAILURE;
+	}
+
+	if (const auto event = system.AddSubsystem<EventSubsystem>(); !event)
+	{
+		OutputDebugStringA(event.error().c_str());
 		return EXIT_FAILURE;
 	}
 

@@ -11,7 +11,7 @@
 
 namespace TUK::Framework
 {
-	class RenderTarget;
+	class SwapChain;
 	class RenderSubsystem;
 
 	class Renderer
@@ -34,9 +34,9 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> End();
 		void Shutdown() noexcept;
 
-		[[nodiscard]] std::expected<void, std::string> SetRenderTarget(RenderTarget& target);
-		[[nodiscard]] std::expected<void, std::string> ClearRenderTarget(RenderTarget& target, const std::array<float, 4>& color);
-		[[nodiscard]] std::expected<void, std::string> EndRenderTarget(RenderTarget& target);
+		[[nodiscard]] std::expected<void, std::string> SetSwapChain(SwapChain& target);
+		[[nodiscard]] std::expected<void, std::string> ClearSwapChain(SwapChain& target, const std::array<float, 4>& color);
+		[[nodiscard]] std::expected<void, std::string> EndSwapChain(SwapChain& target);
 
 		/** Begin과 End 사이에서 호출하는 명령 기록 인터페이스. */
 		void SetPipelineState(ID3D12PipelineState& pipelineState);

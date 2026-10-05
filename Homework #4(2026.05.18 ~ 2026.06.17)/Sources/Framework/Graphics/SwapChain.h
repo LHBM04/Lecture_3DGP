@@ -12,20 +12,20 @@ namespace TUK::Framework
 	class Window;
 	class Renderer;
 
-	class RenderTarget
+	class SwapChain
 	{
 		friend class Renderer;
 
 	public:
-		explicit RenderTarget(Window& window) noexcept;
-		~RenderTarget() noexcept = default;
+		explicit SwapChain(Window& window) noexcept;
+		~SwapChain() noexcept = default;
 
 		/** 복사 금지 */
-		RenderTarget(const RenderTarget&) = delete;
-		RenderTarget& operator=(const RenderTarget&) = delete;
+		SwapChain(const SwapChain&) = delete;
+		SwapChain& operator=(const SwapChain&) = delete;
 
-		RenderTarget(RenderTarget&&) noexcept = default;
-		RenderTarget& operator=(RenderTarget&&) noexcept = default;
+		SwapChain(SwapChain&&) noexcept = default;
+		SwapChain& operator=(SwapChain&&) noexcept = default;
 
 		[[nodiscard]] HRESULT Initialize(ID3D12Device& device, IDXGIFactory6& factory,
 			ID3D12CommandQueue& queue, UINT width, UINT height);

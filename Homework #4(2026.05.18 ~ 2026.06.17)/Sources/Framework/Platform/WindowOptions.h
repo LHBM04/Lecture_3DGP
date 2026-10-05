@@ -1,5 +1,4 @@
-﻿#ifndef HOMEWORK04_FRAMEWORK_PLATFORM_WINDOW_OPTIONS
-#define HOMEWORK04_FRAMEWORK_PLATFORM_WINDOW_OPTIONS
+﻿#pragma once
 
 #include <string>
 
@@ -42,4 +41,3 @@ namespace TUK::Framework
 	};
 }
 
-#endif

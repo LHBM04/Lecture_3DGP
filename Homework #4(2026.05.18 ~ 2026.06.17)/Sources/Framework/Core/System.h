@@ -1,5 +1,4 @@
-﻿#ifndef HOMEWORK04_FRAMEWORK_CORE_SYSTEM
-#define HOMEWORK04_FRAMEWORK_CORE_SYSTEM
+﻿#pragma once
 
 #include <any>
 #include <concepts>
@@ -43,6 +42,7 @@ namespace TUK::Framework
 
 		/** 종료 요청 */
 		void RequestQuit(int code) noexcept;
+		[[nodiscard]] bool IsRunning() const noexcept;
 
 		/** 지정한 타입으로 옵션 생성 및 추가 */
 		template <class TOption, class TValue>
@@ -189,4 +189,3 @@ namespace TUK::Framework
 	}
 }
 
-#endif

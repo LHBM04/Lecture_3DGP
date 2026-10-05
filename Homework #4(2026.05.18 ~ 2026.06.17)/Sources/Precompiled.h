@@ -1,5 +1,4 @@
-﻿#ifndef HOMEWORK04_PRECOMPILED
-#define HOMEWORK04_PRECOMPILED
+﻿#pragma once
 
 #include <algorithm>
 #include <array>
@@ -56,4 +55,3 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 
-#endif

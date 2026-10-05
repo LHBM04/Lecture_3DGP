@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.h"
-#include "RenderTarget.h"
+#include "SwapChain.h"
 #include "../Platform/Window.h"
 #include "../Core/System.h"
 
@@ -7,7 +7,7 @@
 
 namespace TUK::Framework
 {
-	RenderTarget::RenderTarget(Window& targetWindow) noexcept
+	SwapChain::SwapChain(Window& targetWindow) noexcept
 		: window(targetWindow)
 		, windowHandle(targetWindow.GetHWND())
 		, device()
@@ -23,7 +23,7 @@ namespace TUK::Framework
 		assert(windowHandle);
 	}
 
-	HRESULT RenderTarget::Initialize(ID3D12Device& renderDevice, IDXGIFactory6& factory,
+	HRESULT SwapChain::Initialize(ID3D12Device& renderDevice, IDXGIFactory6& factory,
 		ID3D12CommandQueue& queue, UINT targetWidth, UINT targetHeight)
 	{
 		assert(windowHandle);
@@ -86,17 +86,17 @@ namespace TUK::Framework
 		return CreateRenderTargets();
 	}
 
-	Window& RenderTarget::GetWindow() const noexcept
+	Window& SwapChain::GetWindow() const noexcept
 	{
 		return window.get();
 	}
 
-	HWND RenderTarget::GetHWND() const noexcept
+	HWND SwapChain::GetHWND() const noexcept
 	{
 		return windowHandle;
 	}
 
-	HRESULT RenderTarget::CreateRenderTargets()
+	HRESULT SwapChain::CreateRenderTargets()
 	{
 		assert(device && swapChain && renderTargetHeap);
 		assert(!buffers.empty());
@@ -114,7 +114,7 @@ namespace TUK::Framework
 		return S_OK;
 	}
 
-	HRESULT RenderTarget::Resize(UINT targetWidth, UINT targetHeight)
+	HRESULT SwapChain::Resize(UINT targetWidth, UINT targetHeight)
 	{
 		AssertInitialized();
 		if (targetWidth == 0 || targetHeight == 0)
@@ -141,7 +141,7 @@ namespace TUK::Framework
 		return CreateRenderTargets();
 	}
 
-	void RenderTarget::Clear(ID3D12GraphicsCommandList& commandList, const std::array<float, 4>& color)
+	void SwapChain::Clear(ID3D12GraphicsCommandList& commandList, const std::array<float, 4>& color)
 	{
 		const UINT index = GetCurrentBufferIndex();
 		D3D12_RESOURCE_BARRIER barrier{};
@@ -157,7 +157,7 @@ namespace TUK::Framework
 		commandList.ClearRenderTargetView(descriptor, color.data(), 0, nullptr);
 	}
 
-	void RenderTarget::Bind(ID3D12GraphicsCommandList& commandList) const
+	void SwapChain::Bind(ID3D12GraphicsCommandList& commandList) const
 	{
 		const UINT index = GetCurrentBufferIndex();
 		auto descriptor = renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
@@ -173,7 +173,7 @@ namespace TUK::Framework
 		commandList.RSSetScissorRects(1, &scissor);
 	}
 
-	void RenderTarget::EndRender(ID3D12GraphicsCommandList& commandList) const
+	void SwapChain::EndRender(ID3D12GraphicsCommandList& commandList) const
 	{
 		const UINT index = GetCurrentBufferIndex();
 		D3D12_RESOURCE_BARRIER barrier{};
@@ -185,19 +185,19 @@ namespace TUK::Framework
 		commandList.ResourceBarrier(1, &barrier);
 	}
 
-	HRESULT RenderTarget::Present(UINT syncInterval)
+	HRESULT SwapChain::Present(UINT syncInterval)
 	{
 		AssertInitialized();
 		return swapChain->Present(syncInterval, 0);
 	}
 
-	void RenderTarget::AssertInitialized() const noexcept
+	void SwapChain::AssertInitialized() const noexcept
 	{
 		assert(device && swapChain && renderTargetHeap);
 		assert(!buffers.empty());
 	}
 
-	UINT RenderTarget::GetCurrentBufferIndex() const noexcept
+	UINT SwapChain::GetCurrentBufferIndex() const noexcept
 	{
 		AssertInitialized();
 		const UINT index = swapChain->GetCurrentBackBufferIndex();
@@ -205,42 +205,42 @@ namespace TUK::Framework
 		return index;
 	}
 
-	int RenderTarget::GetPositionX() const noexcept
+	int SwapChain::GetPositionX() const noexcept
 	{
 		return positionX;
 	}
 
-	void RenderTarget::SetPositionX(int targetX) noexcept
+	void SwapChain::SetPositionX(int targetX) noexcept
 	{
 		positionX = targetX;
 	}
 
-	int RenderTarget::GetPositionY() const noexcept
+	int SwapChain::GetPositionY() const noexcept
 	{
 		return positionY;
 	}
 
-	void RenderTarget::SetPositionY(int targetY) noexcept
+	void SwapChain::SetPositionY(int targetY) noexcept
 	{
 		positionY = targetY;
 	}
 
-	UINT RenderTarget::GetSizeX() const noexcept
+	UINT SwapChain::GetSizeX() const noexcept
 	{
 		return sizeX;
 	}
 
-	HRESULT RenderTarget::SetSizeX(UINT targetWidth)
+	HRESULT SwapChain::SetSizeX(UINT targetWidth)
 	{
 		return Resize(targetWidth, sizeY);
 	}
 
-	UINT RenderTarget::GetSizeY() const noexcept
+	UINT SwapChain::GetSizeY() const noexcept
 	{
 		return sizeY;
 	}
 
-	HRESULT RenderTarget::SetSizeY(UINT targetHeight)
+	HRESULT SwapChain::SetSizeY(UINT targetHeight)
 	{
 		return Resize(sizeX, targetHeight);
 	}

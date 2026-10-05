@@ -11,7 +11,7 @@
 #include <functional>
 
 #include "../Core/Subsystem.h"
-#include "RenderTarget.h"
+#include "SwapChain.h"
 #include "Renderer.h"
 
 namespace TUK::Framework
@@ -27,8 +27,8 @@ namespace TUK::Framework
 		/** 디바이스 가져오기 */
 		[[nodiscard]] ID3D12Device& GetDevice() const noexcept;
 		[[nodiscard]] Renderer& GetRenderer() noexcept;
-		/** 현재 프레임의 활성 타깃. 반환한 참조는 다음 OnPreTick 이전까지만 사용한다. */
-		[[nodiscard]] std::expected<std::reference_wrapper<RenderTarget>, std::string> GetRenderTarget(Window& window);
+		/** 현재 프레임의 활성 스왑 체인. 반환한 참조는 다음 OnPreTick 이전까지만 사용한다. */
+		[[nodiscard]] std::expected<std::reference_wrapper<SwapChain>, std::string> GetSwapChain(Window& window);
 
 	protected:
 		void OnStartup() override;
@@ -50,8 +50,8 @@ namespace TUK::Framework
 		Microsoft::WRL::ComPtr<ID3D12Fence> fence;
 		HANDLE fenceEvent;
 		UINT64 fenceValue;
-		std::vector<RenderTarget> targets;
-		std::vector<std::size_t> frameTargets;
+		std::vector<SwapChain> swapChains;
+		std::vector<std::size_t> frameSwapChains;
 		bool isFrameRecording;
 		bool isInitialized;
 		bool hasFailed;

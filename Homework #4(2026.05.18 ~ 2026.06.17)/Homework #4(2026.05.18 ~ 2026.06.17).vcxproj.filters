@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Sources">
@@ -19,6 +19,9 @@
     <Filter Include="Sources\Framework\Graphics">
       <UniqueIdentifier>{fe7f510a-f8dd-4d30-86a3-175b91e2bc14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\Entities">
+      <UniqueIdentifier>{dd3f8a2a-d5d0-47d6-af89-4f12e3721cce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Main.cpp">
@@ -33,16 +36,25 @@
     <ClCompile Include="Sources\Framework\Core\Subsystem.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\Window.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\WindowSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\RenderTarget.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Renderer.cpp">
@@ -59,7 +71,19 @@
     <ClInclude Include="Sources\Framework\Core\Subsystem.h">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.h">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\Scene.h">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Platform\WindowSubsystem.h">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.h">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.h">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Platform\Window.h">
@@ -71,7 +95,7 @@
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.h">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\RenderTarget.h">
+    <ClInclude Include="Sources\Framework\Graphics\SwapChain.h">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Renderer.h">

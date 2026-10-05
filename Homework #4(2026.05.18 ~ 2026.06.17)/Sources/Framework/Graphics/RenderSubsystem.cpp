@@ -18,8 +18,8 @@ namespace TUK::Framework
 		, fence()
 		, fenceEvent(nullptr)
 		, fenceValue(0)
-		, targets()
-		, frameTargets()
+		, swapChains()
+		, frameSwapChains()
 		, isFrameRecording(false)
 		, isInitialized(false)
 		, hasFailed(false)
@@ -45,17 +45,17 @@ namespace TUK::Framework
 		return renderer;
 	}
 
-	std::expected<std::reference_wrapper<RenderTarget>, std::string> RenderSubsystem::GetRenderTarget(Window& window)
+	std::expected<std::reference_wrapper<SwapChain>, std::string> RenderSubsystem::GetSwapChain(Window& window)
 	{
 		if (!isFrameRecording || hasFailed)
 		{
 			return std::unexpected(std::string{ "현재 프레임에서 렌더링할 수 없습니다." });
 		}
-		for (const auto index : frameTargets)
+		for (const auto index : frameSwapChains)
 		{
-			if (targets[index].GetHWND() == window.GetHWND() && !window.ShouldClose())
+			if (swapChains[index].GetHWND() == window.GetHWND() && !window.ShouldClose())
 			{
-				return std::ref(targets[index]);
+				return std::ref(swapChains[index]);
 			}
 		}
 		return std::unexpected(std::string{ "해당 창의 활성 렌더 타깃이 없습니다." });
@@ -193,14 +193,14 @@ namespace TUK::Framework
 
 	void RenderSubsystem::OnPreTick()
 	{
-		frameTargets.clear();
+		frameSwapChains.clear();
 		if (!isInitialized || hasFailed)
 		{
 			return;
 		}
 		assert(windowSubsystem && device && commandQueue);
 		const auto& windows = windowSubsystem->GetWindows();
-		std::erase_if(targets, [&windows](const auto& target)
+		std::erase_if(swapChains, [&windows](const auto& target)
 		{
 			return std::ranges::none_of(windows, [&target](const auto& window)
 			{
@@ -228,11 +228,11 @@ namespace TUK::Framework
 				continue;
 			}
 
-			auto iterator = std::ranges::find(targets, handle, &RenderTarget::GetHWND);
-			if (iterator == targets.end())
+			auto iterator = std::ranges::find(swapChains, handle, &SwapChain::GetHWND);
+			if (iterator == swapChains.end())
 			{
-				targets.emplace_back(*window);
-				iterator = std::prev(targets.end());
+				swapChains.emplace_back(*window);
+				iterator = std::prev(swapChains.end());
 				if (!CheckResult(iterator->Initialize(*device.Get(), *factory.Get(), *commandQueue.Get(), width, height), "렌더 타깃 생성"))
 				{
 					return;
@@ -245,9 +245,9 @@ namespace TUK::Framework
 					return;
 				}
 			}
-			frameTargets.push_back(static_cast<std::size_t>(iterator - targets.begin()));
+			frameSwapChains.push_back(static_cast<std::size_t>(iterator - swapChains.begin()));
 		}
-		if (frameTargets.empty())
+		if (frameSwapChains.empty())
 		{
 			return;
 		}
@@ -257,9 +257,9 @@ namespace TUK::Framework
 		}
 
 		constexpr std::array<float, 4> backgroundColor = { 0.08f, 0.12f, 0.18f, 1.0f };
-		for (const auto index : frameTargets)
+		for (const auto index : frameSwapChains)
 		{
-			if (!CheckResult(renderer.ClearRenderTarget(targets[index], backgroundColor)))
+			if (!CheckResult(renderer.ClearSwapChain(swapChains[index], backgroundColor)))
 			{
 				return;
 			}
@@ -274,9 +274,9 @@ namespace TUK::Framework
 			return;
 		}
 		assert(windowSubsystem && device && commandQueue);
-		for (const auto index : frameTargets)
+		for (const auto index : frameSwapChains)
 		{
-			if (!CheckResult(renderer.EndRenderTarget(targets[index])))
+			if (!CheckResult(renderer.EndSwapChain(swapChains[index])))
 			{
 				return;
 			}
@@ -293,9 +293,9 @@ namespace TUK::Framework
 
 		// WindowSubsystem의 OnPostTick에서 이미 삭제된 창에는 Present하지 않는다.
 		const auto& windows = windowSubsystem->GetWindows();
-		for (const auto index : frameTargets)
+		for (const auto index : frameSwapChains)
 		{
-			auto& target = targets[index];
+			auto& target = swapChains[index];
 			const bool canPresent = std::ranges::any_of(windows, [&target](const auto& window)
 			{
 				return !window->ShouldClose() && window->GetHWND() == target.GetHWND();
@@ -311,7 +311,7 @@ namespace TUK::Framework
 		}
 		// Present 실패 시에도 제출한 작업을 정리한 뒤 종료한다.
 		WaitForGpu();
-		frameTargets.clear();
+		frameSwapChains.clear();
 	}
 
 	bool RenderSubsystem::WaitForGpu()
@@ -346,8 +346,8 @@ namespace TUK::Framework
 		{
 			WaitForGpu();
 		}
-		targets.clear();
-		frameTargets.clear();
+		swapChains.clear();
+		frameSwapChains.clear();
 		isFrameRecording = false;
 		renderer.Shutdown();
 		commandQueue.Reset();

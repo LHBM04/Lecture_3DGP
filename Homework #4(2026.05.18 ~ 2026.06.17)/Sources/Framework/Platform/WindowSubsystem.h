@@ -1,5 +1,4 @@
-﻿#ifndef HOMEWORK04_FRAMEWORK_PLATFORM_WINDOW_SUBSYSTEM
-#define HOMEWORK04_FRAMEWORK_PLATFORM_WINDOW_SUBSYSTEM
+﻿#pragma once
 
 #include <expected>
 #include <functional>
@@ -26,7 +25,6 @@ namespace TUK::Framework
 
 	protected:
 		void OnStartup() override;
-		void OnPreTick() override;
 		void OnPostTick() override;
 		void OnShutdown() override;
 
@@ -37,4 +35,3 @@ namespace TUK::Framework
 	};
 }
 
-#endif

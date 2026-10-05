@@ -1,10 +1,12 @@
 ﻿#include "Precompiled.h"
 #include "WorldSubsystem.h"
+#include "Scene.h"
 
 namespace TUK::Framework
 {
 	WorldSubsystem::WorldSubsystem() noexcept
 		: Subsystem(20)
+		, scenes()
 	{
 		
 	}

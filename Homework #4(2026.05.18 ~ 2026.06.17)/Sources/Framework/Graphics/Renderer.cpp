@@ -1,6 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "Renderer.h"
-#include "RenderTarget.h"
+#include "SwapChain.h"
 
 #include <cassert>
 #include <vector>
@@ -85,7 +85,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> Renderer::SetRenderTarget(RenderTarget& target)
+	std::expected<void, std::string> Renderer::SetSwapChain(SwapChain& target)
 	{
 		AssertInitialized();
 		if (!isRecording)
@@ -96,7 +96,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> Renderer::ClearRenderTarget(RenderTarget& target, const std::array<float, 4>& color)
+	std::expected<void, std::string> Renderer::ClearSwapChain(SwapChain& target, const std::array<float, 4>& color)
 	{
 		AssertInitialized();
 		if (!isRecording)
@@ -107,7 +107,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> Renderer::EndRenderTarget(RenderTarget& target)
+	std::expected<void, std::string> Renderer::EndSwapChain(SwapChain& target)
 	{
 		AssertInitialized();
 		if (!isRecording)

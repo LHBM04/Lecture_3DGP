@@ -69,6 +69,11 @@ namespace TUK::Framework
 		isRunning = false;
 	}
 
+	bool System::IsRunning() const noexcept
+	{
+		return isRunning;
+	}
+
 	void System::Startup()
 	{
 		instance = this;

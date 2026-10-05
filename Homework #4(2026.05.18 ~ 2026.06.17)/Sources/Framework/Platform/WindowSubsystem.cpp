@@ -1,5 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "WindowSubsystem.h"
+#include "EventSubsystem.h"
 
 #include "../Core/System.h"
 
@@ -8,38 +9,12 @@ namespace
 	constexpr wchar_t ClassName[] = L"TUK.Framework.Window";
 	const HINSTANCE instance = GetModuleHandleW(nullptr);
 
-	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		auto* window = reinterpret_cast<TUK::Framework::Window*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
-		if (message == WM_NCCREATE)
-		{
-			const auto* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
-			window = static_cast<TUK::Framework::Window*>(creation->lpCreateParams);
-			if (!window)
-			{
-				return FALSE;
-			}
-
-			SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
-		}
-		else if (message == WM_NCDESTROY)
-		{
-			SetWindowLongPtrW(hWnd, GWLP_USERDATA, 0);
-		}
-
-		if (window)
-		{
-			return window->HandleMessage(hWnd, message, wParam, lParam);
-		}
-
-		return DefWindowProcW(hWnd, message, wParam, lParam);
-	}
 }
 
 namespace TUK::Framework
 {
 	WindowSubsystem::WindowSubsystem() noexcept
-		: Subsystem(0)
+		: Subsystem(2)
 		, windowClass(0)
 		, hasExitRequest(false)
 		, windows()
@@ -58,7 +33,7 @@ namespace TUK::Framework
 
 	std::expected<std::reference_wrapper<Window>, std::string> WindowSubsystem::Create(const WindowOptions& options)
 	{
-		if (!windowClass || hasExitRequest)
+		if (!windowClass || hasExitRequest || !System::GetInstance().IsRunning())
 		{
 			return std::unexpected(std::string{ "창을 생성할 수 있는 상태가 아닙니다." });
 		}
@@ -130,7 +105,7 @@ namespace TUK::Framework
 		WNDCLASSEXW description{};
 		description.cbSize = sizeof(description);
 		description.style = CS_HREDRAW | CS_VREDRAW;
-		description.lpfnWndProc = &WindowProc;
+		description.lpfnWndProc = EventSubsystem::GetWindowProc();
 		description.hInstance = instance;
 		description.hCursor = LoadCursorW(nullptr, IDC_ARROW);
 		description.lpszClassName = ClassName;
@@ -162,23 +137,6 @@ namespace TUK::Framework
 		}
 	}
 
-	void WindowSubsystem::OnPreTick()
-	{
-		MSG message{};
-		while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
-		{
-			if (message.message == WM_QUIT)
-			{
-				hasExitRequest = true;
-				System::GetInstance().RequestQuit(static_cast<int>(message.wParam));
-				break;
-			}
-
-			TranslateMessage(&message);
-			DispatchMessageW(&message);
-		}
-	}
-
 	void WindowSubsystem::OnPostTick()
 	{
 		std::erase_if(windows, [](const auto& window)
@@ -186,7 +144,7 @@ namespace TUK::Framework
 			return window->ShouldClose();
 		});
 
-		if (windows.empty() && !hasExitRequest)
+		if (windows.empty() && !hasExitRequest && System::GetInstance().IsRunning())
 		{
 			hasExitRequest = true;
 			System::GetInstance().RequestQuit(EXIT_SUCCESS);

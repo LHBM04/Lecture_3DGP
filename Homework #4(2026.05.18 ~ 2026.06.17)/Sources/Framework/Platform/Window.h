@@ -1,5 +1,4 @@
-﻿#ifndef HOMEWORK04_FRAMEWORK_PLATFORM_WINDOW
-#define HOMEWORK04_FRAMEWORK_PLATFORM_WINDOW
+﻿#pragma once
 
 #include <string>
 #include <string_view>
@@ -53,4 +52,3 @@ namespace TUK::Framework
 	};
 }
 
-#endif
