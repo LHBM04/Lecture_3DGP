@@ -32,7 +32,7 @@ namespace TUK::Framework
 		/** 이전 명령의 GPU 실행이 완료된 뒤 호출. */
 		[[nodiscard]] std::expected<void, std::string> Begin();
 		[[nodiscard]] std::expected<void, std::string> End();
-		void Shutdown() noexcept;
+		void Release() noexcept;
 
 		[[nodiscard]] std::expected<void, std::string> SetSwapChain(SwapChain& target);
 		[[nodiscard]] std::expected<void, std::string> ClearSwapChain(SwapChain& target, const std::array<float, 4>& color);

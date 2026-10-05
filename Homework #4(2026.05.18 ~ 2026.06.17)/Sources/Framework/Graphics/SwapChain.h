@@ -11,10 +11,13 @@ namespace TUK::Framework
 {
 	class Window;
 	class RenderContext;
+	class GraphicsDevice;
 
 	class SwapChain
 	{
 		friend class RenderContext;
+		friend class GraphicsDevice;
+	class GraphicsDevice;
 
 	public:
 		explicit SwapChain(Window& window) noexcept;
@@ -27,8 +30,6 @@ namespace TUK::Framework
 		SwapChain(SwapChain&&) noexcept = default;
 		SwapChain& operator=(SwapChain&&) noexcept = default;
 
-		[[nodiscard]] HRESULT Initialize(ID3D12Device& device, IDXGIFactory6& factory,
-			ID3D12CommandQueue& queue, UINT width, UINT height);
 
 		/** 창이 살아 있는 동안만 사용한다. WindowSubsystem이 창을 소유한다. */
 		[[nodiscard]] Window& GetWindow() const noexcept;
@@ -51,6 +52,8 @@ namespace TUK::Framework
 		[[nodiscard]] HRESULT SetSizeY(UINT height);
 
 	private:
+		[[nodiscard]] HRESULT Initialize(ID3D12Device& device, IDXGIFactory6& factory,
+			ID3D12CommandQueue& queue, UINT width, UINT height);
 		void Clear(ID3D12GraphicsCommandList& commandList, const std::array<float, 4>& color);
 		void Bind(ID3D12GraphicsCommandList& commandList) const;
 		void EndRender(ID3D12GraphicsCommandList& commandList) const;

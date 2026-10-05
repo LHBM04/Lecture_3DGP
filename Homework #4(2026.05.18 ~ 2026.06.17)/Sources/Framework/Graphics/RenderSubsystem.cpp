@@ -11,13 +11,10 @@ namespace TUK::Framework
 	RenderSubsystem::RenderSubsystem() noexcept
 		: Subsystem(10)
 		, windowSubsystem(nullptr)
-		, factory()
 		, device()
 		, commandQueue()
 		, renderContext()
 		, fence()
-		, fenceEvent(nullptr)
-		, fenceValue(0)
 		, swapChains()
 		, frameSwapChains()
 		, isFrameRecording(false)
@@ -26,18 +23,11 @@ namespace TUK::Framework
 	{
 	}
 
-	RenderSubsystem::~RenderSubsystem() noexcept
-	{
-		if (fenceEvent)
-		{
-			CloseHandle(fenceEvent);
-		}
-	}
+	RenderSubsystem::~RenderSubsystem() noexcept = default;
 
-	ID3D12Device& RenderSubsystem::GetDevice() const noexcept
+	GraphicsDevice& RenderSubsystem::GetDevice() noexcept
 	{
-		assert(device);
-		return *device.Get();
+		return device;
 	}
 
 	RenderContext& RenderSubsystem::GetRenderContext() noexcept
@@ -88,62 +78,6 @@ namespace TUK::Framework
 		return false;
 	}
 
-	bool RenderSubsystem::InitializeDevice()
-	{
-		UINT factoryFlags = 0;
-#ifdef _DEBUG
-		Microsoft::WRL::ComPtr<ID3D12Debug> debug;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debug.GetAddressOf()))))
-		{
-			debug->EnableDebugLayer();
-			factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-		}
-#endif
-		if (!CheckResult(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(factory.GetAddressOf())), "DXGI 팩토리 생성"))
-		{
-			return false;
-		}
-
-		for (UINT index = 0; ; ++index)
-		{
-			Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
-			const HRESULT result = factory->EnumAdapterByGpuPreference(index,
-				DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(adapter.GetAddressOf()));
-			if (result == DXGI_ERROR_NOT_FOUND)
-			{
-				break;
-			}
-			if (!CheckResult(result, "어댑터 조회"))
-			{
-				return false;
-			}
-
-			DXGI_ADAPTER_DESC1 description{};
-			if (!CheckResult(adapter->GetDesc1(&description), "어댑터 정보 조회"))
-			{
-				return false;
-			}
-			if (description.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-			{
-				continue;
-			}
-			if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0,
-				IID_PPV_ARGS(device.ReleaseAndGetAddressOf()))))
-			{
-				return true;
-			}
-		}
-
-		// DX12를 지원하는 하드웨어가 없으면 소프트웨어 디바이스 사용.
-		Microsoft::WRL::ComPtr<IDXGIAdapter> warp;
-		if (!CheckResult(factory->EnumWarpAdapter(IID_PPV_ARGS(warp.GetAddressOf())), "WARP 어댑터 조회"))
-		{
-			return false;
-		}
-		return CheckResult(D3D12CreateDevice(warp.Get(), D3D_FEATURE_LEVEL_11_0,
-			IID_PPV_ARGS(device.ReleaseAndGetAddressOf())), "D3D12 디바이스 생성");
-	}
-
 	void RenderSubsystem::OnStartup()
 	{
 		if (isInitialized)
@@ -160,34 +94,31 @@ namespace TUK::Framework
 			return;
 		}
 		windowSubsystem = &windows->get();
-		if (!InitializeDevice())
+		if (!CheckResult(device.Initialize()))
 		{
 			return;
 		}
 
 		D3D12_COMMAND_QUEUE_DESC queueDescription{};
 		queueDescription.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-		if (!CheckResult(device->CreateCommandQueue(&queueDescription,
-			IID_PPV_ARGS(commandQueue.GetAddressOf())), "명령 큐 생성"))
+		const auto queue = device.CreateCommandQueue(queueDescription);
+		if (!queue)
+		{
+			CheckResult(std::expected<void, std::string>{ std::unexpected(queue.error()) });
+			return;
+		}
+		commandQueue = *queue;
+		if (!CheckResult(renderContext.Initialize(device.GetNativeDevice())))
 		{
 			return;
 		}
-		if (!CheckResult(renderContext.Initialize(*device.Get())))
+		auto createdFence = device.CreateFence(0, D3D12_FENCE_FLAG_NONE);
+		if (!createdFence)
 		{
+			CheckResult(std::expected<void, std::string>{ std::unexpected(createdFence.error()) });
 			return;
 		}
-		if (!CheckResult(device->CreateFence(0, D3D12_FENCE_FLAG_NONE,
-			IID_PPV_ARGS(fence.GetAddressOf())), "펜스 생성"))
-		{
-			return;
-		}
-		fenceEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
-		if (!fenceEvent)
-		{
-			CheckResult(HRESULT_FROM_WIN32(GetLastError()), "펜스 이벤트 생성");
-			return;
-		}
-		fenceValue = 0;
+		fence = std::move(*createdFence);
 		isInitialized = true;
 	}
 
@@ -198,7 +129,7 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		assert(windowSubsystem && device && commandQueue);
+		assert(windowSubsystem && commandQueue);
 		const auto& windows = windowSubsystem->GetWindows();
 		std::erase_if(swapChains, [&windows](const auto& target)
 		{
@@ -231,12 +162,14 @@ namespace TUK::Framework
 			auto iterator = std::ranges::find(swapChains, handle, &SwapChain::GetHWND);
 			if (iterator == swapChains.end())
 			{
-				swapChains.emplace_back(*window);
-				iterator = std::prev(swapChains.end());
-				if (!CheckResult(iterator->Initialize(*device.Get(), *factory.Get(), *commandQueue.Get(), width, height), "렌더 타깃 생성"))
+				auto createdSwapChain = device.CreateSwapChain(*window, *commandQueue.Get(), width, height);
+				if (!createdSwapChain)
 				{
+					CheckResult(std::expected<void, std::string>{ std::unexpected(createdSwapChain.error()) });
 					return;
 				}
+				swapChains.push_back(std::move(*createdSwapChain));
+				iterator = std::prev(swapChains.end());
 			}
 			else if (iterator->GetSizeX() != width || iterator->GetSizeY() != height)
 			{
@@ -273,7 +206,7 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		assert(windowSubsystem && device && commandQueue);
+		assert(windowSubsystem && commandQueue);
 		for (const auto index : frameSwapChains)
 		{
 			if (!CheckResult(renderContext.EndSwapChain(swapChains[index])))
@@ -316,28 +249,12 @@ namespace TUK::Framework
 
 	bool RenderSubsystem::WaitForGpu()
 	{
-		assert(device && commandQueue && fence && fenceEvent);
-		if (!CheckResult(device->GetDeviceRemovedReason(), "디바이스 상태 확인"))
+		assert(commandQueue);
+		if (!CheckResult(fence.Signal(*commandQueue.Get())))
 		{
 			return false;
 		}
-		const UINT64 value = ++fenceValue;
-		if (!CheckResult(commandQueue->Signal(fence.Get(), value), "펜스 신호 전송"))
-		{
-			return false;
-		}
-		if (fence->GetCompletedValue() < value)
-		{
-			if (!CheckResult(fence->SetEventOnCompletion(value, fenceEvent), "펜스 이벤트 설정"))
-			{
-				return false;
-			}
-			if (WaitForSingleObject(fenceEvent, INFINITE) != WAIT_OBJECT_0)
-			{
-				return CheckResult(HRESULT_FROM_WIN32(GetLastError()), "GPU 작업 대기");
-			}
-		}
-		return CheckResult(device->GetDeviceRemovedReason(), "GPU 작업 완료 확인");
+		return CheckResult(fence.Wait());
 	}
 
 	void RenderSubsystem::OnShutdown()
@@ -349,16 +266,10 @@ namespace TUK::Framework
 		swapChains.clear();
 		frameSwapChains.clear();
 		isFrameRecording = false;
-		renderContext.Shutdown();
+		renderContext.Release();
 		commandQueue.Reset();
-		fence.Reset();
-		if (fenceEvent)
-		{
-			CloseHandle(fenceEvent);
-			fenceEvent = nullptr;
-		}
-		factory.Reset();
-		device.Reset();
+		fence.Release();
+		device.Release();
 		windowSubsystem = nullptr;
 		isInitialized = false;
 	}

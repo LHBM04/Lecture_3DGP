@@ -241,7 +241,7 @@ namespace TUK::Framework
 		return isRecording;
 	}
 
-	void RenderContext::Shutdown() noexcept
+	void RenderContext::Release() noexcept
 	{
 		isRecording = false;
 		commandList.Reset();

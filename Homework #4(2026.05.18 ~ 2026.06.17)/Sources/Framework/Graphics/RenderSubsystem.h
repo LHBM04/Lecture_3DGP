@@ -13,6 +13,8 @@
 #include "../Core/Subsystem.h"
 #include "SwapChain.h"
 #include "RenderContext.h"
+#include "GraphicsDevice.h"
+#include "Fence.h"
 
 namespace TUK::Framework
 {
@@ -25,7 +27,7 @@ namespace TUK::Framework
 		~RenderSubsystem() noexcept override;
 
 		/** 디바이스 가져오기 */
-		[[nodiscard]] ID3D12Device& GetDevice() const noexcept;
+		[[nodiscard]] GraphicsDevice& GetDevice() noexcept;
 		[[nodiscard]] RenderContext& GetRenderContext() noexcept;
 		/** 현재 프레임의 활성 스왑 체인. 반환한 참조는 다음 OnPreTick 이전까지만 사용한다. */
 		[[nodiscard]] std::expected<std::reference_wrapper<SwapChain>, std::string> GetSwapChain(Window& window);
@@ -39,17 +41,13 @@ namespace TUK::Framework
 	private:
 		bool CheckResult(HRESULT result, std::string_view operation);
 		bool CheckResult(const std::expected<void, std::string>& result);
-		bool InitializeDevice();
 		bool WaitForGpu();
 
 		WindowSubsystem* windowSubsystem;
-		Microsoft::WRL::ComPtr<IDXGIFactory6> factory;
-		Microsoft::WRL::ComPtr<ID3D12Device> device;
+		GraphicsDevice device;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
 		RenderContext renderContext;
-		Microsoft::WRL::ComPtr<ID3D12Fence> fence;
-		HANDLE fenceEvent;
-		UINT64 fenceValue;
+		Fence fence;
 		std::vector<SwapChain> swapChains;
 		std::vector<std::size_t> frameSwapChains;
 		bool isFrameRecording;

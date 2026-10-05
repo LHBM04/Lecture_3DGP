@@ -51,6 +51,12 @@
     <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\Fence.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
@@ -91,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="Sources\Framework\Platform\WindowOptions.h">
       <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Fence.h">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.h">
+      <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.h">
       <Filter>Sources\Framework\Graphics</Filter>
