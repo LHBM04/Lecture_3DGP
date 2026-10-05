@@ -10,11 +10,11 @@
 namespace TUK::Framework
 {
 	class Window;
-	class Renderer;
+	class RenderContext;
 
 	class SwapChain
 	{
-		friend class Renderer;
+		friend class RenderContext;
 
 	public:
 		explicit SwapChain(Window& window) noexcept;

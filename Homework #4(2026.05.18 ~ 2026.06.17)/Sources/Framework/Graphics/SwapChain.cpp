@@ -27,7 +27,7 @@ namespace TUK::Framework
 		ID3D12CommandQueue& queue, UINT targetWidth, UINT targetHeight)
 	{
 		assert(windowHandle);
-		const auto option = System::GetInstance().GetOption<UINT>("Renderer.BufferCount");
+		const auto option = System::GetInstance().GetOption<UINT>("RenderContext.BufferCount");
 		if (!option)
 		{
 			OutputDebugStringA(option.error().c_str());
@@ -36,7 +36,7 @@ namespace TUK::Framework
 		const UINT bufferCount = option->get();
 		if (bufferCount < 2)
 		{
-			OutputDebugStringA("Renderer.BufferCount must be at least 2.\n");
+			OutputDebugStringA("RenderContext.BufferCount must be at least 2.\n");
 			return E_INVALIDARG;
 		}
 

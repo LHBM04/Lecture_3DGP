@@ -9,11 +9,11 @@ namespace TUK::Framework
 {
 	class Scene;
 
-	class WorldSubsystem : public Subsystem
+	class SceneSubsystem : public Subsystem
 	{
 	public:
-		WorldSubsystem() noexcept;
-		~WorldSubsystem() noexcept override;
+		SceneSubsystem() noexcept;
+		~SceneSubsystem() noexcept override;
 
 	protected:
 		void OnStartup() override;

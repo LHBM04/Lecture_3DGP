@@ -36,7 +36,7 @@
     <ClCompile Include="Sources\Framework\Core\Subsystem.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
+    <ClCompile Include="Sources\Framework\Entities\SceneSubsystem.cpp">
       <Filter>Sources\Framework\Entities</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\Window.cpp">
@@ -57,7 +57,7 @@
     <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\Renderer.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\RenderContext.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +71,7 @@
     <ClInclude Include="Sources\Framework\Core\Subsystem.h">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.h">
+    <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.h">
       <Filter>Sources\Framework\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Entities\Scene.h">
@@ -98,7 +98,7 @@
     <ClInclude Include="Sources\Framework\Graphics\SwapChain.h">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Renderer.h">
+    <ClInclude Include="Sources\Framework\Graphics\RenderContext.h">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,7 @@ namespace TUK::Framework
 		, factory()
 		, device()
 		, commandQueue()
-		, renderer()
+		, renderContext()
 		, fence()
 		, fenceEvent(nullptr)
 		, fenceValue(0)
@@ -40,9 +40,9 @@ namespace TUK::Framework
 		return *device.Get();
 	}
 
-	Renderer& RenderSubsystem::GetRenderer() noexcept
+	RenderContext& RenderSubsystem::GetRenderContext() noexcept
 	{
-		return renderer;
+		return renderContext;
 	}
 
 	std::expected<std::reference_wrapper<SwapChain>, std::string> RenderSubsystem::GetSwapChain(Window& window)
@@ -172,7 +172,7 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		if (!CheckResult(renderer.Initialize(*device.Get())))
+		if (!CheckResult(renderContext.Initialize(*device.Get())))
 		{
 			return;
 		}
@@ -251,7 +251,7 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		if (!CheckResult(renderer.Begin()))
+		if (!CheckResult(renderContext.Begin()))
 		{
 			return;
 		}
@@ -259,7 +259,7 @@ namespace TUK::Framework
 		constexpr std::array<float, 4> backgroundColor = { 0.08f, 0.12f, 0.18f, 1.0f };
 		for (const auto index : frameSwapChains)
 		{
-			if (!CheckResult(renderer.ClearSwapChain(swapChains[index], backgroundColor)))
+			if (!CheckResult(renderContext.ClearSwapChain(swapChains[index], backgroundColor)))
 			{
 				return;
 			}
@@ -276,17 +276,17 @@ namespace TUK::Framework
 		assert(windowSubsystem && device && commandQueue);
 		for (const auto index : frameSwapChains)
 		{
-			if (!CheckResult(renderer.EndSwapChain(swapChains[index])))
+			if (!CheckResult(renderContext.EndSwapChain(swapChains[index])))
 			{
 				return;
 			}
 		}
 		isFrameRecording = false;
-		if (!CheckResult(renderer.End()))
+		if (!CheckResult(renderContext.End()))
 		{
 			return;
 		}
-		if (!CheckResult(renderer.Execute(*commandQueue.Get())))
+		if (!CheckResult(renderContext.Execute(*commandQueue.Get())))
 		{
 			return;
 		}
@@ -349,7 +349,7 @@ namespace TUK::Framework
 		swapChains.clear();
 		frameSwapChains.clear();
 		isFrameRecording = false;
-		renderer.Shutdown();
+		renderContext.Shutdown();
 		commandQueue.Reset();
 		fence.Reset();
 		if (fenceEvent)

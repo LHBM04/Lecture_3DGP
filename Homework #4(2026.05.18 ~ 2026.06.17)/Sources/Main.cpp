@@ -37,7 +37,7 @@ INT APIENTRY wWinMain(
 		return EXIT_FAILURE;
 	}
 
-	if (const auto renderOption = system.AddOption<UINT>("Renderer.BufferCount", 2); !renderOption)
+	if (const auto renderOption = system.AddOption<UINT>("RenderContext.BufferCount", 2); !renderOption)
 	{
 		OutputDebugStringA(renderOption.error().c_str());
 		return EXIT_FAILURE;

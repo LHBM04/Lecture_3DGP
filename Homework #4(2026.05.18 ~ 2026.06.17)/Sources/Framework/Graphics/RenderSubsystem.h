@@ -12,7 +12,7 @@
 
 #include "../Core/Subsystem.h"
 #include "SwapChain.h"
-#include "Renderer.h"
+#include "RenderContext.h"
 
 namespace TUK::Framework
 {
@@ -26,7 +26,7 @@ namespace TUK::Framework
 
 		/** 디바이스 가져오기 */
 		[[nodiscard]] ID3D12Device& GetDevice() const noexcept;
-		[[nodiscard]] Renderer& GetRenderer() noexcept;
+		[[nodiscard]] RenderContext& GetRenderContext() noexcept;
 		/** 현재 프레임의 활성 스왑 체인. 반환한 참조는 다음 OnPreTick 이전까지만 사용한다. */
 		[[nodiscard]] std::expected<std::reference_wrapper<SwapChain>, std::string> GetSwapChain(Window& window);
 
@@ -46,7 +46,7 @@ namespace TUK::Framework
 		Microsoft::WRL::ComPtr<IDXGIFactory6> factory;
 		Microsoft::WRL::ComPtr<ID3D12Device> device;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
-		Renderer renderer;
+		RenderContext renderContext;
 		Microsoft::WRL::ComPtr<ID3D12Fence> fence;
 		HANDLE fenceEvent;
 		UINT64 fenceValue;

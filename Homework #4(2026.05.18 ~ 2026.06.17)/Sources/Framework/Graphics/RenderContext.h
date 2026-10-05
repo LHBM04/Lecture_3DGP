@@ -14,19 +14,19 @@ namespace TUK::Framework
 	class SwapChain;
 	class RenderSubsystem;
 
-	class Renderer
+	class RenderContext
 	{
 		friend class RenderSubsystem;
 
 	public:
-		Renderer() noexcept;
-		~Renderer() noexcept = default;
+		RenderContext() noexcept;
+		~RenderContext() noexcept = default;
 
-		Renderer(const Renderer&) = delete;
-		Renderer& operator=(const Renderer&) = delete;
+		RenderContext(const RenderContext&) = delete;
+		RenderContext& operator=(const RenderContext&) = delete;
 
-		Renderer(Renderer&&) = delete;
-		Renderer& operator=(Renderer&&) = delete;
+		RenderContext(RenderContext&&) = delete;
+		RenderContext& operator=(RenderContext&&) = delete;
 
 		[[nodiscard]] std::expected<void, std::string> Initialize(ID3D12Device& device);
 		/** 이전 명령의 GPU 실행이 완료된 뒤 호출. */
