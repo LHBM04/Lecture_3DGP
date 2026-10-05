@@ -1,11 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "GraphicsDevice.h"
 
-#include <cassert>
-#include <format>
-#include <string_view>
-#include <utility>
-
 namespace
 {
 	std::expected<void, std::string> CheckDeviceResult(HRESULT result, std::string_view operation)

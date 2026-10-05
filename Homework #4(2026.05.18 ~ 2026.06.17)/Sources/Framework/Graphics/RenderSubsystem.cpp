@@ -3,9 +3,6 @@
 #include "../Core/System.h"
 #include "../Platform/WindowSubsystem.h"
 
-#include <iterator>
-#include <cassert>
-
 namespace TUK::Framework
 {
 	RenderSubsystem::RenderSubsystem() noexcept
@@ -23,7 +20,9 @@ namespace TUK::Framework
 	{
 	}
 
-	RenderSubsystem::~RenderSubsystem() noexcept = default;
+	RenderSubsystem::~RenderSubsystem() noexcept
+	{
+	}
 
 	GraphicsDevice& RenderSubsystem::GetDevice() noexcept
 	{

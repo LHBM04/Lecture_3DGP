@@ -1,11 +1,9 @@
 ﻿#include "Precompiled.h"
 #include "RenderContext.h"
-#include "SwapChain.h"
-#include "Pipeline.h"
-#include "Buffer.h"
 
-#include <cassert>
-#include <vector>
+#include "Buffer.h"
+#include "Pipeline.h"
+#include "SwapChain.h"
 
 namespace
 {

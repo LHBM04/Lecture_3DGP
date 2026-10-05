@@ -1,9 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "Pipeline.h"
 
-#include <cassert>
-#include <utility>
-
 namespace TUK::Framework
 {
 	Pipeline::Pipeline(Microsoft::WRL::ComPtr<ID3D12PipelineState> state,

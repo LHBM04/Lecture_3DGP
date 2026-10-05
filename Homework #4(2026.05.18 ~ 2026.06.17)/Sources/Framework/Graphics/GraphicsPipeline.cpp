@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "GraphicsPipeline.h"
 
-#include <utility>
-
 namespace TUK::Framework
 {
 	GraphicsPipeline::GraphicsPipeline(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState,
@@ -11,7 +9,9 @@ namespace TUK::Framework
 	{
 	}
 
-	GraphicsPipeline::~GraphicsPipeline() noexcept = default;
+	GraphicsPipeline::~GraphicsPipeline() noexcept
+	{
+	}
 
 	void GraphicsPipeline::Bind(ID3D12GraphicsCommandList& commandList) const
 	{
