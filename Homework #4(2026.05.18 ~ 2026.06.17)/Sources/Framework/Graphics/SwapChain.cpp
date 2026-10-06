@@ -1,7 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "SwapChain.h"
+#include "GraphicsError.h"
 #include "../Platform/Window.h"
-#include "../Core/System.h"
+#include "../Core/Engine.h"
 
 #include <cassert>
 
@@ -23,21 +24,14 @@ namespace TUK::Framework
 		assert(windowHandle);
 	}
 
-	HRESULT SwapChain::Initialize(ID3D12Device& renderDevice, IDXGIFactory6& factory,
+	std::expected<void, std::string> SwapChain::Initialize(ID3D12Device& renderDevice, IDXGIFactory6& factory,
 		ID3D12CommandQueue& queue, UINT targetWidth, UINT targetHeight)
 	{
 		assert(windowHandle);
-		const auto option = System::GetInstance().GetOption<UINT>("RenderContext.BufferCount");
-		if (!option)
-		{
-			OutputDebugStringA(option.error().c_str());
-			return E_INVALIDARG;
-		}
-		const UINT bufferCount = option->get();
+		const UINT bufferCount = Engine::GetInstance().GetOption<UINT>("RenderContext.BufferCount");
 		if (bufferCount < 2)
 		{
-			OutputDebugStringA("RenderContext.BufferCount must be at least 2.\n");
-			return E_INVALIDARG;
+			return std::unexpected(std::string{ "RenderContext.BufferCount는 2 이상이어야 합니다." });
 		}
 
 		device = &renderDevice;
@@ -58,17 +52,17 @@ namespace TUK::Framework
 			&description, nullptr, nullptr, createdSwapChain.GetAddressOf());
 		if (FAILED(result))
 		{
-			return result;
+			return CheckHResult(result, "스왑 체인 생성");
 		}
 		result = createdSwapChain.As(&swapChain);
 		if (FAILED(result))
 		{
-			return result;
+			return CheckHResult(result, "스왑 체인 인터페이스 조회");
 		}
 		result = factory.MakeWindowAssociation(handle, DXGI_MWA_NO_ALT_ENTER);
 		if (FAILED(result))
 		{
-			return result;
+			return CheckHResult(result, "창 연결 설정");
 		}
 
 		D3D12_DESCRIPTOR_HEAP_DESC heapDescription{};
@@ -78,7 +72,7 @@ namespace TUK::Framework
 			IID_PPV_ARGS(renderTargetHeap.GetAddressOf()));
 		if (FAILED(result))
 		{
-			return result;
+			return CheckHResult(result, "RTV 힙 생성");
 		}
 		sizeX = targetWidth;
 		sizeY = targetHeight;
@@ -96,7 +90,7 @@ namespace TUK::Framework
 		return windowHandle;
 	}
 
-	HRESULT SwapChain::CreateRenderTargets()
+	std::expected<void, std::string> SwapChain::CreateRenderTargets()
 	{
 		assert(device && swapChain && renderTargetHeap);
 		assert(!buffers.empty());
@@ -106,24 +100,20 @@ namespace TUK::Framework
 			const HRESULT result = swapChain->GetBuffer(index, IID_PPV_ARGS(buffers[index].GetAddressOf()));
 			if (FAILED(result))
 			{
-				return result;
+				return CheckHResult(result, "백 버퍼 조회");
 			}
 			device->CreateRenderTargetView(buffers[index].Get(), nullptr, descriptor);
 			descriptor.ptr += descriptorSize;
 		}
-		return S_OK;
+		return {};
 	}
 
-	HRESULT SwapChain::Resize(UINT targetWidth, UINT targetHeight)
+	std::expected<void, std::string> SwapChain::Resize(UINT targetWidth, UINT targetHeight)
 	{
 		AssertInitialized();
 		if (targetWidth == 0 || targetHeight == 0)
 		{
-			return E_INVALIDARG;
-		}
-		if (!swapChain)
-		{
-			return E_UNEXPECTED;
+			return std::unexpected(std::string{ "스왑 체인의 크기는 0보다 커야 합니다." });
 		}
 
 		for (auto& buffer : buffers)
@@ -134,7 +124,7 @@ namespace TUK::Framework
 			DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		if (FAILED(result))
 		{
-			return result;
+			return CheckHResult(result, "스왑 체인 크기 변경");
 		}
 		sizeX = targetWidth;
 		sizeY = targetHeight;
@@ -185,10 +175,10 @@ namespace TUK::Framework
 		commandList.ResourceBarrier(1, &barrier);
 	}
 
-	HRESULT SwapChain::Present(UINT syncInterval)
+	std::expected<void, std::string> SwapChain::Present(UINT syncInterval)
 	{
 		AssertInitialized();
-		return swapChain->Present(syncInterval, 0);
+		return CheckHResult(swapChain->Present(syncInterval, 0), "프레임 표시");
 	}
 
 	void SwapChain::AssertInitialized() const noexcept
@@ -230,7 +220,7 @@ namespace TUK::Framework
 		return sizeX;
 	}
 
-	HRESULT SwapChain::SetSizeX(UINT targetWidth)
+	std::expected<void, std::string> SwapChain::SetSizeX(UINT targetWidth)
 	{
 		return Resize(targetWidth, sizeY);
 	}
@@ -240,7 +230,7 @@ namespace TUK::Framework
 		return sizeY;
 	}
 
-	HRESULT SwapChain::SetSizeY(UINT targetHeight)
+	std::expected<void, std::string> SwapChain::SetSizeY(UINT targetHeight)
 	{
 		return Resize(sizeX, targetHeight);
 	}

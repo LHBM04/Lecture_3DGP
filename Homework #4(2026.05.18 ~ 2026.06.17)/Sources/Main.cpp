@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.h"
 
-#include "Framework/Core/System.h"
+#include "Framework/Core/Engine.h"
+#include "Framework/Core/Game.h"
+#include "Framework/Entities/SceneSubsystem.h"
 
 #include "Framework/Platform/WindowSubsystem.h"
 #include "Framework/Platform/TimeSubsystem.h"
@@ -27,44 +29,21 @@ INT APIENTRY wWinMain(
 	freopen_s(&consoleStream, "CONOUT$", "w", stderr);
 #endif
 
-	System system;
+	Engine engine;
+
 	WindowOptions windowOptions;
 	windowOptions.title = L"Homework #4";
-	const auto option = system.AddOption<WindowOptions>("Window.Options", std::move(windowOptions));
-	if (!option)
-	{
-		OutputDebugStringA(option.error().c_str());
-		return EXIT_FAILURE;
-	}
+	
+	engine.AddOption<WindowOptions>("Window.Options", windowOptions);
+	engine.AddOption<UINT>("RenderContext.BufferCount", 2);
 
-	if (const auto renderOption = system.AddOption<UINT>("RenderContext.BufferCount", 2); !renderOption)
-	{
-		OutputDebugStringA(renderOption.error().c_str());
-		return EXIT_FAILURE;
-	}
+	engine.AddSubsystem<TimeSubsystem>();
+	engine.AddSubsystem<EventSubsystem>();
+	engine.AddSubsystem<WindowSubsystem>();
+	engine.AddSubsystem<RenderSubsystem>();
 
-	if (const auto time = system.AddSubsystem<TimeSubsystem>(); !time)
-	{
-		OutputDebugStringA(time.error().c_str());
-		return EXIT_FAILURE;
-	}
+	Game game;
+	game.AddSubsystem<SceneSubsystem>();
 
-	if (const auto event = system.AddSubsystem<EventSubsystem>(); !event)
-	{
-		OutputDebugStringA(event.error().c_str());
-		return EXIT_FAILURE;
-	}
-
-	if (const auto window = system.AddSubsystem<WindowSubsystem>(); !window)
-	{
-		OutputDebugStringA(window.error().c_str());
-		return EXIT_FAILURE;
-	}
-	if (const auto render = system.AddSubsystem<RenderSubsystem>(); !render)
-	{
-		OutputDebugStringA(render.error().c_str());
-		return EXIT_FAILURE;
-	}
-
-	return system.Run();
+	return engine.Run(game);
 }

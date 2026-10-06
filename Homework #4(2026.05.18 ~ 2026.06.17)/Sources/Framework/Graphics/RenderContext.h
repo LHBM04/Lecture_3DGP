@@ -1,9 +1,11 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
+
 #include <d3d12.h>
 #include <array>
 #include <cstdint>
-#include <expected>
 #include <functional>
 #include <span>
 #include <string>
@@ -36,9 +38,10 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> End();
 		void Release() noexcept;
 
-		[[nodiscard]] std::expected<void, std::string> SetSwapChain(SwapChain& target);
-		[[nodiscard]] std::expected<void, std::string> ClearSwapChain(SwapChain& target, const std::array<float, 4>& color);
-		[[nodiscard]] std::expected<void, std::string> EndSwapChain(SwapChain& target);
+		/** Begin과 End 사이에서 호출한다. */
+		void SetSwapChain(SwapChain& target);
+		void ClearSwapChain(SwapChain& target, const std::array<float, 4>& color);
+		void EndSwapChain(SwapChain& target);
 
 		/** Begin과 End 사이에서 호출하는 명령 기록 인터페이스. */
 		void SetPipeline(const Pipeline& pipeline);
@@ -71,7 +74,8 @@ namespace TUK::Framework
 
 	private:
 		void AssertInitialized() const noexcept;
-		[[nodiscard]] std::expected<void, std::string> Execute(ID3D12CommandQueue& queue);
+		/** End가 성공한 명령 목록을 제출한다. 완료 오류는 Fence에서 확인한다. */
+		void Execute(ID3D12CommandQueue& queue);
 
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;

@@ -1,12 +1,13 @@
 ﻿#include "Precompiled.h"
 #include "RenderSubsystem.h"
-#include "../Core/System.h"
+#include "GraphicsError.h"
+#include "../Core/Engine.h"
 #include "../Platform/WindowSubsystem.h"
 
 namespace TUK::Framework
 {
 	RenderSubsystem::RenderSubsystem() noexcept
-		: Subsystem(10)
+		: EngineSubsystem(10)
 		, windowSubsystem(nullptr)
 		, device()
 		, commandQueue()
@@ -20,9 +21,7 @@ namespace TUK::Framework
 	{
 	}
 
-	RenderSubsystem::~RenderSubsystem() noexcept
-	{
-	}
+	RenderSubsystem::~RenderSubsystem() noexcept = default;
 
 	GraphicsDevice& RenderSubsystem::GetDevice() noexcept
 	{
@@ -34,47 +33,26 @@ namespace TUK::Framework
 		return renderContext;
 	}
 
-	std::expected<std::reference_wrapper<SwapChain>, std::string> RenderSubsystem::GetSwapChain(Window& window)
+	SwapChain& RenderSubsystem::GetSwapChain(Window& window)
 	{
-		if (!isFrameRecording || hasFailed)
+		assert(isFrameRecording && !hasFailed && !window.ShouldClose());
+		const auto iterator = std::ranges::find_if(frameSwapChains, [this, &window](std::size_t index)
 		{
-			return std::unexpected(std::string{ "현재 프레임에서 렌더링할 수 없습니다." });
-		}
-		for (const auto index : frameSwapChains)
-		{
-			if (swapChains[index].GetHWND() == window.GetHWND() && !window.ShouldClose())
-			{
-				return std::ref(swapChains[index]);
-			}
-		}
-		return std::unexpected(std::string{ "해당 창의 활성 렌더 타깃이 없습니다." });
+			return swapChains[index].GetHWND() == window.GetHWND();
+		});
+		assert(iterator != frameSwapChains.end() && "The window must have an active swap chain.");
+		return swapChains[*iterator];
 	}
 
-	bool RenderSubsystem::CheckResult(const std::expected<void, std::string>& result)
+	void RenderSubsystem::ReportError(std::string_view message)
 	{
-		if (result)
-		{
-			return true;
-		}
 		hasFailed = true;
-		OutputDebugStringA(result.error().c_str());
-		System::GetInstance().RequestQuit(EXIT_FAILURE);
-		return false;
+		Engine::GetInstance().ReportError(message);
 	}
 
 	bool RenderSubsystem::CheckResult(HRESULT result, std::string_view operation)
 	{
-		if (SUCCEEDED(result))
-		{
-			return true;
-		}
-
-		hasFailed = true;
-		const auto message = std::format("RenderSubsystem: {} 실패 (HRESULT: 0x{:08X}).\n",
-			operation, static_cast<unsigned long>(result));
-		OutputDebugStringA(message.c_str());
-		System::GetInstance().RequestQuit(EXIT_FAILURE);
-		return false;
+		return CheckResult(CheckHResult(result, operation));
 	}
 
 	void RenderSubsystem::OnStartup()
@@ -84,15 +62,7 @@ namespace TUK::Framework
 			return;
 		}
 		hasFailed = false;
-		const auto windows = System::GetInstance().GetSubsystem<WindowSubsystem>();
-		if (!windows)
-		{
-			OutputDebugStringA(windows.error().c_str());
-			hasFailed = true;
-			System::GetInstance().RequestQuit(EXIT_FAILURE);
-			return;
-		}
-		windowSubsystem = &windows->get();
+		windowSubsystem = Engine::GetInstance().GetSubsystem<WindowSubsystem>();
 		if (!CheckResult(device.Initialize()))
 		{
 			return;
@@ -101,9 +71,8 @@ namespace TUK::Framework
 		D3D12_COMMAND_QUEUE_DESC queueDescription{};
 		queueDescription.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		const auto queue = device.CreateCommandQueue(queueDescription);
-		if (!queue)
+		if (!CheckResult(queue))
 		{
-			CheckResult(std::expected<void, std::string>{ std::unexpected(queue.error()) });
 			return;
 		}
 		commandQueue = *queue;
@@ -112,9 +81,8 @@ namespace TUK::Framework
 			return;
 		}
 		auto createdFence = device.CreateFence(0, D3D12_FENCE_FLAG_NONE);
-		if (!createdFence)
+		if (!CheckResult(createdFence))
 		{
-			CheckResult(std::expected<void, std::string>{ std::unexpected(createdFence.error()) });
 			return;
 		}
 		fence = std::move(*createdFence);
@@ -162,9 +130,8 @@ namespace TUK::Framework
 			if (iterator == swapChains.end())
 			{
 				auto createdSwapChain = device.CreateSwapChain(*window, *commandQueue.Get(), width, height);
-				if (!createdSwapChain)
+				if (!CheckResult(createdSwapChain))
 				{
-					CheckResult(std::expected<void, std::string>{ std::unexpected(createdSwapChain.error()) });
 					return;
 				}
 				swapChains.push_back(std::move(*createdSwapChain));
@@ -172,7 +139,7 @@ namespace TUK::Framework
 			}
 			else if (iterator->GetSizeX() != width || iterator->GetSizeY() != height)
 			{
-				if (!CheckResult(iterator->Resize(width, height), "렌더 타깃 크기 변경"))
+				if (!CheckResult(iterator->Resize(width, height)))
 				{
 					return;
 				}
@@ -191,10 +158,7 @@ namespace TUK::Framework
 		constexpr std::array<float, 4> backgroundColor = { 0.08f, 0.12f, 0.18f, 1.0f };
 		for (const auto index : frameSwapChains)
 		{
-			if (!CheckResult(renderContext.ClearSwapChain(swapChains[index], backgroundColor)))
-			{
-				return;
-			}
+			renderContext.ClearSwapChain(swapChains[index], backgroundColor);
 		}
 		isFrameRecording = true;
 	}
@@ -208,20 +172,14 @@ namespace TUK::Framework
 		assert(windowSubsystem && commandQueue);
 		for (const auto index : frameSwapChains)
 		{
-			if (!CheckResult(renderContext.EndSwapChain(swapChains[index])))
-			{
-				return;
-			}
+			renderContext.EndSwapChain(swapChains[index]);
 		}
 		isFrameRecording = false;
 		if (!CheckResult(renderContext.End()))
 		{
 			return;
 		}
-		if (!CheckResult(renderContext.Execute(*commandQueue.Get())))
-		{
-			return;
-		}
+		renderContext.Execute(*commandQueue.Get());
 
 		// WindowSubsystem의 OnPostTick에서 이미 삭제된 창에는 Present하지 않는다.
 		const auto& windows = windowSubsystem->GetWindows();
@@ -236,7 +194,7 @@ namespace TUK::Framework
 			{
 				continue;
 			}
-			if (!CheckResult(target.Present(), "프레임 표시"))
+			if (!CheckResult(target.Present()))
 			{
 				break;
 			}

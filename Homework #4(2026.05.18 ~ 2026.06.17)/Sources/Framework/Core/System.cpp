@@ -1,18 +1,15 @@
 ﻿#include "Precompiled.h"
 #include "System.h"
 
-#include <cstdlib>
-
 namespace TUK::Framework
 {
 	System::System()
 		: isRunning(false)
-		, exitCode(EXIT_SUCCESS)
+		, quitCode(EXIT_SUCCESS)
 		, options()
 		, subsystems()
 		, subsystemsByType()
 	{
-		
 	}
 
 	System::~System()
@@ -22,51 +19,20 @@ namespace TUK::Framework
 		subsystems.clear();
 	}
 
-	System& System::GetInstance()
-	{
-		return *instance;
-	}
-
-	int System::Run()
-	{
-		exitCode = EXIT_SUCCESS;
-
-		/** 서브시스템 가동 */
-		Startup();
-
-		while (true)
-		{
-			for (auto& subsystem : subsystems)
-			{
-				subsystem->OnPreTick();
-			}
-
-			for (auto& subsystem : subsystems)
-			{
-				subsystem->OnTick();
-			}
-
-			for (auto& subsystem : subsystems)
-			{
-				subsystem->OnPostTick();
-			}
-
-			if (!isRunning)
-			{
-				break;
-			}
-		}
-
-		/** 서브시스템 종료 */
-		Shutdown();
-
-		return exitCode;
-	}
-
 	void System::RequestQuit(int code) noexcept
 	{
-		exitCode = code;
+		if (quitCode == EXIT_SUCCESS)
+		{
+			quitCode = code;
+		}
 		isRunning = false;
+	}
+
+	void System::ReportError(std::string_view message)
+	{
+		const auto line = std::format("{}\n", message);
+		OutputDebugStringA(line.c_str());
+		RequestQuit(EXIT_FAILURE);
 	}
 
 	bool System::IsRunning() const noexcept
@@ -76,12 +42,10 @@ namespace TUK::Framework
 
 	void System::Startup()
 	{
-		instance = this;
-
 		isRunning = true;
 
 		std::ranges::sort(subsystems, std::ranges::less{}, &Subsystem::GetPriority);
-		for (auto& subsystem : subsystems)
+		for (std::unique_ptr<Subsystem>& subsystem : subsystems)
 		{
 			subsystem->OnStartup();
 		}
@@ -91,13 +55,17 @@ namespace TUK::Framework
 	{
 		isRunning = false;
 
-		for (auto& subsystem : subsystems | std::views::reverse)
+		for (std::unique_ptr<Subsystem>& subsystem : subsystems | std::views::reverse)
 		{
 			subsystem->OnShutdown();
 		}
 
-		instance = nullptr;
+		subsystems.clear();
+		subsystemsByType.clear();
 	}
 
-	System* System::instance = nullptr;
+	int System::GetQuitCode() const noexcept
+	{
+		return quitCode;
+	}
 }

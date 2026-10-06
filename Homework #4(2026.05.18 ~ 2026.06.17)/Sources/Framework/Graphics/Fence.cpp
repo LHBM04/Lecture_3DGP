@@ -1,24 +1,12 @@
 ﻿#include "Precompiled.h"
 #include "Fence.h"
+#include "GraphicsError.h"
 
 #include <cassert>
 #include <format>
 #include <limits>
 #include <string_view>
 #include <utility>
-
-namespace
-{
-	std::expected<void, std::string> CheckFenceResult(HRESULT result, std::string_view operation)
-	{
-		if (FAILED(result))
-		{
-			return std::unexpected(std::format("Fence: {} 실패 (HRESULT: 0x{:08X}).",
-				operation, static_cast<unsigned long>(result)));
-		}
-		return {};
-	}
-}
 
 namespace TUK::Framework
 {
@@ -69,7 +57,7 @@ namespace TUK::Framework
 			return std::unexpected(std::string{ "Fence의 초기 값으로 UINT64_MAX를 사용할 수 없습니다." });
 		}
 		Microsoft::WRL::ComPtr<ID3D12Fence> createdFence;
-		const auto result = CheckFenceResult(renderDevice.CreateFence(initialValue, flags,
+		const auto result = CheckHResult(renderDevice.CreateFence(initialValue, flags,
 			IID_PPV_ARGS(createdFence.GetAddressOf())), "펜스 생성");
 		if (!result)
 		{
@@ -78,7 +66,7 @@ namespace TUK::Framework
 		const HANDLE createdEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
 		if (!createdEvent)
 		{
-			return CheckFenceResult(HRESULT_FROM_WIN32(GetLastError()), "완료 이벤트 생성");
+			return CheckHResult(HRESULT_FROM_WIN32(GetLastError()), "완료 이벤트 생성");
 		}
 		device = &renderDevice;
 		fence = std::move(createdFence);
@@ -90,7 +78,7 @@ namespace TUK::Framework
 	std::expected<void, std::string> Fence::CheckDeviceStatus() const
 	{
 		assert(device);
-		return CheckFenceResult(device->GetDeviceRemovedReason(), "디바이스 상태 확인");
+		return CheckHResult(device->GetDeviceRemovedReason(), "디바이스 상태 확인");
 	}
 
 	std::expected<void, std::string> Fence::Signal(ID3D12CommandQueue& queue)
@@ -106,7 +94,7 @@ namespace TUK::Framework
 			return std::unexpected(std::string{ "Fence 신호 값을 더 증가시킬 수 없습니다." });
 		}
 		const UINT64 nextValue = value + 1;
-		const auto result = CheckFenceResult(queue.Signal(fence.Get(), nextValue), "펜스 신호 전송");
+		const auto result = CheckHResult(queue.Signal(fence.Get(), nextValue), "펜스 신호 전송");
 		if (!result)
 		{
 			return result;
@@ -143,7 +131,7 @@ namespace TUK::Framework
 		{
 			return {};
 		}
-		const auto result = CheckFenceResult(fence->SetEventOnCompletion(value, completionEvent), "완료 이벤트 설정");
+		const auto result = CheckHResult(fence->SetEventOnCompletion(value, completionEvent), "완료 이벤트 설정");
 		if (!result)
 		{
 			return result;
@@ -151,7 +139,7 @@ namespace TUK::Framework
 		const DWORD waitResult = WaitForSingleObject(completionEvent, INFINITE);
 		if (waitResult == WAIT_FAILED)
 		{
-			return CheckFenceResult(HRESULT_FROM_WIN32(GetLastError()), "GPU 작업 대기");
+			return CheckHResult(HRESULT_FROM_WIN32(GetLastError()), "GPU 작업 대기");
 		}
 		if (waitResult != WAIT_OBJECT_0)
 		{

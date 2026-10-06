@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
+
 #include <array>
 #include <functional>
 #include <vector>
@@ -17,7 +20,6 @@ namespace TUK::Framework
 	{
 		friend class RenderContext;
 		friend class GraphicsDevice;
-	class GraphicsDevice;
 
 	public:
 		explicit SwapChain(Window& window) noexcept;
@@ -37,8 +39,8 @@ namespace TUK::Framework
 		[[nodiscard]] HWND GetHWND() const noexcept;
 
 		/** GPU가 백 버퍼 사용을 마친 뒤 호출. */
-		[[nodiscard]] HRESULT Resize(UINT width, UINT height);
-		[[nodiscard]] HRESULT Present(UINT syncInterval = 1);
+		[[nodiscard]] std::expected<void, std::string> Resize(UINT width, UINT height);
+		[[nodiscard]] std::expected<void, std::string> Present(UINT syncInterval = 1);
 
 		[[nodiscard]] int GetPositionX() const noexcept;
 		void SetPositionX(int x) noexcept;
@@ -46,20 +48,20 @@ namespace TUK::Framework
 		void SetPositionY(int y) noexcept;
 
 		[[nodiscard]] UINT GetSizeX() const noexcept;
-		[[nodiscard]] HRESULT SetSizeX(UINT width);
+		[[nodiscard]] std::expected<void, std::string> SetSizeX(UINT width);
 
 		[[nodiscard]] UINT GetSizeY() const noexcept;
-		[[nodiscard]] HRESULT SetSizeY(UINT height);
+		[[nodiscard]] std::expected<void, std::string> SetSizeY(UINT height);
 
 	private:
-		[[nodiscard]] HRESULT Initialize(ID3D12Device& device, IDXGIFactory6& factory,
+		[[nodiscard]] std::expected<void, std::string> Initialize(ID3D12Device& device, IDXGIFactory6& factory,
 			ID3D12CommandQueue& queue, UINT width, UINT height);
 		void Clear(ID3D12GraphicsCommandList& commandList, const std::array<float, 4>& color);
 		void Bind(ID3D12GraphicsCommandList& commandList) const;
 		void EndRender(ID3D12GraphicsCommandList& commandList) const;
 		void AssertInitialized() const noexcept;
 		UINT GetCurrentBufferIndex() const noexcept;
-		HRESULT CreateRenderTargets();
+		std::expected<void, std::string> CreateRenderTargets();
 
 		std::reference_wrapper<Window> window;
 		HWND windowHandle;

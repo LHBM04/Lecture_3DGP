@@ -5,7 +5,7 @@
 namespace TUK::Framework
 {
 	SceneSubsystem::SceneSubsystem() noexcept
-		: Subsystem(20)
+		: GameSubsystem(20)
 		, scenes()
 	{
 		
@@ -21,7 +21,7 @@ namespace TUK::Framework
 		
 	}
 
-	void SceneSubsystem::OnTick()
+	void SceneSubsystem::Update(double deltaTime)
 	{
 		
 	}

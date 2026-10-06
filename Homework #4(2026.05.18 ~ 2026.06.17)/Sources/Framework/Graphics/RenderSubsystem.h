@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 
@@ -10,7 +13,7 @@
 #include <vector>
 #include <functional>
 
-#include "../Core/Subsystem.h"
+#include "../Core/EngineSubsystem.h"
 #include "SwapChain.h"
 #include "RenderContext.h"
 #include "GraphicsDevice.h"
@@ -20,7 +23,7 @@ namespace TUK::Framework
 {
 	class WindowSubsystem;
 
-	class RenderSubsystem : public Subsystem
+	class RenderSubsystem : public EngineSubsystem
 	{
 	public:
 		RenderSubsystem() noexcept;
@@ -29,8 +32,8 @@ namespace TUK::Framework
 		/** 디바이스 가져오기 */
 		[[nodiscard]] GraphicsDevice& GetDevice() noexcept;
 		[[nodiscard]] RenderContext& GetRenderContext() noexcept;
-		/** 현재 프레임의 활성 스왑 체인. 반환한 참조는 다음 OnPreTick 이전까지만 사용한다. */
-		[[nodiscard]] std::expected<std::reference_wrapper<SwapChain>, std::string> GetSwapChain(Window& window);
+		/** 해당 창에 현재 프레임의 활성 스왑 체인이 있어야 한다. 반환한 참조는 다음 OnPreTick 이전까지만 사용한다. */
+		[[nodiscard]] SwapChain& GetSwapChain(Window& window);
 
 	protected:
 		void OnStartup() override;
@@ -40,7 +43,10 @@ namespace TUK::Framework
 
 	private:
 		bool CheckResult(HRESULT result, std::string_view operation);
-		bool CheckResult(const std::expected<void, std::string>& result);
+		void ReportError(std::string_view message);
+
+		template <class T>
+		bool CheckResult(const std::expected<T, std::string>& result);
 		bool WaitForGpu();
 
 		WindowSubsystem* windowSubsystem;
@@ -54,4 +60,14 @@ namespace TUK::Framework
 		bool isInitialized;
 		bool hasFailed;
 	};
+
+	template <class T>
+	bool RenderSubsystem::CheckResult(const std::expected<T, std::string>& result)
+	{
+		if (!result)
+		{
+			ReportError(result.error());
+		}
+		return result.has_value();
+	}
 }

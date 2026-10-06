@@ -1,5 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "Buffer.h"
+#include "GraphicsError.h"
 
 #include <cassert>
 #include <cstring>
@@ -99,8 +100,7 @@ namespace TUK::Framework
 		const HRESULT result = resource->Map(0, &readRange, &mapped);
 		if (FAILED(result))
 		{
-			return std::unexpected(std::format("Buffer: 쓰기 매핑 실패 (HRESULT: 0x{:08X}).",
-				static_cast<unsigned long>(result)));
+			return CheckHResult(result, "버퍼 쓰기 매핑");
 		}
 		std::memcpy(static_cast<std::byte*>(mapped) + offset, data.data(), data.size());
 		const D3D12_RANGE writtenRange{ offset, offset + data.size() };
@@ -129,8 +129,7 @@ namespace TUK::Framework
 		const HRESULT result = resource->Map(0, &readRange, &mapped);
 		if (FAILED(result))
 		{
-			return std::unexpected(std::format("Buffer: 읽기 매핑 실패 (HRESULT: 0x{:08X}).",
-				static_cast<unsigned long>(result)));
+			return CheckHResult(result, "버퍼 읽기 매핑");
 		}
 		std::memcpy(destination.data(), static_cast<const std::byte*>(mapped) + offset, destination.size());
 		const D3D12_RANGE writtenRange{ 0, 0 };

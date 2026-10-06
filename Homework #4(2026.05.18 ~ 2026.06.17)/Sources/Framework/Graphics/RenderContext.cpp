@@ -1,22 +1,10 @@
 ﻿#include "Precompiled.h"
 #include "RenderContext.h"
+#include "GraphicsError.h"
 
 #include "Buffer.h"
 #include "Pipeline.h"
 #include "SwapChain.h"
-
-namespace
-{
-	std::expected<void, std::string> CheckCommandResult(HRESULT result, std::string_view operation)
-	{
-		if (FAILED(result))
-		{
-			return std::unexpected(std::format("RenderContext: {} 실패 (HRESULT: 0x{:08X}).",
-				operation, static_cast<unsigned long>(result)));
-		}
-		return {};
-	}
-}
 
 namespace TUK::Framework
 {
@@ -33,19 +21,25 @@ namespace TUK::Framework
 		{
 			return std::unexpected(std::string{ "RenderContext가 이미 초기화되어 있습니다." });
 		}
-		const auto allocator = CheckCommandResult(device.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-			IID_PPV_ARGS(commandAllocator.GetAddressOf())), "명령 할당자 생성");
-		if (!allocator)
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> createdAllocator;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> createdList;
+		if (auto result = CheckHResult(device.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+			IID_PPV_ARGS(createdAllocator.GetAddressOf())), "명령 할당자 생성"); !result)
 		{
-			return allocator;
+			return result;
 		}
-		const auto list = CheckCommandResult(device.CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-			commandAllocator.Get(), nullptr, IID_PPV_ARGS(commandList.GetAddressOf())), "명령 목록 생성");
-		if (!list)
+		if (auto result = CheckHResult(device.CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+			createdAllocator.Get(), nullptr, IID_PPV_ARGS(createdList.GetAddressOf())), "명령 목록 생성"); !result)
 		{
-			return list;
+			return result;
 		}
-		return CheckCommandResult(commandList->Close(), "명령 목록 닫기");
+		if (auto result = CheckHResult(createdList->Close(), "명령 목록 닫기"); !result)
+		{
+			return result;
+		}
+		commandAllocator = std::move(createdAllocator);
+		commandList = std::move(createdList);
+		return {};
 	}
 
 	std::expected<void, std::string> RenderContext::Begin()
@@ -55,12 +49,12 @@ namespace TUK::Framework
 		{
 			return std::unexpected(std::string{ "명령 기록을 시작할 수 없는 상태입니다." });
 		}
-		const auto allocator = CheckCommandResult(commandAllocator->Reset(), "명령 할당자 초기화");
+		const auto allocator = CheckHResult(commandAllocator->Reset(), "명령 할당자 초기화");
 		if (!allocator)
 		{
 			return allocator;
 		}
-		const auto list = CheckCommandResult(commandList->Reset(commandAllocator.Get(), nullptr), "명령 목록 초기화");
+		const auto list = CheckHResult(commandList->Reset(commandAllocator.Get(), nullptr), "명령 목록 초기화");
 		if (!list)
 		{
 			return list;
@@ -76,7 +70,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected(std::string{ "기록 중인 명령 목록이 없습니다." });
 		}
-		const auto result = CheckCommandResult(commandList->Close(), "명령 목록 닫기");
+		const auto result = CheckHResult(commandList->Close(), "명령 목록 닫기");
 		if (!result)
 		{
 			return result;
@@ -85,37 +79,22 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> RenderContext::SetSwapChain(SwapChain& target)
+	void RenderContext::SetSwapChain(SwapChain& target)
 	{
 		AssertInitialized();
-		if (!isRecording)
-		{
-			return std::unexpected(std::string{ "명령 기록 중에만 렌더 타깃을 설정할 수 있습니다." });
-		}
 		target.Bind(*commandList.Get());
-		return {};
 	}
 
-	std::expected<void, std::string> RenderContext::ClearSwapChain(SwapChain& target, const std::array<float, 4>& color)
+	void RenderContext::ClearSwapChain(SwapChain& target, const std::array<float, 4>& color)
 	{
 		AssertInitialized();
-		if (!isRecording)
-		{
-			return std::unexpected(std::string{ "명령 기록 중에만 렌더 타깃을 클리어할 수 있습니다." });
-		}
 		target.Clear(*commandList.Get(), color);
-		return {};
 	}
 
-	std::expected<void, std::string> RenderContext::EndSwapChain(SwapChain& target)
+	void RenderContext::EndSwapChain(SwapChain& target)
 	{
 		AssertInitialized();
-		if (!isRecording)
-		{
-			return std::unexpected(std::string{ "명령 기록 중에만 렌더 타깃의 기록을 마칠 수 있습니다." });
-		}
 		target.EndRender(*commandList.Get());
-		return {};
 	}
 
 	void RenderContext::SetPipeline(const Pipeline& pipeline)
@@ -291,16 +270,11 @@ namespace TUK::Framework
 		commandList->CopyResource(&destination, &source);
 	}
 
-	std::expected<void, std::string> RenderContext::Execute(ID3D12CommandQueue& queue)
+	void RenderContext::Execute(ID3D12CommandQueue& queue)
 	{
 		AssertInitialized();
-		if (!commandList || isRecording)
-		{
-			return std::unexpected(std::string{ "기록을 마친 명령 목록만 제출할 수 있습니다." });
-		}
 		ID3D12CommandList* lists[] = { commandList.Get() };
 		queue.ExecuteCommandLists(1, lists);
-		return {};
 	}
 
 	void RenderContext::AssertInitialized() const noexcept

@@ -3,13 +3,13 @@
 #include <memory>
 #include <vector>
 
-#include "../Core/Subsystem.h"
+#include "../Core/GameSubsystem.h"
 
 namespace TUK::Framework
 {
 	class Scene;
 
-	class SceneSubsystem : public Subsystem
+	class SceneSubsystem : public GameSubsystem
 	{
 	public:
 		SceneSubsystem() noexcept;
@@ -17,7 +17,7 @@ namespace TUK::Framework
 
 	protected:
 		void OnStartup() override;
-		void OnTick() override;
+		void Update(double deltaTime) override;
 		void OnShutdown() override;
 
 	private:

@@ -1,18 +1,20 @@
 ﻿#pragma once
 
 #include <expected>
+#include <string>
+
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "../Core/Subsystem.h"
+#include "../Core/EngineSubsystem.h"
 #include "Window.h"
 #include "WindowOptions.h"
 
 namespace TUK::Framework
 {
-	class WindowSubsystem : public Subsystem
+	class WindowSubsystem : public EngineSubsystem
 	{
 	public:
 		WindowSubsystem() noexcept;

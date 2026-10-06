@@ -8,9 +8,7 @@ namespace TUK::Framework
 	{
 	}
 
-	Subsystem::~Subsystem() noexcept
-	{
-	}
+	Subsystem::~Subsystem() noexcept = default;
 
 	unsigned short Subsystem::GetPriority() const noexcept
 	{
@@ -18,18 +16,6 @@ namespace TUK::Framework
 	}
 
 	void Subsystem::OnStartup()
-	{
-	}
-
-	void Subsystem::OnPreTick()
-	{
-	}
-
-	void Subsystem::OnTick()
-	{
-	}
-
-	void Subsystem::OnPostTick()
 	{
 	}
 

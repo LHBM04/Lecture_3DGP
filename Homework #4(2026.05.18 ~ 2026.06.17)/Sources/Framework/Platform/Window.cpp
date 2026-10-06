@@ -42,14 +42,7 @@ namespace TUK::Framework
 	{
 		if (SetWindowPos(hWnd, nullptr, 0, 0, sizeX, options.sizeY, SWP_NOMOVE | SWP_NOZORDER))
 		{
-			RECT rect{};
-			if (GetWindowRect(hWnd, &rect))
-			{
-				options.positionX = rect.left;
-				options.positionY = rect.top;
-				options.sizeX = rect.right - rect.left;
-				options.sizeY = rect.bottom - rect.top;
-			}
+			UpdateBounds();
 		}
 	}
 
@@ -62,14 +55,7 @@ namespace TUK::Framework
 	{
 		if (SetWindowPos(hWnd, nullptr, 0, 0, options.sizeX, sizeY, SWP_NOMOVE | SWP_NOZORDER))
 		{
-			RECT rect{};
-			if (GetWindowRect(hWnd, &rect))
-			{
-				options.positionX = rect.left;
-				options.positionY = rect.top;
-				options.sizeX = rect.right - rect.left;
-				options.sizeY = rect.bottom - rect.top;
-			}
+			UpdateBounds();
 		}
 	}
 
@@ -82,14 +68,7 @@ namespace TUK::Framework
 	{
 		if (SetWindowPos(hWnd, nullptr, positionX, options.positionY, 0, 0, SWP_NOSIZE | SWP_NOZORDER))
 		{
-			RECT rect{};
-			if (GetWindowRect(hWnd, &rect))
-			{
-				options.positionX = rect.left;
-				options.positionY = rect.top;
-				options.sizeX = rect.right - rect.left;
-				options.sizeY = rect.bottom - rect.top;
-			}
+			UpdateBounds();
 		}
 	}
 
@@ -102,14 +81,19 @@ namespace TUK::Framework
 	{
 		if (SetWindowPos(hWnd, nullptr, options.positionX, positionY, 0, 0, SWP_NOSIZE | SWP_NOZORDER))
 		{
-			RECT rect{};
-			if (GetWindowRect(hWnd, &rect))
-			{
-				options.positionX = rect.left;
-				options.positionY = rect.top;
-				options.sizeX = rect.right - rect.left;
-				options.sizeY = rect.bottom - rect.top;
-			}
+			UpdateBounds();
+		}
+	}
+
+	void Window::UpdateBounds() noexcept
+	{
+		RECT rect{};
+		if (GetWindowRect(hWnd, &rect))
+		{
+			options.positionX = rect.left;
+			options.positionY = rect.top;
+			options.sizeX = rect.right - rect.left;
+			options.sizeY = rect.bottom - rect.top;
 		}
 	}
 
@@ -145,14 +129,7 @@ namespace TUK::Framework
 			case WM_CREATE: [[fallthrough]];
 			case WM_WINDOWPOSCHANGED:
 			{
-				RECT rect{};
-				if (GetWindowRect(hWnd, &rect))
-				{
-					options.positionX = rect.left;
-					options.positionY = rect.top;
-					options.sizeX = rect.right - rect.left;
-					options.sizeY = rect.bottom - rect.top;
-				}
+				UpdateBounds();
 				return 0;
 			}
 			case WM_SHOWWINDOW:

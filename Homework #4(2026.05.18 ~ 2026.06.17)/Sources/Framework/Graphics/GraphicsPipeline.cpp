@@ -9,9 +9,7 @@ namespace TUK::Framework
 	{
 	}
 
-	GraphicsPipeline::~GraphicsPipeline() noexcept
-	{
-	}
+	GraphicsPipeline::~GraphicsPipeline() noexcept = default;
 
 	void GraphicsPipeline::Bind(ID3D12GraphicsCommandList& commandList) const
 	{

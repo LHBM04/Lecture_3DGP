@@ -1,10 +1,12 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
+
 #include <cstddef>
 #include <span>
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <expected>
 #include <string>
 #include <wrl.h>
 

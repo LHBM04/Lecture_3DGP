@@ -5,11 +5,11 @@
 #endif
 #include <windows.h>
 
-#include "../Core/Subsystem.h"
+#include "../Core/EngineSubsystem.h"
 
 namespace TUK::Framework
 {
-	class EventSubsystem : public Subsystem
+	class EventSubsystem : public EngineSubsystem
 	{
 	public:
 		EventSubsystem() noexcept;

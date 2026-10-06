@@ -23,9 +23,6 @@ namespace TUK::Framework
 
 	protected:
 		virtual void OnStartup();
-		virtual void OnPreTick();
-		virtual void OnTick();
-		virtual void OnPostTick();
 		virtual void OnShutdown();
 
 	private:

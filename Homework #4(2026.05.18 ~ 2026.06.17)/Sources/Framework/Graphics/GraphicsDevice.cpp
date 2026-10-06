@@ -1,18 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "GraphicsDevice.h"
-
-namespace
-{
-	std::expected<void, std::string> CheckDeviceResult(HRESULT result, std::string_view operation)
-	{
-		if (FAILED(result))
-		{
-			return std::unexpected(std::format("GraphicsDevice: {} 실패 (HRESULT: 0x{:08X}).",
-				operation, static_cast<unsigned long>(result)));
-		}
-		return {};
-	}
-}
+#include "GraphicsError.h"
 
 namespace TUK::Framework
 {
@@ -40,7 +28,7 @@ namespace TUK::Framework
 			factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 		}
 #endif
-		const auto factoryResult = CheckDeviceResult(CreateDXGIFactory2(factoryFlags,
+		const auto factoryResult = CheckHResult(CreateDXGIFactory2(factoryFlags,
 			IID_PPV_ARGS(createdFactory.GetAddressOf())), "DXGI 팩토리 생성");
 		if (!factoryResult)
 		{
@@ -55,13 +43,13 @@ namespace TUK::Framework
 			{
 				break;
 			}
-			const auto adapterResult = CheckDeviceResult(result, "어댑터 조회");
+			const auto adapterResult = CheckHResult(result, "어댑터 조회");
 			if (!adapterResult)
 			{
 				return adapterResult;
 			}
 			DXGI_ADAPTER_DESC1 description{};
-			const auto descriptionResult = CheckDeviceResult(adapter->GetDesc1(&description), "어댑터 정보 조회");
+			const auto descriptionResult = CheckHResult(adapter->GetDesc1(&description), "어댑터 정보 조회");
 			if (!descriptionResult)
 			{
 				return descriptionResult;
@@ -79,13 +67,13 @@ namespace TUK::Framework
 		if (!createdDevice)
 		{
 			Microsoft::WRL::ComPtr<IDXGIAdapter> warp;
-			const auto warpResult = CheckDeviceResult(createdFactory->EnumWarpAdapter(
+			const auto warpResult = CheckHResult(createdFactory->EnumWarpAdapter(
 				IID_PPV_ARGS(warp.GetAddressOf())), "WARP 어댑터 조회");
 			if (!warpResult)
 			{
 				return warpResult;
 			}
-			const auto deviceResult = CheckDeviceResult(D3D12CreateDevice(warp.Get(), D3D_FEATURE_LEVEL_11_0,
+			const auto deviceResult = CheckHResult(D3D12CreateDevice(warp.Get(), D3D_FEATURE_LEVEL_11_0,
 				IID_PPV_ARGS(createdDevice.ReleaseAndGetAddressOf())), "D3D12 디바이스 생성");
 			if (!deviceResult)
 			{
@@ -114,13 +102,8 @@ namespace TUK::Framework
 	{
 		assert(device && factory);
 		SwapChain swapChain(window);
-		const auto result = CheckDeviceResult(swapChain.Initialize(*device.Get(), *factory.Get(), queue,
-			width, height), "스왑 체인 생성");
-		if (!result)
-		{
-			return std::unexpected(result.error());
-		}
-		return swapChain;
+		return swapChain.Initialize(*device.Get(), *factory.Get(), queue, width, height).transform(
+			[&swapChain] { return std::move(swapChain); });
 	}
 
 	std::expected<Microsoft::WRL::ComPtr<ID3D12Resource>, std::string> GraphicsDevice::CreateResource(
@@ -133,7 +116,7 @@ namespace TUK::Framework
 		heap.CreationNodeMask = 1;
 		heap.VisibleNodeMask = 1;
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		const auto result = CheckDeviceResult(device->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE,
+		const auto result = CheckHResult(device->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE,
 			&description, initialState, clearValue, IID_PPV_ARGS(resource.GetAddressOf())), "리소스 생성");
 		if (!result)
 		{
@@ -154,12 +137,11 @@ namespace TUK::Framework
 		description.SampleDesc.Count = 1;
 		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 		description.Flags = flags;
-		auto resource = CreateResource(description, heapType, initialState, nullptr);
-		if (!resource)
-		{
-			return std::unexpected(resource.error());
-		}
-		return Buffer(std::move(*resource), size, heapType);
+		return CreateResource(description, heapType, initialState, nullptr).transform(
+			[size, heapType](auto resource)
+			{
+				return Buffer(std::move(resource), size, heapType);
+			});
 	}
 
 	std::expected<Microsoft::WRL::ComPtr<ID3D12Resource>, std::string> GraphicsDevice::CreateTexture(
@@ -180,7 +162,7 @@ namespace TUK::Framework
 	{
 		assert(device);
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> queue;
-		const auto result = CheckDeviceResult(device->CreateCommandQueue(&description,
+		const auto result = CheckHResult(device->CreateCommandQueue(&description,
 			IID_PPV_ARGS(queue.GetAddressOf())), "명령 큐 생성");
 		if (!result)
 		{
@@ -194,12 +176,8 @@ namespace TUK::Framework
 	{
 		assert(device);
 		Fence fence;
-		const auto result = fence.Initialize(*device.Get(), initialValue, flags);
-		if (!result)
-		{
-			return std::unexpected(result.error());
-		}
-		return fence;
+		return fence.Initialize(*device.Get(), initialValue, flags).transform(
+			[&fence] { return std::move(fence); });
 	}
 
 	std::expected<Microsoft::WRL::ComPtr<ID3D12RootSignature>, std::string> GraphicsDevice::CreateRootSignature(
@@ -207,7 +185,7 @@ namespace TUK::Framework
 	{
 		assert(device);
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> signature;
-		const auto result = CheckDeviceResult(device->CreateRootSignature(0, serializedSignature.data(),
+		const auto result = CheckHResult(device->CreateRootSignature(0, serializedSignature.data(),
 			serializedSignature.size(), IID_PPV_ARGS(signature.GetAddressOf())), "루트 시그니처 생성");
 		if (!result)
 		{
@@ -221,7 +199,7 @@ namespace TUK::Framework
 	{
 		assert(device && description.pRootSignature);
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> state;
-		const auto result = CheckDeviceResult(device->CreateGraphicsPipelineState(&description,
+		const auto result = CheckHResult(device->CreateGraphicsPipelineState(&description,
 			IID_PPV_ARGS(state.GetAddressOf())), "그래픽 파이프라인 생성");
 		if (!result)
 		{
@@ -235,7 +213,7 @@ namespace TUK::Framework
 	{
 		assert(device && description.pRootSignature);
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> state;
-		const auto result = CheckDeviceResult(device->CreateComputePipelineState(&description,
+		const auto result = CheckHResult(device->CreateComputePipelineState(&description,
 			IID_PPV_ARGS(state.GetAddressOf())), "컴퓨트 파이프라인 생성");
 		if (!result)
 		{

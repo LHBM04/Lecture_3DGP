@@ -3,7 +3,9 @@
 #include <string>
 #include <string_view>
 
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 #include "WindowOptions.h"
@@ -46,6 +48,8 @@ namespace TUK::Framework
 		LRESULT HandleMessage(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) noexcept;
 
 	private:
+		void UpdateBounds() noexcept;
+
 		HWND hWnd;
 		WindowOptions options;
 		bool shouldClose;

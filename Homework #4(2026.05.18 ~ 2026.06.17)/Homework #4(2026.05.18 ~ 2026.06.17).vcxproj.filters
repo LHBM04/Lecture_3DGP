@@ -83,6 +83,9 @@
     <ClInclude Include="Sources\Precompiled.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsError.h">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Core\System.h">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
@@ -137,5 +140,31 @@
     <ClInclude Include="Sources\Framework\Graphics\RenderContext.h">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core\Engine.h">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClCompile Include="Sources\Framework\Core\Engine.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClInclude Include="Sources\Framework\Core\Game.h">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClCompile Include="Sources\Framework\Core\Game.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.h">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClInclude Include="Sources\Framework\Core\GameSubsystem.h">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClCompile Include="Sources\Framework\Core\GameSubsystem.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

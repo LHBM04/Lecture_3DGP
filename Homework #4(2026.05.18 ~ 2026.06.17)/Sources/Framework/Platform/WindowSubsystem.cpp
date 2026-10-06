@@ -2,7 +2,7 @@
 #include "WindowSubsystem.h"
 #include "EventSubsystem.h"
 
-#include "../Core/System.h"
+#include "../Core/Engine.h"
 
 namespace
 {
@@ -14,7 +14,7 @@ namespace
 namespace TUK::Framework
 {
 	WindowSubsystem::WindowSubsystem() noexcept
-		: Subsystem(2)
+		: EngineSubsystem(2)
 		, windowClass(0)
 		, hasExitRequest(false)
 		, windows()
@@ -23,17 +23,12 @@ namespace TUK::Framework
 
 	WindowSubsystem::~WindowSubsystem() noexcept
 	{
-		windows.clear();
-		if (windowClass)
-		{
-			UnregisterClassW(ClassName, instance);
-			windowClass = 0;
-		}
+		OnShutdown();
 	}
 
 	std::expected<std::reference_wrapper<Window>, std::string> WindowSubsystem::Create(const WindowOptions& options)
 	{
-		if (!windowClass || hasExitRequest || !System::GetInstance().IsRunning())
+		if (!windowClass || hasExitRequest || !Engine::GetInstance().IsRunning())
 		{
 			return std::unexpected(std::string{ "창을 생성할 수 있는 상태가 아닙니다." });
 		}
@@ -112,28 +107,18 @@ namespace TUK::Framework
 		windowClass = RegisterClassExW(&description);
 		if (!windowClass)
 		{
-			OutputDebugStringW(L"WindowSubsystem: 창 클래스 등록 실패.\n");
 			hasExitRequest = true;
-			System::GetInstance().RequestQuit(EXIT_FAILURE);
+			Engine::GetInstance().ReportError(std::format("창 클래스 등록 실패 (Win32 오류: {}).", GetLastError()));
 			return;
 		}
 
-		auto& system = System::GetInstance();
-		const auto options = system.GetOption<WindowOptions>("Window.Options");
-		if (!options)
-		{
-			OutputDebugStringA(options.error().c_str());
-			hasExitRequest = true;
-			system.RequestQuit(EXIT_FAILURE);
-			return;
-		}
-
-		const auto window = Create(options->get());
+		auto& system = Engine::GetInstance();
+		const auto& options = system.GetOption<WindowOptions>("Window.Options");
+		const auto window = Create(options);
 		if (!window)
 		{
-			OutputDebugStringA(window.error().c_str());
 			hasExitRequest = true;
-			system.RequestQuit(EXIT_FAILURE);
+			system.ReportError(window.error());
 		}
 	}
 
@@ -144,10 +129,10 @@ namespace TUK::Framework
 			return window->ShouldClose();
 		});
 
-		if (windows.empty() && !hasExitRequest && System::GetInstance().IsRunning())
+		if (windows.empty() && !hasExitRequest && Engine::GetInstance().IsRunning())
 		{
 			hasExitRequest = true;
-			System::GetInstance().RequestQuit(EXIT_SUCCESS);
+			Engine::GetInstance().RequestQuit(EXIT_SUCCESS);
 		}
 	}
 

@@ -1,12 +1,14 @@
 ﻿#pragma once
 
 #include <any>
+#include <cassert>
 #include <concepts>
-#include <expected>
+#include <cstddef>
 #include <functional>
 #include <memory>
+#include <ranges>
 #include <string>
-#include <type_traits>
+#include <string_view>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
@@ -16,176 +18,147 @@
 
 namespace TUK::Framework
 {
-	/** 지정 타입이 서브시스템인가? */
-	template <class TSubsystem>
-	concept FromSubsystem = std::derived_from<TSubsystem, Subsystem>;
-
 	class System
 	{
 	public:
 		System();
-		~System();
+		virtual ~System();
 
-		/** 복사 금지 */
 		System(const System&) = delete;
 		System& operator=(const System&) = delete;
-
-		/** 이동 금지 */
+		
 		System(System&&) = delete;
 		System& operator=(System&&) = delete;
 
-		/** 정적 인스턴스 가져오기 */
-		[[nodiscard]] static System& GetInstance();
-
-		/** 시스템 실행 */
-		int Run();
-
-		/** 종료 요청 */
 		void RequestQuit(int code) noexcept;
+		void ReportError(std::string_view message);
 		[[nodiscard]] bool IsRunning() const noexcept;
+		[[nodiscard]] int GetQuitCode() const noexcept;
 
-		/** 지정한 타입으로 옵션 생성 및 추가 */
 		template <class TOption, class TValue>
-		std::expected<void, std::string> AddOption(std::string key, TValue&& value);
+		void AddOption(std::string_view key, TValue&& value);
 
-		/** 옵션 가져오기 */
 		template <class TOption>
-		[[nodiscard]] std::expected<std::reference_wrapper<TOption>, std::string> GetOption(const std::string& key);
+		[[nodiscard]] TOption& GetOption(const std::string& key);
 
-		/** 저장된 타입으로 옵션 가져오기(const) */
 		template <class TOption>
-		[[nodiscard]] std::expected<std::reference_wrapper<const TOption>, std::string> GetOption(const std::string& key) const;
+		[[nodiscard]] const TOption& GetOption(const std::string& key) const;
 
-		/** 서브시스템 추가 */
-		template <FromSubsystem TSubsystem>
-		std::expected<std::reference_wrapper<TSubsystem>, std::string> AddSubsystem();
-
-		/** 서브시스템 가져오기 */
-		template <FromSubsystem TSubsystem>
-		[[nodiscard]] std::expected<std::reference_wrapper<TSubsystem>, std::string> GetSubsystem();
-
-		/** 서브시스템 가져오기(const) */
-		template <FromSubsystem TSubsystem>
-		[[nodiscard]] std::expected<std::reference_wrapper<const TSubsystem>, std::string> GetSubsystem() const;
-
-	private:
-		/** 정적 인스턴스 */
-		static System* instance;
-
-		/** 시스템 가동 */
+	protected:
 		void Startup();
-
-		/** 시스템 종료 */
 		void Shutdown();
 
-		/** 실행 여부 */
+		template <std::derived_from<Subsystem> TSubsystem>
+		TSubsystem* AddSubsystem();
+
+		template <std::derived_from<Subsystem> TSubsystem>
+		[[nodiscard]] TSubsystem* GetSubsystem();
+
+		template <std::derived_from<Subsystem> TSubsystem>
+		[[nodiscard]] const TSubsystem* GetSubsystem() const;
+
+		template <std::derived_from<Subsystem> TSubsystem>
+		[[nodiscard]] auto GetSubsystems();
+
+		template <std::derived_from<Subsystem> TSubsystem>
+		[[nodiscard]] const auto GetSubsystems() const;
+
+	private:
+		/** 시스템 상태 */
 		bool isRunning;
-
-		/** 종료 코드 */
-		int exitCode;
-
-		/** 시스템 설정 */
+		int quitCode;
+		
+		/** 시스템 옵션 */
 		std::unordered_map<std::string, std::any> options;
-
-		/** 실질적인 저장은 여기에 */
+		
+		/** 포함된 서브시스템 */
 		std::vector<std::unique_ptr<Subsystem>> subsystems;
-
-		/** 검색용 맵 */
 		std::unordered_map<std::type_index, std::reference_wrapper<Subsystem>> subsystemsByType;
 	};
 
 	template <class TOption, class TValue>
-	std::expected<void, std::string> System::AddOption(std::string key, TValue&& value)
+	void System::AddOption(std::string_view key, TValue&& value)
 	{
-		const auto [iterator, inserted] = options.try_emplace(
-			std::move(key),
-			std::in_place_type<TOption>,
-			std::forward<TValue>(value));
-
-		if (!inserted)
-		{
-			return std::unexpected(std::string{ "이미 등록된 옵션입니다." });
-		}
-
-		return {};
+		assert(!options.contains(key.data()) && "The option must not already be registered.");
+		options.try_emplace(key.data(), std::in_place_type<TOption>, std::forward<TValue>(value));
 	}
 
 	template <class TOption>
-	std::expected<std::reference_wrapper<TOption>, std::string> System::GetOption(const std::string& key)
+	TOption& System::GetOption(const std::string& key)
 	{
 		const auto result = options.find(key);
-		if (result == options.end())
-		{
-			return std::unexpected("해당 옵션이 등록되어 있지 않습니다: " + key);
-		}
+		
 
 		auto* value = std::any_cast<TOption>(&result->second);
-		if (!value)
-		{
-			return std::unexpected("옵션의 타입이 일치하지 않습니다: " + key);
-		}
+		assert(value && "The option type must match its registered type.");
 
-		return std::ref(*value);
+		return *value;
 	}
 
 	template <class TOption>
-	std::expected<std::reference_wrapper<const TOption>, std::string> System::GetOption(const std::string& key) const
+	const TOption& System::GetOption(const std::string& key) const
 	{
 		const auto result = options.find(key);
-		if (result == options.end())
-		{
-			return std::unexpected("해당 옵션이 등록되어 있지 않습니다: " + key);
-		}
+		assert(result != options.end() && "The requested option must be registered.");
 
 		const auto* value = std::any_cast<TOption>(&result->second);
-		if (!value)
-		{
-			return std::unexpected("옵션의 타입이 일치하지 않습니다: " + key);
-		}
+		assert(value && "The option type must match its registered type.");
 
-		return std::cref(*value);
+		return *value;
 	}
 
-	template <FromSubsystem TSubsystem>
-	std::expected<std::reference_wrapper<TSubsystem>, std::string> System::AddSubsystem()
+	template <std::derived_from<Subsystem> TSubsystem>
+	TSubsystem* System::AddSubsystem()
 	{
-		const std::type_index type = typeid(TSubsystem);
-		if (subsystemsByType.contains(type))
+		const auto result = subsystemsByType.find(typeid(TSubsystem));
+		if (result != subsystemsByType.end())
 		{
-			return std::unexpected(std::string{ "이미 등록된 서브시스템입니다." });
+			return dynamic_cast<TSubsystem*>(&result->second.get());
 		}
 
 		auto subsystem = std::make_unique<TSubsystem>();
-		auto reference = std::ref(*subsystem);
-
+		auto* pointer = subsystem.get();
 		subsystems.push_back(std::move(subsystem));
-		subsystemsByType.emplace(type, reference);
-
-		return reference;
+		subsystemsByType.emplace(typeid(TSubsystem), std::ref(*pointer));
+		return pointer;
 	}
 
-	template <FromSubsystem TSubsystem>
-	std::expected<std::reference_wrapper<TSubsystem>, std::string> System::GetSubsystem()
+	template <std::derived_from<Subsystem> TSubsystem>
+	TSubsystem* System::GetSubsystem()
+	{
+		const auto result = subsystemsByType.find(typeid(TSubsystem));
+		if (result != subsystemsByType.end())
+		{
+			return static_cast<TSubsystem*>(&result->second.get());
+		}
+
+		return nullptr;
+	}
+
+	template <std::derived_from<Subsystem> TSubsystem>
+	const TSubsystem* System::GetSubsystem() const
 	{
 		const auto result = subsystemsByType.find(typeid(TSubsystem));
 		if (result == subsystemsByType.end())
 		{
-			return std::unexpected(std::string{"해당 서브시스템이 등록되어 있지 않습니다."});
+			return static_cast<const TSubsystem*>(&result->second.get());
 		}
 
-		return std::ref(static_cast<TSubsystem&>(result->second.get()));
+		return nullptr;
 	}
 
-	template <FromSubsystem TSubsystem>
-	std::expected<std::reference_wrapper<const TSubsystem>, std::string> System::GetSubsystem() const
+	template <std::derived_from<Subsystem> TSubsystem>
+	auto System::GetSubsystems()
 	{
-		const auto result = subsystemsByType.find(typeid(TSubsystem));
-		if (result == subsystemsByType.end())
-		{
-			return std::unexpected(std::string{"해당 서브시스템이 등록되어 있지 않습니다."});
-		}
+		return subsystems | std::views::filter([](const auto& subsystem) { return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr; })
+						  | std::views::transform([](const auto& subsystem) -> TSubsystem& { return static_cast<TSubsystem&>(*subsystem); });
+	}
 
-		return std::cref(static_cast<const TSubsystem&>(result->second.get()));
+	template <std::derived_from<Subsystem> TSubsystem>
+	const auto System::GetSubsystems() const
+	{
+		return subsystems | std::views::filter([](const auto& subsystem) { return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr; })
+						  | std::views::transform([](const auto& subsystem) -> const TSubsystem& { return static_cast<const TSubsystem&>(*subsystem); });
 	}
 }
 

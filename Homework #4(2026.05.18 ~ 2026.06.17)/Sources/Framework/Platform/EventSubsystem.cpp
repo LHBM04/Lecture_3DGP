@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.h"
 #include "EventSubsystem.h"
 #include "Window.h"
-#include "../Core/System.h"
+#include "../Core/Engine.h"
 
 namespace
 {
@@ -34,7 +34,7 @@ namespace
 namespace TUK::Framework
 {
 	EventSubsystem::EventSubsystem() noexcept
-		: Subsystem(1)
+		: EngineSubsystem(1)
 	{
 	}
 
@@ -47,7 +47,7 @@ namespace TUK::Framework
 
 	void EventSubsystem::OnPreTick()
 	{
-		auto& system = System::GetInstance();
+		auto& system = Engine::GetInstance();
 		if (!system.IsRunning())
 		{
 			return;
