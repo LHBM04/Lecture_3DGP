@@ -74,6 +74,21 @@ namespace TUK::Framework
 		return hWnd;
 	}
 
+	bool Window::IsResizable() const noexcept
+	{
+		return options.isResizable;
+	}
+
+	bool Window::IsBorderless() const noexcept
+	{
+		return options.isBorderless;
+	}
+
+	bool Window::IsFullscreen() const noexcept
+	{
+		return options.isFullscreen;
+	}
+
 	bool Window::ShouldClose() const noexcept
 	{
 		return shouldClose;
@@ -93,6 +108,71 @@ namespace TUK::Framework
 				hWnd = handle;
 				return DefWindowProcW(handle, message, wParam, lParam);
 			}
+			case WM_NCCALCSIZE:
+			{
+				if (options.isBorderless || options.isFullscreen)
+				{
+					return 0;
+				}
+				return DefWindowProcW(handle, message, wParam, lParam);
+			}
+			case WM_GETMINMAXINFO:
+			{
+				if (options.isBorderless && !options.isFullscreen)
+				{
+					MONITORINFO monitor{};
+					monitor.cbSize = sizeof(monitor);
+					if (GetMonitorInfoW(MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST), &monitor))
+					{
+						auto& bounds = *reinterpret_cast<MINMAXINFO*>(lParam);
+						bounds.ptMaxPosition = { monitor.rcWork.left - monitor.rcMonitor.left,
+							monitor.rcWork.top - monitor.rcMonitor.top };
+						bounds.ptMaxSize = { monitor.rcWork.right - monitor.rcWork.left,
+							monitor.rcWork.bottom - monitor.rcWork.top };
+						return 0;
+					}
+				}
+				return DefWindowProcW(handle, message, wParam, lParam);
+			}
+			case WM_NCHITTEST:
+			{
+				if (options.isBorderless && !options.isFullscreen && options.isResizable && !IsZoomed(handle))
+				{
+					RECT rect{};
+					if (GetWindowRect(handle, &rect))
+					{
+						const UINT dpi = GetDpiForWindow(handle);
+						const int borderX = GetSystemMetricsForDpi(SM_CXSIZEFRAME, dpi)
+							+ GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+						const int borderY = GetSystemMetricsForDpi(SM_CYSIZEFRAME, dpi)
+							+ GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+						const int x = GET_X_LPARAM(lParam);
+						const int y = GET_Y_LPARAM(lParam);
+						const bool isLeft = x < rect.left + borderX;
+						const bool isRight = x >= rect.right - borderX;
+						const bool isTop = y < rect.top + borderY;
+						const bool isBottom = y >= rect.bottom - borderY;
+						if (isTop)
+						{
+							return isLeft ? HTTOPLEFT : isRight ? HTTOPRIGHT : HTTOP;
+						}
+						if (isBottom)
+						{
+							return isLeft ? HTBOTTOMLEFT : isRight ? HTBOTTOMRIGHT : HTBOTTOM;
+						}
+						if (isLeft)
+						{
+							return HTLEFT;
+						}
+						if (isRight)
+						{
+							return HTRIGHT;
+						}
+						return HTCLIENT;
+					}
+				}
+				return DefWindowProcW(handle, message, wParam, lParam);
+			}
 			case WM_CLOSE:
 			{
 				RequestClose();
@@ -102,12 +182,7 @@ namespace TUK::Framework
 			case WM_WINDOWPOSCHANGED:
 			{
 				UpdateBounds();
-				return 0;
-			}
-			case WM_SHOWWINDOW:
-			{
-				options.isVisible = wParam != 0;
-				return 0;
+				return DefWindowProcW(handle, message, wParam, lParam);
 			}
 			case WM_NCDESTROY:
 			{

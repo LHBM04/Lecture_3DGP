@@ -23,6 +23,11 @@ namespace TUK::Framework
 		assert(windowHandle);
 	}
 
+	SwapChain::~SwapChain() noexcept
+	{
+		Release();
+	}
+
 	SwapChain::SwapChain(SwapChain&& other) noexcept
 		: window(other.window)
 		, windowHandle(other.windowHandle)
@@ -42,6 +47,7 @@ namespace TUK::Framework
 	{
 		if (this != &other)
 		{
+			Release();
 			device = std::move(other.device);
 			swapChain = std::move(other.swapChain);
 			renderTargetHeap = std::move(other.renderTargetHeap);
@@ -81,6 +87,8 @@ namespace TUK::Framework
 		description.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		description.BufferCount = bufferCount;
 		description.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		const bool isExclusiveFullscreen = window.get().IsFullscreen() && !window.get().IsBorderless();
+		description.Flags = isExclusiveFullscreen ? DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH : 0;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> createdSwapChain;
 		HRESULT result = factory.CreateSwapChainForHwnd(&queue, handle,
@@ -100,6 +108,42 @@ namespace TUK::Framework
 			return CheckHResult(result, "창 연결 설정");
 		}
 
+		if (isExclusiveFullscreen)
+		{
+			Microsoft::WRL::ComPtr<IDXGIOutput> output;
+			result = swapChain->GetContainingOutput(output.GetAddressOf());
+			if (FAILED(result))
+			{
+				return CheckHResult(result, "전체 화면 출력 조회");
+			}
+			result = swapChain->SetFullscreenState(TRUE, output.Get());
+			if (result != S_OK)
+			{
+				return std::unexpected(std::format("독점 전체 화면 전환 실패 (DXGI 결과: {:#010x}).",
+					static_cast<unsigned long>(result)));
+			}
+			DXGI_MODE_DESC mode{};
+			mode.Width = targetWidth;
+			mode.Height = targetHeight;
+			mode.Format = description.Format;
+			result = swapChain->ResizeTarget(&mode);
+			if (result != S_OK)
+			{
+				return std::unexpected(std::format("전체 화면 해상도 변경 실패 (DXGI 결과: {:#010x}).",
+					static_cast<unsigned long>(result)));
+			}
+			result = swapChain->ResizeBuffers(bufferCount, 0, 0, description.Format, description.Flags);
+			if (FAILED(result))
+			{
+				return CheckHResult(result, "전체 화면 백 버퍼 갱신");
+			}
+			result = swapChain->GetDesc1(&description);
+			if (FAILED(result))
+			{
+				return CheckHResult(result, "전체 화면 백 버퍼 크기 조회");
+			}
+		}
+
 		D3D12_DESCRIPTOR_HEAP_DESC heapDescription{};
 		heapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 		heapDescription.NumDescriptors = bufferCount;
@@ -109,8 +153,8 @@ namespace TUK::Framework
 		{
 			return CheckHResult(result, "RTV 힙 생성");
 		}
-		sizeX = targetWidth;
-		sizeY = targetHeight;
+		sizeX = description.Width;
+		sizeY = description.Height;
 		buffers.resize(bufferCount);
 		return CreateRenderTargets();
 	}
@@ -143,40 +187,52 @@ namespace TUK::Framework
 		return {};
 	}
 
+	void SwapChain::Release() noexcept
+	{
+		if (swapChain)
+		{
+			(void)swapChain->SetFullscreenState(FALSE, nullptr);
+		}
+		buffers.clear();
+		renderTargetHeap.Reset();
+		swapChain.Reset();
+		device.Reset();
+		descriptorSize = 0;
+		sizeX = 0;
+		sizeY = 0;
+	}
+
 	void SwapChain::Resize(UINT targetWidth, UINT targetHeight)
 	{
 		assert(device && swapChain && renderTargetHeap);
 		assert(!buffers.empty());
 		assert(targetWidth > 0 && targetHeight > 0);
 
+		DXGI_SWAP_CHAIN_DESC1 description{};
+		const auto descriptionResult = CheckHResult(swapChain->GetDesc1(&description), "스왑 체인 설정 조회");
+		if (!descriptionResult)
+		{
+			Engine::GetInstance().ReportError(descriptionResult.error());
+			return;
+		}
 		for (auto& buffer : buffers)
 		{
 			buffer.Reset();
 		}
-
 		const auto result = CheckHResult(
 			swapChain->ResizeBuffers(static_cast<UINT>(buffers.size()), targetWidth, targetHeight,
-				DXGI_FORMAT_R8G8B8A8_UNORM, 0),
-			"스왑 체인 크기 변경");
+				DXGI_FORMAT_R8G8B8A8_UNORM, description.Flags), "스왑 체인 크기 변경");
 		if (!result)
 		{
 			Engine::GetInstance().ReportError(result.error());
 			return;
 		}
-
-		auto descriptor = renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
-		for (UINT index = 0; index < buffers.size(); ++index)
+		const auto targets = CreateRenderTargets();
+		if (!targets)
 		{
-			if (FAILED(swapChain->GetBuffer(index, IID_PPV_ARGS(buffers[index].GetAddressOf()))))
-			{
-				// return CheckHResult(result, "백 버퍼 조회");
-				return;
-			}
-
-			device->CreateRenderTargetView(buffers[index].Get(), nullptr, descriptor);
-			descriptor.ptr += descriptorSize;
+			Engine::GetInstance().ReportError(targets.error());
+			return;
 		}
-
 		sizeX = targetWidth;
 		sizeY = targetHeight;
 	}

@@ -25,7 +25,7 @@ namespace TUK::Framework
 
 	public:
 		explicit SwapChain(Window& window) noexcept;
-		~SwapChain() noexcept = default;
+		~SwapChain() noexcept;
 
 		/** 복사 금지 */
 		SwapChain(const SwapChain&) = delete;
@@ -40,6 +40,7 @@ namespace TUK::Framework
 		[[nodiscard]] HWND GetHWND() const noexcept;
 
 		/** 초기화 완료, 양수 크기, GPU의 백 버퍼 사용 완료가 필요하다. */
+		void Release() noexcept;
 		void Resize(UINT width, UINT height);
 		[[nodiscard]] std::expected<void, std::string> Present(UINT syncInterval = 1);
 

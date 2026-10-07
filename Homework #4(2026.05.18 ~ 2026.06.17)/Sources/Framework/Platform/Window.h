@@ -37,6 +37,10 @@ namespace TUK::Framework
 		[[nodiscard]] const Vector2D<int>& GetSize() const noexcept;
 		void SetSize(const Vector2D<int>& size) noexcept;
 
+		[[nodiscard]] bool IsResizable() const noexcept;
+		[[nodiscard]] bool IsBorderless() const noexcept;
+		[[nodiscard]] bool IsFullscreen() const noexcept;
+
 		[[nodiscard]] bool ShouldClose() const noexcept;
 		void RequestClose() noexcept;
 

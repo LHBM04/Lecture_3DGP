@@ -223,4 +223,9 @@
       <Filter>Sources\Framework\Entities</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Platform\WindowOptions.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

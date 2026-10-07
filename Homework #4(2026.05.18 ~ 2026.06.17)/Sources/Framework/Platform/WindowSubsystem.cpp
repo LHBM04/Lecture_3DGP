@@ -8,7 +8,6 @@ namespace
 {
 	constexpr wchar_t ClassName[] = L"TUK.Framework.Window";
 	const HINSTANCE instance = GetModuleHandleW(nullptr);
-
 }
 
 namespace TUK::Framework
@@ -28,58 +27,59 @@ namespace TUK::Framework
 
 	std::expected<std::reference_wrapper<Window>, std::string> WindowSubsystem::Create(const WindowOptions& options)
 	{
-		if (!windowClass || hasExitRequest || !Engine::GetInstance().IsRunning())
+		assert(options.size.GetX() > 0 && options.size.GetY() > 0);
+		if (!windowClass || hasExitRequest)
 		{
-			return std::unexpected(std::string{ "창을 생성할 수 있는 상태가 아닙니다." });
-		}
-		if (options.size.GetX() <= 0 || options.size.GetY() <= 0)
-		{
-			return std::unexpected(std::string{ "창의 크기는 0보다 커야 합니다." });
+			return std::unexpected(std::string{ "창 서브시스템이 초기화되지 않았거나 종료 중입니다." });
 		}
 
-		DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
-		if (options.isResizable)
+		WindowOptions resolvedOptions = options;
+		DWORD style = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+		if (options.isBorderless || options.isFullscreen)
 		{
-			style |= WS_THICKFRAME;
+			style = WS_POPUP;
 		}
-		if (options.hasMinimizeButton)
+		if (!options.isFullscreen)
 		{
-			style |= WS_MINIMIZEBOX;
+			style |= WS_SYSMENU | WS_MINIMIZEBOX;
+			if (options.isResizable)
+			{
+				style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+			}
 		}
-		if (options.hasMaximizeButton)
+		else
 		{
-			style |= WS_MAXIMIZEBOX;
+			const POINT position{
+				options.position.GetX() == CW_USEDEFAULT ? 0 : options.position.GetX(),
+				options.position.GetY() == CW_USEDEFAULT ? 0 : options.position.GetY()
+			};
+			MONITORINFO monitor{};
+			monitor.cbSize = sizeof(monitor);
+			if (!GetMonitorInfoW(MonitorFromPoint(position, MONITOR_DEFAULTTONEAREST), &monitor))
+			{
+				return std::unexpected(std::format("모니터 조회 실패 (Win32 오류: {}).", GetLastError()));
+			}
+			resolvedOptions.position.Set(monitor.rcMonitor.left, monitor.rcMonitor.top);
+			if (options.isBorderless)
+			{
+				resolvedOptions.size.Set(monitor.rcMonitor.right - monitor.rcMonitor.left,
+					monitor.rcMonitor.bottom - monitor.rcMonitor.top);
+			}
 		}
-		const DWORD extendedStyle = options.isAlwaysOnTop ? WS_EX_TOPMOST : 0;
 
-		auto window = std::make_unique<Window>(options);
-
-		const HWND hWnd = CreateWindowExW(
-			extendedStyle, 
-			ClassName, 
-			options.title.data(), 
-			style,
-			options.position.GetX(), 
-			options.position.GetY(), 
-			options.size.GetX(), 
-			options.size.GetY(),
-			nullptr, 
-			nullptr, 
-			instance, 
-			window.get());
-
+		std::unique_ptr<Window> window = std::make_unique<Window>(resolvedOptions);
+		const HWND hWnd = CreateWindowExW(0, ClassName, resolvedOptions.title.c_str(), style,
+			resolvedOptions.position.GetX(), resolvedOptions.position.GetY(),
+			resolvedOptions.size.GetX(), resolvedOptions.size.GetY(),
+			nullptr, nullptr, instance, window.get());
 		if (!hWnd)
 		{
-			const DWORD error = GetLastError();
-			return std::unexpected(std::format("창 생성 실패 (Win32 오류: {}).", error));
+			return std::unexpected(std::format("창 생성 실패 (Win32 오류: {}).", GetLastError()));
 		}
 
 		auto reference = std::ref(*window);
 		windows.push_back(std::move(window));
-		if (options.isVisible)
-		{
-			ShowWindow(hWnd, SW_SHOW);
-		}
+		ShowWindow(hWnd, SW_SHOW);
 		return reference;
 	}
 
@@ -90,13 +90,8 @@ namespace TUK::Framework
 
 	void WindowSubsystem::OnStartup()
 	{
-		if (windowClass)
-		{
-			return;
-		}
-
 		hasExitRequest = false;
-
+		auto& engine = Engine::GetInstance();
 		WNDCLASSEXW description{};
 		description.cbSize = sizeof(description);
 		description.style = CS_HREDRAW | CS_VREDRAW;
@@ -108,56 +103,47 @@ namespace TUK::Framework
 		if (!windowClass)
 		{
 			hasExitRequest = true;
-			Engine::GetInstance().ReportError(std::format("창 클래스 등록 실패 (Win32 오류: {}).", GetLastError()));
+			engine.ReportError(std::format("창 클래스 등록 실패 (Win32 오류: {}).", GetLastError()));
 			return;
 		}
 
-		auto& system = Engine::GetInstance();
 		WindowOptions options;
-		const auto& title = system.GetOption<std::string>("Window.Title");
-		if (title.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
+		const auto& title = engine.GetOption<std::string>("Window.Title");
+		assert(title.size() <= static_cast<std::size_t>(std::numeric_limits<int>::max()));
+		if (!title.empty())
 		{
-			hasExitRequest = true;
-			system.ReportError("Window.Title이 너무 깁니다.");
-			return;
-		}
-		if (title.empty())
-		{
-			options.title.clear();
+			const int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+				title.data(), static_cast<int>(title.size()), nullptr, 0);
+			if (length == 0)
+			{
+				hasExitRequest = true;
+				engine.ReportError(std::format("창 제목 UTF-8 변환 실패 (Win32 오류: {}).", GetLastError()));
+				return;
+			}
+			options.title.resize(length);
+			if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, title.data(),
+				static_cast<int>(title.size()), options.title.data(), length) == 0)
+			{
+				hasExitRequest = true;
+				engine.ReportError(std::format("창 제목 UTF-8 변환 실패 (Win32 오류: {}).", GetLastError()));
+				return;
+			}
 		}
 		else
 		{
-			const int length = static_cast<int>(title.size());
-			const int wideLength = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-				title.data(), length, nullptr, 0);
-			if (wideLength == 0)
-			{
-				hasExitRequest = true;
-				system.ReportError("Window.Title은 올바른 UTF-8 문자열이어야 합니다.");
-				return;
-			}
-			options.title.resize(wideLength);
-			if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-				title.data(), length, options.title.data(), wideLength) == 0)
-			{
-				hasExitRequest = true;
-				system.ReportError("Window.Title의 UTF-16 변환에 실패했습니다.");
-				return;
-			}
+			options.title.clear();
 		}
+		options.position.Set(engine.GetOption<int>("Window.PositionX"), engine.GetOption<int>("Window.PositionY"));
+		options.size.Set(engine.GetOption<int>("Window.SizeX"), engine.GetOption<int>("Window.SizeY"));
+		options.isResizable = engine.GetOption<bool>("Window.IsResizable");
+		options.isBorderless = engine.GetOption<bool>("Window.IsBorderless");
+		options.isFullscreen = engine.GetOption<bool>("Window.IsFullscreen");
 
-		options.position.Set(system.GetOption<int>("Window.PositionX"), system.GetOption<int>("Window.PositionY"));
-		options.size.Set(system.GetOption<int>("Window.SizeX"), system.GetOption<int>("Window.SizeY"));
-		options.isResizable = system.GetOption<bool>("Window.IsResizable");
-		options.hasMinimizeButton = system.GetOption<bool>("Window.HasMinimizeButton");
-		options.hasMaximizeButton = system.GetOption<bool>("Window.HasMaximizeButton");
-		options.isAlwaysOnTop = system.GetOption<bool>("Window.IsAlwaysOnTop");
-		options.isVisible = system.GetOption<bool>("Window.IsVisible");
 		const auto window = Create(options);
 		if (!window)
 		{
 			hasExitRequest = true;
-			system.ReportError(window.error());
+			engine.ReportError(window.error());
 		}
 	}
 
@@ -167,7 +153,6 @@ namespace TUK::Framework
 		{
 			return window->ShouldClose();
 		});
-
 		if (windows.empty() && !hasExitRequest && Engine::GetInstance().IsRunning())
 		{
 			hasExitRequest = true;
@@ -177,7 +162,6 @@ namespace TUK::Framework
 
 	void WindowSubsystem::OnShutdown()
 	{
-		// 해당 클래스의 창을 모두 파괴한 뒤 클래스를 해제한다.
 		windows.clear();
 		if (windowClass)
 		{

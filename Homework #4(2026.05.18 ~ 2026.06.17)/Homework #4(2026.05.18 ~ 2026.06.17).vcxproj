@@ -245,4 +245,7 @@
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Entities\Scene.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Platform\WindowOptions.cpp" />
+  </ItemGroup>
 </Project>

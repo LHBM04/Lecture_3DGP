@@ -36,10 +36,8 @@ INT APIENTRY wWinMain(
 	engine.SetOption("Window.SizeX", 1280);
 	engine.SetOption("Window.SizeY", 720);
 	engine.SetOption("Window.IsResizable", true);
-	engine.SetOption("Window.HasMinimizeButton", true);
-	engine.SetOption("Window.HasMaximizeButton", true);
-	engine.SetOption("Window.IsAlwaysOnTop", false);
-	engine.SetOption("Window.IsVisible", true);
+	engine.SetOption("Window.IsBorderless", false);
+	engine.SetOption("Window.IsFullscreen", false);
 
 	engine.SetOption("RenderContext.BufferCount", 2);
 

@@ -21,11 +21,12 @@ namespace TUK::Framework
 
 	/** 조회 시에는 실제 저장 타입을 사용한다. */
 	template <class T>
-	concept OptionType =
-		std::same_as<T, std::string>
-		|| std::same_as<T, int>
-		|| std::same_as<T, float>
-		|| std::same_as<T, bool>;
+	concept OptionType = std::same_as<T, std::string>
+					  || std::same_as<T, std::string_view>
+					  || std::same_as<T, std::wstring_view>
+					  || std::same_as<T, int>
+					  || std::same_as<T, float>
+					  || std::same_as<T, bool>;
 
 	class System
 	{
