@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "RenderContext.h"
-#include "GraphicsError.h"
 
 #include "Buffer.h"
+#include "GraphicsError.h"
 #include "Pipeline.h"
 #include "SwapChain.h"
 
@@ -65,7 +65,7 @@ namespace TUK::Framework
 
 	std::expected<void, std::string> RenderContext::End()
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		if (!isRecording)
 		{
 			return std::unexpected(std::string{ "기록 중인 명령 목록이 없습니다." });
@@ -81,31 +81,31 @@ namespace TUK::Framework
 
 	void RenderContext::SetSwapChain(SwapChain& target)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		target.Bind(*commandList.Get());
 	}
 
 	void RenderContext::ClearSwapChain(SwapChain& target, const std::array<float, 4>& color)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		target.Clear(*commandList.Get(), color);
 	}
 
 	void RenderContext::EndSwapChain(SwapChain& target)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		target.EndRender(*commandList.Get());
 	}
 
 	void RenderContext::SetPipeline(const Pipeline& pipeline)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		pipeline.Bind(*commandList.Get());
 	}
 
 	void RenderContext::SetDescriptorHeaps(std::span<const std::reference_wrapper<ID3D12DescriptorHeap>> heaps)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		std::vector<ID3D12DescriptorHeap*> nativeHeaps(heaps.size());
 		for (std::size_t index = 0; index < heaps.size(); ++index)
 		{
@@ -116,115 +116,115 @@ namespace TUK::Framework
 
 	void RenderContext::SetRootDescriptorTable(UINT parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE descriptor)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetGraphicsRootDescriptorTable(parameterIndex, descriptor);
 	}
 
 	void RenderContext::SetRootConstantBufferView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetGraphicsRootConstantBufferView(parameterIndex, address);
 	}
 
 	void RenderContext::SetRootShaderResourceView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetGraphicsRootShaderResourceView(parameterIndex, address);
 	}
 
 	void RenderContext::SetRoot32BitConstants(UINT parameterIndex, std::span<const std::uint32_t> values, UINT offset)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetGraphicsRoot32BitConstants(parameterIndex, static_cast<UINT>(values.size()), values.data(), offset);
 	}
 
 	void RenderContext::SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY topology)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->IASetPrimitiveTopology(topology);
 	}
 
 	void RenderContext::SetVertexBuffers(UINT startSlot, std::span<const D3D12_VERTEX_BUFFER_VIEW> views)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->IASetVertexBuffers(startSlot, static_cast<UINT>(views.size()), views.data());
 	}
 
 	void RenderContext::SetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& view)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->IASetIndexBuffer(&view);
 	}
 
 	void RenderContext::SetViewports(std::span<const D3D12_VIEWPORT> viewports)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->RSSetViewports(static_cast<UINT>(viewports.size()), viewports.data());
 	}
 
 	void RenderContext::SetScissorRects(std::span<const D3D12_RECT> rectangles)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->RSSetScissorRects(static_cast<UINT>(rectangles.size()), rectangles.data());
 	}
 
 	void RenderContext::DrawInstanced(UINT vertexCount, UINT instanceCount, UINT startVertex, UINT startInstance)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->DrawInstanced(vertexCount, instanceCount, startVertex, startInstance);
 	}
 
 	void RenderContext::DrawIndexedInstanced(UINT indexCount, UINT instanceCount, UINT startIndex, INT baseVertex, UINT startInstance)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->DrawIndexedInstanced(indexCount, instanceCount, startIndex, baseVertex, startInstance);
 	}
 
 	void RenderContext::SetComputeRootDescriptorTable(UINT parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE descriptor)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetComputeRootDescriptorTable(parameterIndex, descriptor);
 	}
 
 	void RenderContext::SetComputeRootConstantBufferView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetComputeRootConstantBufferView(parameterIndex, address);
 	}
 
 	void RenderContext::SetComputeRootShaderResourceView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetComputeRootShaderResourceView(parameterIndex, address);
 	}
 
 	void RenderContext::SetComputeRootUnorderedAccessView(UINT parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS address)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetComputeRootUnorderedAccessView(parameterIndex, address);
 	}
 
 	void RenderContext::SetComputeRoot32BitConstants(UINT parameterIndex, std::span<const std::uint32_t> values, UINT offset)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->SetComputeRoot32BitConstants(parameterIndex, static_cast<UINT>(values.size()), values.data(), offset);
 	}
 
 	void RenderContext::Dispatch(UINT groupCountX, UINT groupCountY, UINT groupCountZ)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->Dispatch(groupCountX, groupCountY, groupCountZ);
 	}
 
 	void RenderContext::ResourceBarriers(std::span<const D3D12_RESOURCE_BARRIER> barriers)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
 	}
 
 	void RenderContext::TransitionBuffer(const Buffer& buffer, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		if (before == after)
 		{
 			return;
@@ -241,7 +241,7 @@ namespace TUK::Framework
 	std::expected<void, std::string> RenderContext::CopyBuffer(const Buffer& destination, UINT64 destinationOffset,
 		const Buffer& source, UINT64 sourceOffset, UINT64 size)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		if (!isRecording)
 		{
 			return std::unexpected(std::string{ "명령 기록 중에만 버퍼를 복사할 수 있습니다." });
@@ -266,20 +266,15 @@ namespace TUK::Framework
 
 	void RenderContext::CopyResource(ID3D12Resource& destination, ID3D12Resource& source)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		commandList->CopyResource(&destination, &source);
 	}
 
 	void RenderContext::Execute(ID3D12CommandQueue& queue)
 	{
-		AssertInitialized();
+		assert(commandList && commandAllocator);
 		ID3D12CommandList* lists[] = { commandList.Get() };
 		queue.ExecuteCommandLists(1, lists);
-	}
-
-	void RenderContext::AssertInitialized() const noexcept
-	{
-		assert(commandList && commandAllocator);
 	}
 
 	bool RenderContext::IsRecording() const noexcept

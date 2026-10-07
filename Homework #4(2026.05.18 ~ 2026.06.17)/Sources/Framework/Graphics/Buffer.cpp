@@ -1,12 +1,7 @@
 ﻿#include "Precompiled.h"
 #include "Buffer.h"
-#include "GraphicsError.h"
 
-#include <cassert>
-#include <cstring>
-#include <format>
-#include <limits>
-#include <utility>
+#include "GraphicsError.h"
 
 namespace TUK::Framework
 {
@@ -17,6 +12,24 @@ namespace TUK::Framework
 		, heapType(bufferHeapType)
 	{
 		assert(resource);
+	}
+
+	Buffer::Buffer(Buffer&& other) noexcept
+		: resource(std::move(other.resource))
+		, size(other.size)
+		, heapType(other.heapType)
+	{
+	}
+
+	Buffer& Buffer::operator=(Buffer&& other) noexcept
+	{
+		if (this != &other)
+		{
+			resource = std::move(other.resource);
+			size = other.size;
+			heapType = other.heapType;
+		}
+		return *this;
 	}
 
 	ID3D12Resource& Buffer::GetResource() const noexcept

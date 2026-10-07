@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include "Subsystem.h"
 
 namespace TUK::Framework

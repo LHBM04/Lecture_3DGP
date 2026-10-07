@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "WindowSubsystem.h"
-#include "EventSubsystem.h"
 
 #include "../Core/Engine.h"
+#include "EventSubsystem.h"
 
 namespace
 {
@@ -113,7 +113,48 @@ namespace TUK::Framework
 		}
 
 		auto& system = Engine::GetInstance();
-		const auto& options = system.GetOption<WindowOptions>("Window.Options");
+		WindowOptions options;
+		const auto& title = system.GetOption<std::string>("Window.Title");
+		if (title.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
+		{
+			hasExitRequest = true;
+			system.ReportError("Window.Title이 너무 깁니다.");
+			return;
+		}
+		if (title.empty())
+		{
+			options.title.clear();
+		}
+		else
+		{
+			const int length = static_cast<int>(title.size());
+			const int wideLength = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+				title.data(), length, nullptr, 0);
+			if (wideLength == 0)
+			{
+				hasExitRequest = true;
+				system.ReportError("Window.Title은 올바른 UTF-8 문자열이어야 합니다.");
+				return;
+			}
+			options.title.resize(wideLength);
+			if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+				title.data(), length, options.title.data(), wideLength) == 0)
+			{
+				hasExitRequest = true;
+				system.ReportError("Window.Title의 UTF-16 변환에 실패했습니다.");
+				return;
+			}
+		}
+
+		options.positionX = system.GetOption<int>("Window.PositionX");
+		options.positionY = system.GetOption<int>("Window.PositionY");
+		options.sizeX = system.GetOption<int>("Window.SizeX");
+		options.sizeY = system.GetOption<int>("Window.SizeY");
+		options.isResizable = system.GetOption<bool>("Window.IsResizable");
+		options.hasMinimizeButton = system.GetOption<bool>("Window.HasMinimizeButton");
+		options.hasMaximizeButton = system.GetOption<bool>("Window.HasMaximizeButton");
+		options.isAlwaysOnTop = system.GetOption<bool>("Window.IsAlwaysOnTop");
+		options.isVisible = system.GetOption<bool>("Window.IsVisible");
 		const auto window = Create(options);
 		if (!window)
 		{

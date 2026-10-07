@@ -8,7 +8,9 @@ namespace TUK::Framework
 	{
 	}
 
-	EngineSubsystem::~EngineSubsystem() noexcept = default;
+	EngineSubsystem::~EngineSubsystem() noexcept
+	{
+	}
 
 	void EngineSubsystem::OnPreTick()
 	{

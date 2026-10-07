@@ -9,6 +9,17 @@ namespace TUK::Framework
 	{
 	}
 
+	GraphicsPipeline::GraphicsPipeline(GraphicsPipeline&& other) noexcept
+		: Pipeline(std::move(other))
+	{
+	}
+
+	GraphicsPipeline& GraphicsPipeline::operator=(GraphicsPipeline&& other) noexcept
+	{
+		Pipeline::operator=(std::move(other));
+		return *this;
+	}
+
 	GraphicsPipeline::~GraphicsPipeline() noexcept = default;
 
 	void GraphicsPipeline::Bind(ID3D12GraphicsCommandList& commandList) const

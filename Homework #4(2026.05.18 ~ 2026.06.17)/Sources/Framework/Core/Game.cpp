@@ -1,7 +1,8 @@
 ﻿#include "Precompiled.h"
 #include "Game.h"
-#include "Engine.h"
+
 #include "../Platform/TimeSubsystem.h"
+#include "Engine.h"
 
 namespace TUK::Framework
 {

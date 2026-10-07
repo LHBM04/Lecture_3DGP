@@ -1,20 +1,21 @@
 ﻿#pragma once
 
+#include <cstddef>
 #include <expected>
+#include <span>
 #include <string>
 
-#include <cstddef>
-#include <span>
 #include <d3d12.h>
+
 #include <dxgi1_6.h>
-#include <string>
+
 #include <wrl.h>
 
-#include "SwapChain.h"
-#include "Fence.h"
 #include "Buffer.h"
-#include "GraphicsPipeline.h"
 #include "ComputePipeline.h"
+#include "Fence.h"
+#include "GraphicsPipeline.h"
+#include "SwapChain.h"
 
 namespace TUK::Framework
 {

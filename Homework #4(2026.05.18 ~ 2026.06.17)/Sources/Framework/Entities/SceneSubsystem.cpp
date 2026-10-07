@@ -1,5 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "SceneSubsystem.h"
+
 #include "Scene.h"
 
 namespace TUK::Framework

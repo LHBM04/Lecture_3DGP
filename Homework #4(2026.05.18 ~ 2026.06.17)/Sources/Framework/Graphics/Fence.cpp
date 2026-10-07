@@ -1,12 +1,7 @@
 ﻿#include "Precompiled.h"
 #include "Fence.h"
-#include "GraphicsError.h"
 
-#include <cassert>
-#include <format>
-#include <limits>
-#include <string_view>
-#include <utility>
+#include "GraphicsError.h"
 
 namespace TUK::Framework
 {

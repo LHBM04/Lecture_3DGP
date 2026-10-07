@@ -3,11 +3,10 @@
 #include "Framework/Core/Engine.h"
 #include "Framework/Core/Game.h"
 #include "Framework/Entities/SceneSubsystem.h"
-
-#include "Framework/Platform/WindowSubsystem.h"
-#include "Framework/Platform/TimeSubsystem.h"
-#include "Framework/Platform/EventSubsystem.h"
 #include "Framework/Graphics/RenderSubsystem.h"
+#include "Framework/Platform/EventSubsystem.h"
+#include "Framework/Platform/TimeSubsystem.h"
+#include "Framework/Platform/WindowSubsystem.h"
 
 using namespace TUK::Framework;
 
@@ -31,11 +30,18 @@ INT APIENTRY wWinMain(
 
 	Engine engine;
 
-	WindowOptions windowOptions;
-	windowOptions.title = L"Homework #4";
-	
-	engine.AddOption<WindowOptions>("Window.Options", windowOptions);
-	engine.AddOption<UINT>("RenderContext.BufferCount", 2);
+	engine.SetOption<std::string>("Window.Title", "Homework #4");
+	engine.SetOption("Window.PositionX", CW_USEDEFAULT);
+	engine.SetOption("Window.PositionY", CW_USEDEFAULT);
+	engine.SetOption("Window.SizeX", 1280);
+	engine.SetOption("Window.SizeY", 720);
+	engine.SetOption("Window.IsResizable", true);
+	engine.SetOption("Window.HasMinimizeButton", true);
+	engine.SetOption("Window.HasMaximizeButton", true);
+	engine.SetOption("Window.IsAlwaysOnTop", false);
+	engine.SetOption("Window.IsVisible", true);
+
+	engine.SetOption("RenderContext.BufferCount", 2);
 
 	engine.AddSubsystem<TimeSubsystem>();
 	engine.AddSubsystem<EventSubsystem>();

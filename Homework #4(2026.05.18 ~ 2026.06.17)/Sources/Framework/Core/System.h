@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <any>
 #include <cassert>
 #include <concepts>
 #include <cstddef>
@@ -12,12 +11,22 @@
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "Subsystem.h"
 
 namespace TUK::Framework
 {
+
+	/** 조회 시에는 실제 저장 타입을 사용한다. */
+	template <class T>
+	concept OptionType =
+		std::same_as<T, std::string>
+		|| std::same_as<T, int>
+		|| std::same_as<T, float>
+		|| std::same_as<T, bool>;
+
 	class System
 	{
 	public:
@@ -35,13 +44,17 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsRunning() const noexcept;
 		[[nodiscard]] int GetQuitCode() const noexcept;
 
-		template <class TOption, class TValue>
-		void AddOption(std::string_view key, TValue&& value);
+		template <class TValue>
+		void AddOption(std::string_view key, TValue value);
 
-		template <class TOption>
+		/** 옵션을 추가하거나 기존 값을 덮어쓴다. */
+		template <class TValue>
+		void SetOption(std::string_view key, TValue value) = delete;
+
+		template <OptionType TOption>
 		[[nodiscard]] TOption& GetOption(const std::string& key);
 
-		template <class TOption>
+		template <OptionType TOption>
 		[[nodiscard]] const TOption& GetOption(const std::string& key) const;
 
 	protected:
@@ -69,41 +82,75 @@ namespace TUK::Framework
 		int quitCode;
 		
 		/** 시스템 옵션 */
-		std::unordered_map<std::string, std::any> options;
+		std::unordered_map<std::string, std::variant<std::string, int, float, bool>> options;
 		
 		/** 포함된 서브시스템 */
 		std::vector<std::unique_ptr<Subsystem>> subsystems;
 		std::unordered_map<std::type_index, std::reference_wrapper<Subsystem>> subsystemsByType;
 	};
 
-	template <class TOption, class TValue>
-	void System::AddOption(std::string_view key, TValue&& value)
+	template <>
+	inline void System::SetOption<std::string>(std::string_view key, std::string value)
 	{
-		assert(!options.contains(key.data()) && "The option must not already be registered.");
-		options.try_emplace(key.data(), std::in_place_type<TOption>, std::forward<TValue>(value));
+		const auto separator = key.find('.');
+		assert(separator != std::string_view::npos && separator > 0 && separator + 1 < key.size());
+		options.insert_or_assign(std::string(key),
+			std::variant<std::string, int, float, bool>(std::in_place_type<std::string>, std::move(value)));
 	}
 
-	template <class TOption>
+	template <>
+	inline void System::SetOption<int>(std::string_view key, int value)
+	{
+		const auto separator = key.find('.');
+		assert(separator != std::string_view::npos && separator > 0 && separator + 1 < key.size());
+		options.insert_or_assign(std::string(key),
+			std::variant<std::string, int, float, bool>(std::in_place_type<int>, std::move(value)));
+	}
+
+	template <>
+	inline void System::SetOption<float>(std::string_view key, float value)
+	{
+		const auto separator = key.find('.');
+		assert(separator != std::string_view::npos && separator > 0 && separator + 1 < key.size());
+		options.insert_or_assign(std::string(key),
+			std::variant<std::string, int, float, bool>(std::in_place_type<float>, std::move(value)));
+	}
+
+	template <>
+	inline void System::SetOption<bool>(std::string_view key, bool value)
+	{
+		const auto separator = key.find('.');
+		assert(separator != std::string_view::npos && separator > 0 && separator + 1 < key.size());
+		options.insert_or_assign(std::string(key),
+			std::variant<std::string, int, float, bool>(std::in_place_type<bool>, std::move(value)));
+	}
+
+	template <class TValue>
+	void System::AddOption(std::string_view key, TValue value)
+	{
+		assert(!options.contains(std::string(key)) && "The option must not already be registered.");
+		SetOption<TValue>(key, std::move(value));
+	}
+
+	template <OptionType TOption>
 	TOption& System::GetOption(const std::string& key)
 	{
 		const auto result = options.find(key);
-		
+		assert(result != options.end() && "The requested option must be registered.");
 
-		auto* value = std::any_cast<TOption>(&result->second);
+		auto* value = std::get_if<TOption>(&result->second);
 		assert(value && "The option type must match its registered type.");
-
 		return *value;
 	}
 
-	template <class TOption>
+	template <OptionType TOption>
 	const TOption& System::GetOption(const std::string& key) const
 	{
 		const auto result = options.find(key);
 		assert(result != options.end() && "The requested option must be registered.");
 
-		const auto* value = std::any_cast<TOption>(&result->second);
+		const auto* value = std::get_if<TOption>(&result->second);
 		assert(value && "The option type must match its registered type.");
-
 		return *value;
 	}
 
@@ -150,15 +197,23 @@ namespace TUK::Framework
 	template <std::derived_from<Subsystem> TSubsystem>
 	auto System::GetSubsystems()
 	{
-		return subsystems | std::views::filter([](const auto& subsystem) { return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr; })
-						  | std::views::transform([](const auto& subsystem) -> TSubsystem& { return static_cast<TSubsystem&>(*subsystem); });
+		return subsystems | std::views::filter([](const auto& subsystem) {
+								return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr;
+							})
+						  | std::views::transform([](const auto& subsystem) -> TSubsystem& {
+							  return static_cast<TSubsystem&>(*subsystem);
+							});
 	}
 
 	template <std::derived_from<Subsystem> TSubsystem>
 	const auto System::GetSubsystems() const
 	{
-		return subsystems | std::views::filter([](const auto& subsystem) { return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr; })
-						  | std::views::transform([](const auto& subsystem) -> const TSubsystem& { return static_cast<const TSubsystem&>(*subsystem); });
+		return subsystems | std::views::filter([](const auto& subsystem) {
+								return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr;
+							})
+						  | std::views::transform([](const auto& subsystem) -> const TSubsystem& {
+							  return static_cast<const TSubsystem&>(*subsystem);
+							});
 	}
 }
 

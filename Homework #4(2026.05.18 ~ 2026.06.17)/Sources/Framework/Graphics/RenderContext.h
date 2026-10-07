@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include <expected>
-#include <string>
-
-#include <d3d12.h>
 #include <array>
 #include <cstdint>
+#include <expected>
 #include <functional>
 #include <span>
 #include <string>
+
+#include <d3d12.h>
+
 #include <wrl.h>
 
 namespace TUK::Framework
@@ -73,7 +73,6 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsRecording() const noexcept;
 
 	private:
-		void AssertInitialized() const noexcept;
 		/** End가 성공한 명령 목록을 제출한다. 완료 오류는 Fence에서 확인한다. */
 		void Execute(ID3D12CommandQueue& queue);
 

@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include <expected>
-#include <string>
-
 #include <cstddef>
-#include <d3d12.h>
+#include <expected>
 #include <span>
 #include <string>
+
+#include <d3d12.h>
+
 #include <wrl.h>
 
 namespace TUK::Framework
@@ -21,10 +21,12 @@ namespace TUK::Framework
 
 	public:
 		~Buffer() noexcept = default;
+
 		Buffer(const Buffer&) = delete;
 		Buffer& operator=(const Buffer&) = delete;
-		Buffer(Buffer&&) noexcept = default;
-		Buffer& operator=(Buffer&&) noexcept = default;
+
+		Buffer(Buffer&& other) noexcept;
+		Buffer& operator=(Buffer&& other) noexcept;
 
 		[[nodiscard]] UINT64 GetSize() const noexcept;
 		[[nodiscard]] D3D12_HEAP_TYPE GetHeapType() const noexcept;

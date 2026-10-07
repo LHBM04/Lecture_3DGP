@@ -1,10 +1,9 @@
 ﻿#include "Precompiled.h"
 #include "SwapChain.h"
-#include "GraphicsError.h"
-#include "../Platform/Window.h"
-#include "../Core/Engine.h"
 
-#include <cassert>
+#include "../Core/Engine.h"
+#include "../Platform/Window.h"
+#include "GraphicsError.h"
 
 namespace TUK::Framework
 {
@@ -24,15 +23,51 @@ namespace TUK::Framework
 		assert(windowHandle);
 	}
 
+	SwapChain::SwapChain(SwapChain&& other) noexcept
+		: window(other.window)
+		, windowHandle(other.windowHandle)
+		, device(std::move(other.device))
+		, swapChain(std::move(other.swapChain))
+		, renderTargetHeap(std::move(other.renderTargetHeap))
+		, buffers(std::move(other.buffers))
+		, descriptorSize(other.descriptorSize)
+		, positionX(other.positionX)
+		, positionY(other.positionY)
+		, sizeX(other.sizeX)
+		, sizeY(other.sizeY)
+	{
+	}
+
+	SwapChain& SwapChain::operator=(SwapChain&& other) noexcept
+	{
+		if (this != &other)
+		{
+			device = std::move(other.device);
+			swapChain = std::move(other.swapChain);
+			renderTargetHeap = std::move(other.renderTargetHeap);
+			buffers = std::move(other.buffers);
+			window = other.window;
+			windowHandle = other.windowHandle;
+			descriptorSize = other.descriptorSize;
+			positionX = other.positionX;
+			positionY = other.positionY;
+			sizeX = other.sizeX;
+			sizeY = other.sizeY;
+		}
+		return *this;
+	}
+
 	std::expected<void, std::string> SwapChain::Initialize(ID3D12Device& renderDevice, IDXGIFactory6& factory,
 		ID3D12CommandQueue& queue, UINT targetWidth, UINT targetHeight)
 	{
 		assert(windowHandle);
-		const UINT bufferCount = Engine::GetInstance().GetOption<UINT>("RenderContext.BufferCount");
-		if (bufferCount < 2)
+		const auto configuredBufferCount = Engine::GetInstance().GetOption<int>("RenderContext.BufferCount");
+		if (configuredBufferCount < 2 || configuredBufferCount > 16)
 		{
-			return std::unexpected(std::string{ "RenderContext.BufferCount는 2 이상이어야 합니다." });
+			return std::unexpected(std::string{ "RenderContext.BufferCount는 2 이상 16 이하여야 합니다." });
 		}
+
+		const UINT bufferCount = static_cast<UINT>(configuredBufferCount);
 
 		device = &renderDevice;
 		const HWND handle = windowHandle;
@@ -108,32 +143,48 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> SwapChain::Resize(UINT targetWidth, UINT targetHeight)
+	void SwapChain::Resize(UINT targetWidth, UINT targetHeight)
 	{
-		AssertInitialized();
-		if (targetWidth == 0 || targetHeight == 0)
-		{
-			return std::unexpected(std::string{ "스왑 체인의 크기는 0보다 커야 합니다." });
-		}
+		assert(device && swapChain && renderTargetHeap);
+		assert(!buffers.empty());
+		assert(targetWidth > 0 && targetHeight > 0);
 
 		for (auto& buffer : buffers)
 		{
 			buffer.Reset();
 		}
-		const HRESULT result = swapChain->ResizeBuffers(static_cast<UINT>(buffers.size()), targetWidth, targetHeight,
-			DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-		if (FAILED(result))
+
+		const auto result = CheckHResult(
+			swapChain->ResizeBuffers(static_cast<UINT>(buffers.size()), targetWidth, targetHeight,
+				DXGI_FORMAT_R8G8B8A8_UNORM, 0),
+			"스왑 체인 크기 변경");
+		if (!result)
 		{
-			return CheckHResult(result, "스왑 체인 크기 변경");
+			Engine::GetInstance().ReportError(result.error());
+			return;
 		}
+
+		auto descriptor = renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
+		for (UINT index = 0; index < buffers.size(); ++index)
+		{
+			if (FAILED(swapChain->GetBuffer(index, IID_PPV_ARGS(buffers[index].GetAddressOf()))))
+			{
+				// return CheckHResult(result, "백 버퍼 조회");
+				return;
+			}
+
+			device->CreateRenderTargetView(buffers[index].Get(), nullptr, descriptor);
+			descriptor.ptr += descriptorSize;
+		}
+
 		sizeX = targetWidth;
 		sizeY = targetHeight;
-		return CreateRenderTargets();
 	}
 
 	void SwapChain::Clear(ID3D12GraphicsCommandList& commandList, const std::array<float, 4>& color)
 	{
 		const UINT index = GetCurrentBufferIndex();
+
 		D3D12_RESOURCE_BARRIER barrier{};
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 		barrier.Transition.pResource = buffers[index].Get();
@@ -142,7 +193,7 @@ namespace TUK::Framework
 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		commandList.ResourceBarrier(1, &barrier);
 
-		auto descriptor = renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
+		D3D12_CPU_DESCRIPTOR_HANDLE descriptor = renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 		descriptor.ptr += static_cast<SIZE_T>(index) * descriptorSize;
 		commandList.ClearRenderTargetView(descriptor, color.data(), 0, nullptr);
 	}
@@ -177,22 +228,16 @@ namespace TUK::Framework
 
 	std::expected<void, std::string> SwapChain::Present(UINT syncInterval)
 	{
-		AssertInitialized();
-		return CheckHResult(swapChain->Present(syncInterval, 0), "프레임 표시");
-	}
-
-	void SwapChain::AssertInitialized() const noexcept
-	{
 		assert(device && swapChain && renderTargetHeap);
 		assert(!buffers.empty());
+		return CheckHResult(swapChain->Present(syncInterval, 0), "프레임 표시");
 	}
 
 	UINT SwapChain::GetCurrentBufferIndex() const noexcept
 	{
-		AssertInitialized();
-		const UINT index = swapChain->GetCurrentBackBufferIndex();
-		assert(buffers[index]);
-		return index;
+		assert(device && swapChain && renderTargetHeap);
+		assert(!buffers.empty());
+		return swapChain->GetCurrentBackBufferIndex();
 	}
 
 	int SwapChain::GetPositionX() const noexcept
@@ -220,9 +265,9 @@ namespace TUK::Framework
 		return sizeX;
 	}
 
-	std::expected<void, std::string> SwapChain::SetSizeX(UINT targetWidth)
+	void SwapChain::SetSizeX(UINT targetWidth)
 	{
-		return Resize(targetWidth, sizeY);
+		Resize(targetWidth, sizeY);
 	}
 
 	UINT SwapChain::GetSizeY() const noexcept
@@ -230,8 +275,8 @@ namespace TUK::Framework
 		return sizeY;
 	}
 
-	std::expected<void, std::string> SwapChain::SetSizeY(UINT targetHeight)
+	void SwapChain::SetSizeY(UINT targetHeight)
 	{
-		return Resize(sizeX, targetHeight);
+		Resize(sizeX, targetHeight);
 	}
 }

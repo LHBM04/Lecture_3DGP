@@ -8,7 +8,9 @@ namespace TUK::Framework
 	{
 	}
 
-	GameSubsystem::~GameSubsystem() noexcept = default;
+	GameSubsystem::~GameSubsystem() noexcept
+	{
+	}
 
 	void GameSubsystem::EarlyUpdate(double)
 	{

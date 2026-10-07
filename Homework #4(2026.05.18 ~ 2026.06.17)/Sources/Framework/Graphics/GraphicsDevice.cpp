@@ -1,5 +1,6 @@
 ﻿#include "Precompiled.h"
 #include "GraphicsDevice.h"
+
 #include "GraphicsError.h"
 
 namespace TUK::Framework

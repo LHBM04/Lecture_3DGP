@@ -11,6 +11,22 @@ namespace TUK::Framework
 		assert(pipelineState);
 	}
 
+	Pipeline::Pipeline(Pipeline&& other) noexcept
+		: pipelineState(std::move(other.pipelineState))
+		, rootSignature(std::move(other.rootSignature))
+	{
+	}
+
+	Pipeline& Pipeline::operator=(Pipeline&& other) noexcept
+	{
+		if (this != &other)
+		{
+			pipelineState = std::move(other.pipelineState);
+			rootSignature = std::move(other.rootSignature);
+		}
+		return *this;
+	}
+
 	Pipeline::~Pipeline() noexcept = default;
 
 	ID3D12PipelineState& Pipeline::GetPipelineState() const noexcept

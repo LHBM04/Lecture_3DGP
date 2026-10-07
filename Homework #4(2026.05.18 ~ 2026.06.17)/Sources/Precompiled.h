@@ -5,9 +5,11 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
+#include <compare>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <expected>
@@ -34,15 +36,19 @@
 #include <variant>
 #include <vector>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <windows.h>
 #include <windowsx.h>
+
 #include <wrl.h>
+
+#include <crtdbg.h>
 
 #include <d3d12.h>
 #include <d3d12sdklayers.h>
@@ -55,4 +61,3 @@
 #include <DirectXColors.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
-

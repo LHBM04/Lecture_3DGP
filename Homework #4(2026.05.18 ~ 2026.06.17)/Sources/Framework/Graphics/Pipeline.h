@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <d3d12.h>
+
 #include <wrl.h>
 
 namespace TUK::Framework
@@ -23,8 +24,8 @@ namespace TUK::Framework
 	protected:
 		Pipeline(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState,
 			ID3D12RootSignature& rootSignature) noexcept;
-		Pipeline(Pipeline&&) noexcept = default;
-		Pipeline& operator=(Pipeline&&) noexcept = default;
+		Pipeline(Pipeline&& other) noexcept;
+		Pipeline& operator=(Pipeline&& other) noexcept;
 
 		[[nodiscard]] ID3D12PipelineState& GetPipelineState() const noexcept;
 		[[nodiscard]] ID3D12RootSignature& GetRootSignature() const noexcept;

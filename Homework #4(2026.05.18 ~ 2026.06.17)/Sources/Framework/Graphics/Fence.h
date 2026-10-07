@@ -4,7 +4,7 @@
 #include <string>
 
 #include <d3d12.h>
-#include <string>
+
 #include <wrl.h>
 
 namespace TUK::Framework

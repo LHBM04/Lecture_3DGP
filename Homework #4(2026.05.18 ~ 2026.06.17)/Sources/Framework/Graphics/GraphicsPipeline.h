@@ -15,8 +15,8 @@ namespace TUK::Framework
 
 		GraphicsPipeline(const GraphicsPipeline&) = delete;
 		GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
-		GraphicsPipeline(GraphicsPipeline&&) noexcept = default;
-		GraphicsPipeline& operator=(GraphicsPipeline&&) noexcept = default;
+		GraphicsPipeline(GraphicsPipeline&& other) noexcept;
+		GraphicsPipeline& operator=(GraphicsPipeline&& other) noexcept;
 
 	private:
 		GraphicsPipeline(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState,

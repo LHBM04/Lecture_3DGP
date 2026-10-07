@@ -1,23 +1,23 @@
 ﻿#pragma once
 
+#include <cstddef>
 #include <expected>
+#include <functional>
 #include <string>
+#include <string_view>
+#include <vector>
 
 #include <d3d12.h>
+
 #include <dxgi1_6.h>
 
 #include <wrl.h>
 
-#include <string_view>
-#include <cstddef>
-#include <vector>
-#include <functional>
-
 #include "../Core/EngineSubsystem.h"
-#include "SwapChain.h"
-#include "RenderContext.h"
-#include "GraphicsDevice.h"
 #include "Fence.h"
+#include "GraphicsDevice.h"
+#include "RenderContext.h"
+#include "SwapChain.h"
 
 namespace TUK::Framework
 {

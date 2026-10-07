@@ -1,6 +1,5 @@
 ﻿#include "Precompiled.h"
 #include "TimeSubsystem.h"
-#include <cmath>
 
 namespace TUK::Framework
 {

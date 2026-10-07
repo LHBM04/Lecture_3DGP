@@ -2,8 +2,8 @@
 
 #include <concepts>
 
-#include "System.h"
 #include "GameSubsystem.h"
+#include "System.h"
 
 namespace TUK::Framework
 {
@@ -53,12 +53,12 @@ namespace TUK::Framework
 		return System::GetSubsystem<TSubsystem>();
 	}
 
-	auto Game::GetSubsystems()
+	inline auto Game::GetSubsystems()
 	{
 		return System::GetSubsystems<GameSubsystem>();
 	}
 
-	const auto Game::GetSubsystems() const
+	inline const auto Game::GetSubsystems() const
 	{
 		return System::GetSubsystems<GameSubsystem>();
 	}

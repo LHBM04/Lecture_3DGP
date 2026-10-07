@@ -1,8 +1,9 @@
 ﻿#include "Precompiled.h"
 #include "RenderSubsystem.h"
-#include "GraphicsError.h"
+
 #include "../Core/Engine.h"
 #include "../Platform/WindowSubsystem.h"
+#include "GraphicsError.h"
 
 namespace TUK::Framework
 {
@@ -139,8 +140,10 @@ namespace TUK::Framework
 			}
 			else if (iterator->GetSizeX() != width || iterator->GetSizeY() != height)
 			{
-				if (!CheckResult(iterator->Resize(width, height)))
+				iterator->Resize(width, height);
+				if (!Engine::GetInstance().IsRunning())
 				{
+					hasFailed = true;
 					return;
 				}
 			}

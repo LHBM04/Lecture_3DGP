@@ -1,13 +1,15 @@
 ﻿#pragma once
 
-#include <expected>
-#include <string>
-
 #include <array>
+#include <expected>
 #include <functional>
+#include <string>
 #include <vector>
+
 #include <d3d12.h>
+
 #include <dxgi1_6.h>
+
 #include <wrl.h>
 
 namespace TUK::Framework
@@ -29,17 +31,16 @@ namespace TUK::Framework
 		SwapChain(const SwapChain&) = delete;
 		SwapChain& operator=(const SwapChain&) = delete;
 
-		SwapChain(SwapChain&&) noexcept = default;
-		SwapChain& operator=(SwapChain&&) noexcept = default;
-
+		SwapChain(SwapChain&& other) noexcept;
+		SwapChain& operator=(SwapChain&& other) noexcept;
 
 		/** 창이 살아 있는 동안만 사용한다. WindowSubsystem이 창을 소유한다. */
 		[[nodiscard]] Window& GetWindow() const noexcept;
 		/** 창 삭제 후에도 비교에 사용할 수 있는 생성 당시 핸들. */
 		[[nodiscard]] HWND GetHWND() const noexcept;
 
-		/** GPU가 백 버퍼 사용을 마친 뒤 호출. */
-		[[nodiscard]] std::expected<void, std::string> Resize(UINT width, UINT height);
+		/** 초기화 완료, 양수 크기, GPU의 백 버퍼 사용 완료가 필요하다. */
+		void Resize(UINT width, UINT height);
 		[[nodiscard]] std::expected<void, std::string> Present(UINT syncInterval = 1);
 
 		[[nodiscard]] int GetPositionX() const noexcept;
@@ -48,10 +49,10 @@ namespace TUK::Framework
 		void SetPositionY(int y) noexcept;
 
 		[[nodiscard]] UINT GetSizeX() const noexcept;
-		[[nodiscard]] std::expected<void, std::string> SetSizeX(UINT width);
+		void SetSizeX(UINT width);
 
 		[[nodiscard]] UINT GetSizeY() const noexcept;
-		[[nodiscard]] std::expected<void, std::string> SetSizeY(UINT height);
+		void SetSizeY(UINT height);
 
 	private:
 		[[nodiscard]] std::expected<void, std::string> Initialize(ID3D12Device& device, IDXGIFactory6& factory,
@@ -59,7 +60,6 @@ namespace TUK::Framework
 		void Clear(ID3D12GraphicsCommandList& commandList, const std::array<float, 4>& color);
 		void Bind(ID3D12GraphicsCommandList& commandList) const;
 		void EndRender(ID3D12GraphicsCommandList& commandList) const;
-		void AssertInitialized() const noexcept;
 		UINT GetCurrentBufferIndex() const noexcept;
 		std::expected<void, std::string> CreateRenderTargets();
 

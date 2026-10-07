@@ -15,8 +15,8 @@ namespace TUK::Framework
 
 		ComputePipeline(const ComputePipeline&) = delete;
 		ComputePipeline& operator=(const ComputePipeline&) = delete;
-		ComputePipeline(ComputePipeline&&) noexcept = default;
-		ComputePipeline& operator=(ComputePipeline&&) noexcept = default;
+		ComputePipeline(ComputePipeline&& other) noexcept;
+		ComputePipeline& operator=(ComputePipeline&& other) noexcept;
 
 	private:
 		ComputePipeline(Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState,
