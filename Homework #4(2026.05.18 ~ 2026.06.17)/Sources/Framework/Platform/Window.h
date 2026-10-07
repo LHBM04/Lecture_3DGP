@@ -26,6 +26,8 @@ namespace TUK::Framework
 		Window(Window&&) = delete;
 		Window& operator=(Window&&) = delete;
 
+		[[nodiscard]] HWND GetHWND() const noexcept;
+
 		[[nodiscard]] const std::wstring& GetTitle() const noexcept;
 		void SetTitle(std::wstring_view title) noexcept;
 
@@ -35,12 +37,9 @@ namespace TUK::Framework
 		[[nodiscard]] const Vector2D<int>& GetSize() const noexcept;
 		void SetSize(const Vector2D<int>& size) noexcept;
 
-		[[nodiscard]] HWND GetHWND() const noexcept;
-
 		[[nodiscard]] bool ShouldClose() const noexcept;
 		void RequestClose() noexcept;
 
-		/** WindowProc에서 전달하는 네이티브 메시지 처리 */
 		LRESULT HandleMessage(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) noexcept;
 
 	private:
