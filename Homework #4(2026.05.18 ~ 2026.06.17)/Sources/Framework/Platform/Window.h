@@ -9,6 +9,7 @@
 
 #include <windows.h>
 
+#include "../Math/Vector2D.h"
 #include "WindowOptions.h"
 
 namespace TUK::Framework
@@ -28,17 +29,11 @@ namespace TUK::Framework
 		[[nodiscard]] const std::wstring& GetTitle() const noexcept;
 		void SetTitle(std::wstring_view title) noexcept;
 
-		[[nodiscard]] int GetSizeX() const noexcept;
-		void SetSizeX(int sizeX) noexcept;
+		[[nodiscard]] const Vector2D<int>& GetPosition() const noexcept;
+		void SetPosition(const Vector2D<int>& position) noexcept;
 
-		[[nodiscard]] int GetSizeY() const noexcept;
-		void SetSizeY(int sizeY) noexcept;
-
-		[[nodiscard]] int GetPositionX() const noexcept;
-		void SetPositionX(int positionX) noexcept;
-
-		[[nodiscard]] int GetPositionY() const noexcept;
-		void SetPositionY(int positionY) noexcept;
+		[[nodiscard]] const Vector2D<int>& GetSize() const noexcept;
+		void SetSize(const Vector2D<int>& size) noexcept;
 
 		[[nodiscard]] HWND GetHWND() const noexcept;
 

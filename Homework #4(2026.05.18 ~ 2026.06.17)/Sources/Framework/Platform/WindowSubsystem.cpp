@@ -32,7 +32,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected(std::string{ "창을 생성할 수 있는 상태가 아닙니다." });
 		}
-		if (options.sizeX <= 0 || options.sizeY <= 0)
+		if (options.size.GetX() <= 0 || options.size.GetY() <= 0)
 		{
 			return std::unexpected(std::string{ "창의 크기는 0보다 커야 합니다." });
 		}
@@ -59,10 +59,10 @@ namespace TUK::Framework
 			ClassName, 
 			options.title.data(), 
 			style,
-			options.positionX, 
-			options.positionY, 
-			options.sizeX, 
-			options.sizeY,
+			options.position.GetX(), 
+			options.position.GetY(), 
+			options.size.GetX(), 
+			options.size.GetY(),
 			nullptr, 
 			nullptr, 
 			instance, 
@@ -146,10 +146,8 @@ namespace TUK::Framework
 			}
 		}
 
-		options.positionX = system.GetOption<int>("Window.PositionX");
-		options.positionY = system.GetOption<int>("Window.PositionY");
-		options.sizeX = system.GetOption<int>("Window.SizeX");
-		options.sizeY = system.GetOption<int>("Window.SizeY");
+		options.position.Set(system.GetOption<int>("Window.PositionX"), system.GetOption<int>("Window.PositionY"));
+		options.size.Set(system.GetOption<int>("Window.SizeX"), system.GetOption<int>("Window.SizeY"));
 		options.isResizable = system.GetOption<bool>("Window.IsResizable");
 		options.hasMinimizeButton = system.GetOption<bool>("Window.HasMinimizeButton");
 		options.hasMaximizeButton = system.GetOption<bool>("Window.HasMaximizeButton");

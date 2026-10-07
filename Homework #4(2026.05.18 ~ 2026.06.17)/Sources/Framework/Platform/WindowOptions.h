@@ -6,17 +6,16 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#include "../Math/Vector2D.h"
+
 namespace TUK::Framework
 {
 	struct WindowOptions final
 	{
 		std::wstring title;
 
-		int positionX;
-		int positionY;
-
-		int sizeX;
-		int sizeY;
+		Vector2D<int> position;
+		Vector2D<int> size;
 
 		bool isResizable;
 		bool hasMinimizeButton;

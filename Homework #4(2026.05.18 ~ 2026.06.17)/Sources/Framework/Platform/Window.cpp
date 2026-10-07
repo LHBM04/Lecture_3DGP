@@ -33,53 +33,27 @@ namespace TUK::Framework
 		}
 	}
 
-	int Window::GetSizeX() const noexcept
+	const Vector2D<int>& Window::GetPosition() const noexcept
 	{
-		return options.sizeX;
+		return options.position;
 	}
 
-	void Window::SetSizeX(int sizeX) noexcept
+	void Window::SetPosition(const Vector2D<int>& position) noexcept
 	{
-		if (SetWindowPos(hWnd, nullptr, 0, 0, sizeX, options.sizeY, SWP_NOMOVE | SWP_NOZORDER))
+		if (SetWindowPos(hWnd, nullptr, position.GetX(), position.GetY(), 0, 0, SWP_NOSIZE | SWP_NOZORDER))
 		{
 			UpdateBounds();
 		}
 	}
 
-	int Window::GetSizeY() const noexcept
+	const Vector2D<int>& Window::GetSize() const noexcept
 	{
-		return options.sizeY;
+		return options.size;
 	}
 
-	void Window::SetSizeY(int sizeY) noexcept
+	void Window::SetSize(const Vector2D<int>& size) noexcept
 	{
-		if (SetWindowPos(hWnd, nullptr, 0, 0, options.sizeX, sizeY, SWP_NOMOVE | SWP_NOZORDER))
-		{
-			UpdateBounds();
-		}
-	}
-
-	int Window::GetPositionX() const noexcept
-	{
-		return options.positionX;
-	}
-
-	void Window::SetPositionX(int positionX) noexcept
-	{
-		if (SetWindowPos(hWnd, nullptr, positionX, options.positionY, 0, 0, SWP_NOSIZE | SWP_NOZORDER))
-		{
-			UpdateBounds();
-		}
-	}
-
-	int Window::GetPositionY() const noexcept
-	{
-		return options.positionY;
-	}
-
-	void Window::SetPositionY(int positionY) noexcept
-	{
-		if (SetWindowPos(hWnd, nullptr, options.positionX, positionY, 0, 0, SWP_NOSIZE | SWP_NOZORDER))
+		if (SetWindowPos(hWnd, nullptr, 0, 0, size.GetX(), size.GetY(), SWP_NOMOVE | SWP_NOZORDER))
 		{
 			UpdateBounds();
 		}
@@ -90,10 +64,8 @@ namespace TUK::Framework
 		RECT rect{};
 		if (GetWindowRect(hWnd, &rect))
 		{
-			options.positionX = rect.left;
-			options.positionY = rect.top;
-			options.sizeX = rect.right - rect.left;
-			options.sizeY = rect.bottom - rect.top;
+			options.position.Set(rect.left, rect.top);
+			options.size.Set(rect.right - rect.left, rect.bottom - rect.top);
 		}
 	}
 
