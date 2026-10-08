@@ -39,7 +39,7 @@ INT APIENTRY wWinMain(
 	engine.SetOption("Window.IsBorderless", false);
 	engine.SetOption("Window.IsFullscreen", false);
 
-	engine.SetOption("RenderContext.BufferCount", 2);
+	engine.SetOption("Render.BufferCount", 2);
 
 	engine.AddSubsystem<TimeSubsystem>();
 	engine.AddSubsystem<EventSubsystem>();

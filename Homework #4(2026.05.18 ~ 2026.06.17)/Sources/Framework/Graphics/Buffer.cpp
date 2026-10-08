@@ -32,7 +32,7 @@ namespace TUK::Framework
 		return *this;
 	}
 
-	ID3D12Resource& Buffer::GetResource() const noexcept
+	ID3D12Resource& Buffer::GetNativeResource() const noexcept
 	{
 		assert(resource);
 		return *resource.Get();
@@ -52,7 +52,7 @@ namespace TUK::Framework
 
 	D3D12_GPU_VIRTUAL_ADDRESS Buffer::GetGPUVirtualAddress() const noexcept
 	{
-		return GetResource().GetGPUVirtualAddress();
+		return GetNativeResource().GetGPUVirtualAddress();
 	}
 
 	std::expected<D3D12_VERTEX_BUFFER_VIEW, std::string> Buffer::GetVertexBufferView(UINT stride) const

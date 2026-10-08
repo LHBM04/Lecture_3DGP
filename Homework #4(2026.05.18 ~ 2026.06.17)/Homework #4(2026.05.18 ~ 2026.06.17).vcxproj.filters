@@ -54,31 +54,10 @@
     <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\Fence.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\Pipeline.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\ComputePipeline.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Buffer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\RenderContext.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,31 +95,10 @@
     <ClInclude Include="Sources\Framework\Platform\WindowOptions.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Fence.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Pipeline.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\RenderContext.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Math\Vector2D.hpp">
@@ -230,5 +188,40 @@
     <ClCompile Include="Sources\Framework\Platform\WindowOptions.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Graphics\Renderer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\Renderer.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\RenderTarget.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\Texture.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\Shader.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

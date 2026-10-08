@@ -88,6 +88,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -101,11 +102,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -121,11 +123,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -139,11 +142,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <AdditionalOptions>/source-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -159,22 +163,15 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\System.cpp" />
     <ClCompile Include="Sources\Framework\Core\Subsystem.cpp" />
     <ClCompile Include="Sources\Framework\Entities\SceneSubsystem.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\Fence.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\Pipeline.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\ComputePipeline.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Buffer.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\RenderContext.cpp" />
     <ClCompile Include="Sources\Framework\Platform\Window.cpp" />
     <ClCompile Include="Sources\Framework\Platform\WindowSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp" />
@@ -193,15 +190,8 @@
     <ClInclude Include="Sources\Framework\Core\Subsystem.hpp" />
     <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Entities\Scene.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\Fence.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\Pipeline.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\RenderContext.hpp" />
     <ClInclude Include="Sources\Framework\Math\Mathf.hpp" />
     <ClInclude Include="Sources\Framework\Math\Vector2D.hpp" />
     <ClInclude Include="Sources\Framework\Platform\Window.hpp" />
@@ -248,5 +238,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Platform\WindowOptions.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Graphics\Renderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\Renderer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\RenderTarget.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\Texture.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\Shader.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp" />
   </ItemGroup>
 </Project>
