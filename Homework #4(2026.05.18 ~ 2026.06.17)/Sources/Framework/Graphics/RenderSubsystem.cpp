@@ -1,9 +1,9 @@
-﻿#include "Precompiled.h"
-#include "RenderSubsystem.h"
+﻿#include "Precompiled.hpp"
+#include "RenderSubsystem.hpp"
 
-#include "../Core/Engine.h"
-#include "../Platform/WindowSubsystem.h"
-#include "GraphicsError.h"
+#include "../Core/Engine.hpp"
+#include "../Platform/WindowSubsystem.hpp"
+#include "GraphicsError.hpp"
 
 namespace TUK::Framework
 {

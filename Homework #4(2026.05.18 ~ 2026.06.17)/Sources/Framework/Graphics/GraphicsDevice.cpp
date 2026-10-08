@@ -1,7 +1,7 @@
-﻿#include "Precompiled.h"
-#include "GraphicsDevice.h"
+﻿#include "Precompiled.hpp"
+#include "GraphicsDevice.hpp"
 
-#include "GraphicsError.h"
+#include "GraphicsError.hpp"
 
 namespace TUK::Framework
 {

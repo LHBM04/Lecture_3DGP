@@ -11,11 +11,11 @@
 
 #include <wrl.h>
 
-#include "Buffer.h"
-#include "ComputePipeline.h"
-#include "Fence.h"
-#include "GraphicsPipeline.h"
-#include "SwapChain.h"
+#include "Buffer.hpp"
+#include "ComputePipeline.hpp"
+#include "Fence.hpp"
+#include "GraphicsPipeline.hpp"
+#include "SwapChain.hpp"
 
 namespace TUK::Framework
 {

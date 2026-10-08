@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "GameSubsystem.h"
+﻿#include "Precompiled.hpp"
+#include "GameSubsystem.hpp"
 
 namespace TUK::Framework
 {

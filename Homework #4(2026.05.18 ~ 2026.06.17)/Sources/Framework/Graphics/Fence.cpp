@@ -1,7 +1,7 @@
-﻿#include "Precompiled.h"
-#include "Fence.h"
+﻿#include "Precompiled.hpp"
+#include "Fence.hpp"
 
-#include "GraphicsError.h"
+#include "GraphicsError.hpp"
 
 namespace TUK::Framework
 {

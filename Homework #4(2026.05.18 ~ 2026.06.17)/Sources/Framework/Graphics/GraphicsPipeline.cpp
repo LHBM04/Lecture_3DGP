@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "GraphicsPipeline.h"
+﻿#include "Precompiled.hpp"
+#include "GraphicsPipeline.hpp"
 
 namespace TUK::Framework
 {

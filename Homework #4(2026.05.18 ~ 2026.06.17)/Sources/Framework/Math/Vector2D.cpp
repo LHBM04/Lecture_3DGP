@@ -1,9 +1,9 @@
-﻿#include "Precompiled.h"
-#include "Mathf.h"
-#include "Vector2D.h"
+﻿#include "Precompiled.hpp"
+#include "Mathf.hpp"
+#include "Vector2D.hpp"
 
-#include "Vector3D.h"
-#include "Vector4D.h"
+#include "Vector3D.hpp"
+#include "Vector4D.hpp"
 
 namespace TUK::Framework
 {

@@ -6,7 +6,7 @@
 
 #include <windows.h>
 
-#include "../Core/EngineSubsystem.h"
+#include "../Core/EngineSubsystem.hpp"
 
 namespace TUK::Framework
 {

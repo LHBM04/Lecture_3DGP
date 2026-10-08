@@ -2,8 +2,8 @@
 
 #include <concepts>
 
-#include "GameSubsystem.h"
-#include "System.h"
+#include "GameSubsystem.hpp"
+#include "System.hpp"
 
 namespace TUK::Framework
 {

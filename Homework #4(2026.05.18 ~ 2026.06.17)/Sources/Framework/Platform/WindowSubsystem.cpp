@@ -1,8 +1,8 @@
-﻿#include "Precompiled.h"
-#include "WindowSubsystem.h"
+﻿#include "Precompiled.hpp"
+#include "WindowSubsystem.hpp"
 
-#include "../Core/Engine.h"
-#include "EventSubsystem.h"
+#include "../Core/Engine.hpp"
+#include "EventSubsystem.hpp"
 
 namespace
 {

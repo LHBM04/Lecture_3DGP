@@ -1,12 +1,12 @@
-﻿#include "Precompiled.h"
+﻿#include "Precompiled.hpp"
 
-#include "Framework/Core/Engine.h"
-#include "Framework/Core/Game.h"
-#include "Framework/Entities/SceneSubsystem.h"
-#include "Framework/Graphics/RenderSubsystem.h"
-#include "Framework/Platform/EventSubsystem.h"
-#include "Framework/Platform/TimeSubsystem.h"
-#include "Framework/Platform/WindowSubsystem.h"
+#include "Framework/Core/Engine.hpp"
+#include "Framework/Core/Game.hpp"
+#include "Framework/Entities/SceneSubsystem.hpp"
+#include "Framework/Graphics/RenderSubsystem.hpp"
+#include "Framework/Platform/EventSubsystem.hpp"
+#include "Framework/Platform/TimeSubsystem.hpp"
+#include "Framework/Platform/WindowSubsystem.hpp"
 
 using namespace TUK::Framework;
 

@@ -1,7 +1,7 @@
-﻿#include "Precompiled.h"
-#include "Engine.h"
+﻿#include "Precompiled.hpp"
+#include "Engine.hpp"
 
-#include "Game.h"
+#include "Game.hpp"
 
 namespace TUK::Framework
 {
@@ -37,13 +37,7 @@ namespace TUK::Framework
 			while (IsRunning())
 			{
 				OnPreTick();
-
-				if (IsRunning())
-				{
-					OnTick(game);
-				}
-
-				// PreTick에서 시작한 렌더링 작업은 종료 요청 후에도 마무리한다.
+				OnTick(game);
 				OnPostTick();
 
 				if (!game.IsRunning())

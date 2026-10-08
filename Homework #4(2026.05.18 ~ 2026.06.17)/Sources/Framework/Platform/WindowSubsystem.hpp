@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-#include "../Core/EngineSubsystem.h"
-#include "Window.h"
-#include "WindowOptions.h"
+#include "../Core/EngineSubsystem.hpp"
+#include "Window.hpp"
+#include "WindowOptions.hpp"
 
 namespace TUK::Framework
 {

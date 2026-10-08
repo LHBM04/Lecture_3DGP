@@ -1,7 +1,7 @@
-﻿#include "Precompiled.h"
-#include "Quaternion.h"
+﻿#include "Precompiled.hpp"
+#include "Quaternion.hpp"
 
-#include "Matrix4x4.h"
+#include "Matrix4x4.hpp"
 
 namespace TUK::Framework
 {

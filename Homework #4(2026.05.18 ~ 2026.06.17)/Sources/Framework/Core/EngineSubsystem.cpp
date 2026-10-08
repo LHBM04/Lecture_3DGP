@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "EngineSubsystem.h"
+﻿#include "Precompiled.hpp"
+#include "EngineSubsystem.hpp"
 
 namespace TUK::Framework
 {

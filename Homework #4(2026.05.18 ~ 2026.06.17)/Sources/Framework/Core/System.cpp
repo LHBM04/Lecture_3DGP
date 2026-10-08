@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "System.h"
+﻿#include "Precompiled.hpp"
+#include "System.hpp"
 
 namespace TUK::Framework
 {

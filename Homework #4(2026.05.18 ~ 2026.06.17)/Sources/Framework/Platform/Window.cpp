@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "Window.h"
+﻿#include "Precompiled.hpp"
+#include "Window.hpp"
 
 namespace TUK::Framework
 {

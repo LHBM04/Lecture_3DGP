@@ -9,8 +9,8 @@
 
 #include <windows.h>
 
-#include "../Math/Vector2D.h"
-#include "WindowOptions.h"
+#include "../Math/Vector2D.hpp"
+#include "WindowOptions.hpp"
 
 namespace TUK::Framework
 {

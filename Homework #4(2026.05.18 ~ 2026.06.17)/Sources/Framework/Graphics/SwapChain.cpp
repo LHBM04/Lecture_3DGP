@@ -1,9 +1,9 @@
-﻿#include "Precompiled.h"
-#include "SwapChain.h"
+﻿#include "Precompiled.hpp"
+#include "SwapChain.hpp"
 
-#include "../Core/Engine.h"
-#include "../Platform/Window.h"
-#include "GraphicsError.h"
+#include "../Core/Engine.hpp"
+#include "../Platform/Window.hpp"
+#include "GraphicsError.hpp"
 
 namespace TUK::Framework
 {

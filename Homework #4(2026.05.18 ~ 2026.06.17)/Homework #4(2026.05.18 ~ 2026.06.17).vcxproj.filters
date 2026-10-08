@@ -83,93 +83,93 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Precompiled.h">
+    <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsError.h">
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsError.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Core\System.h">
+    <ClInclude Include="Sources\Framework\Core\System.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Core\Subsystem.h">
+    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.h">
+    <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.hpp">
       <Filter>Sources\Framework\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Scene.h">
+    <ClInclude Include="Sources\Framework\Entities\Scene.hpp">
       <Filter>Sources\Framework\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\WindowSubsystem.h">
+    <ClInclude Include="Sources\Framework\Platform\WindowSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.h">
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.h">
+    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\Window.h">
+    <ClInclude Include="Sources\Framework\Platform\Window.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\WindowOptions.h">
+    <ClInclude Include="Sources\Framework\Platform\WindowOptions.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Fence.h">
+    <ClInclude Include="Sources\Framework\Graphics\Fence.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Pipeline.h">
+    <ClInclude Include="Sources\Framework\Graphics\Pipeline.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.h">
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.h">
+    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Buffer.h">
+    <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.h">
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.h">
+    <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\SwapChain.h">
+    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\RenderContext.h">
+    <ClInclude Include="Sources\Framework\Graphics\RenderContext.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Math\Vector2D.h">
+    <ClInclude Include="Sources\Framework\Math\Vector2D.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Math\Mathf.h">
+    <ClInclude Include="Sources\Framework\Math\Mathf.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Core\Engine.h">
+    <ClInclude Include="Sources\Framework\Core\Engine.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Core\Engine.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Core\Game.h">
+    <ClInclude Include="Sources\Framework\Core\Game.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Core\Game.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.h">
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Core\GameSubsystem.h">
+    <ClInclude Include="Sources\Framework\Core\GameSubsystem.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Core\GameSubsystem.cpp">
@@ -182,13 +182,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Math\Vector3D.h">
+    <ClInclude Include="Sources\Framework\Math\Vector3D.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Math\Vector3D.cpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Math\Vector4D.h">
+    <ClInclude Include="Sources\Framework\Math\Vector4D.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Math\Vector4D.cpp">
@@ -196,25 +196,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Math\ColorRGB.h">
+    <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Math\ColorRGBA.h">
+    <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Math\Matrix4x4.h">
+    <ClInclude Include="Sources\Framework\Math\Matrix4x4.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClCompile>
-    <ClInclude Include="Sources\Framework\Math\Quaternion.h">
+    <ClInclude Include="Sources\Framework\Math\Quaternion.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
     <ClCompile Include="Sources\Framework\Math\Quaternion.cpp">

@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "Scene.h"
+﻿#include "Precompiled.hpp"
+#include "Scene.hpp"
 
 namespace TUK::Framework
 {

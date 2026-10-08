@@ -1,7 +1,7 @@
-﻿#include "Precompiled.h"
-#include "Buffer.h"
+﻿#include "Precompiled.hpp"
+#include "Buffer.hpp"
 
-#include "GraphicsError.h"
+#include "GraphicsError.hpp"
 
 namespace TUK::Framework
 {

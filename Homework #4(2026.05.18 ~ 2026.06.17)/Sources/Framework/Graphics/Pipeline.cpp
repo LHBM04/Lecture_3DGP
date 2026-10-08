@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "Pipeline.h"
+﻿#include "Precompiled.hpp"
+#include "Pipeline.hpp"
 
 namespace TUK::Framework
 {

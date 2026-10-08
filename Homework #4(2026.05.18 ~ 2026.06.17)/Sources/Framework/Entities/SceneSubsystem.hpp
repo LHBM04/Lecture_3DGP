@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "../Core/GameSubsystem.h"
+#include "../Core/GameSubsystem.hpp"
 
 namespace TUK::Framework
 {

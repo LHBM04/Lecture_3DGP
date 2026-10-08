@@ -1,8 +1,8 @@
-﻿#include "Precompiled.h"
-#include "EventSubsystem.h"
+﻿#include "Precompiled.hpp"
+#include "EventSubsystem.hpp"
 
-#include "../Core/Engine.h"
-#include "Window.h"
+#include "../Core/Engine.hpp"
+#include "Window.hpp"
 
 namespace
 {
@@ -39,7 +39,9 @@ namespace TUK::Framework
 	{
 	}
 
-	EventSubsystem::~EventSubsystem() noexcept = default;
+	EventSubsystem::~EventSubsystem() noexcept
+	{
+	}
 
 	WNDPROC EventSubsystem::GetWindowProc() noexcept
 	{
@@ -48,18 +50,12 @@ namespace TUK::Framework
 
 	void EventSubsystem::OnPreTick()
 	{
-		auto& system = Engine::GetInstance();
-		if (!system.IsRunning())
-		{
-			return;
-		}
-
 		MSG message{};
 		while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (message.message == WM_QUIT)
 			{
-				system.RequestQuit(static_cast<int>(message.wParam));
+				Engine::GetInstance().RequestQuit(static_cast<int>(message.wParam));
 				break;
 			}
 			TranslateMessage(&message);

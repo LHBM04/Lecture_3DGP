@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "TimeSubsystem.h"
+﻿#include "Precompiled.hpp"
+#include "TimeSubsystem.hpp"
 
 namespace TUK::Framework
 {

@@ -1,10 +1,10 @@
-﻿#include "Precompiled.h"
-#include "RenderContext.h"
+﻿#include "Precompiled.hpp"
+#include "RenderContext.hpp"
 
-#include "Buffer.h"
-#include "GraphicsError.h"
-#include "Pipeline.h"
-#include "SwapChain.h"
+#include "Buffer.hpp"
+#include "GraphicsError.hpp"
+#include "Pipeline.hpp"
+#include "SwapChain.hpp"
 
 namespace TUK::Framework
 {

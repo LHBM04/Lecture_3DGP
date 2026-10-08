@@ -13,11 +13,11 @@
 
 #include <wrl.h>
 
-#include "../Core/EngineSubsystem.h"
-#include "Fence.h"
-#include "GraphicsDevice.h"
-#include "RenderContext.h"
-#include "SwapChain.h"
+#include "../Core/EngineSubsystem.hpp"
+#include "Fence.hpp"
+#include "GraphicsDevice.hpp"
+#include "RenderContext.hpp"
+#include "SwapChain.hpp"
 
 namespace TUK::Framework
 {

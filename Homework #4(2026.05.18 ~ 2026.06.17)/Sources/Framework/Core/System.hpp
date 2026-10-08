@@ -14,7 +14,7 @@
 #include <variant>
 #include <vector>
 
-#include "Subsystem.h"
+#include "Subsystem.hpp"
 
 namespace TUK::Framework
 {

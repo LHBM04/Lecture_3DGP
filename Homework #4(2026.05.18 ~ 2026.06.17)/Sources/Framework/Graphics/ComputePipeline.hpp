@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Pipeline.h"
+#include "Pipeline.hpp"
 
 namespace TUK::Framework
 {

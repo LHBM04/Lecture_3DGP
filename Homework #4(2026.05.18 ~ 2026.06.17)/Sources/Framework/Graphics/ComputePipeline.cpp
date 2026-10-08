@@ -1,5 +1,5 @@
-﻿#include "Precompiled.h"
-#include "ComputePipeline.h"
+﻿#include "Precompiled.hpp"
+#include "ComputePipeline.hpp"
 
 namespace TUK::Framework
 {

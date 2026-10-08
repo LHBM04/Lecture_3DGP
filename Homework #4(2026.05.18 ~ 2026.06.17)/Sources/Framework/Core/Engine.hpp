@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "EngineSubsystem.h"
-#include "System.h"
+#include "EngineSubsystem.hpp"
+#include "System.hpp"
 
 namespace TUK::Framework
 {

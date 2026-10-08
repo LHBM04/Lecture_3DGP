@@ -1,7 +1,7 @@
-﻿#include "Precompiled.h"
-#include "ColorRGB.h"
+﻿#include "Precompiled.hpp"
+#include "ColorRGB.hpp"
 
-#include "ColorRGBA.h"
+#include "ColorRGBA.hpp"
 
 namespace
 {

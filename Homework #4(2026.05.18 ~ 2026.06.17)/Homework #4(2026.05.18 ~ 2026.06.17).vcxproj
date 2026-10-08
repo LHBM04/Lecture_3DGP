@@ -95,7 +95,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -133,7 +133,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -153,7 +153,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Precompiled.hpp</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)Sources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -188,59 +188,59 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsError.h" />
-    <ClInclude Include="Sources\Framework\Core\System.h" />
-    <ClInclude Include="Sources\Framework\Core\Subsystem.h" />
-    <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.h" />
-    <ClInclude Include="Sources\Framework\Entities\Scene.h" />
-    <ClInclude Include="Sources\Framework\Graphics\Fence.h" />
-    <ClInclude Include="Sources\Framework\Graphics\Pipeline.h" />
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.h" />
-    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.h" />
-    <ClInclude Include="Sources\Framework\Graphics\Buffer.h" />
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.h" />
-    <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.h" />
-    <ClInclude Include="Sources\Framework\Graphics\SwapChain.h" />
-    <ClInclude Include="Sources\Framework\Graphics\RenderContext.h" />
-    <ClInclude Include="Sources\Framework\Math\Mathf.h" />
-    <ClInclude Include="Sources\Framework\Math\Vector2D.h" />
-    <ClInclude Include="Sources\Framework\Platform\Window.h" />
-    <ClInclude Include="Sources\Framework\Platform\WindowOptions.h" />
-    <ClInclude Include="Sources\Framework\Platform\WindowSubsystem.h" />
-    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.h" />
-    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.h" />
-    <ClInclude Include="Sources\Precompiled.h" />
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsError.hpp" />
+    <ClInclude Include="Sources\Framework\Core\System.hpp" />
+    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\SceneSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\Scene.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\Fence.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\Pipeline.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\RenderContext.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Mathf.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Vector2D.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\Window.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\WindowOptions.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\WindowSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp" />
+    <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Core\Engine.h" />
+    <ClInclude Include="Sources\Framework\Core\Engine.hpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
-    <ClInclude Include="Sources\Framework\Core\Game.h" />
+    <ClInclude Include="Sources\Framework\Core\Game.hpp" />
     <ClCompile Include="Sources\Framework\Core\Game.cpp" />
-    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.h" />
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp" />
     <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp" />
-    <ClInclude Include="Sources\Framework\Core\GameSubsystem.h" />
+    <ClInclude Include="Sources\Framework\Core\GameSubsystem.hpp" />
     <ClCompile Include="Sources\Framework\Core\GameSubsystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Math\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Math\Vector3D.h" />
+    <ClInclude Include="Sources\Framework\Math\Vector3D.hpp" />
     <ClCompile Include="Sources\Framework\Math\Vector3D.cpp" />
-    <ClInclude Include="Sources\Framework\Math\Vector4D.h" />
+    <ClInclude Include="Sources\Framework\Math\Vector4D.hpp" />
     <ClCompile Include="Sources\Framework\Math\Vector4D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Math\ColorRGB.h" />
+    <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
-    <ClInclude Include="Sources\Framework\Math\ColorRGBA.h" />
+    <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />
-    <ClInclude Include="Sources\Framework\Math\Matrix4x4.h" />
+    <ClInclude Include="Sources\Framework\Math\Matrix4x4.hpp" />
     <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp" />
-    <ClInclude Include="Sources\Framework\Math\Quaternion.h" />
+    <ClInclude Include="Sources\Framework\Math\Quaternion.hpp" />
     <ClCompile Include="Sources\Framework\Math\Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
