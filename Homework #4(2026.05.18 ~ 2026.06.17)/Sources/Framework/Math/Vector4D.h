@@ -95,38 +95,38 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector4D GetPositiveInfinity() noexcept requires std::same_as<TValue, float>;
 		[[nodiscard]] static Vector4D GetNegativeInfinity() noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static DirectX::XMVECTOR Load(const Vector4D& vec_) noexcept requires std::same_as<TValue, float>;
-		static void Store(Vector4D& d_, DirectX::XMVECTOR s_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static DirectX::XMVECTOR Load(const Vector4D& vec) noexcept requires std::same_as<TValue, float>;
+		static void Store(Vector4D& d, DirectX::XMVECTOR s) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static bool IsApproximately(const Vector4D& lhs_, const Vector4D& rhs_, float epsilon_ = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static bool IsApproximately(const Vector4D& lhs, const Vector4D& rhs, float epsilon = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Max(const Vector4D& a_, const Vector4D& b_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector4D Min(const Vector4D& a_, const Vector4D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Max(const Vector4D& a, const Vector4D& b) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Min(const Vector4D& a, const Vector4D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Clamp(const Vector4D& value_, const Vector4D& min_, const Vector4D& max_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector4D ClampMagnitude(const Vector4D& vector_, float maxLength_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Clamp(const Vector4D& value, const Vector4D& min, const Vector4D& max) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D ClampMagnitude(const Vector4D& vector, float maxLength) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Scale(const Vector4D& vector_, const Vector4D& scale_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Scale(const Vector4D& vector, const Vector4D& scale) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Normalize(const Vector4D& value_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Normalize(const Vector4D& value) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static float Dot(const Vector4D& a_, const Vector4D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float Dot(const Vector4D& a, const Vector4D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static float Distance(const Vector4D& a_, const Vector4D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float Distance(const Vector4D& a, const Vector4D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static float Angle(const Vector4D& a_, const Vector4D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float Angle(const Vector4D& a, const Vector4D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Project(const Vector4D& vector_, const Vector4D& onNormal_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Project(const Vector4D& vector, const Vector4D& onNormal) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Reflect(const Vector4D& vector_, const Vector4D& normal_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Reflect(const Vector4D& vector, const Vector4D& normal) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Lerp(const Vector4D& a_, const Vector4D& b_, float t_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector4D LerpUnclamped(const Vector4D& a_, const Vector4D& b_, float t_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Lerp(const Vector4D& a, const Vector4D& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D LerpUnclamped(const Vector4D& a, const Vector4D& b, float t) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D Slerp(const Vector4D& a_, const Vector4D& b_, float t_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector4D SlerpUnclamped(const Vector4D& a_, const Vector4D& b_, float t_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D Slerp(const Vector4D& a, const Vector4D& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D SlerpUnclamped(const Vector4D& a, const Vector4D& b, float t) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector4D MoveTowards(const Vector4D& current_, const Vector4D& target_, float maxDistanceDelta_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector4D MoveTowards(const Vector4D& current, const Vector4D& target, float maxDistanceDelta) noexcept requires std::same_as<TValue, float>;
 
 	private:
 		std::conditional_t<std::same_as<TValue, int>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

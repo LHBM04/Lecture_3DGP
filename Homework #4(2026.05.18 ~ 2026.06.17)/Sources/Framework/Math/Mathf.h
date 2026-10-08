@@ -1,9 +1,6 @@
 ﻿#pragma once
 
 #include <algorithm>
-#include <limits>
-#include <numbers>
-#include <numeric>
 
 namespace TUK::Framework
 {

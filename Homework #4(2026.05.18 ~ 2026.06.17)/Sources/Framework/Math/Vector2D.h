@@ -95,48 +95,48 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector2D GetPositiveInfinity() noexcept requires std::same_as<TValue, float>;
 		[[nodiscard]] static Vector2D GetNegativeInfinity() noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static DirectX::XMVECTOR Load(const Vector2D& vec_) noexcept requires std::same_as<TValue, float>;
-		static void Store(Vector2D& d_, DirectX::XMVECTOR s_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static DirectX::XMVECTOR Load(const Vector2D& vec) noexcept requires std::same_as<TValue, float>;
+		static void Store(Vector2D& d, DirectX::XMVECTOR s) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static bool IsApproximately(const Vector2D& lhs_, const Vector2D& rhs_, float epsilon_ = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static bool IsApproximately(const Vector2D& lhs, const Vector2D& rhs, float epsilon = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Max(const Vector2D& a_, const Vector2D& b_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector2D Min(const Vector2D& a_, const Vector2D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Max(const Vector2D& a, const Vector2D& b) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Min(const Vector2D& a, const Vector2D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Clamp(const Vector2D& value_, const Vector2D& min_, const Vector2D& max_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector2D ClampMagnitude(const Vector2D& vector_, float maxLength_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Clamp(const Vector2D& value, const Vector2D& min, const Vector2D& max) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D ClampMagnitude(const Vector2D& vector, float maxLength) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Scale(const Vector2D& vector_, const Vector2D& scale_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Scale(const Vector2D& vector, const Vector2D& scale) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Normalize(const Vector2D& value_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Normalize(const Vector2D& value) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static float Dot(const Vector2D& a_, const Vector2D& b_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector2D Cross(const Vector2D& a_, const Vector2D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float Dot(const Vector2D& a, const Vector2D& b) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Cross(const Vector2D& a, const Vector2D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Perpendicular(const Vector2D& vector_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Perpendicular(const Vector2D& vector) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static float Distance(const Vector2D& a_, const Vector2D& b_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float Distance(const Vector2D& a, const Vector2D& b) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static float Angle(const Vector2D& a_, const Vector2D& b_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static float SignedAngle(const Vector2D& from_, const Vector2D& to_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float Angle(const Vector2D& a, const Vector2D& b) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static float SignedAngle(const Vector2D& from, const Vector2D& to) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Reflect(const Vector2D& vector_, const Vector2D& normal_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Reflect(const Vector2D& vector, const Vector2D& normal) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Lerp(const Vector2D& a_, const Vector2D& b_, float t_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector2D LerpUnclamped(const Vector2D& a_, const Vector2D& b_, float t_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Lerp(const Vector2D& a, const Vector2D& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D LerpUnclamped(const Vector2D& a, const Vector2D& b, float t) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D Slerp(const Vector2D& a_, const Vector2D& b_, float t_) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector2D SlerpUnclamped(const Vector2D& a_, const Vector2D& b_, float t_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D Slerp(const Vector2D& a, const Vector2D& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D SlerpUnclamped(const Vector2D& a, const Vector2D& b, float t) noexcept requires std::same_as<TValue, float>;
 
-		[[nodiscard]] static Vector2D MoveTowards(const Vector2D& current_, const Vector2D& target_, float maxDistanceDelta_) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector2D MoveTowards(const Vector2D& current, const Vector2D& target, float maxDistanceDelta) noexcept requires std::same_as<TValue, float>;
 
 		[[nodiscard]] static Vector2D SmoothDamp(
-			const Vector2D& current_,
-			const Vector2D& target_,
-			Vector2D& currentVelocity_,
-			float smoothTime_,
-			float maxSpeed_,
-			float deltaTime_) noexcept requires std::same_as<TValue, float>;
+			const Vector2D& current,
+			const Vector2D& target,
+			Vector2D& currentVelocity,
+			float smoothTime,
+			float maxSpeed,
+			float deltaTime) noexcept requires std::same_as<TValue, float>;
 
 	private:
 		std::conditional_t<std::same_as<TValue, int>, DirectX::XMINT2, DirectX::XMFLOAT2> value;

@@ -395,56 +395,56 @@ namespace TUK::Framework
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetZero() noexcept
 	{
-		return Vector3D<TValue>(TValue{0}, TValue{0}, TValue{0});
+		return Vector3D<TValue>(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetOne() noexcept
 	{
-		return Vector3D<TValue>(TValue{1}, TValue{1}, TValue{1});
+		return Vector3D<TValue>(static_cast<TValue>(1), static_cast<TValue>(1), static_cast<TValue>(1));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetUp() noexcept
 	{
-		return Vector3D<TValue>(TValue{0}, TValue{1}, TValue{0});
+		return Vector3D<TValue>(static_cast<TValue>(0), static_cast<TValue>(1), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetDown() noexcept
 	{
-		return Vector3D<TValue>(TValue{0}, TValue{-1}, TValue{0});
+		return Vector3D<TValue>(static_cast<TValue>(0), static_cast<TValue>(-1), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetLeft() noexcept
 	{
-		return Vector3D<TValue>(TValue{-1}, TValue{0}, TValue{0});
+		return Vector3D<TValue>(static_cast<TValue>(-1), static_cast<TValue>(0), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetRight() noexcept
 	{
-		return Vector3D<TValue>(TValue{1}, TValue{0}, TValue{0});
+		return Vector3D<TValue>(static_cast<TValue>(1), static_cast<TValue>(0), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetForward() noexcept
 	{
-		return Vector3D<TValue>(TValue{0}, TValue{0}, TValue{1});
+		return Vector3D<TValue>(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(1));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::GetBack() noexcept
 	{
-		return Vector3D<TValue>(TValue{0}, TValue{0}, TValue{-1});
+		return Vector3D<TValue>(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(-1));
 	}
 
 	template <class TValue>
@@ -452,7 +452,7 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::GetPositiveInfinity() noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float infinity{ std::numeric_limits<float>::infinity() };
+		const float infinity = std::numeric_limits<float>::infinity();
 		    return Vector3D<TValue>(infinity, infinity, infinity);
 	}
 
@@ -461,7 +461,7 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::GetNegativeInfinity() noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float negativeInfinity{ -std::numeric_limits<float>::infinity() };
+		const float negativeInfinity = -std::numeric_limits<float>::infinity();
 		    return Vector3D<TValue>(negativeInfinity, negativeInfinity, negativeInfinity);
 	}
 
@@ -483,109 +483,109 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool Vector3D<TValue>::IsApproximately(const Vector3D<TValue>& lhs_, const Vector3D<TValue>& rhs_, float epsilon_) noexcept
+	bool Vector3D<TValue>::IsApproximately(const Vector3D<TValue>& lhs, const Vector3D<TValue>& rhs, float epsilon) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::abs(lhs_.GetX() - rhs_.GetX()) <= epsilon_
-		        && std::abs(lhs_.GetY() - rhs_.GetY()) <= epsilon_
-		        && std::abs(lhs_.GetZ() - rhs_.GetZ()) <= epsilon_;
+		return std::abs(lhs.GetX() - rhs.GetX()) <= epsilon
+		        && std::abs(lhs.GetY() - rhs.GetY()) <= epsilon
+		        && std::abs(lhs.GetZ() - rhs.GetZ()) <= epsilon;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Max(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Max(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(std::max(a_.GetX(), b_.GetX()), std::max(a_.GetY(), b_.GetY()), std::max(a_.GetZ(), b_.GetZ()));
+		return Vector3D<TValue>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()), std::max(a.GetZ(), b.GetZ()));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Min(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Min(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(std::min(a_.GetX(), b_.GetX()), std::min(a_.GetY(), b_.GetY()), std::min(a_.GetZ(), b_.GetZ()));
+		return Vector3D<TValue>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()), std::min(a.GetZ(), b.GetZ()));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Clamp(const Vector3D<TValue>& value_, const Vector3D<TValue>& min_, const Vector3D<TValue>& max_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Clamp(const Vector3D<TValue>& value, const Vector3D<TValue>& min, const Vector3D<TValue>& max) noexcept
 		requires std::same_as<TValue, float>
 	{
 		return Vector3D<TValue>(
-		        std::clamp(value_.GetX(), min_.GetX(), max_.GetX()),
-		        std::clamp(value_.GetY(), min_.GetY(), max_.GetY()),
-		        std::clamp(value_.GetZ(), min_.GetZ(), max_.GetZ())
+		        std::clamp(value.GetX(), min.GetX(), max.GetX()),
+		        std::clamp(value.GetY(), min.GetY(), max.GetY()),
+		        std::clamp(value.GetZ(), min.GetZ(), max.GetZ())
 		    );
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::ClampMagnitude(const Vector3D<TValue>& vector_, float maxLength_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::ClampMagnitude(const Vector3D<TValue>& vector, float maxLength) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float sqrMagnitude{ vector_.GetSqrMagnitude() };
-		    const float maxSqr{ maxLength_ * maxLength_ };
+		const float sqrMagnitude = vector.GetSqrMagnitude();
+		    const float maxSqr = maxLength * maxLength;
 		    if (sqrMagnitude <= maxSqr)
 		    {
-		        return vector_;
+		        return vector;
 		    }
 		
-		    return Normalize(vector_) * maxLength_;
+		    return Normalize(vector) * maxLength;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Scale(const Vector3D<TValue>& vector_, const Vector3D<TValue>& scale_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Scale(const Vector3D<TValue>& vector, const Vector3D<TValue>& scale) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(vector_.GetX() * scale_.GetX(), vector_.GetY() * scale_.GetY(), vector_.GetZ() * scale_.GetZ());
+		return Vector3D<TValue>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY(), vector.GetZ() * scale.GetZ());
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Normalize(const Vector3D<TValue>& value_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Normalize(const Vector3D<TValue>& value) noexcept
 		requires std::same_as<TValue, float>
 	{
-		Vector3D<TValue> res;
-		    Store(res, DirectX::XMVector3Normalize(Load(value_)));
+		Vector3D<TValue> res{};
+		    Store(res, DirectX::XMVector3Normalize(Load(value)));
 		    return res;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	void Vector3D<TValue>::OrthoNormalize(Vector3D<TValue>& normal_, Vector3D<TValue>& tangent_) noexcept
+	void Vector3D<TValue>::OrthoNormalize(Vector3D<TValue>& normal, Vector3D<TValue>& tangent) noexcept
 		requires std::same_as<TValue, float>
 	{
-		normal_ = Normalize(normal_);
-		    tangent_ = tangent_ - normal_ * Dot(normal_, tangent_);
-		    tangent_ = Normalize(tangent_);
+		normal = Normalize(normal);
+		    tangent = tangent - normal * Dot(normal, tangent);
+		    tangent = Normalize(tangent);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	void Vector3D<TValue>::OrthoNormalize(Vector3D<TValue>& normal_, Vector3D<TValue>& tangent_, Vector3D<TValue>& binormal_) noexcept
+	void Vector3D<TValue>::OrthoNormalize(Vector3D<TValue>& normal, Vector3D<TValue>& tangent, Vector3D<TValue>& binormal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		OrthoNormalize(normal_, tangent_);
-		    binormal_ = Normalize(Cross(normal_, tangent_));
+		OrthoNormalize(normal, tangent);
+		    binormal = Normalize(Cross(normal, tangent));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	float Vector3D<TValue>::Dot(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_) noexcept
+	float Vector3D<TValue>::Dot(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return DirectX::XMVectorGetX(DirectX::XMVector3Dot(Load(a_), Load(b_)));
+		return DirectX::XMVectorGetX(DirectX::XMVector3Dot(Load(a), Load(b)));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Cross(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Cross(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		Vector3D<TValue> res;
-		    Store(res, DirectX::XMVector3Cross(Load(a_), Load(b_)));
+		Vector3D<TValue> res{};
+		    Store(res, DirectX::XMVector3Cross(Load(a), Load(b)));
 		    return res;
 	}
 
@@ -599,47 +599,47 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	float Vector3D<TValue>::Angle(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_) noexcept
+	float Vector3D<TValue>::Angle(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const Vector3D<TValue> from{ Normalize(a_) };
-		    const Vector3D<TValue> to{ Normalize(b_) };
-		    const float dot{ std::clamp(Dot(from, to), -1.0f, 1.0f) };
+		const Vector3D<TValue> from = Normalize(a);
+		    const Vector3D<TValue> to = Normalize(b);
+		    const float dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
 		    return std::acos(dot);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	float Vector3D<TValue>::SignedAngle(const Vector3D<TValue>& from_, const Vector3D<TValue>& to_, const Vector3D<TValue>& axis_) noexcept
+	float Vector3D<TValue>::SignedAngle(const Vector3D<TValue>& from, const Vector3D<TValue>& to, const Vector3D<TValue>& axis) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const Vector3D<TValue> cross{ Cross(from_, to_) };
-		    const float angle{ Angle(from_, to_) };
-		    const float sign{ (Dot(axis_, cross) >= 0.0f) ? 1.0f : -1.0f };
+		const Vector3D<TValue> cross = Cross(from, to);
+		    const float angle = Angle(from, to);
+		    const float sign = (Dot(axis, cross) >= 0.0f) ? 1.0f : -1.0f;
 		    return angle * sign;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Project(const Vector3D<TValue>& vector_, const Vector3D<TValue>& onNormal_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Project(const Vector3D<TValue>& vector, const Vector3D<TValue>& onNormal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float denominator{ Dot(onNormal_, onNormal_) };
+		const float denominator = Dot(onNormal, onNormal);
 		    if (denominator <= std::numeric_limits<float>::epsilon())
 		    {
 		        return GetZero();
 		    }
 		
-		    const float scale{ Dot(vector_, onNormal_) / denominator };
-		    return onNormal_ * scale;
+		    const float scale = Dot(vector, onNormal) / denominator;
+		    return onNormal * scale;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::ProjectOnPlane(const Vector3D<TValue>& vector_, const Vector3D<TValue>& planeNormal_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::ProjectOnPlane(const Vector3D<TValue>& vector, const Vector3D<TValue>& planeNormal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return vector_ - Project(vector_, planeNormal_);
+		return vector - Project(vector, planeNormal);
 	}
 
 	template <class TValue>
@@ -647,7 +647,7 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::Reflect(const Vector3D<TValue>& _vector, const Vector3D<TValue>& _normal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		Vector3D<TValue> res;
+		Vector3D<TValue> res{};
 		    Store(res, DirectX::XMVector3Reflect(Load(_vector), Load(_normal)));
 		    return res;
 	}
@@ -657,112 +657,112 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::Refract(const Vector3D<TValue>& _vector, const Vector3D<TValue>& _normal, float _eta) noexcept
 		requires std::same_as<TValue, float>
 	{
-		Vector3D<TValue> res;
+		Vector3D<TValue> res{};
 		    Store(res, DirectX::XMVector3Refract(Load(_vector), Load(_normal), _eta));
 		    return res;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Lerp(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_, float t_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Lerp(const Vector3D<TValue>& a, const Vector3D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		Vector3D<TValue> res;
-		    Store(res, DirectX::XMVectorLerp(Load(a_), Load(b_), std::clamp(t_, 0.0f, 1.0f)));
+		Vector3D<TValue> res{};
+		    Store(res, DirectX::XMVectorLerp(Load(a), Load(b), std::clamp(t, 0.0f, 1.0f)));
 		    return res;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::LerpUnclamped(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_, float t_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::LerpUnclamped(const Vector3D<TValue>& a, const Vector3D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		Vector3D<TValue> res;
-		    Store(res, DirectX::XMVectorLerp(Load(a_), Load(b_), t_));
+		Vector3D<TValue> res{};
+		    Store(res, DirectX::XMVectorLerp(Load(a), Load(b), t));
 		    return res;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::Slerp(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_, float t_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::Slerp(const Vector3D<TValue>& a, const Vector3D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return SlerpUnclamped(a_, b_, std::clamp(t_, 0.0f, 1.0f));
+		return SlerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::SlerpUnclamped(const Vector3D<TValue>& a_, const Vector3D<TValue>& b_, float t_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::SlerpUnclamped(const Vector3D<TValue>& a, const Vector3D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float aMag{ a_.GetMagnitude() };
-		    const float bMag{ b_.GetMagnitude() };
+		const float aMag = a.GetMagnitude();
+		    const float bMag = b.GetMagnitude();
 		
 		    if (aMag <= std::numeric_limits<float>::epsilon() || bMag <= std::numeric_limits<float>::epsilon())
 		    {
-		        return LerpUnclamped(a_, b_, t_);
+		        return LerpUnclamped(a, b, t);
 		    }
 		
-		    const Vector3D<TValue> from{ a_ / aMag };
-		    const Vector3D<TValue> to{ b_ / bMag };
+		    const Vector3D<TValue> from = a / aMag;
+		    const Vector3D<TValue> to = b / bMag;
 		
-		    float dot{ std::clamp(Dot(from, to), -1.0f, 1.0f) };
-		    const float theta{ std::acos(dot) * t_ };
+		    float dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
+		    const float theta = std::acos(dot) * t;
 		
-		    Vector3D<TValue> relative{ to - from * dot };
-		    const float relativeMag{ relative.GetMagnitude() };
+		    Vector3D<TValue> relative = to - from * dot;
+		    const float relativeMag = relative.GetMagnitude();
 		    if (relativeMag <= std::numeric_limits<float>::epsilon())
 		    {
-		        return LerpUnclamped(a_, b_, t_);
+		        return LerpUnclamped(a, b, t);
 		    }
 		
 		    relative /= relativeMag;
-		    const Vector3D<TValue> direction{ from * std::cos(theta) + relative * std::sin(theta) };
-		    const float magnitude{ Mathf::Lerp(aMag, bMag, t_) };
+		    const Vector3D<TValue> direction = from * std::cos(theta) + relative * std::sin(theta);
+		    const float magnitude = Mathf::Lerp(aMag, bMag, t);
 		
 		    return direction * magnitude;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::MoveTowards(const Vector3D<TValue>& current_, const Vector3D<TValue>& target_, float maxDistanceDelta_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::MoveTowards(const Vector3D<TValue>& current, const Vector3D<TValue>& target, float maxDistanceDelta) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const Vector3D<TValue> delta{ target_ - current_ };
-		    const float distance{ delta.GetMagnitude() };
+		const Vector3D<TValue> delta = target - current;
+		    const float distance = delta.GetMagnitude();
 		
-		    if (distance <= maxDistanceDelta_ || distance <= std::numeric_limits<float>::epsilon())
+		    if (distance <= maxDistanceDelta || distance <= std::numeric_limits<float>::epsilon())
 		    {
-		        return target_;
+		        return target;
 		    }
 		
-		    return current_ + (delta / distance) * maxDistanceDelta_;
+		    return current + (delta / distance) * maxDistanceDelta;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector3D<TValue> Vector3D<TValue>::RotateTowards(const Vector3D<TValue>& current_, const Vector3D<TValue>& target_, float maxRadiansDelta_, float maxMagnitudeDelta_) noexcept
+	Vector3D<TValue> Vector3D<TValue>::RotateTowards(const Vector3D<TValue>& current, const Vector3D<TValue>& target, float maxRadiansDelta, float maxMagnitudeDelta) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float currentMag{ current_.GetMagnitude() };
-		    const float targetMag{ target_.GetMagnitude() };
+		const float currentMag = current.GetMagnitude();
+		    const float targetMag = target.GetMagnitude();
 		
 		    if (currentMag <= std::numeric_limits<float>::epsilon() || targetMag <= std::numeric_limits<float>::epsilon())
 		    {
-		        return MoveTowards(current_, target_, maxMagnitudeDelta_);
+		        return MoveTowards(current, target, maxMagnitudeDelta);
 		    }
 		
-		    const Vector3D<TValue> currentDir{ current_ / currentMag };
-		    const Vector3D<TValue> targetDir{ target_ / targetMag };
+		    const Vector3D<TValue> currentDir = current / currentMag;
+		    const Vector3D<TValue> targetDir = target / targetMag;
 		
-		    const float angle{ Angle(currentDir, targetDir) };
-		    const float t{ (angle <= std::numeric_limits<float>::epsilon()) ? 1.0f : std::min(1.0f, maxRadiansDelta_ / angle) };
+		    const float angle = Angle(currentDir, targetDir);
+		    const float t = (angle <= std::numeric_limits<float>::epsilon()) ? 1.0f : std::min(1.0f, maxRadiansDelta / angle);
 		
-		    const Vector3D<TValue> newDir{ SlerpUnclamped(currentDir, targetDir, t).GetNormalized() };
+		    const Vector3D<TValue> newDir = SlerpUnclamped(currentDir, targetDir, t).GetNormalized();
 		
-		    float deltaMag{ targetMag - currentMag };
-		    deltaMag = std::clamp(deltaMag, -maxMagnitudeDelta_, maxMagnitudeDelta_);
-		    const float newMag{ currentMag + deltaMag };
+		    float deltaMag = targetMag - currentMag;
+		    deltaMag = std::clamp(deltaMag, -maxMagnitudeDelta, maxMagnitudeDelta);
+		    const float newMag = currentMag + deltaMag;
 		
 		    return newDir * newMag;
 	}
@@ -770,34 +770,34 @@ namespace TUK::Framework
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	Vector3D<TValue> Vector3D<TValue>::SmoothDamp(
-	const Vector3D<TValue>& current_,
-	const Vector3D<TValue>& target_,
-	Vector3D<TValue>& currentVelocity_,
-	float smoothTime_,
-	float maxSpeed_,
-	float deltaTime_) noexcept
+	const Vector3D<TValue>& current,
+	const Vector3D<TValue>& target,
+	Vector3D<TValue>& currentVelocity,
+	float smoothTime,
+	float maxSpeed,
+	float deltaTime) noexcept
 		requires std::same_as<TValue, float>
 	{
-		smoothTime_ = std::max(0.0001f, smoothTime_);
-		    const float omega{ 2.0f / smoothTime_ };
-		    const float x{ omega * deltaTime_ };
-		    const float exp{ 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x) };
+		smoothTime = std::max(0.0001f, smoothTime);
+		    const float omega = 2.0f / smoothTime;
+		    const float x = omega * deltaTime;
+		    const float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
 		
-		    Vector3D<TValue> change{ current_ - target_ };
-		    const Vector3D<TValue> originalTarget{ target_ };
+		    Vector3D<TValue> change = current - target;
+		    const Vector3D<TValue> originalTarget = target;
 		
-		    const float maxChange{ maxSpeed_ * smoothTime_ };
+		    const float maxChange = maxSpeed * smoothTime;
 		    change = ClampMagnitude(change, maxChange);
-		    const Vector3D<TValue> target{ current_ - change };
+		    const Vector3D<TValue> adjustedTarget = current - change;
 		
-		    const Vector3D<TValue> temp{ (currentVelocity_ + change * omega) * deltaTime_ };
-		    currentVelocity_ = (currentVelocity_ - temp * omega) * exp;
-		    Vector3D<TValue> output{ target + (change + temp) * exp };
+		    const Vector3D<TValue> temp = (currentVelocity + change * omega) * deltaTime;
+		    currentVelocity = (currentVelocity - temp * omega) * exp;
+		    Vector3D<TValue> output = adjustedTarget + (change + temp) * exp;
 		
-		    if (Dot(originalTarget - current_, output - originalTarget) > 0.0f)
+		    if (Dot(originalTarget - current, output - originalTarget) > 0.0f)
 		    {
 		        output = originalTarget;
-		        currentVelocity_ = Vector3D<TValue>(0.0f, 0.0f, 0.0f);
+		        currentVelocity = Vector3D<TValue>(0.0f, 0.0f, 0.0f);
 		    }
 		
 		    return output;

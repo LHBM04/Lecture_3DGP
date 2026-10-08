@@ -26,7 +26,7 @@ namespace TUK::Framework
 
 	void Window::SetTitle(std::wstring_view title) noexcept
 	{
-		std::wstring windowTitle{ title };
+		std::wstring windowTitle(title);
 		if (SetWindowTextW(hWnd, windowTitle.c_str()))
 		{
 			options.title = std::move(windowTitle);

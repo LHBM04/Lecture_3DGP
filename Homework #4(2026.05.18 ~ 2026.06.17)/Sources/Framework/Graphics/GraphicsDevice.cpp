@@ -15,7 +15,7 @@ namespace TUK::Framework
 	{
 		if (factory || device)
 		{
-			return std::unexpected(std::string{ "GraphicsDevice가 이미 초기화되어 있습니다." });
+			return std::unexpected(std::string("GraphicsDevice가 이미 초기화되어 있습니다."));
 		}
 		// 실패한 초기화에서 일부 자원을 멤버에 남기지 않는다.
 		Microsoft::WRL::ComPtr<IDXGIFactory6> createdFactory;
@@ -153,7 +153,7 @@ namespace TUK::Framework
 			&& description.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D
 			&& description.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE3D)
 		{
-			return std::unexpected(std::string{ "텍스처 리소스 설명이 필요합니다." });
+			return std::unexpected(std::string("텍스처 리소스 설명이 필요합니다."));
 		}
 		return CreateResource(description, D3D12_HEAP_TYPE_DEFAULT, initialState, clearValue);
 	}

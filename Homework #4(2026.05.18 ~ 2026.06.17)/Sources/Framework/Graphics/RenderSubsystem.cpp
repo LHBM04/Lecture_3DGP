@@ -158,7 +158,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		constexpr std::array<float, 4> backgroundColor = { 0.08f, 0.12f, 0.18f, 1.0f };
+		constexpr std::array<float, 4> backgroundColor{ 0.08f, 0.12f, 0.18f, 1.0f };
 		for (const auto index : frameSwapChains)
 		{
 			renderContext.ClearSwapChain(swapChains[index], backgroundColor);

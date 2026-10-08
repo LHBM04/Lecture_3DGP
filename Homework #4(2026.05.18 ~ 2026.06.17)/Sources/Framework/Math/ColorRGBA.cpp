@@ -8,98 +8,98 @@ namespace TUK::Framework
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	ColorRGBA<TValue>::ColorRGBA() noexcept
-		: value(TValue{0}, TValue{0}, TValue{0}, static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1))
+		: value(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1))
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(TValue value_) noexcept
-		: value(value_, value_, value_, value_)
+	ColorRGBA<TValue>::ColorRGBA(TValue value) noexcept
+		: value(value, value, value, value)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(TValue r_, TValue g_, TValue b_, TValue a_) noexcept
-		: value(r_, g_, b_, a_)
+	ColorRGBA<TValue>::ColorRGBA(TValue r, TValue g, TValue b, TValue a) noexcept
+		: value(r, g, b, a)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(const TValue* values_) noexcept
-		: value(TValue{0}, TValue{0}, TValue{0}, static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1))
+	ColorRGBA<TValue>::ColorRGBA(const TValue* values) noexcept
+		: value(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1))
 	{
-		assert(values_);
-		value = decltype(value)(values_);
+		assert(values);
+		value = decltype(value)(values);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(const ColorRGBA<TValue>& other_) noexcept
-		: value(other_.value)
-	{
-	}
-
-	template <class TValue>
-		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(ColorRGBA<TValue>&& other_) noexcept
-		: value(std::move(other_.value))
+	ColorRGBA<TValue>::ColorRGBA(const ColorRGBA<TValue>& other) noexcept
+		: value(other.value)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(const ColorRGB<TValue>& rgb_, TValue a_) noexcept
-		: value(rgb_.GetR(), rgb_.GetG(), rgb_.GetB(), a_)
+	ColorRGBA<TValue>::ColorRGBA(ColorRGBA<TValue>&& other) noexcept
+		: value(std::move(other.value))
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(const Vector3D<TValue>& vector_, TValue alpha_) noexcept
-		: value(vector_.GetX(), vector_.GetY(), vector_.GetZ(), alpha_)
+	ColorRGBA<TValue>::ColorRGBA(const ColorRGB<TValue>& rgb, TValue a) noexcept
+		: value(rgb.GetR(), rgb.GetG(), rgb.GetB(), a)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>::ColorRGBA(const Vector4D<TValue>& vector_) noexcept
-		: value(vector_.GetX(), vector_.GetY(), vector_.GetZ(), vector_.GetW())
+	ColorRGBA<TValue>::ColorRGBA(const Vector3D<TValue>& vector, TValue alpha) noexcept
+		: value(vector.GetX(), vector.GetY(), vector.GetZ(), alpha)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(const ColorRGBA<TValue>& other_) noexcept
+	ColorRGBA<TValue>::ColorRGBA(const Vector4D<TValue>& vector) noexcept
+		: value(vector.GetX(), vector.GetY(), vector.GetZ(), vector.GetW())
 	{
-		value.x = other_.value.x;
-		value.y = other_.value.y;
-		value.z = other_.value.z;
-		value.w = other_.value.w;
+	}
+
+	template <class TValue>
+		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(const ColorRGBA<TValue>& other) noexcept
+	{
+		value.x = other.value.x;
+		value.y = other.value.y;
+		value.z = other.value.z;
+		value.w = other.value.w;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(ColorRGBA<TValue>&& other_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(ColorRGBA<TValue>&& other) noexcept
 	{
-		value.x = other_.value.x;
-		value.y = other_.value.y;
-		value.z = other_.value.z;
-		value.w = other_.value.w;
+		value.x = other.value.x;
+		value.y = other.value.y;
+		value.z = other.value.z;
+		value.w = other.value.w;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(const Vector4D<TValue>& other_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(const Vector4D<TValue>& other) noexcept
 	{
-		value.x = other_.GetX();
-		value.y = other_.GetY();
-		value.z = other_.GetZ();
-		value.w = other_.GetW();
+		value.x = other.GetX();
+		value.y = other.GetY();
+		value.z = other.GetZ();
+		value.w = other.GetW();
 		return *this;
 	}
 
@@ -112,148 +112,148 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator+(const ColorRGBA<TValue>& other_) const noexcept
+	ColorRGBA<TValue> ColorRGBA<TValue>::operator+(const ColorRGBA<TValue>& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			return ColorRGBA<TValue>(value.x + other_.value.x, value.y + other_.value.y, value.z + other_.value.z, value.w + other_.value.w);
+			return ColorRGBA<TValue>(value.x + other.value.x, value.y + other.value.y, value.z + other.value.z, value.w + other.value.w);
 		}
 		else
 		{
-			ColorRGBA<TValue> result;
-			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other_)));
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
 			return result;
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator+=(const ColorRGBA<TValue>& other_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator+=(const ColorRGBA<TValue>& other) noexcept
 	{
-		*this = *this + other_;
+		*this = *this + other;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator-(const ColorRGBA<TValue>& other_) const noexcept
+	ColorRGBA<TValue> ColorRGBA<TValue>::operator-(const ColorRGBA<TValue>& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			return ColorRGBA<TValue>(value.x - other_.value.x, value.y - other_.value.y, value.z - other_.value.z, value.w - other_.value.w);
+			return ColorRGBA<TValue>(value.x - other.value.x, value.y - other.value.y, value.z - other.value.z, value.w - other.value.w);
 		}
 		else
 		{
-			ColorRGBA<TValue> result;
-			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other_)));
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
 			return result;
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator-=(const ColorRGBA<TValue>& other_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator-=(const ColorRGBA<TValue>& other) noexcept
 	{
-		*this = *this - other_;
+		*this = *this - other;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(const ColorRGBA<TValue>& other_) const noexcept
+	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(const ColorRGBA<TValue>& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			return ColorRGBA<TValue>(value.x * other_.value.x, value.y * other_.value.y, value.z * other_.value.z, value.w * other_.value.w);
+			return ColorRGBA<TValue>(value.x * other.value.x, value.y * other.value.y, value.z * other.value.z, value.w * other.value.w);
 		}
 		else
 		{
-			ColorRGBA<TValue> result;
-			Store(result, DirectX::XMVectorMultiply(Load(*this), Load(other_)));
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorMultiply(Load(*this), Load(other)));
 			return result;
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(TValue scalar_) const noexcept
+	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(TValue scalar) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			return ColorRGBA<TValue>(value.x * scalar_, value.y * scalar_, value.z * scalar_, value.w * scalar_);
+			return ColorRGBA<TValue>(value.x * scalar, value.y * scalar, value.z * scalar, value.w * scalar);
 		}
 		else
 		{
-			ColorRGBA<TValue> result;
-			Store(result, DirectX::XMVectorScale(Load(*this), scalar_));
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
 			return result;
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator*=(const ColorRGBA<TValue>& other_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator*=(const ColorRGBA<TValue>& other) noexcept
 	{
-		*this = *this * other_;
+		*this = *this * other;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator*=(TValue scalar_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator*=(TValue scalar) noexcept
 	{
-		*this = *this * scalar_;
+		*this = *this * scalar;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator/(TValue scalar_) const noexcept
+	ColorRGBA<TValue> ColorRGBA<TValue>::operator/(TValue scalar) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			assert(scalar_ != TValue{});
-			return ColorRGBA<TValue>(value.x / scalar_, value.y / scalar_, value.z / scalar_, value.w / scalar_);
+			assert(scalar != TValue{});
+			return ColorRGBA<TValue>(value.x / scalar, value.y / scalar, value.z / scalar, value.w / scalar);
 		}
 		else
 		{
-			assert(scalar_ != 0.0f);
-			ColorRGBA<TValue> result;
-			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar_));
+			assert(scalar != 0.0f);
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
 			return result;
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator/=(TValue scalar_) noexcept
+	ColorRGBA<TValue>& ColorRGBA<TValue>::operator/=(TValue scalar) noexcept
 	{
-		*this = *this / scalar_;
+		*this = *this / scalar;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGBA<TValue>::operator==(const ColorRGBA<TValue>& other_) const noexcept
+	bool ColorRGBA<TValue>::operator==(const ColorRGBA<TValue>& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			return value.x == other_.value.x && value.y == other_.value.y && value.z == other_.value.z && value.w == other_.value.w;
+			return value.x == other.value.x && value.y == other.value.y && value.z == other.value.z && value.w == other.value.w;
 		}
 		else
 		{
-			return std::abs(value.x - other_.value.x) < std::numeric_limits<float>::epsilon() &&
-			std::abs(value.y - other_.value.y) < std::numeric_limits<float>::epsilon() &&
-			std::abs(value.z - other_.value.z) < std::numeric_limits<float>::epsilon() &&
-			std::abs(value.w - other_.value.w) < std::numeric_limits<float>::epsilon();
+			return std::abs(value.x - other.value.x) < std::numeric_limits<float>::epsilon() &&
+			std::abs(value.y - other.value.y) < std::numeric_limits<float>::epsilon() &&
+			std::abs(value.z - other.value.z) < std::numeric_limits<float>::epsilon() &&
+			std::abs(value.w - other.value.w) < std::numeric_limits<float>::epsilon();
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGBA<TValue>::operator!=(const ColorRGBA<TValue>& other_) const noexcept
+	bool ColorRGBA<TValue>::operator!=(const ColorRGBA<TValue>& other) const noexcept
 	{
-		return !(*this == other_);
+		return !(*this == other);
 	}
 
 	template <class TValue>
@@ -324,17 +324,17 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGBA<TValue>::IsTransparent(float epsilon_) const noexcept
+	bool ColorRGBA<TValue>::IsTransparent(float epsilon) const noexcept
 	{
-		return value.w <= epsilon_;
+		return value.w <= epsilon;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGBA<TValue>::IsOpaque(float epsilon_) const noexcept
+	bool ColorRGBA<TValue>::IsOpaque(float epsilon) const noexcept
 	{
 		constexpr TValue maximum = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1);
-		return value.w >= maximum - epsilon_;
+		return value.w >= maximum - epsilon;
 	}
 
 	template <class TValue>
@@ -479,38 +479,38 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	DirectX::XMVECTOR ColorRGBA<TValue>::Load(const ColorRGBA<TValue>& color_) noexcept
+	DirectX::XMVECTOR ColorRGBA<TValue>::Load(const ColorRGBA<TValue>& color) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return DirectX::XMLoadFloat4(&color_.value);
+		return DirectX::XMLoadFloat4(&color.value);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	void ColorRGBA<TValue>::Store(ColorRGBA<TValue>& destination_, DirectX::XMVECTOR source_) noexcept
+	void ColorRGBA<TValue>::Store(ColorRGBA<TValue>& destination, DirectX::XMVECTOR source) noexcept
 		requires std::same_as<TValue, float>
 	{
-		DirectX::XMStoreFloat4(&destination_.value, source_);
+		DirectX::XMStoreFloat4(&destination.value, source);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGBA<TValue>::IsApproximately(const ColorRGBA<TValue>& lhs_, const ColorRGBA<TValue>& rhs_, float epsilon_) noexcept
+	bool ColorRGBA<TValue>::IsApproximately(const ColorRGBA<TValue>& lhs, const ColorRGBA<TValue>& rhs, float epsilon) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::abs(lhs_.value.x - rhs_.value.x) <= epsilon_ &&
-		std::abs(lhs_.value.y - rhs_.value.y) <= epsilon_ &&
-		std::abs(lhs_.value.z - rhs_.value.z) <= epsilon_ &&
-		std::abs(lhs_.value.w - rhs_.value.w) <= epsilon_;
+		return std::abs(lhs.value.x - rhs.value.x) <= epsilon &&
+		std::abs(lhs.value.y - rhs.value.y) <= epsilon &&
+		std::abs(lhs.value.z - rhs.value.z) <= epsilon &&
+		std::abs(lhs.value.w - rhs.value.w) <= epsilon;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGBA<TValue>::Lerp(const ColorRGBA<TValue>& start_, const ColorRGBA<TValue>& end_, float t_) noexcept
+	ColorRGBA<TValue> ColorRGBA<TValue>::Lerp(const ColorRGBA<TValue>& start, const ColorRGBA<TValue>& end, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		ColorRGBA<TValue> result;
-		Store(result, DirectX::XMVectorLerp(Load(start_), Load(end_), t_));
+		ColorRGBA<TValue> result{};
+		Store(result, DirectX::XMVectorLerp(Load(start), Load(end), t));
 		return result;
 	}
 

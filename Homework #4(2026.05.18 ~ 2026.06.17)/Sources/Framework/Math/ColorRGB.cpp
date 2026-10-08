@@ -16,98 +16,98 @@ namespace TUK::Framework
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
 	ColorRGB<TValue>::ColorRGB() noexcept
-		: value(TValue{0}, TValue{0}, TValue{0})
+		: value(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0))
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(TValue value_) noexcept
-		: value(value_, value_, value_)
+	ColorRGB<TValue>::ColorRGB(TValue value) noexcept
+		: value(value, value, value)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(TValue r_, TValue g_, TValue b_) noexcept
-		: value(r_, g_, b_)
+	ColorRGB<TValue>::ColorRGB(TValue r, TValue g, TValue b) noexcept
+		: value(r, g, b)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(const ColorRGB<TValue>& color_) noexcept
-		: value(color_.value)
+	ColorRGB<TValue>::ColorRGB(const ColorRGB<TValue>& color) noexcept
+		: value(color.value)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(ColorRGB<TValue>&& color_) noexcept
-		: value(color_.value)
+	ColorRGB<TValue>::ColorRGB(ColorRGB<TValue>&& color) noexcept
+		: value(color.value)
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(const Vector3D<TValue>& vector_) noexcept
-		: value(vector_.GetX(), vector_.GetY(), vector_.GetZ())
+	ColorRGB<TValue>::ColorRGB(const Vector3D<TValue>& vector) noexcept
+		: value(vector.GetX(), vector.GetY(), vector.GetZ())
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(const Vector4D<TValue>& vector_) noexcept
-		: value(vector_.GetX(), vector_.GetY(), vector_.GetZ())
+	ColorRGB<TValue>::ColorRGB(const Vector4D<TValue>& vector) noexcept
+		: value(vector.GetX(), vector.GetY(), vector.GetZ())
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>::ColorRGB(const ColorRGBA<TValue>& color_) noexcept
-		: value(color_.GetR(), color_.GetG(), color_.GetB())
+	ColorRGB<TValue>::ColorRGB(const ColorRGBA<TValue>& color) noexcept
+		: value(color.GetR(), color.GetG(), color.GetB())
 	{
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>& ColorRGB<TValue>::operator=(const ColorRGB<TValue>& other_) noexcept
+	ColorRGB<TValue>& ColorRGB<TValue>::operator=(const ColorRGB<TValue>& other) noexcept
 	{
-		value.x = other_.value.x;
-		value.y = other_.value.y;
-		value.z = other_.value.z;
+		value.x = other.value.x;
+		value.y = other.value.y;
+		value.z = other.value.z;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue>& ColorRGB<TValue>::operator=(ColorRGB<TValue>&& other_) noexcept
+	ColorRGB<TValue>& ColorRGB<TValue>::operator=(ColorRGB<TValue>&& other) noexcept
 	{
-		value.x = other_.value.x;
-		value.y = other_.value.y;
-		value.z = other_.value.z;
+		value.x = other.value.x;
+		value.y = other.value.y;
+		value.z = other.value.z;
 		return *this;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGB<TValue>::operator==(const ColorRGB<TValue>& other_) const noexcept
+	bool ColorRGB<TValue>::operator==(const ColorRGB<TValue>& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, int>)
 		{
-			return value.x == other_.value.x && value.y == other_.value.y && value.z == other_.value.z;
+			return value.x == other.value.x && value.y == other.value.y && value.z == other.value.z;
 		}
 		else
 		{
-			return IsApproximately(*this, other_);
+			return IsApproximately(*this, other);
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGB<TValue>::operator!=(const ColorRGB<TValue>& other_) const noexcept
+	bool ColorRGB<TValue>::operator!=(const ColorRGB<TValue>& other) const noexcept
 	{
-		return !(*this == other_);
+		return !(*this == other);
 	}
 
 	template <class TValue>
@@ -222,16 +222,16 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	Vector4D<TValue> ColorRGB<TValue>::ToVector4D(TValue alpha_) const noexcept
+	Vector4D<TValue> ColorRGB<TValue>::ToVector4D(TValue alpha) const noexcept
 	{
-		return Vector4D<TValue>(value.x, value.y, value.z, alpha_);
+		return Vector4D<TValue>(value.x, value.y, value.z, alpha);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGBA<TValue> ColorRGB<TValue>::ToColorRGBA(TValue alpha_) const noexcept
+	ColorRGBA<TValue> ColorRGB<TValue>::ToColorRGBA(TValue alpha) const noexcept
 	{
-		return ColorRGBA<TValue>(*this, alpha_);
+		return ColorRGBA<TValue>(*this, alpha);
 	}
 
 	template <class TValue>
@@ -385,134 +385,134 @@ namespace TUK::Framework
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	bool ColorRGB<TValue>::IsApproximately(const ColorRGB<TValue>& lhs_, const ColorRGB<TValue>& rhs_, float epsilon_) noexcept
+	bool ColorRGB<TValue>::IsApproximately(const ColorRGB<TValue>& lhs, const ColorRGB<TValue>& rhs, float epsilon) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::abs(lhs_.value.x - rhs_.value.x) <= epsilon_
-		&& std::abs(lhs_.value.y - rhs_.value.y) <= epsilon_
-		&& std::abs(lhs_.value.z - rhs_.value.z) <= epsilon_;
+		return std::abs(lhs.value.x - rhs.value.x) <= epsilon
+		&& std::abs(lhs.value.y - rhs.value.y) <= epsilon
+		&& std::abs(lhs.value.z - rhs.value.z) <= epsilon;
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	float ColorRGB<TValue>::LinearToGammaSpace(float value_) noexcept
+	float ColorRGB<TValue>::LinearToGammaSpace(float value) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::pow(std::max(0.0f, value_), 1.0f / 2.2f);
+		return std::pow(std::max(0.0f, value), 1.0f / 2.2f);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	float ColorRGB<TValue>::GammaToLinearSpace(float value_) noexcept
+	float ColorRGB<TValue>::GammaToLinearSpace(float value) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::pow(std::max(0.0f, value_), 2.2f);
+		return std::pow(std::max(0.0f, value), 2.2f);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue> ColorRGB<TValue>::HSVToRGB(float h_, float s_, float v_) noexcept
+	ColorRGB<TValue> ColorRGB<TValue>::HSVToRGB(float h, float s, float v) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return HSVToRGB(h_, s_, v_, false);
+		return HSVToRGB(h, s, v, false);
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue> ColorRGB<TValue>::HSVToRGB(float h_, float s_, float v_, bool hdr_) noexcept
+	ColorRGB<TValue> ColorRGB<TValue>::HSVToRGB(float h, float s, float v, bool hdr) noexcept
 		requires std::same_as<TValue, float>
 	{
-		h_ = h_ - std::floor(h_);
-		s_ = std::clamp(s_, 0.0f, 1.0f);
-		if (!hdr_)
+		h = h - std::floor(h);
+		s = std::clamp(s, 0.0f, 1.0f);
+		if (!hdr)
 		{
-			v_ = std::clamp(v_, 0.0f, 1.0f);
+			v = std::clamp(v, 0.0f, 1.0f);
 		}
 
-		if (s_ <= std::numeric_limits<float>::epsilon())
+		if (s <= std::numeric_limits<float>::epsilon())
 		{
-			return ColorRGB<TValue>(v_, v_, v_);
+			return ColorRGB<TValue>(v, v, v);
 		}
 
-		const float scaledH{ h_ * 6.0f };
-		const int sector{ static_cast<int>(std::floor(scaledH)) };
-		const float f{ scaledH - static_cast<float>(sector) };
-		const float p{ v_ * (1.0f - s_) };
-		const float q{ v_ * (1.0f - s_ * f) };
-		const float t{ v_ * (1.0f - s_ * (1.0f - f)) };
+		const float scaledH = h * 6.0f;
+		const int sector = static_cast<int>(std::floor(scaledH));
+		const float f = scaledH - static_cast<float>(sector);
+		const float p = v * (1.0f - s);
+		const float q = v * (1.0f - s * f);
+		const float t = v * (1.0f - s * (1.0f - f));
 
 		switch (sector % 6)
 		{
-		case 0: return ColorRGB<TValue>(v_, t, p);
-		case 1: return ColorRGB<TValue>(q, v_, p);
-		case 2: return ColorRGB<TValue>(p, v_, t);
-		case 3: return ColorRGB<TValue>(p, q, v_);
-		case 4: return ColorRGB<TValue>(t, p, v_);
-		default: return ColorRGB<TValue>(v_, p, q);
+		case 0: return ColorRGB<TValue>(v, t, p);
+		case 1: return ColorRGB<TValue>(q, v, p);
+		case 2: return ColorRGB<TValue>(p, v, t);
+		case 3: return ColorRGB<TValue>(p, q, v);
+		case 4: return ColorRGB<TValue>(t, p, v);
+		default: return ColorRGB<TValue>(v, p, q);
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	void ColorRGB<TValue>::RGBToHSV(const ColorRGB<TValue>& rgbColor_, float& h_, float& s_, float& v_) noexcept
+	void ColorRGB<TValue>::RGBToHSV(const ColorRGB<TValue>& rgbColor, float& h, float& s, float& v) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float r{ rgbColor_.value.x };
-		const float g{ rgbColor_.value.y };
-		const float b{ rgbColor_.value.z };
+		const float r = rgbColor.value.x;
+		const float g = rgbColor.value.y;
+		const float b = rgbColor.value.z;
 
-		const float maxV{ std::max(r, std::max(g, b)) };
-		const float minV{ std::min(r, std::min(g, b)) };
-		const float delta{ maxV - minV };
+		const float maxV = std::max(r, std::max(g, b));
+		const float minV = std::min(r, std::min(g, b));
+		const float delta = maxV - minV;
 
-		v_ = maxV;
+		v = maxV;
 
 		if (delta <= std::numeric_limits<float>::epsilon())
 		{
-			h_ = 0.0f;
-			s_ = 0.0f;
+			h = 0.0f;
+			s = 0.0f;
 			return;
 		}
 
-		s_ = (maxV <= std::numeric_limits<float>::epsilon()) ? 0.0f : (delta / maxV);
+		s = (maxV <= std::numeric_limits<float>::epsilon()) ? 0.0f : (delta / maxV);
 
 		if (r >= maxV)
 		{
-			h_ = (g - b) / delta;
+			h = (g - b) / delta;
 		}
 		else if (g >= maxV)
 		{
-			h_ = 2.0f + (b - r) / delta;
+			h = 2.0f + (b - r) / delta;
 		}
 		else
 		{
-			h_ = 4.0f + (r - g) / delta;
+			h = 4.0f + (r - g) / delta;
 		}
 
-		h_ /= 6.0f;
-		if (h_ < 0.0f)
+		h /= 6.0f;
+		if (h < 0.0f)
 		{
-			h_ += 1.0f;
+			h += 1.0f;
 		}
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue> ColorRGB<TValue>::Lerp(const ColorRGB<TValue>& a_, const ColorRGB<TValue>& b_, float t_) noexcept
+	ColorRGB<TValue> ColorRGB<TValue>::Lerp(const ColorRGB<TValue>& a, const ColorRGB<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return LerpUnclamped(a_, b_, std::clamp(t_, 0.0f, 1.0f));
+		return LerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
 	template <class TValue>
 		requires (std::same_as<TValue, int> || std::same_as<TValue, float>)
-	ColorRGB<TValue> ColorRGB<TValue>::LerpUnclamped(const ColorRGB<TValue>& a_, const ColorRGB<TValue>& b_, float t_) noexcept
+	ColorRGB<TValue> ColorRGB<TValue>::LerpUnclamped(const ColorRGB<TValue>& a, const ColorRGB<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
 		return ColorRGB<TValue>(
-			ScalarLerp(a_.value.x, b_.value.x, t_),
-			ScalarLerp(a_.value.y, b_.value.y, t_),
-			ScalarLerp(a_.value.z, b_.value.z, t_));
+			ScalarLerp(a.value.x, b.value.x, t),
+			ScalarLerp(a.value.y, b.value.y, t),
+			ScalarLerp(a.value.z, b.value.z, t));
 	}
 
 	template class ColorRGB<int>;

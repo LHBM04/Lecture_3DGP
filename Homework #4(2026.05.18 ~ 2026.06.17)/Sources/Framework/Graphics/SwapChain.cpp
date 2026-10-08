@@ -70,7 +70,7 @@ namespace TUK::Framework
 		const auto configuredBufferCount = Engine::GetInstance().GetOption<int>("RenderContext.BufferCount");
 		if (configuredBufferCount < 2 || configuredBufferCount > 16)
 		{
-			return std::unexpected(std::string{ "RenderContext.BufferCount는 2 이상 16 이하여야 합니다." });
+			return std::unexpected(std::string("RenderContext.BufferCount는 2 이상 16 이하여야 합니다."));
 		}
 
 		const UINT bufferCount = static_cast<UINT>(configuredBufferCount);

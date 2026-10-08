@@ -19,7 +19,7 @@ namespace TUK::Framework
 	{
 		if (commandAllocator || commandList)
 		{
-			return std::unexpected(std::string{ "RenderContext가 이미 초기화되어 있습니다." });
+			return std::unexpected(std::string("RenderContext가 이미 초기화되어 있습니다."));
 		}
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> createdAllocator;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> createdList;
@@ -47,7 +47,7 @@ namespace TUK::Framework
 		assert(commandList && commandAllocator);
 		if (isRecording)
 		{
-			return std::unexpected(std::string{ "명령 기록을 시작할 수 없는 상태입니다." });
+			return std::unexpected(std::string("명령 기록을 시작할 수 없는 상태입니다."));
 		}
 		const auto allocator = CheckHResult(commandAllocator->Reset(), "명령 할당자 초기화");
 		if (!allocator)
@@ -68,7 +68,7 @@ namespace TUK::Framework
 		assert(commandList && commandAllocator);
 		if (!isRecording)
 		{
-			return std::unexpected(std::string{ "기록 중인 명령 목록이 없습니다." });
+			return std::unexpected(std::string("기록 중인 명령 목록이 없습니다."));
 		}
 		const auto result = CheckHResult(commandList->Close(), "명령 목록 닫기");
 		if (!result)
@@ -244,12 +244,12 @@ namespace TUK::Framework
 		assert(commandList && commandAllocator);
 		if (!isRecording)
 		{
-			return std::unexpected(std::string{ "명령 기록 중에만 버퍼를 복사할 수 있습니다." });
+			return std::unexpected(std::string("명령 기록 중에만 버퍼를 복사할 수 있습니다."));
 		}
 		if (destinationOffset > destination.GetSize() || size > destination.GetSize() - destinationOffset
 			|| sourceOffset > source.GetSize() || size > source.GetSize() - sourceOffset)
 		{
-			return std::unexpected(std::string{ "버퍼 복사 범위를 벗어났습니다." });
+			return std::unexpected(std::string("버퍼 복사 범위를 벗어났습니다."));
 		}
 		if (size == 0)
 		{
@@ -257,7 +257,7 @@ namespace TUK::Framework
 		}
 		if (&destination.GetResource() == &source.GetResource())
 		{
-			return std::unexpected(std::string{ "CopyBuffer에는 서로 다른 버퍼가 필요합니다." });
+			return std::unexpected(std::string("CopyBuffer에는 서로 다른 버퍼가 필요합니다."));
 		}
 		commandList->CopyBufferRegion(&destination.GetResource(), destinationOffset,
 			&source.GetResource(), sourceOffset, size);
@@ -273,7 +273,7 @@ namespace TUK::Framework
 	void RenderContext::Execute(ID3D12CommandQueue& queue)
 	{
 		assert(commandList && commandAllocator);
-		ID3D12CommandList* lists[] = { commandList.Get() };
+		ID3D12CommandList* lists[]{ commandList.Get() };
 		queue.ExecuteCommandLists(1, lists);
 	}
 

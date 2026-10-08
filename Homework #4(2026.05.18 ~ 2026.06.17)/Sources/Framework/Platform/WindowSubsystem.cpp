@@ -30,7 +30,7 @@ namespace TUK::Framework
 		assert(options.size.GetX() > 0 && options.size.GetY() > 0);
 		if (!windowClass || hasExitRequest)
 		{
-			return std::unexpected(std::string{ "창 서브시스템이 초기화되지 않았거나 종료 중입니다." });
+			return std::unexpected(std::string("창 서브시스템이 초기화되지 않았거나 종료 중입니다."));
 		}
 
 		WindowOptions resolvedOptions = options;

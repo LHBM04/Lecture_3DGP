@@ -44,12 +44,12 @@ namespace TUK::Framework
 	{
 		if (fence || completionEvent)
 		{
-			return std::unexpected(std::string{ "Fence가 이미 초기화되어 있습니다." });
+			return std::unexpected(std::string("Fence가 이미 초기화되어 있습니다."));
 		}
 		// UINT64_MAX는 디바이스 제거를 나타내는 완료 값이다.
 		if (initialValue == (std::numeric_limits<UINT64>::max)())
 		{
-			return std::unexpected(std::string{ "Fence의 초기 값으로 UINT64_MAX를 사용할 수 없습니다." });
+			return std::unexpected(std::string("Fence의 초기 값으로 UINT64_MAX를 사용할 수 없습니다."));
 		}
 		Microsoft::WRL::ComPtr<ID3D12Fence> createdFence;
 		const auto result = CheckHResult(renderDevice.CreateFence(initialValue, flags,
@@ -86,7 +86,7 @@ namespace TUK::Framework
 		}
 		if (value >= (std::numeric_limits<UINT64>::max)() - 1)
 		{
-			return std::unexpected(std::string{ "Fence 신호 값을 더 증가시킬 수 없습니다." });
+			return std::unexpected(std::string("Fence 신호 값을 더 증가시킬 수 없습니다."));
 		}
 		const UINT64 nextValue = value + 1;
 		const auto result = CheckHResult(queue.Signal(fence.Get(), nextValue), "펜스 신호 전송");
@@ -109,7 +109,7 @@ namespace TUK::Framework
 		const UINT64 completedValue = fence->GetCompletedValue();
 		if (completedValue == (std::numeric_limits<UINT64>::max)())
 		{
-			return std::unexpected(std::string{ "Fence 완료 조회 중 디바이스가 제거되었습니다." });
+			return std::unexpected(std::string("Fence 완료 조회 중 디바이스가 제거되었습니다."));
 		}
 		return completedValue >= value;
 	}
