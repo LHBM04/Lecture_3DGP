@@ -1,16 +1,9 @@
 ﻿#include "Precompiled.h"
+#include "Mathf.h"
 #include "Vector4D.h"
 
 #include "Vector2D.h"
 #include "Vector3D.h"
-
-namespace
-{
-	float ScalarLerp(float a, float b, float t) noexcept
-	{
-		return a + t * (b - a);
-	}
-}
 
 namespace TUK::Framework
 {
@@ -639,7 +632,7 @@ namespace TUK::Framework
 		
 		    relative /= relativeMag;
 		    const Vector4D<TValue> direction{ from * std::cos(theta) + relative * std::sin(theta) };
-		    const float magnitude{ ScalarLerp(aMag, bMag, t_) };
+		    const float magnitude{ Mathf::Lerp(aMag, bMag, t_) };
 		
 		    return direction * magnitude;
 	}
