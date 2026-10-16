@@ -213,6 +213,13 @@
     <ClInclude Include="Public\Framework\Platform\DisplayOptions.hpp" />
     <ClInclude Include="Public\Framework\Platform\DisplaySubsystem.hpp" />
     <ClInclude Include="Private\Graphics\GraphicsDevice_Impl.hpp" />
+    <ClInclude Include="Private\Math\ColorRGB_Impl.hpp" />
+    <ClInclude Include="Private\Math\ColorRGBA_Impl.hpp" />
+    <ClInclude Include="Private\Math\Matrix4x4_Impl.hpp" />
+    <ClInclude Include="Private\Math\Quaternion_Impl.hpp" />
+    <ClInclude Include="Private\Math\Vector2D_Impl.hpp" />
+    <ClInclude Include="Private\Math\Vector3D_Impl.hpp" />
+    <ClInclude Include="Private\Math\Vector4D_Impl.hpp" />
     <ClInclude Include="Private\Precompiled.hpp" />
     <ClInclude Include="Public\Framework\Graphics.hpp" />
     <ClInclude Include="Public\Framework\Math.hpp" />

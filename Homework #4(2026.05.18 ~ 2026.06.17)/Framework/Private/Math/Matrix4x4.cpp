@@ -1,12 +1,10 @@
-﻿#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <iterator>
-#include <numbers>
-#include <utility>
+#include "Precompiled.hpp"
 #include "Matrix4x4.hpp"
 
 #include "Quaternion.hpp"
+#include "Matrix4x4_Impl.hpp"
+#include "Quaternion_Impl.hpp"
+#include "Vector3D_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -106,18 +104,27 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::operator*(const Matrix4x4<TValue>& other) const noexcept
 	{
-		Matrix4x4<TValue> result(TValue{});
-		for (std::size_t row = 0; row < 4; ++row)
+		if constexpr (std::same_as<TValue, float>)
 		{
-			for (std::size_t column = 0; column < 4; ++column)
+			Matrix4x4<TValue> result;
+			Store(result, DirectX::XMMatrixMultiply(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			Matrix4x4<TValue> result(TValue{});
+			for (std::size_t row = 0; row < 4; ++row)
 			{
-				for (std::size_t element = 0; element < 4; ++element)
+				for (std::size_t column = 0; column < 4; ++column)
 				{
-					result[row * 4 + column] += (*this)[row * 4 + element] * other[element * 4 + column];
+					for (std::size_t element = 0; element < 4; ++element)
+					{
+						result[row * 4 + column] += (*this)[row * 4 + element] * other[element * 4 + column];
+					}
 				}
 			}
+			return result;
 		}
-		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -191,34 +198,30 @@ namespace TUK::Framework
 	float Matrix4x4<TValue>::GetDeterminant() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		double determinant = 0.0;
-		for (std::size_t column = 0; column < 4; ++column)
-		{
-			double minor[9];
-			std::size_t target = 0;
-			for (std::size_t row = 1; row < 4; ++row)
-				for (std::size_t c = 0; c < 4; ++c)
-					if (c != column) minor[target++] = (*this)[row * 4 + c];
-			const double det3 = minor[0] * (minor[4] * minor[8] - minor[5] * minor[7])
-				- minor[1] * (minor[3] * minor[8] - minor[5] * minor[6])
-				+ minor[2] * (minor[3] * minor[7] - minor[4] * minor[6]);
-			determinant += (column % 2 == 0 ? 1.0 : -1.0) * (*this)[column] * det3;
-		}
-		return static_cast<float>(determinant);
+		return DirectX::XMVectorGetX(DirectX::XMMatrixDeterminant(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::GetTranspose() const noexcept
 	{
-		Matrix4x4<TValue> result(TValue{});
-		for (std::size_t row = 0; row < 4; ++row)
+		if constexpr (std::same_as<TValue, float>)
 		{
-			for (std::size_t column = 0; column < 4; ++column)
-			{
-				result[row * 4 + column] = (*this)[column * 4 + row];
-			}
+			Matrix4x4<TValue> result;
+			Store(result, DirectX::XMMatrixTranspose(Load(*this)));
+			return result;
 		}
-		return result;
+		else
+		{
+			Matrix4x4<TValue> result(TValue{});
+			for (std::size_t row = 0; row < 4; ++row)
+			{
+				for (std::size_t column = 0; column < 4; ++column)
+				{
+					result[row * 4 + column] = (*this)[column * 4 + row];
+				}
+			}
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -318,28 +321,46 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector3D<TValue> Matrix4x4<TValue>::MultiplyPoint3x4(const Vector3D<TValue>& point) const noexcept
 	{
-		return Vector3D<TValue>(
-			point.GetX() * (*this)[0] + point.GetY() * (*this)[4] + point.GetZ() * (*this)[8] + (*this)[12],
-			point.GetX() * (*this)[1] + point.GetY() * (*this)[5] + point.GetZ() * (*this)[9] + (*this)[13],
-			point.GetX() * (*this)[2] + point.GetY() * (*this)[6] + point.GetZ() * (*this)[10] + (*this)[14]);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVector3Transform(Load(point), Load(*this)));
+			return result;
+		}
+		else
+		{
+			return Vector3D<TValue>(
+				point.GetX() * (*this)[0] + point.GetY() * (*this)[4] + point.GetZ() * (*this)[8] + (*this)[12],
+				point.GetX() * (*this)[1] + point.GetY() * (*this)[5] + point.GetZ() * (*this)[9] + (*this)[13],
+				point.GetX() * (*this)[2] + point.GetY() * (*this)[6] + point.GetZ() * (*this)[10] + (*this)[14]);
+		}
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<float> Matrix4x4<TValue>::MultiplyPoint(const Vector3D<float>& point) const noexcept
 		requires std::same_as<TValue, float>
 	{
-		const auto transformed = MultiplyPoint3x4(point);
-		const float w = point.GetX() * values[3] + point.GetY() * values[7] + point.GetZ() * values[11] + values[15];
-		return Vector3D<float>(transformed.GetX() / w, transformed.GetY() / w, transformed.GetZ() / w);
+		Vector3D<float> result;
+		Store(result, DirectX::XMVector3TransformCoord(Load(point), Load(*this)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Matrix4x4<TValue>::MultiplyVector(const Vector3D<TValue>& vector) const noexcept
 	{
-		return Vector3D<TValue>(
-			vector.GetX() * (*this)[0] + vector.GetY() * (*this)[4] + vector.GetZ() * (*this)[8],
-			vector.GetX() * (*this)[1] + vector.GetY() * (*this)[5] + vector.GetZ() * (*this)[9],
-			vector.GetX() * (*this)[2] + vector.GetY() * (*this)[6] + vector.GetZ() * (*this)[10]);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVector3TransformNormal(Load(vector), Load(*this)));
+			return result;
+		}
+		else
+		{
+			return Vector3D<TValue>(
+				vector.GetX() * (*this)[0] + vector.GetY() * (*this)[4] + vector.GetZ() * (*this)[8],
+				vector.GetX() * (*this)[1] + vector.GetY() * (*this)[5] + vector.GetZ() * (*this)[9],
+				vector.GetX() * (*this)[2] + vector.GetY() * (*this)[6] + vector.GetZ() * (*this)[10]);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -498,97 +519,102 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Translate(const Vector3D<TValue>& translation) noexcept
 	{
-		Matrix4x4<TValue> result{};
-		result[12] = translation.GetX();
-		result[13] = translation.GetY();
-		result[14] = translation.GetZ();
-		return result;
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Matrix4x4<TValue> result;
+			Store(result, DirectX::XMMatrixTranslationFromVector(Load(translation)));
+			return result;
+		}
+		else
+		{
+			Matrix4x4<TValue> result{};
+			result[12] = translation.GetX();
+			result[13] = translation.GetY();
+			result[14] = translation.GetZ();
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Rotate(const Quaternion<TValue>& rotation) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float x = rotation.GetX(), y = rotation.GetY(), z = rotation.GetZ(), w = rotation.GetW();
-		return Matrix4x4(
-			1.0f - 2.0f * (y * y + z * z), 2.0f * (x * y + z * w), 2.0f * (x * z - y * w), 0.0f,
-			2.0f * (x * y - z * w), 1.0f - 2.0f * (x * x + z * z), 2.0f * (y * z + x * w), 0.0f,
-			2.0f * (x * z + y * w), 2.0f * (y * z - x * w), 1.0f - 2.0f * (x * x + y * y), 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixRotationQuaternion(Load(rotation)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Scale(const Vector3D<TValue>& scale) noexcept
 	{
-		Matrix4x4<TValue> result{};
-		result[0] = scale.GetX();
-		result[5] = scale.GetY();
-		result[10] = scale.GetZ();
-		return result;
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Matrix4x4<TValue> result;
+			Store(result, DirectX::XMMatrixScalingFromVector(Load(scale)));
+			return result;
+		}
+		else
+		{
+			Matrix4x4<TValue> result{};
+			result[0] = scale.GetX();
+			result[5] = scale.GetY();
+			result[10] = scale.GetZ();
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::TRS(const Vector3D<float>& translation, const Quaternion<TValue>& rotation, const Vector3D<float>& scale) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Scale(scale) * Rotate(rotation) * Translate(translation);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixAffineTransformation(Load(scale), DirectX::XMVectorZero(), Load(rotation), Load(translation)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::LookAt(const Vector3D<float>& from, const Vector3D<float>& to, const Vector3D<float>& up) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const auto forward = Vector3D<float>::Normalize(to - from);
-		const auto right = Vector3D<float>::Normalize(Vector3D<float>::Cross(up, forward));
-		const auto vertical = Vector3D<float>::Cross(forward, right);
-		return Matrix4x4(
-			right.GetX(), vertical.GetX(), forward.GetX(), 0.0f,
-			right.GetY(), vertical.GetY(), forward.GetY(), 0.0f,
-			right.GetZ(), vertical.GetZ(), forward.GetZ(), 0.0f,
-			-Vector3D<float>::Dot(right, from), -Vector3D<float>::Dot(vertical, from), -Vector3D<float>::Dot(forward, from), 1.0f);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixLookAtLH(Load(from), Load(to), Load(up)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Perspective(float fovYDegrees, float aspect, float nearZ, float farZ) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float height = 1.0f / std::tan(fovYDegrees * (std::numbers::pi_v<float> / 360.0f));
-		const float depth = farZ / (farZ - nearZ);
-		return Matrix4x4(height / aspect, 0.0f, 0.0f, 0.0f,
-			0.0f, height, 0.0f, 0.0f,
-			0.0f, 0.0f, depth, 1.0f,
-			0.0f, 0.0f, -nearZ * depth, 0.0f);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fovYDegrees), aspect, nearZ, farZ));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Frustum(float left, float right, float bottom, float top, float nearZ, float farZ) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float width = right - left, height = top - bottom;
-		const float depth = farZ / (farZ - nearZ);
-		return Matrix4x4(2.0f * nearZ / width, 0.0f, 0.0f, 0.0f,
-			0.0f, 2.0f * nearZ / height, 0.0f, 0.0f,
-			-(left + right) / width, -(top + bottom) / height, depth, 1.0f,
-			0.0f, 0.0f, -nearZ * depth, 0.0f);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixPerspectiveOffCenterLH(left, right, bottom, top, nearZ, farZ));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Ortho(float left, float right, float bottom, float top, float nearZ, float farZ) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float width = right - left, height = top - bottom;
-		const float depth = 1.0f / (farZ - nearZ);
-		return Matrix4x4(2.0f / width, 0.0f, 0.0f, 0.0f,
-			0.0f, 2.0f / height, 0.0f, 0.0f,
-			0.0f, 0.0f, depth, 0.0f,
-			-(left + right) / width, -(top + bottom) / height, -nearZ * depth, 1.0f);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixOrthographicOffCenterLH(left, right, bottom, top, nearZ, farZ));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Matrix4x4<TValue> Matrix4x4<TValue>::Ortho(float width, float height, float nearZ, float farZ) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Ortho(-width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f, nearZ, farZ);
+		Matrix4x4<TValue> result;
+		Store(result, DirectX::XMMatrixOrthographicLH(width, height, nearZ, farZ));
+		return result;
 	}
 
 	template <IsNumeric TValue>

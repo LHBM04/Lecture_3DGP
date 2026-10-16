@@ -1,12 +1,9 @@
-﻿#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <iterator>
-#include <numbers>
-#include <utility>
+#include "Precompiled.hpp"
 #include "Quaternion.hpp"
 
 #include "Matrix4x4.hpp"
+#include "Quaternion_Impl.hpp"
+#include "Vector3D_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -99,7 +96,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Quaternion<TValue> Quaternion<TValue>::operator+(const Quaternion<TValue>& _other) const noexcept
 	{
-		return Quaternion<TValue>(values[0] + _other.values[0], values[1] + _other.values[1], values[2] + _other.values[2], values[3] + _other.values[3]);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Quaternion<TValue> result;
+			Store(result, DirectX::XMVectorAdd(Load(*this), Load(_other)));
+			return result;
+		}
+		else
+		{
+			return Quaternion<TValue>(values[0] + _other.values[0], values[1] + _other.values[1], values[2] + _other.values[2], values[3] + _other.values[3]);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -112,7 +118,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Quaternion<TValue> Quaternion<TValue>::operator-(const Quaternion<TValue>& _other) const noexcept
 	{
-		return Quaternion<TValue>(values[0] - _other.values[0], values[1] - _other.values[1], values[2] - _other.values[2], values[3] - _other.values[3]);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Quaternion<TValue> result;
+			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(_other)));
+			return result;
+		}
+		else
+		{
+			return Quaternion<TValue>(values[0] - _other.values[0], values[1] - _other.values[1], values[2] - _other.values[2], values[3] - _other.values[3]);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -125,27 +140,44 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Quaternion<TValue> Quaternion<TValue>::operator*(TValue _scalar) const noexcept
 	{
-		return Quaternion<TValue>(values[0] * _scalar, values[1] * _scalar, values[2] * _scalar, values[3] * _scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Quaternion<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), _scalar));
+			return result;
+		}
+		else
+		{
+			return Quaternion<TValue>(values[0] * _scalar, values[1] * _scalar, values[2] * _scalar, values[3] * _scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
 	Quaternion<TValue> Quaternion<TValue>::operator*(const Quaternion<TValue>& _other) const noexcept
 	{
-		return Quaternion<TValue>(
-			_other.values[3] * values[0] + _other.values[0] * values[3] + _other.values[1] * values[2] - _other.values[2] * values[1],
-			_other.values[3] * values[1] - _other.values[0] * values[2] + _other.values[1] * values[3] + _other.values[2] * values[0],
-			_other.values[3] * values[2] + _other.values[0] * values[1] - _other.values[1] * values[0] + _other.values[2] * values[3],
-			_other.values[3] * values[3] - _other.values[0] * values[0] - _other.values[1] * values[1] - _other.values[2] * values[2]);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Quaternion<TValue> result;
+			Store(result, DirectX::XMQuaternionMultiply(Load(*this), Load(_other)));
+			return result;
+		}
+		else
+		{
+			return Quaternion<TValue>(
+				_other.values[3] * values[0] + _other.values[0] * values[3] + _other.values[1] * values[2] - _other.values[2] * values[1],
+				_other.values[3] * values[1] - _other.values[0] * values[2] + _other.values[1] * values[3] + _other.values[2] * values[0],
+				_other.values[3] * values[2] + _other.values[0] * values[1] - _other.values[1] * values[0] + _other.values[2] * values[3],
+				_other.values[3] * values[3] - _other.values[0] * values[0] - _other.values[1] * values[1] - _other.values[2] * values[2]);
+		}
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<float> Quaternion<TValue>::operator*(const Vector3D<float>& vector) const noexcept
 		requires std::same_as<TValue, float>
 	{
-		const Vector3D<float> imaginary(GetX(), GetY(), GetZ());
-		return imaginary * (2.0f * Vector3D<float>::Dot(imaginary, vector))
-			+ vector * (GetW() * GetW() - imaginary.GetSqrMagnitude())
-			+ Vector3D<float>::Cross(imaginary, vector) * (2.0f * GetW());
+		Vector3D<float> result;
+		Store(result, DirectX::XMVector3Rotate(Load(vector), Load(*this)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -166,7 +198,16 @@ namespace TUK::Framework
 	Quaternion<TValue> Quaternion<TValue>::operator/(TValue _scalar) const noexcept
 	{
 		assert(_scalar != TValue{});
-		return Quaternion<TValue>(values[0] / _scalar, values[1] / _scalar, values[2] / _scalar, values[3] / _scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Quaternion<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / _scalar));
+			return result;
+		}
+		else
+		{
+			return Quaternion<TValue>(values[0] / _scalar, values[1] / _scalar, values[2] / _scalar, values[3] / _scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -296,14 +337,14 @@ namespace TUK::Framework
 	float Quaternion<TValue>::GetMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::sqrt(GetSqrMagnitude());
+		return DirectX::XMVectorGetX(DirectX::XMQuaternionLength(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
 	float Quaternion<TValue>::GetSqrMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Dot(*this, *this);
+		return DirectX::XMVectorGetX(DirectX::XMQuaternionLengthSq(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
@@ -392,10 +433,9 @@ namespace TUK::Framework
 	Quaternion<TValue> Quaternion<TValue>::Normalize(const Quaternion<TValue>& rotation) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float length = rotation.GetMagnitude();
-		if (length == 0.0f) return Quaternion(TValue{});
-		if (std::isinf(length)) return Quaternion(std::numeric_limits<float>::quiet_NaN());
-		return rotation / length;
+		Quaternion<TValue> result;
+		Store(result, DirectX::XMQuaternionNormalize(Load(rotation)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -423,26 +463,21 @@ namespace TUK::Framework
 	Quaternion<TValue> Quaternion<TValue>::AngleAxis(float angleDegrees, Vector3D<float> axis) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const auto normalizedAxis = Vector3D<float>::Normalize(axis);
-		const float halfAngle = angleDegrees * (std::numbers::pi_v<float> / 360.0f);
-		const float sine = std::sin(halfAngle);
-		return Quaternion(normalizedAxis.GetX() * sine, normalizedAxis.GetY() * sine,
-			normalizedAxis.GetZ() * sine, std::cos(halfAngle));
+		Quaternion<TValue> result;
+		Store(result, DirectX::XMQuaternionRotationNormal(DirectX::XMVector3Normalize(Load(axis)), DirectX::XMConvertToRadians(angleDegrees)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Quaternion<TValue> Quaternion<TValue>::Euler(float xDegrees, float yDegrees, float zDegrees) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float factor = std::numbers::pi_v<float> / 360.0f;
-		const float sp = std::sin(xDegrees * factor), cp = std::cos(xDegrees * factor);
-		const float sy = std::sin(yDegrees * factor), cy = std::cos(yDegrees * factor);
-		const float sr = std::sin(zDegrees * factor), cr = std::cos(zDegrees * factor);
-		// Row-vector convention: roll, then pitch, then yaw.
-		return Quaternion(cr * sp * cy + sr * cp * sy,
-			cr * cp * sy - sr * sp * cy,
-			sr * cp * cy - cr * sp * sy,
-			cr * cp * cy + sr * sp * sy);
+		Quaternion<TValue> result;
+		Store(result, DirectX::XMQuaternionRotationRollPitchYaw(
+			DirectX::XMConvertToRadians(xDegrees),
+			DirectX::XMConvertToRadians(yDegrees),
+			DirectX::XMConvertToRadians(zDegrees)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -458,21 +493,25 @@ namespace TUK::Framework
 	{
 		const float lengthSquared = rotation.GetSqrMagnitude();
 		if (lengthSquared <= std::numeric_limits<float>::epsilon()) return Quaternion(TValue{});
-		return Conjugate(rotation) / lengthSquared;
+		Quaternion<TValue> result;
+		Store(result, DirectX::XMQuaternionInverse(Load(rotation)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Quaternion<TValue> Quaternion<TValue>::Conjugate(const Quaternion<TValue>& rotation) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Quaternion(-rotation.GetX(), -rotation.GetY(), -rotation.GetZ(), rotation.GetW());
+		Quaternion<TValue> result;
+		Store(result, DirectX::XMQuaternionConjugate(Load(rotation)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	float Quaternion<TValue>::Dot(const Quaternion<TValue>& a, const Quaternion<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a.GetX() * b.GetX() + a.GetY() * b.GetY() + a.GetZ() * b.GetZ() + a.GetW() * b.GetW();
+		return DirectX::XMVectorGetX(DirectX::XMQuaternionDot(Load(a), Load(b)));
 	}
 
 	template <IsNumeric TValue>
@@ -500,14 +539,9 @@ namespace TUK::Framework
 	Quaternion<TValue> Quaternion<TValue>::SlerpUnclamped(const Quaternion<TValue>& a, const Quaternion<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float dot = Dot(a, b);
-		const float sign = dot < 0.0f ? -1.0f : 1.0f;
-		const float cosine = std::clamp(std::abs(dot), 0.0f, 1.0f);
-		if (cosine >= 1.0f - 0.00001f) return a * (1.0f - t) + b * (sign * t);
-		const float angle = std::acos(cosine);
-		const float sine = std::sin(angle);
-		return a * (std::sin((1.0f - t) * angle) / sine)
-			+ b * (sign * std::sin(t * angle) / sine);
+		Quaternion<TValue> result;
+		Store(result, DirectX::XMQuaternionSlerp(Load(a), Load(b), t));
+		return result;
 	}
 
 	template <IsNumeric TValue>

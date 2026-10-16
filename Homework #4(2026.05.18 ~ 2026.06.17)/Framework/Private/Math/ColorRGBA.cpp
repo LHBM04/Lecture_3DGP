@@ -1,7 +1,8 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
 #include "ColorRGB.hpp"
+#include "ColorRGBA_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -102,7 +103,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator+(const ColorRGBA<TValue>& other) const noexcept
 	{
-		return ColorRGBA<TValue>(values[0] + other.values[0], values[1] + other.values[1], values[2] + other.values[2], values[3] + other.values[3]);
+		if constexpr (std::same_as<TValue, int>)
+		{
+			return ColorRGBA<TValue>(values[0] + other.values[0], values[1] + other.values[1], values[2] + other.values[2], values[3] + other.values[3]);
+		}
+		else
+		{
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -115,7 +125,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator-(const ColorRGBA<TValue>& other) const noexcept
 	{
-		return ColorRGBA<TValue>(values[0] - other.values[0], values[1] - other.values[1], values[2] - other.values[2], values[3] - other.values[3]);
+		if constexpr (std::same_as<TValue, int>)
+		{
+			return ColorRGBA<TValue>(values[0] - other.values[0], values[1] - other.values[1], values[2] - other.values[2], values[3] - other.values[3]);
+		}
+		else
+		{
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -128,13 +147,31 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(const ColorRGBA<TValue>& other) const noexcept
 	{
-		return ColorRGBA<TValue>(values[0] * other.values[0], values[1] * other.values[1], values[2] * other.values[2], values[3] * other.values[3]);
+		if constexpr (std::same_as<TValue, int>)
+		{
+			return ColorRGBA<TValue>(values[0] * other.values[0], values[1] * other.values[1], values[2] * other.values[2], values[3] * other.values[3]);
+		}
+		else
+		{
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorMultiply(Load(*this), Load(other)));
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(TValue scalar) const noexcept
 	{
-		return ColorRGBA<TValue>(values[0] * scalar, values[1] * scalar, values[2] * scalar, values[3] * scalar);
+		if constexpr (std::same_as<TValue, int>)
+		{
+			return ColorRGBA<TValue>(values[0] * scalar, values[1] * scalar, values[2] * scalar, values[3] * scalar);
+		}
+		else
+		{
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -155,7 +192,16 @@ namespace TUK::Framework
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator/(TValue scalar) const noexcept
 	{
 		assert(scalar != TValue{});
-		return ColorRGBA<TValue>(values[0] / scalar, values[1] / scalar, values[2] / scalar, values[3] / scalar);
+		if constexpr (std::same_as<TValue, int>)
+		{
+			return ColorRGBA<TValue>(values[0] / scalar, values[1] / scalar, values[2] / scalar, values[3] / scalar);
+		}
+		else
+		{
+			ColorRGBA<TValue> result{};
+			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
+			return result;
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -400,7 +446,9 @@ namespace TUK::Framework
 	ColorRGBA<TValue> ColorRGBA<TValue>::Lerp(const ColorRGBA<TValue>& start, const ColorRGBA<TValue>& end, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return start + (end - start) * t;
+		ColorRGBA<TValue> result;
+		Store(result, DirectX::XMVectorLerp(Load(start), Load(end), t));
+		return result;
 	}
 
 	template class ColorRGBA<int>;

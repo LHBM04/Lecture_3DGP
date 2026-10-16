@@ -1,7 +1,8 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "ColorRGB.hpp"
 
 #include "ColorRGBA.hpp"
+#include "ColorRGB_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -441,10 +442,9 @@ namespace TUK::Framework
 	ColorRGB<TValue> ColorRGB<TValue>::LerpUnclamped(const ColorRGB<TValue>& a, const ColorRGB<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return ColorRGB<TValue>(
-			Mathf::Lerp(a.values[0], b.values[0], t),
-			Mathf::Lerp(a.values[1], b.values[1], t),
-			Mathf::Lerp(a.values[2], b.values[2], t));
+		ColorRGB<TValue> result{};
+		Store(result, DirectX::XMVectorLerp(Load(a), Load(b), t));
+		return result;
 	}
 
 	template class ColorRGB<int>;

@@ -1,8 +1,9 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Vector3D.hpp"
 
 #include "Vector2D.hpp"
 #include "Vector4D.hpp"
+#include "Vector3D_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -117,7 +118,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::operator+(const Vector3D& other) const noexcept
 	{
-		return Vector3D(GetX() + other.GetX(), GetY() + other.GetY(), GetZ() + other.GetZ());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			return Vector3D(GetX() + other.GetX(), GetY() + other.GetY(), GetZ() + other.GetZ());
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -130,13 +140,31 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::operator-() const noexcept
 	{
-		return Vector3D(-GetX(), -GetY(), -GetZ());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVectorNegate(Load(*this)));
+			return result;
+		}
+		else
+		{
+			return Vector3D(-GetX(), -GetY(), -GetZ());
+		}
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::operator-(const Vector3D& other) const noexcept
 	{
-		return Vector3D(GetX() - other.GetX(), GetY() - other.GetY(), GetZ() - other.GetZ());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			return Vector3D(GetX() - other.GetX(), GetY() - other.GetY(), GetZ() - other.GetZ());
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -149,7 +177,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::operator*(TValue scalar) const noexcept
 	{
-		return Vector3D(GetX() * scalar, GetY() * scalar, GetZ() * scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
+			return result;
+		}
+		else
+		{
+			return Vector3D(GetX() * scalar, GetY() * scalar, GetZ() * scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -162,7 +199,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::operator/(TValue scalar) const noexcept
 	{
-		return Vector3D(GetX() / scalar, GetY() / scalar, GetZ() / scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector3D<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
+			return result;
+		}
+		else
+		{
+			return Vector3D(GetX() / scalar, GetY() / scalar, GetZ() / scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -246,14 +292,14 @@ namespace TUK::Framework
 	float Vector3D<TValue>::GetMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::sqrt(GetSqrMagnitude());
+		return DirectX::XMVectorGetX(DirectX::XMVector3Length(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
 	float Vector3D<TValue>::GetSqrMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Dot(*this, *this);
+		return DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
@@ -381,25 +427,27 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::Max(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()), std::max(a.GetZ(), b.GetZ()));
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVectorMax(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::Min(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()), std::min(a.GetZ(), b.GetZ()));
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVectorMin(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::Clamp(const Vector3D<TValue>& value, const Vector3D<TValue>& min, const Vector3D<TValue>& max) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(
-				std::clamp(value.GetX(), min.GetX(), max.GetX()),
-				std::clamp(value.GetY(), min.GetY(), max.GetY()),
-				std::clamp(value.GetZ(), min.GetZ(), max.GetZ())
-			);
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVectorClamp(Load(value), Load(min), Load(max)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -420,17 +468,18 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::Scale(const Vector3D<TValue>& vector, const Vector3D<TValue>& scale) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D<TValue>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY(), vector.GetZ() * scale.GetZ());
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVectorMultiply(Load(vector), Load(scale)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::Normalize(const Vector3D<TValue>& value) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float length = value.GetMagnitude();
-		if (length == 0.0f) return GetZero();
-		if (std::isinf(length)) return Vector3D(std::numeric_limits<float>::quiet_NaN());
-		return value / length;
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVector3Normalize(Load(value)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -454,17 +503,16 @@ namespace TUK::Framework
 	float Vector3D<TValue>::Dot(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a.GetX() * b.GetX() + a.GetY() * b.GetY() + a.GetZ() * b.GetZ();
+		return DirectX::XMVectorGetX(DirectX::XMVector3Dot(Load(a), Load(b)));
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::Cross(const Vector3D<TValue>& a, const Vector3D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector3D(
-			a.GetY() * b.GetZ() - a.GetZ() * b.GetY(),
-			a.GetZ() * b.GetX() - a.GetX() * b.GetZ(),
-			a.GetX() * b.GetY() - a.GetY() * b.GetX());
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVector3Cross(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -519,17 +567,18 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::Reflect(const Vector3D<TValue>& _vector, const Vector3D<TValue>& _normal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return _vector - _normal * (2.0f * Dot(_vector, _normal));
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVector3Reflect(Load(_vector), Load(_normal)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector3D<TValue> Vector3D<TValue>::Refract(const Vector3D<TValue>& _vector, const Vector3D<TValue>& _normal, float _eta) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float dot = Dot(_vector, _normal);
-		const float discriminant = 1.0f - _eta * _eta * (1.0f - dot * dot);
-		if (discriminant <= 0.0f) return GetZero();
-		return _vector * _eta - _normal * (_eta * dot + std::sqrt(discriminant));
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVector3Refract(Load(_vector), Load(_normal), _eta));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -543,7 +592,9 @@ namespace TUK::Framework
 	Vector3D<TValue> Vector3D<TValue>::LerpUnclamped(const Vector3D<TValue>& a, const Vector3D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a + (b - a) * t;
+		Vector3D<TValue> result;
+		Store(result, DirectX::XMVectorLerp(Load(a), Load(b), t));
+		return result;
 	}
 
 	template <IsNumeric TValue>

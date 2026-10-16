@@ -1,8 +1,9 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Vector4D.hpp"
 
 #include "Vector2D.hpp"
 #include "Vector3D.hpp"
+#include "Vector4D_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -121,7 +122,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::operator+(const Vector4D& other) const noexcept
 	{
-		return Vector4D(GetX() + other.GetX(), GetY() + other.GetY(), GetZ() + other.GetZ(), GetW() + other.GetW());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector4D<TValue> result;
+			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			return Vector4D(GetX() + other.GetX(), GetY() + other.GetY(), GetZ() + other.GetZ(), GetW() + other.GetW());
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -134,13 +144,31 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::operator-() const noexcept
 	{
-		return Vector4D(-GetX(), -GetY(), -GetZ(), -GetW());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector4D<TValue> result;
+			Store(result, DirectX::XMVectorNegate(Load(*this)));
+			return result;
+		}
+		else
+		{
+			return Vector4D(-GetX(), -GetY(), -GetZ(), -GetW());
+		}
 	}
 
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::operator-(const Vector4D& other) const noexcept
 	{
-		return Vector4D(GetX() - other.GetX(), GetY() - other.GetY(), GetZ() - other.GetZ(), GetW() - other.GetW());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector4D<TValue> result;
+			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			return Vector4D(GetX() - other.GetX(), GetY() - other.GetY(), GetZ() - other.GetZ(), GetW() - other.GetW());
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -153,7 +181,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::operator*(TValue scalar) const noexcept
 	{
-		return Vector4D(GetX() * scalar, GetY() * scalar, GetZ() * scalar, GetW() * scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector4D<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
+			return result;
+		}
+		else
+		{
+			return Vector4D(GetX() * scalar, GetY() * scalar, GetZ() * scalar, GetW() * scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -166,7 +203,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::operator/(TValue scalar) const noexcept
 	{
-		return Vector4D(GetX() / scalar, GetY() / scalar, GetZ() / scalar, GetW() / scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector4D<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
+			return result;
+		}
+		else
+		{
+			return Vector4D(GetX() / scalar, GetY() / scalar, GetZ() / scalar, GetW() / scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -267,14 +313,14 @@ namespace TUK::Framework
 	float Vector4D<TValue>::GetMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::sqrt(GetSqrMagnitude());
+		return DirectX::XMVectorGetX(DirectX::XMVector4Length(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
 	float Vector4D<TValue>::GetSqrMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Dot(*this, *this);
+		return DirectX::XMVectorGetX(DirectX::XMVector4LengthSq(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
@@ -367,26 +413,27 @@ namespace TUK::Framework
 	Vector4D<TValue> Vector4D<TValue>::Max(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector4D<TValue>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()), std::max(a.GetZ(), b.GetZ()), std::max(a.GetW(), b.GetW()));
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVectorMax(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::Min(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector4D<TValue>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()), std::min(a.GetZ(), b.GetZ()), std::min(a.GetW(), b.GetW()));
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVectorMin(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::Clamp(const Vector4D<TValue>& value, const Vector4D<TValue>& min, const Vector4D<TValue>& max) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector4D<TValue>(
-				std::clamp(value.GetX(), min.GetX(), max.GetX()),
-				std::clamp(value.GetY(), min.GetY(), max.GetY()),
-				std::clamp(value.GetZ(), min.GetZ(), max.GetZ()),
-				std::clamp(value.GetW(), min.GetW(), max.GetW())
-			);
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVectorClamp(Load(value), Load(min), Load(max)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -407,24 +454,25 @@ namespace TUK::Framework
 	Vector4D<TValue> Vector4D<TValue>::Scale(const Vector4D<TValue>& vector, const Vector4D<TValue>& scale) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector4D<TValue>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY(), vector.GetZ() * scale.GetZ(), vector.GetW() * scale.GetW());
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVectorMultiply(Load(vector), Load(scale)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector4D<TValue> Vector4D<TValue>::Normalize(const Vector4D<TValue>& value) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float length = value.GetMagnitude();
-		if (length == 0.0f) return GetZero();
-		if (std::isinf(length)) return Vector4D(std::numeric_limits<float>::quiet_NaN());
-		return value / length;
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVector4Normalize(Load(value)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	float Vector4D<TValue>::Dot(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a.GetX() * b.GetX() + a.GetY() * b.GetY() + a.GetZ() * b.GetZ() + a.GetW() * b.GetW();
+		return DirectX::XMVectorGetX(DirectX::XMVector4Dot(Load(a), Load(b)));
 	}
 
 	template <IsNumeric TValue>
@@ -462,7 +510,9 @@ namespace TUK::Framework
 	Vector4D<TValue> Vector4D<TValue>::Reflect(const Vector4D<TValue>& vector, const Vector4D<TValue>& normal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return vector - normal * (2.0f * Dot(vector, normal));
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVector4Reflect(Load(vector), Load(normal)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -476,7 +526,9 @@ namespace TUK::Framework
 	Vector4D<TValue> Vector4D<TValue>::LerpUnclamped(const Vector4D<TValue>& a, const Vector4D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a + (b - a) * t;
+		Vector4D<TValue> result;
+		Store(result, DirectX::XMVectorLerp(Load(a), Load(b), t));
+		return result;
 	}
 
 	template <IsNumeric TValue>

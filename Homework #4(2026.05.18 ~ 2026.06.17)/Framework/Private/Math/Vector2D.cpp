@@ -1,8 +1,9 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Vector2D.hpp"
 
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
+#include "Vector2D_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -113,7 +114,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator+(const Vector2D& other) const noexcept
 	{
-		return Vector2D(GetX() + other.GetX(), GetY() + other.GetY());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector2D<TValue> result;
+			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			return Vector2D(GetX() + other.GetX(), GetY() + other.GetY());
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -126,13 +136,31 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator-() const noexcept
 	{
-		return Vector2D(-GetX(), -GetY());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector2D<TValue> result;
+			Store(result, DirectX::XMVectorNegate(Load(*this)));
+			return result;
+		}
+		else
+		{
+			return Vector2D(-GetX(), -GetY());
+		}
 	}
 
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator-(const Vector2D& other) const noexcept
 	{
-		return Vector2D(GetX() - other.GetX(), GetY() - other.GetY());
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector2D<TValue> result;
+			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
+			return result;
+		}
+		else
+		{
+			return Vector2D(GetX() - other.GetX(), GetY() - other.GetY());
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -145,7 +173,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator*(TValue scalar) const noexcept
 	{
-		return Vector2D(GetX() * scalar, GetY() * scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector2D<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
+			return result;
+		}
+		else
+		{
+			return Vector2D(GetX() * scalar, GetY() * scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -158,7 +195,16 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator/(TValue scalar) const noexcept
 	{
-		return Vector2D(GetX() / scalar, GetY() / scalar);
+		if constexpr (std::same_as<TValue, float>)
+		{
+			Vector2D<TValue> result;
+			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
+			return result;
+		}
+		else
+		{
+			return Vector2D(GetX() / scalar, GetY() / scalar);
+		}
 	}
 
 	template <IsNumeric TValue>
@@ -225,14 +271,14 @@ namespace TUK::Framework
 	float Vector2D<TValue>::GetMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return std::sqrt(GetSqrMagnitude());
+		return DirectX::XMVectorGetX(DirectX::XMVector2Length(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
 	float Vector2D<TValue>::GetSqrMagnitude() const noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Dot(*this, *this);
+		return DirectX::XMVectorGetX(DirectX::XMVector2LengthSq(Load(*this)));
 	}
 
 	template <IsNumeric TValue>
@@ -346,24 +392,27 @@ namespace TUK::Framework
 	Vector2D<TValue> Vector2D<TValue>::Max(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector2D<TValue>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()));
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVectorMax(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::Min(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector2D<TValue>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()));
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVectorMin(Load(a), Load(b)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::Clamp(const Vector2D<TValue>& value, const Vector2D<TValue>& min, const Vector2D<TValue>& max) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector2D<TValue>(
-				std::clamp(value.GetX(), min.GetX(), max.GetX()),
-				std::clamp(value.GetY(), min.GetY(), max.GetY())
-			);
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVectorClamp(Load(value), Load(min), Load(max)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -384,32 +433,33 @@ namespace TUK::Framework
 	Vector2D<TValue> Vector2D<TValue>::Scale(const Vector2D<TValue>& vector, const Vector2D<TValue>& scale) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return Vector2D<TValue>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY());
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVectorMultiply(Load(vector), Load(scale)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::Normalize(const Vector2D<TValue>& value) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float length = value.GetMagnitude();
-		if (length == 0.0f) return GetZero();
-		if (std::isinf(length)) return Vector2D(std::numeric_limits<float>::quiet_NaN());
-		return value / length;
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVector2Normalize(Load(value)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
 	float Vector2D<TValue>::Dot(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a.GetX() * b.GetX() + a.GetY() * b.GetY();
+		return DirectX::XMVectorGetX(DirectX::XMVector2Dot(Load(a), Load(b)));
 	}
 
 	template <IsNumeric TValue>
 	Vector2D<TValue> Vector2D<TValue>::Cross(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
 		requires std::same_as<TValue, float>
 	{
-		const float z = a.GetX() * b.GetY() - a.GetY() * b.GetX();
-			return Vector2D<TValue>(0.0f, z);
+		const float z = DirectX::XMVectorGetX(DirectX::XMVector2Cross(Load(a), Load(b)));
+		return Vector2D<TValue>(0.0f, z);
 	}
 
 	template <IsNumeric TValue>
@@ -449,7 +499,9 @@ namespace TUK::Framework
 	Vector2D<TValue> Vector2D<TValue>::Reflect(const Vector2D<TValue>& vector, const Vector2D<TValue>& normal) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return vector - normal * (2.0f * Dot(vector, normal));
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVector2Reflect(Load(vector), Load(normal)));
+		return result;
 	}
 
 	template <IsNumeric TValue>
@@ -463,7 +515,9 @@ namespace TUK::Framework
 	Vector2D<TValue> Vector2D<TValue>::LerpUnclamped(const Vector2D<TValue>& a, const Vector2D<TValue>& b, float t) noexcept
 		requires std::same_as<TValue, float>
 	{
-		return a + (b - a) * t;
+		Vector2D<TValue> result;
+		Store(result, DirectX::XMVectorLerp(Load(a), Load(b), t));
+		return result;
 	}
 
 	template <IsNumeric TValue>
