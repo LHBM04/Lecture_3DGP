@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Public">
+      <UniqueIdentifier>{f9be7768-ef9d-4f44-95a4-6ebcec2263e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{746561d2-8430-4fb0-a06f-8abf8adc259e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Framework">
+      <UniqueIdentifier>{29006ca2-d687-4562-be47-eaec1fb8e52f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Framework\Math">
+      <UniqueIdentifier>{d7b05ca4-ff65-453d-8888-0b7b1a5c50a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Framework\Platform">
+      <UniqueIdentifier>{f5ffae65-6159-4329-9137-f72136050eae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Framework\Core">
+      <UniqueIdentifier>{9e315336-b807-41dc-b594-2c8223c7227e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Framework\Graphics">
+      <UniqueIdentifier>{eb4ed366-9ea1-4484-8f8f-4dd50423ae22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Framework\Entities">
+      <UniqueIdentifier>{1a03d213-edf5-4820-a694-40e3e41f2efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Entities">
+      <UniqueIdentifier>{356caa5e-01ac-46f6-a624-348a3bf9df9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Platform">
+      <UniqueIdentifier>{8cb06ad7-d6d1-43d5-b42d-6130d0505766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Core">
+      <UniqueIdentifier>{e9babd4f-aa86-4bf0-b48d-bf8591ada8d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Graphics">
+      <UniqueIdentifier>{ccb06428-ced9-46b2-9ee4-a3dcfd0dce8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Math">
+      <UniqueIdentifier>{346aef9b-dabd-41f0-812d-d45fd087130b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Public\Framework\Math\ColorRGB.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\ColorRGBA.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\Mathf.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\Matrix4x4.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\Quaternion.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\Vector2D.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\Vector3D.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math\Vector4D.hpp">
+      <Filter>Public\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\TimeSubsystem.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\Window.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\WindowOptions.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\WindowSubsystem.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\Engine.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\EngineSubsystem.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\Game.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\GameSubsystem.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\Subsystem.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\System.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Buffer.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\CommandBuffer.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\ComputePipeline.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\GraphicsDevice.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\GraphicsPipeline.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Material.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Mesh.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\MeshRenderer.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Pipeline.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\RenderSubsystem.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\RenderTarget.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Shader.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\SwapChain.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Texture.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Entities\Component.hpp">
+      <Filter>Public\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Entities\Entity.hpp">
+      <Filter>Public\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Entities\Transform.hpp">
+      <Filter>Public\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Entities\World.hpp">
+      <Filter>Public\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Entities\WorldSubsystem.hpp">
+      <Filter>Public\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Graphics\GraphicsDeviceImpl.hpp">
+      <Filter>Private\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics.hpp">
+      <Filter>Public\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Math.hpp">
+      <Filter>Public\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Precompiled.hpp">
+      <Filter>Private</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Private\Platform\TimeSubsystem.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\Window.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\WindowSubsystem.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Entities\Component.cpp">
+      <Filter>Private\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Entities\Entity.cpp">
+      <Filter>Private\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Entities\Transform.cpp">
+      <Filter>Private\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Entities\World.cpp">
+      <Filter>Private\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Entities\WorldSubsystem.cpp">
+      <Filter>Private\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\Engine.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\EngineSubsystem.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\Entry.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\Game.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\GameSubsystem.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\Subsystem.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\System.cpp">
+      <Filter>Private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\Buffer.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\CommandBuffer.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\ComputePipeline.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\GraphicsPipeline.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\Mesh.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\MeshRenderer.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\RenderSubsystem.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\RenderTarget.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\Shader.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\SwapChain.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\Texture.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\ColorRGB.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\ColorRGBA.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\Matrix4x4.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\Quaternion.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\Vector2D.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\Vector3D.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Math\Vector4D.cpp">
+      <Filter>Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\GraphicsDeviceImpl.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Precompiled.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
