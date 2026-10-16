@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ColorRGBA.hpp"
 #include "Component.hpp"
