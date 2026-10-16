@@ -1,5 +1,4 @@
-﻿#ifndef TUK_GRAPHICS_RENDERTARGET_IMPL
-#define TUK_GRAPHICS_RENDERTARGET_IMPL
+#pragma once
 
 #include "Framework/Graphics/RenderTarget.hpp"
 
@@ -13,5 +12,3 @@ namespace TUK::Framework
 	private:
 	};
 }
-
-#endif

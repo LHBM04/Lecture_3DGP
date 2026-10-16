@@ -1,5 +1,4 @@
-﻿#ifndef TUK_GRAPHICS_SWAPCHAINIMPL
-#define TUK_GRAPHICS_SWAPCHAINIMPL
+#pragma once
 
 #include <dxgi1_6.h>
 
@@ -23,5 +22,3 @@ namespace TUK::Framework
 		IDXGISwapChain4* dxgiSwapChain;
 	};
 }
-
-#endif // !TUK_GRAPHICS_SWAPCHAINIMPL

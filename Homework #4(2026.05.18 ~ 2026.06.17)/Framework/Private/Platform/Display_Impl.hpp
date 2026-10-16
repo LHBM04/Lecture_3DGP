@@ -1,5 +1,4 @@
-﻿#ifndef TUK_PLATFORM_WINDOW_IMPL
-#define TUK_PLATFORM_WINDOW_IMPL
+#pragma once
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -38,5 +37,3 @@ namespace TUK::Framework
 		HWND hWnd;
 	};
 }
-
-#endif
