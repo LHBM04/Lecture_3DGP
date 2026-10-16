@@ -2,7 +2,7 @@
 
 #include "Framework/Core/Game.hpp"
 
-#include "Framework/Platform/Window.hpp"
+#include "Framework/Platform/Display.hpp"
 
 namespace TUK::Game
 {
@@ -20,6 +20,6 @@ namespace TUK::Game
 		void RequireWindow();
 		void RequireScenes();
 
-		Framework::Window* window = nullptr;
+		Framework::Display* window = nullptr;
 	};
 }

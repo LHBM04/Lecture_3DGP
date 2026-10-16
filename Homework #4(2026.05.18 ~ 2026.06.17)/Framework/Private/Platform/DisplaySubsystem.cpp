@@ -62,7 +62,7 @@ namespace TUK::Framework
 		}
 	}
 
-	std::expected<std::reference_wrapper<Window>, std::string> WindowSubsystem::Create(const WindowOptions& options)
+	std::expected<std::reference_wrapper<Window>, std::string> WindowSubsystem::Create(const DisplayOptions& options)
 	{
 		std::unique_ptr<Window> newWindow = std::unique_ptr<Window>(new Window_Impl(nullptr));
 

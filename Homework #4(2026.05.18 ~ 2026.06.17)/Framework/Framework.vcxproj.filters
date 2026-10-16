@@ -69,13 +69,13 @@
     <ClInclude Include="Public\Framework\Platform\TimeSubsystem.hpp">
       <Filter>Public\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Framework\Platform\Window.hpp">
+    <ClInclude Include="Public\Framework\Platform\Display.hpp">
       <Filter>Public\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Framework\Platform\WindowOptions.hpp">
+    <ClInclude Include="Public\Framework\Platform\DisplayOptions.hpp">
       <Filter>Public\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Framework\Platform\WindowSubsystem.hpp">
+    <ClInclude Include="Public\Framework\Platform\DisplaySubsystem.hpp">
       <Filter>Public\Framework\Platform</Filter>
     </ClInclude>
     <ClInclude Include="Public\Framework\Core\Engine.hpp">
@@ -165,15 +165,10 @@
     <ClInclude Include="Private\Precompiled.hpp">
       <Filter>Private</Filter>
     </ClInclude>
+    <ClInclude Include="Private\Platform\Display_Impl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Platform\TimeSubsystem.cpp">
-      <Filter>Private\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Platform\Window.cpp">
-      <Filter>Private\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Platform\WindowSubsystem.cpp">
       <Filter>Private\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Private\Entities\Component.cpp">

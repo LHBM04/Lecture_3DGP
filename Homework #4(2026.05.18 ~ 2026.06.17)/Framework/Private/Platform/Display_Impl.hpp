@@ -8,11 +8,11 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "Framework/Platform/Window.hpp"
+#include "Framework/Platform/Display.hpp"
 
 namespace TUK::Framework
 {
-	class Window_Impl : public Window
+	class Window_Impl : public Display
 	{
 	public:
 		explicit Window_Impl(HWND hWnd) noexcept;

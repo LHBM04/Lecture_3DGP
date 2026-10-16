@@ -10,8 +10,8 @@
 
 namespace TUK::Framework
 {
-	class Window;
-	class WindowSubsystem;
+	class Display;
+	class DisplaySubsystem;
 
 	class RenderSubsystem : public EngineSubsystem
 	{
@@ -19,7 +19,7 @@ namespace TUK::Framework
 		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
 
-		void RegisterWindow(const Window& window);
+		void RegisterWindow(const Display& window);
 
 	protected:
 		void OnStartup() override;

@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "MyGame.hpp"
 
-#include "Framework/Platform/WindowOptions.hpp"
-#include "Framework/Platform/WindowSubsystem.hpp"
+#include "Framework/Platform/DisplayOptions.hpp"
+#include "Framework/Platform/DisplaySubsystem.hpp"
 
 #include "Framework/Graphics/RenderSubsystem.hpp"
 
@@ -35,16 +35,16 @@ namespace TUK::Game
 
 	void MyGame::RequireWindow()
 	{
-		WindowOptions options{};
+		DisplayOptions options{};
 		options.caption = TEXT("Homework #4(2026.05.18 ~ 2026.06.17)");
 		options.position = Framework::Vector2D(100, 100);
 		options.size = Framework::Vector2D(1280, 960);
 		options.style = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 
-		WindowSubsystem* windowSubsystem = MyEngine::GetInstance()->GetSubsystem<WindowSubsystem>();
+		DisplaySubsystem* windowSubsystem = MyEngine::GetInstance()->GetSubsystem<DisplaySubsystem>();
 		assert(windowSubsystem);
 
-		auto created = windowSubsystem->Create(options);
+		auto created = windowSubsystem->CreateDisplay(options);
 		if (!created)
 		{
 			ReportError(created.error());

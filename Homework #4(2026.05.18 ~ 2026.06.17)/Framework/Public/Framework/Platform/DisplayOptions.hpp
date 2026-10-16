@@ -2,21 +2,18 @@
 
 #include <string>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <Windows.h>
-
 #include "../Math/Vector2D.hpp"
 
 namespace TUK::Framework
 {
-	struct WindowOptions final
+	struct DisplayOptions final
 	{
-		LPCTSTR caption;
+#if defined(_UNICODE) || defined(UNICODE)
+		std::wstring caption;
+#else
+		std::string caption;
+#endif
 		Vector2D<int> position;
 		Vector2D<int> size;
-		DWORD style;
 	};
 }

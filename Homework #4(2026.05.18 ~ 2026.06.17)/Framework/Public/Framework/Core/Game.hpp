@@ -2,7 +2,7 @@
 
 #include <concepts>
 
-#include "../Platform/WindowOptions.hpp"
+#include "../Platform/DisplayOptions.hpp"
 
 #include "GameSubsystem.hpp"
 #include "System.hpp"

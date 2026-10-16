@@ -3,23 +3,23 @@
 #include <string>
 #include <string_view>
 
-#include "WindowOptions.hpp"
+#include "DisplayOptions.hpp"
 
 namespace TUK::Framework
 {
-	class Window
+	class Display
 	{
 		friend class EventSubsystem;
-		friend class WindowSubsystem;
+		friend class DisplaySubsystem;
 
 	public:
-		virtual ~Window() noexcept = default;
+		virtual ~Display() noexcept = default;
 
-		Window(const Window&) = delete;
-		Window& operator=(const Window&) = delete;
+		Display(const Display&) = delete;
+		Display& operator=(const Display&) = delete;
 
-		Window(Window&&) = default;
-		Window& operator=(Window&&) = default
+		Display(Display&&) = default;
+		Display& operator=(Display&&) = default;
 
 #if defined(_UNICODE) || defined(UNICODE)
 		[[nodiscard]] virtual const std::wstring& GetCaption() const = 0;
@@ -36,7 +36,7 @@ namespace TUK::Framework
 		virtual void SetSize(const Vector2D<int>& size) noexcept = 0;
 
 	protected:
-		Window() noexcept = default;
+		Display() noexcept = default;
 	};
 }
 
