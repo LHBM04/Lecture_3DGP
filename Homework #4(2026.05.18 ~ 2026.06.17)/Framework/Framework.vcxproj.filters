@@ -153,9 +153,6 @@
     <ClInclude Include="Public\Framework\Entities\WorldSubsystem.hpp">
       <Filter>Public\Framework\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Graphics\GraphicsDeviceImpl.hpp">
-      <Filter>Private\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Framework\Graphics.hpp">
       <Filter>Public\Framework</Filter>
     </ClInclude>
@@ -165,7 +162,40 @@
     <ClInclude Include="Private\Precompiled.hpp">
       <Filter>Private</Filter>
     </ClInclude>
+    <ClInclude Include="Private\Graphics\RenderTarget_Impl.hpp" />
+    <ClInclude Include="Private\Graphics\SwapChain_Impl.hpp" />
     <ClInclude Include="Private\Platform\Display_Impl.hpp" />
+    <ClInclude Include="Private\Graphics\GraphicsDevice_Impl.hpp" />
+    <ClInclude Include="Public\Framework\Core.hpp">
+      <Filter>Public\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Entities.hpp">
+      <Filter>Public\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform.hpp">
+      <Filter>Public\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\ColorRGB_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\ColorRGBA_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\Matrix4x4_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\Quaternion_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\Vector2D_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\Vector3D_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Math\Vector4D_Impl.hpp">
+      <Filter>Private\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Platform\TimeSubsystem.cpp">
@@ -207,39 +237,6 @@
     <ClCompile Include="Private\Core\System.cpp">
       <Filter>Private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Graphics\Buffer.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\CommandBuffer.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\ComputePipeline.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\GraphicsPipeline.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\Mesh.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\MeshRenderer.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\RenderSubsystem.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\RenderTarget.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\Shader.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\SwapChain.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Graphics\Texture.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Private\Math\ColorRGB.cpp">
       <Filter>Private\Math</Filter>
     </ClCompile>
@@ -261,11 +258,12 @@
     <ClCompile Include="Private\Math\Vector4D.cpp">
       <Filter>Private\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Graphics\GraphicsDeviceImpl.cpp">
-      <Filter>Private\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Private\Precompiled.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp" />
+    <ClCompile Include="Private\Platform\DisplaySubsystem.cpp" />
+    <ClCompile Include="Private\Graphics\GraphicsDevice_Impl.cpp" />
+    <ClCompile Include="Private\Platform\Display_Impl.cpp" />
   </ItemGroup>
 </Project>
