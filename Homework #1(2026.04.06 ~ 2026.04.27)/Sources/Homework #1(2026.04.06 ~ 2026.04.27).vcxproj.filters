@@ -7,235 +7,235 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{dc4671f2-8c10-4bc1-85ec-4740ca3e151c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Header Files">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{a5af3994-cd2a-4e79-b754-102b99c2cfb6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Source Files">
+    <Filter Include="Source Files">
       <UniqueIdentifier>{7418616a-36eb-4cf8-9685-9eb708dd5085}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Bullet.cpp">
+    <ClCompile Include="Bullet.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Camera.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CameraController.cpp">
+    <ClCompile Include="CameraController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Collider.cpp">
+    <ClCompile Include="Collider.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CollisionBox.cpp">
+    <ClCompile Include="CollisionBox.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CollisionFrustum.cpp">
+    <ClCompile Include="CollisionFrustum.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CollisionSphere.cpp">
+    <ClCompile Include="CollisionSphere.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ColorRGB.cpp">
+    <ClCompile Include="ColorRGB.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ColorRGBA.cpp">
+    <ClCompile Include="ColorRGBA.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Component.cpp">
+    <ClCompile Include="Component.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Input.cpp">
+    <ClCompile Include="Input.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Logger.cpp">
+    <ClCompile Include="Logger.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Matrix4x4.cpp">
+    <ClCompile Include="Matrix4x4.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Mesh.cpp">
+    <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\MeshRenderer.cpp">
+    <ClCompile Include="MeshRenderer.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object.cpp">
+    <ClCompile Include="Object.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ObstacleSpawner.cpp">
+    <ClCompile Include="ObstacleSpawner.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\OrthographicsCamera.cpp">
+    <ClCompile Include="OrthographicsCamera.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Particle.cpp">
+    <ClCompile Include="Particle.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\PerspectiveCamera.cpp">
+    <ClCompile Include="PerspectiveCamera.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\PlayerMovement.cpp">
+    <ClCompile Include="PlayerMovement.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Precompiled.cpp">
+    <ClCompile Include="Precompiled.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Quaternion.cpp">
+    <ClCompile Include="Quaternion.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Renderer.cpp">
+    <ClCompile Include="Renderer.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\RotatingObstacle.cpp">
+    <ClCompile Include="RotatingObstacle.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene.cpp">
+    <ClCompile Include="Scene.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Game.cpp">
+    <ClCompile Include="Scene_Game.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\TextView.cpp">
+    <ClCompile Include="TextView.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Timer.cpp">
+    <ClCompile Include="Timer.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Transform.cpp">
+    <ClCompile Include="Transform.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Vector2D.cpp">
+    <ClCompile Include="Vector2D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Vector3D.cpp">
+    <ClCompile Include="Vector3D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Vector4D.cpp">
+    <ClCompile Include="Vector4D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Window.cpp">
+    <ClCompile Include="Window.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Bullet.hpp">
+    <ClInclude Include="Bullet.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Camera.hpp">
+    <ClInclude Include="Camera.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CameraController.hpp">
+    <ClInclude Include="CameraController.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Collider.hpp">
+    <ClInclude Include="Collider.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CollisionBox.hpp">
+    <ClInclude Include="CollisionBox.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CollisionFrustum.hpp">
+    <ClInclude Include="CollisionFrustum.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CollisionSphere.hpp">
+    <ClInclude Include="CollisionSphere.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ColorRGB.hpp">
+    <ClInclude Include="ColorRGB.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ColorRGBA.hpp">
+    <ClInclude Include="ColorRGBA.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Component.hpp">
+    <ClInclude Include="Component.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Input.hpp">
+    <ClInclude Include="Input.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Logger.hpp">
+    <ClInclude Include="Logger.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Math.hpp">
+    <ClInclude Include="Math.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Matrix4x4.hpp">
+    <ClInclude Include="Matrix4x4.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Mesh.hpp">
+    <ClInclude Include="Mesh.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MeshRenderer.hpp">
+    <ClInclude Include="MeshRenderer.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object.hpp">
+    <ClInclude Include="Object.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ObstacleSpawner.hpp">
+    <ClInclude Include="ObstacleSpawner.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\OrthographicsCamera.hpp">
+    <ClInclude Include="OrthographicsCamera.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Particle.hpp">
+    <ClInclude Include="Particle.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PerspectiveCamera.hpp">
+    <ClInclude Include="PerspectiveCamera.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PlayerMovement.hpp">
+    <ClInclude Include="PlayerMovement.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Precompiled.hpp">
+    <ClInclude Include="Precompiled.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Quaternion.hpp">
+    <ClInclude Include="Quaternion.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Renderer.hpp">
+    <ClInclude Include="Renderer.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\RotatingObstacle.hpp">
+    <ClInclude Include="RotatingObstacle.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene.hpp">
+    <ClInclude Include="Scene.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Game.hpp">
+    <ClInclude Include="Scene_Game.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\TextView.hpp">
+    <ClInclude Include="TextView.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Timer.hpp">
+    <ClInclude Include="Timer.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Transform.hpp">
+    <ClInclude Include="Transform.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vector2D.hpp">
+    <ClInclude Include="Vector2D.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vector3D.hpp">
+    <ClInclude Include="Vector3D.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vector4D.hpp">
+    <ClInclude Include="Vector4D.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Window.hpp">
+    <ClInclude Include="Window.hpp">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Resources\Airplane.obj">
+    <Text Include="..\Resources\Airplane.obj">
       <Filter>Resources</Filter>
     </Text>
-    <Text Include="Resources\Cube.obj">
+    <Text Include="..\Resources\Cube.obj">
       <Filter>Resources</Filter>
     </Text>
-    <Text Include="Resources\Sphere.obj">
+    <Text Include="..\Resources\Sphere.obj">
       <Filter>Resources</Filter>
     </Text>
   </ItemGroup>

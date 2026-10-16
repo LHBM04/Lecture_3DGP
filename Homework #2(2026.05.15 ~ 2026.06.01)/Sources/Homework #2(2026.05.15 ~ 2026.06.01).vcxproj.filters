@@ -7,352 +7,352 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{2e11dd9a-ab51-46d3-b07e-db2138fb4d13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Header Files">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{a34e4bd2-ef31-4aa2-a282-377f45c3eb00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Source Files">
+    <Filter Include="Source Files">
       <UniqueIdentifier>{8a3775ec-04de-40ad-a7f8-9ef65761f71e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Shaders">
+    <Filter Include="..\Resources\Shaders">
       <UniqueIdentifier>{eab1ef25-5d60-4cc9-afa3-d58cf10048c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Materials">
+    <Filter Include="..\Resources\Materials">
       <UniqueIdentifier>{38b8df1b-9156-43ac-8e43-7e6eb2c2bf4c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Meshes">
+    <Filter Include="..\Resources\Meshes">
       <UniqueIdentifier>{08e2fe9b-47a4-4fc4-9e5e-ff3175267bea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Scenes">
+    <Filter Include="..\Resources\Scenes">
       <UniqueIdentifier>{f9d486a4-6cbc-4f99-9fda-cf56b15fe974}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Precompiled.cpp">
+    <ClCompile Include="Precompiled.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\RenderSystem.cpp">
+    <ClCompile Include="RenderSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\InputSystem.cpp">
+    <ClCompile Include="InputSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Vector4D.cpp">
+    <ClCompile Include="Vector4D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Vector3D.cpp">
+    <ClCompile Include="Vector3D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Vector2D.cpp">
+    <ClCompile Include="Vector2D.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Quaternion.cpp">
+    <ClCompile Include="Quaternion.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Matrix4x4.cpp">
+    <ClCompile Include="Matrix4x4.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ColorRGBA.cpp">
+    <ClCompile Include="ColorRGBA.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ColorRGB.cpp">
+    <ClCompile Include="ColorRGB.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SceneSystem.cpp">
+    <ClCompile Include="SceneSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene.cpp">
+    <ClCompile Include="Scene.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\GameObject.cpp">
+    <ClCompile Include="GameObject.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Title.cpp">
+    <ClCompile Include="Scene_Title.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Camera.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Transform.cpp">
+    <ClCompile Include="Transform.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CubeCollider.cpp">
+    <ClCompile Include="CubeCollider.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Light.cpp">
+    <ClCompile Include="Light.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Material.cpp">
+    <ClCompile Include="Material.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\MenuSceneController.cpp">
+    <ClCompile Include="MenuSceneController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Mesh.cpp">
+    <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Resource.cpp">
+    <ClCompile Include="Resource.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ResourceSystem.cpp">
+    <ClCompile Include="ResourceSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Shader.cpp">
+    <ClCompile Include="Shader.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\SphereCollider.cpp">
+    <ClCompile Include="SphereCollider.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\CameraController.cpp">
+    <ClCompile Include="CameraController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Collider.cpp">
+    <ClCompile Include="Collider.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Component.cpp">
+    <ClCompile Include="Component.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\MeshRenderer.cpp">
+    <ClCompile Include="MeshRenderer.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\PhysicsSystem.cpp">
+    <ClCompile Include="PhysicsSystem.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\PlayerController.cpp">
+    <ClCompile Include="PlayerController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\PlayerProjectile.cpp">
+    <ClCompile Include="PlayerProjectile.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Stage1.cpp">
+    <ClCompile Include="Scene_Stage1.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Menu.cpp">
+    <ClCompile Include="Scene_Menu.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\StairCollider.cpp">
+    <ClCompile Include="StairCollider.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\EnemyController.cpp">
+    <ClCompile Include="EnemyController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ExplodeParticle.cpp">
+    <ClCompile Include="ExplodeParticle.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\TitleSceneController.cpp">
+    <ClCompile Include="TitleSceneController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene_Stage2.cpp">
+    <ClCompile Include="Scene_Stage2.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\StageSceneController.cpp">
+    <ClCompile Include="StageSceneController.cpp">
       <Filter>Sources\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Precompiled.h">
+    <ClInclude Include="Precompiled.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Singleton.h">
+    <ClInclude Include="Singleton.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\RenderSystem.h">
+    <ClInclude Include="RenderSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\InputSystem.h">
+    <ClInclude Include="InputSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vector4D.h">
+    <ClInclude Include="Vector4D.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vector3D.h">
+    <ClInclude Include="Vector3D.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vector2D.h">
+    <ClInclude Include="Vector2D.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Quaternion.h">
+    <ClInclude Include="Quaternion.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Matrix4x4.h">
+    <ClInclude Include="Matrix4x4.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ColorRGBA.h">
+    <ClInclude Include="ColorRGBA.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ColorRGB.h">
+    <ClInclude Include="ColorRGB.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MathF.h">
+    <ClInclude Include="MathF.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MenuSceneController.h">
+    <ClInclude Include="MenuSceneController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene.h">
+    <ClInclude Include="Scene.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Logger.h">
+    <ClInclude Include="Logger.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\GameObject.h">
+    <ClInclude Include="GameObject.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Component.h">
+    <ClInclude Include="Component.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Title.h">
+    <ClInclude Include="Scene_Title.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Camera.h">
+    <ClInclude Include="Camera.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Transform.h">
+    <ClInclude Include="Transform.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Collider.h">
+    <ClInclude Include="Collider.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CubeCollider.h">
+    <ClInclude Include="CubeCollider.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Mesh.h">
+    <ClInclude Include="Mesh.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Light.h">
+    <ClInclude Include="Light.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Resource.h">
+    <ClInclude Include="Resource.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ResourceSystem.h">
+    <ClInclude Include="ResourceSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\SceneSystem.h">
+    <ClInclude Include="SceneSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Shader.h">
+    <ClInclude Include="Shader.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\SphereCollider.h">
+    <ClInclude Include="SphereCollider.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\CameraController.h">
+    <ClInclude Include="CameraController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MeshRenderer.h">
+    <ClInclude Include="MeshRenderer.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PhysicsSystem.h">
+    <ClInclude Include="PhysicsSystem.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PlayerController.h">
+    <ClInclude Include="PlayerController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\PlayerProjectile.h">
+    <ClInclude Include="PlayerProjectile.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Stage1.h">
+    <ClInclude Include="Scene_Stage1.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Menu.h">
+    <ClInclude Include="Scene_Menu.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\StairCollider.h">
+    <ClInclude Include="StairCollider.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\EnemyController.h">
+    <ClInclude Include="EnemyController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ExplodeParticle.h">
+    <ClInclude Include="ExplodeParticle.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\TitleSceneController.h">
+    <ClInclude Include="TitleSceneController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Scene_Stage2.h">
+    <ClInclude Include="Scene_Stage2.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\StageSceneController.h">
+    <ClInclude Include="StageSceneController.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Material.h">
+    <ClInclude Include="Material.h">
       <Filter>Sources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\Floor_Day.bin">
+    <None Include="..\Resources\Materials\Floor_Day.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\Floor_Night.bin">
+    <None Include="..\Resources\Materials\Floor_Night.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\PlayerProjectile.bin">
+    <None Include="..\Resources\Materials\PlayerProjectile.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\Crosshair.bin">
+    <None Include="..\Resources\Materials\Crosshair.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\Wall_Day.bin">
+    <None Include="..\Resources\Materials\Wall_Day.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\Wall_Night.bin">
+    <None Include="..\Resources\Materials\Wall_Night.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Meshes\Floor.bin">
+    <None Include="..\Resources\Meshes\Floor.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Day.bin">
+    <None Include="..\Resources\Meshes\Day.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Night.bin">
+    <None Include="..\Resources\Meshes\Night.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Player.bin">
+    <None Include="..\Resources\Meshes\Player.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Wall.bin">
+    <None Include="..\Resources\Meshes\Wall.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Cube.bin">
+    <None Include="..\Resources\Meshes\Cube.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Button.bin">
+    <None Include="..\Resources\Meshes\Button.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Title.bin">
+    <None Include="..\Resources\Meshes\Title.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Shaders\GameObject.hlsl">
+    <None Include="..\Resources\Shaders\GameObject.hlsl">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="Resources\Shaders\UIObject.hlsl">
+    <None Include="..\Resources\Shaders\UIObject.hlsl">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="Resources\Meshes\Sphere.bin">
+    <None Include="..\Resources\Meshes\Sphere.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Meshes\Crosshair.bin">
+    <None Include="..\Resources\Meshes\Crosshair.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Scenes\Scene_Stage1.bin">
+    <None Include="..\Resources\Scenes\Scene_Stage1.bin">
       <Filter>Resources\Scenes</Filter>
     </None>
-    <None Include="Resources\Meshes\Stair.bin">
+    <None Include="..\Resources\Meshes\Stair.bin">
       <Filter>Resources\Meshes</Filter>
     </None>
-    <None Include="Resources\Shaders\DeferredLighting.hlsl">
+    <None Include="..\Resources\Shaders\DeferredLighting.hlsl">
       <Filter>Resources\Shaders</Filter>
     </None>
-    <None Include="Resources\Scenes\Scene_Stage2.bin">
+    <None Include="..\Resources\Scenes\Scene_Stage2.bin">
       <Filter>Resources\Scenes</Filter>
     </None>
-    <None Include="Resources\Materials\Stair_Day.bin">
+    <None Include="..\Resources\Materials\Stair_Day.bin">
       <Filter>Resources\Materials</Filter>
     </None>
-    <None Include="Resources\Materials\Stair_Night.bin">
+    <None Include="..\Resources\Materials\Stair_Night.bin">
       <Filter>Resources\Materials</Filter>
     </None>
   </ItemGroup>

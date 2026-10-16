@@ -5,7 +5,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Homework #3(2026.05.18 ~ 2026.06.08).vcxproj">
+  <Project Path="Sources/Homework #3(2026.05.18 ~ 2026.06.08).vcxproj">
     <Platform Solution="*|x86" Project="Win32" />
   </Project>
 </Solution>

@@ -71,20 +71,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\Caches\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -94,7 +98,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -115,7 +119,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -134,7 +138,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -155,7 +159,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)Sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
@@ -167,133 +171,133 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Camera.cpp" />
-    <ClCompile Include="Sources\CameraController.cpp" />
-    <ClCompile Include="Sources\Collider.cpp" />
-    <ClCompile Include="Sources\ColorRGB.cpp" />
-    <ClCompile Include="Sources\ColorRGBA.cpp" />
-    <ClCompile Include="Sources\Component.cpp" />
-    <ClCompile Include="Sources\CubeCollider.cpp" />
-    <ClCompile Include="Sources\EnemyController.cpp" />
-    <ClCompile Include="Sources\ExplodeParticle.cpp" />
-    <ClCompile Include="Sources\GameObject.cpp" />
-    <ClCompile Include="Sources\InputSystem.cpp" />
-    <ClCompile Include="Sources\Light.cpp" />
-    <ClCompile Include="Sources\Main.cpp" />
-    <ClCompile Include="Sources\Material.cpp" />
-    <ClCompile Include="Sources\MenuSceneController.cpp" />
-    <ClCompile Include="Sources\Matrix4x4.cpp" />
-    <ClCompile Include="Sources\PlayerController.cpp" />
-    <ClCompile Include="Sources\PlayerProjectile.cpp" />
-    <ClCompile Include="Sources\Precompiled.cpp">
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColorRGB.cpp" />
+    <ClCompile Include="ColorRGBA.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CubeCollider.cpp" />
+    <ClCompile Include="EnemyController.cpp" />
+    <ClCompile Include="ExplodeParticle.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MenuSceneController.cpp" />
+    <ClCompile Include="Matrix4x4.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="PlayerProjectile.cpp" />
+    <ClCompile Include="Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Sources\Mesh.cpp" />
-    <ClCompile Include="Sources\MeshRenderer.cpp" />
-    <ClCompile Include="Sources\PhysicsSystem.cpp" />
-    <ClCompile Include="Sources\Quaternion.cpp" />
-    <ClCompile Include="Sources\RenderSystem.cpp" />
-    <ClCompile Include="Sources\Resource.cpp" />
-    <ClCompile Include="Sources\ResourceSystem.cpp" />
-    <ClCompile Include="Sources\Scene.cpp" />
-    <ClCompile Include="Sources\SceneSystem.cpp" />
-    <ClCompile Include="Sources\Scene_Stage1.cpp" />
-    <ClCompile Include="Sources\Scene_Menu.cpp" />
-    <ClCompile Include="Sources\Scene_Title.cpp" />
-    <ClCompile Include="Sources\Shader.cpp" />
-    <ClCompile Include="Sources\SphereCollider.cpp" />
-    <ClCompile Include="Sources\Scene_Stage2.cpp" />
-    <ClCompile Include="Sources\StageSceneController.cpp" />
-    <ClCompile Include="Sources\StairCollider.cpp" />
-    <ClCompile Include="Sources\Transform.cpp" />
-    <ClCompile Include="Sources\TitleSceneController.cpp" />
-    <ClCompile Include="Sources\Vector2D.cpp" />
-    <ClCompile Include="Sources\Vector3D.cpp" />
-    <ClCompile Include="Sources\Vector4D.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceSystem.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneSystem.cpp" />
+    <ClCompile Include="Scene_Stage1.cpp" />
+    <ClCompile Include="Scene_Menu.cpp" />
+    <ClCompile Include="Scene_Title.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="Scene_Stage2.cpp" />
+    <ClCompile Include="StageSceneController.cpp" />
+    <ClCompile Include="StairCollider.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TitleSceneController.cpp" />
+    <ClCompile Include="Vector2D.cpp" />
+    <ClCompile Include="Vector3D.cpp" />
+    <ClCompile Include="Vector4D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Camera.h" />
-    <ClInclude Include="Sources\CameraController.h" />
-    <ClInclude Include="Sources\Collider.h" />
-    <ClInclude Include="Sources\ColorRGB.h" />
-    <ClInclude Include="Sources\ColorRGBA.h" />
-    <ClInclude Include="Sources\Component.h" />
-    <ClInclude Include="Sources\CubeCollider.h" />
-    <ClInclude Include="Sources\EnemyController.h" />
-    <ClInclude Include="Sources\ExplodeParticle.h" />
-    <ClInclude Include="Sources\GameObject.h" />
-    <ClInclude Include="Sources\InputSystem.h" />
-    <ClInclude Include="Sources\Light.h" />
-    <ClInclude Include="Sources\Logger.h" />
-    <ClInclude Include="Sources\Material.h" />
-    <ClInclude Include="Sources\MathF.h" />
-    <ClInclude Include="Sources\Matrix4x4.h" />
-    <ClInclude Include="Sources\MenuSceneController.h" />
-    <ClInclude Include="Sources\Mesh.h" />
-    <ClInclude Include="Sources\MeshRenderer.h" />
-    <ClInclude Include="Sources\PhysicsSystem.h" />
-    <ClInclude Include="Sources\PlayerController.h" />
-    <ClInclude Include="Sources\PlayerProjectile.h" />
-    <ClInclude Include="Sources\Precompiled.h" />
-    <ClInclude Include="Sources\Quaternion.h" />
-    <ClInclude Include="Sources\RenderSystem.h" />
-    <ClInclude Include="Sources\Resource.h" />
-    <ClInclude Include="Sources\ResourceSystem.h" />
-    <ClInclude Include="Sources\Scene.h" />
-    <ClInclude Include="Sources\SceneSystem.h" />
-    <ClInclude Include="Sources\Scene_Stage1.h" />
-    <ClInclude Include="Sources\Scene_Menu.h" />
-    <ClInclude Include="Sources\Scene_Title.h" />
-    <ClInclude Include="Sources\Shader.h" />
-    <ClInclude Include="Sources\Singleton.h" />
-    <ClInclude Include="Sources\SphereCollider.h" />
-    <ClInclude Include="Sources\Scene_Stage2.h" />
-    <ClInclude Include="Sources\StageSceneController.h" />
-    <ClInclude Include="Sources\StairCollider.h" />
-    <ClInclude Include="Sources\Transform.h" />
-    <ClInclude Include="Sources\TitleSceneController.h" />
-    <ClInclude Include="Sources\Vector2D.h" />
-    <ClInclude Include="Sources\Vector3D.h" />
-    <ClInclude Include="Sources\Vector4D.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColorRGB.h" />
+    <ClInclude Include="ColorRGBA.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="CubeCollider.h" />
+    <ClInclude Include="EnemyController.h" />
+    <ClInclude Include="ExplodeParticle.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MathF.h" />
+    <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="MenuSceneController.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="PhysicsSystem.h" />
+    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PlayerProjectile.h" />
+    <ClInclude Include="Precompiled.h" />
+    <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceSystem.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneSystem.h" />
+    <ClInclude Include="Scene_Stage1.h" />
+    <ClInclude Include="Scene_Menu.h" />
+    <ClInclude Include="Scene_Title.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="Scene_Stage2.h" />
+    <ClInclude Include="StageSceneController.h" />
+    <ClInclude Include="StairCollider.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="TitleSceneController.h" />
+    <ClInclude Include="Vector2D.h" />
+    <ClInclude Include="Vector3D.h" />
+    <ClInclude Include="Vector4D.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\Crosshair.bin" />
-    <None Include="Resources\Materials\PlayerProjectile.bin" />
-    <None Include="Resources\Meshes\Crosshair.bin" />
-    <None Include="Resources\Meshes\Sphere.bin" />
+    <None Include="..\Resources\Materials\Crosshair.bin" />
+    <None Include="..\Resources\Materials\PlayerProjectile.bin" />
+    <None Include="..\Resources\Meshes\Crosshair.bin" />
+    <None Include="..\Resources\Meshes\Sphere.bin" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Materials\Floor_Day.bin" />
-    <None Include="Resources\Materials\Floor_Night.bin" />
-    <None Include="Resources\Materials\Stair_Day.bin" />
-    <None Include="Resources\Materials\Stair_Night.bin" />
-    <None Include="Resources\Materials\Wall_Day.bin" />
-    <None Include="Resources\Materials\Wall_Night.bin" />
-    <None Include="Resources\Meshes\Cube.bin" />
-    <None Include="Resources\Meshes\Button.bin" />
-    <None Include="Resources\Meshes\Floor.bin" />
-    <None Include="Resources\Meshes\Day.bin" />
-    <None Include="Resources\Meshes\Night.bin" />
-    <None Include="Resources\Meshes\Player.bin" />
-    <None Include="Resources\Meshes\Stair.bin" />
-    <None Include="Resources\Meshes\Title.bin" />
-    <None Include="Resources\Meshes\Wall.bin" />
+    <None Include="..\Resources\Materials\Floor_Day.bin" />
+    <None Include="..\Resources\Materials\Floor_Night.bin" />
+    <None Include="..\Resources\Materials\Stair_Day.bin" />
+    <None Include="..\Resources\Materials\Stair_Night.bin" />
+    <None Include="..\Resources\Materials\Wall_Day.bin" />
+    <None Include="..\Resources\Materials\Wall_Night.bin" />
+    <None Include="..\Resources\Meshes\Cube.bin" />
+    <None Include="..\Resources\Meshes\Button.bin" />
+    <None Include="..\Resources\Meshes\Floor.bin" />
+    <None Include="..\Resources\Meshes\Day.bin" />
+    <None Include="..\Resources\Meshes\Night.bin" />
+    <None Include="..\Resources\Meshes\Player.bin" />
+    <None Include="..\Resources\Meshes\Stair.bin" />
+    <None Include="..\Resources\Meshes\Title.bin" />
+    <None Include="..\Resources\Meshes\Wall.bin" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Scenes\Scene_Stage1.bin" />
-    <None Include="Resources\Scenes\Scene_Stage2.bin" />
-    <None Include="Resources\Shaders\GameObject.hlsl">
+    <None Include="..\Resources\Scenes\Scene_Stage1.bin" />
+    <None Include="..\Resources\Scenes\Scene_Stage2.bin" />
+    <None Include="..\Resources\Shaders\GameObject.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="Resources\Shaders\UIObject.hlsl">
+    <None Include="..\Resources\Shaders\UIObject.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\DeferredLighting.hlsl">
+    <None Include="..\Resources\Shaders\DeferredLighting.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
