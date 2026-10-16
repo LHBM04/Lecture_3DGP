@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Homework #1(2026.04.06 ~ 2026.04.27).vcxproj">
+    <Platform Solution="*|x86" Project="Win32" />
+  </Project>
+</Solution>
