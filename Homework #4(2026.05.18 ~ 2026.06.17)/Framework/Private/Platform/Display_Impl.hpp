@@ -31,6 +31,9 @@ namespace TUK::Framework
 		[[nodiscard]] Vector2D<int> GetSize() const noexcept override;
 		void SetSize(const Vector2D<int>& size) noexcept override;
 
+		[[nodiscard]] bool ShouldClose() const noexcept override;
+		void SetShouldClose(bool value) noexcept override;
+
 		[[nodiscard]] HWND GetHWND() const noexcept;
 
 	private:

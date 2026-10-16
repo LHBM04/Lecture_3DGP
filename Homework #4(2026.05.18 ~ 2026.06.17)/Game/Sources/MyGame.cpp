@@ -39,7 +39,6 @@ namespace TUK::Game
 		options.caption = TEXT("Homework #4(2026.05.18 ~ 2026.06.17)");
 		options.position = Framework::Vector2D(100, 100);
 		options.size = Framework::Vector2D(1280, 960);
-		options.style = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 
 		DisplaySubsystem* windowSubsystem = MyEngine::GetInstance()->GetSubsystem<DisplaySubsystem>();
 		assert(windowSubsystem);

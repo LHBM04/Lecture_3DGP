@@ -35,5 +35,9 @@
     <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Game.rc" />
   </ItemGroup>
 </Project>

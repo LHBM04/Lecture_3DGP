@@ -175,10 +175,14 @@
     <ClCompile Include="Sources\TestWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Sources\MyEngine.hpp" />
     <ClInclude Include="Sources\MyGame.hpp" />
     <ClInclude Include="Sources\Precompiled.hpp" />
     <ClInclude Include="Sources\TestWorld.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Game.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

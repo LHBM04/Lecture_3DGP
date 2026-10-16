@@ -3,8 +3,8 @@
 
 #include "Framework/Graphics/RenderSubsystem.hpp"
 
+#include "Framework/Platform/DisplaySubsystem.hpp"
 #include "Framework/Platform/TimeSubsystem.hpp"
-#include "Framework/Platform/WindowSubsystem.hpp"
 
 DEFINE_ENGINE_INSTANCE(::TUK::Game::MyEngine)
 
@@ -15,7 +15,7 @@ namespace TUK::Game
 		Engine::Ready();
 
 		AddSubsystem<Framework::TimeSubsystem>();
-		AddSubsystem<Framework::WindowSubsystem>();
+		AddSubsystem<Framework::DisplaySubsystem>();
 		AddSubsystem<Framework::RenderSubsystem>();
 	}
 

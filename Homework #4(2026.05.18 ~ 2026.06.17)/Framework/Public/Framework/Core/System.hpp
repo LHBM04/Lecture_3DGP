@@ -41,7 +41,7 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsRunning() const noexcept;
 		void RequestQuit(int code) noexcept;
 
-		[[deprecated]] void ReportError(std::string_view message);	// TODO: 이거 없애고 Logger 만들기
+		void ReportError(std::string_view message);	// TODO: 이거 없애고 Logger 만들기
 		[[nodiscard]] int GetQuitCode() const noexcept;
 
 		template <class TValue>

@@ -78,6 +78,16 @@ namespace TUK::Framework
 		SetWindowPos(hWnd, nullptr, 0, 0, size.GetX(), size.GetY(), SWP_NOMOVE | SWP_NOZORDER);
 	}
 
+	bool Display_Impl::ShouldClose() const noexcept
+	{
+		return false;
+	}
+
+	void Display_Impl::SetShouldClose(bool value) noexcept
+	{
+		// TODO: 이거 구현해라
+	}
+
 	HWND Display_Impl::GetHWND() const noexcept
 	{
 		assert(hWnd);

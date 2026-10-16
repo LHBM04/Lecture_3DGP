@@ -13,7 +13,7 @@ namespace
 	const HINSTANCE Instance = GetModuleHandleW(nullptr);
 
 	/** 윈도우 클래스 */
-	ATOM windowClass;
+	ATOM wndClassEx;
 }
 
 namespace TUK::Framework
@@ -55,10 +55,10 @@ namespace TUK::Framework
 	{
 		displays.clear();
 
-		if (windowClass == 0)
+		if (wndClassEx == 0)
 		{
 			UnregisterClassW(ClassName, Instance);
-			windowClass = 0;
+			wndClassEx = 0;
 		}
 	}
 
@@ -66,11 +66,11 @@ namespace TUK::Framework
 	{
 		std::unique_ptr<Display> newWindow = std::unique_ptr<Display>(new Display_Impl(nullptr));
 
-		HWND hWnd = CreateWindowExW(
+		HWND hWnd = CreateWindowEx(
 			0, 
 			ClassName, 
 			options.caption.data(),
-			options.style,
+			WS_OVERLAPPEDWINDOW,
 			options.position.GetX(),
 			options.position.GetY(),
 			options.size.GetX(),
@@ -106,7 +106,7 @@ namespace TUK::Framework
 		description.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		description.lpszClassName = ClassName;
 		description.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-		windowClass = RegisterClassExW(&description);
+		wndClassEx = RegisterClassExW(&description);
 	}
 
 	void DisplaySubsystem::PreTick()
@@ -127,9 +127,9 @@ namespace TUK::Framework
 
 	void DisplaySubsystem::PostTick()
 	{
-		std::erase_if(displays, [](const auto& window)
+		std::erase_if(displays, [](const auto& display)
 		{
-			return window->ShouldClose();
+			return display->ShouldClose();
 		});
 
 		if (displays.empty() && Engine::GetInstance()->IsRunning())
@@ -142,10 +142,10 @@ namespace TUK::Framework
 	{
 		displays.clear();
 
-		if (windowClass)
+		if (wndClassEx)
 		{
 			UnregisterClassW(ClassName, Instance);
-			windowClass = 0;
+			wndClassEx = 0;
 		}
 	}
 }
