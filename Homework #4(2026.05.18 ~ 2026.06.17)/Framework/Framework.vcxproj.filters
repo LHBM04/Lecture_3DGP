@@ -162,10 +162,6 @@
     <ClInclude Include="Private\Precompiled.hpp">
       <Filter>Private</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Graphics\RenderTarget_Impl.hpp" />
-    <ClInclude Include="Private\Graphics\SwapChain_Impl.hpp" />
-    <ClInclude Include="Private\Platform\Display_Impl.hpp" />
-    <ClInclude Include="Private\Graphics\GraphicsDevice_Impl.hpp" />
     <ClInclude Include="Public\Framework\Core.hpp">
       <Filter>Public\Framework</Filter>
     </ClInclude>
@@ -195,6 +191,18 @@
     </ClInclude>
     <ClInclude Include="Private\Math\Vector4D_Impl.hpp">
       <Filter>Private\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Platform\Display_Impl.hpp">
+      <Filter>Private\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Graphics\GraphicsDevice_Impl.hpp">
+      <Filter>Private\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Graphics\RenderTarget_Impl.hpp">
+      <Filter>Private\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Graphics\SwapChain_Impl.hpp">
+      <Filter>Private\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -261,9 +269,17 @@
     <ClCompile Include="Private\Precompiled.cpp">
       <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp" />
-    <ClCompile Include="Private\Platform\DisplaySubsystem.cpp" />
-    <ClCompile Include="Private\Graphics\GraphicsDevice_Impl.cpp" />
-    <ClCompile Include="Private\Platform\Display_Impl.cpp" />
+    <ClCompile Include="Private\Platform\Display_Impl.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplaySubsystem.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\GraphicsDevice_Impl.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

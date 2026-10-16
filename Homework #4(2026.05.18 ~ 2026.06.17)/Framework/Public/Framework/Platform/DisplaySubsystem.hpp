@@ -20,10 +20,10 @@ namespace TUK::Framework
 		~DisplaySubsystem() noexcept override;
 
 		/** OnStartup 이후 호출. 크기는 창 전체 영역 기준. */
-		std::expected<std::reference_wrapper<Display>, std::string> Create(const DisplayOptions& options);
+		std::expected<std::reference_wrapper<Display>, std::string> CreateDisplay(const DisplayOptions& options);
 
 		/** 생성된 모든 창을 반환합니다. */
-		[[nodiscard]] const std::vector<std::unique_ptr<Display>>& GetWindows() const noexcept;
+		[[nodiscard]] const std::vector<std::unique_ptr<Display>>& GetDisplays() const noexcept;
 
 	protected:
 		void OnStartup() override;
@@ -32,7 +32,7 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		std::vector<std::unique_ptr<Display>> windows;
+		std::vector<std::unique_ptr<Display>> displays;
 	};
 }
 

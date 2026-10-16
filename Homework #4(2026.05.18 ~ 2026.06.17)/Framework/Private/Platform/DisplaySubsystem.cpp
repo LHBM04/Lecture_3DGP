@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
-#include "WindowSubsystem.hpp"
+#include "DisplaySubsystem.hpp"
 
 #include "../Core/Engine.hpp"
-#include "Window_Impl.hpp"
+#include "Display_Impl.hpp"
 
 namespace
 {
@@ -20,12 +20,12 @@ namespace TUK::Framework
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		auto* window = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		auto* window = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 		if (message == WM_NCCREATE)
 		{
 			const auto* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
 
-			window = static_cast<Window*>(creation->lpCreateParams);
+			window = static_cast<Display*>(creation->lpCreateParams);
 			if (!window)
 			{
 				return FALSE;
@@ -46,14 +46,14 @@ namespace TUK::Framework
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-	WindowSubsystem::WindowSubsystem() noexcept
+	DisplaySubsystem::DisplaySubsystem() noexcept
 		: EngineSubsystem(2)
 	{
 	}
 
-	WindowSubsystem::~WindowSubsystem() noexcept
+	DisplaySubsystem::~DisplaySubsystem() noexcept
 	{
-		windows.clear();
+		displays.clear();
 
 		if (windowClass == 0)
 		{
@@ -62,14 +62,14 @@ namespace TUK::Framework
 		}
 	}
 
-	std::expected<std::reference_wrapper<Window>, std::string> WindowSubsystem::Create(const DisplayOptions& options)
+	std::expected<std::reference_wrapper<Display>, std::string> DisplaySubsystem::CreateDisplay(const DisplayOptions& options)
 	{
-		std::unique_ptr<Window> newWindow = std::unique_ptr<Window>(new Window_Impl(nullptr));
+		std::unique_ptr<Display> newWindow = std::unique_ptr<Display>(new Display_Impl(nullptr));
 
 		HWND hWnd = CreateWindowExW(
 			0, 
 			ClassName, 
-			options.caption,
+			options.caption.data(),
 			options.style,
 			options.position.GetX(),
 			options.position.GetY(),
@@ -86,17 +86,17 @@ namespace TUK::Framework
 		}
 
 		auto reference = std::ref(*newWindow);
-		windows.push_back(std::move(newWindow));
+		displays.push_back(std::move(newWindow));
 		ShowWindow(hWnd, SW_SHOW);
 		return reference;
 	}
 
-	const std::vector<std::unique_ptr<Window>>& WindowSubsystem::GetWindows() const noexcept
+	const std::vector<std::unique_ptr<Display>>& DisplaySubsystem::GetDisplays() const noexcept
 	{
-		return windows;
+		return displays;
 	}
 
-	void WindowSubsystem::OnStartup()
+	void DisplaySubsystem::OnStartup()
 	{
 		WNDCLASSEXW description{};
 		description.cbSize = sizeof(description);
@@ -109,7 +109,7 @@ namespace TUK::Framework
 		windowClass = RegisterClassExW(&description);
 	}
 
-	void WindowSubsystem::PreTick()
+	void DisplaySubsystem::PreTick()
 	{
 		MSG message{};
 		while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
@@ -125,23 +125,22 @@ namespace TUK::Framework
 		}
 	}
 
-	void WindowSubsystem::PostTick()
+	void DisplaySubsystem::PostTick()
 	{
-		std::erase_if(windows, [](const auto& window)
+		std::erase_if(displays, [](const auto& window)
 		{
 			return window->ShouldClose();
 		});
 
-		if (windows.empty() && !hasExitRequest && Engine::GetInstance()->IsRunning())
+		if (displays.empty() && Engine::GetInstance()->IsRunning())
 		{
-			hasExitRequest = true;
 			Engine::GetInstance()->RequestQuit(EXIT_SUCCESS);
 		}
 	}
 
-	void WindowSubsystem::OnShutdown()
+	void DisplaySubsystem::OnShutdown()
 	{
-		windows.clear();
+		displays.clear();
 
 		if (windowClass)
 		{

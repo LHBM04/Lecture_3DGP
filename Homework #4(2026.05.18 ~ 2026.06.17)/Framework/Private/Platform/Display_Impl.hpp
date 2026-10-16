@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -11,11 +11,11 @@
 
 namespace TUK::Framework
 {
-	class Window_Impl : public Display
+	class Display_Impl : public Display
 	{
 	public:
-		explicit Window_Impl(HWND hWnd) noexcept;
-		~Window_Impl() noexcept override;
+		explicit Display_Impl(HWND hWnd) noexcept;
+		~Display_Impl() noexcept override;
 
 #if defined(_UNICODE) || defined(UNICODE)
 		[[nodiscard]] const std::wstring& GetCaption() const noexcept override;

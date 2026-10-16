@@ -1,15 +1,15 @@
 ﻿#include "Precompiled.hpp"
-#include "Window_Impl.hpp"
+#include "Display_Impl.hpp"
 
 namespace TUK::Framework
 {
-	Window_Impl::Window_Impl(HWND hWnd) noexcept
+	Display_Impl::Display_Impl(HWND hWnd) noexcept
 		: hWnd(hWnd)
 	{
 		assert(hWnd);
 	}
 
-	Window_Impl::~Window_Impl() noexcept
+	Display_Impl::~Display_Impl() noexcept
 	{
 		if (hWnd)
 		{
@@ -19,7 +19,7 @@ namespace TUK::Framework
 	}
 
 #if defined(_UNICODE) || defined(UNICODE)
-	const std::wstring& Window_Impl::GetCaption() const noexcept
+	const std::wstring& Display_Impl::GetCaption() const noexcept
 	{
 		assert(hWnd);
 		static std::wstring caption;
@@ -28,7 +28,7 @@ namespace TUK::Framework
 		return caption;
 	}
 
-	void Window_Impl::SetCaption(std::wstring_view value) noexcept
+	void Display_Impl::SetCaption(std::wstring_view value) noexcept
 	{
 		assert(hWnd);
 		SetWindowTextW(hWnd, value.data());
@@ -50,7 +50,7 @@ namespace TUK::Framework
 	}
 #endif
 
-	Vector2D<int> Window_Impl::GetPosition() const noexcept
+	Vector2D<int> Display_Impl::GetPosition() const noexcept
 	{
 		assert(hWnd);
 		RECT rect;
@@ -58,13 +58,13 @@ namespace TUK::Framework
 		return { rect.left, rect.top };
 	}
 
-	void Window_Impl::SetPosition(const Vector2D<int>& position) noexcept
+	void Display_Impl::SetPosition(const Vector2D<int>& position) noexcept
 	{
 		assert(hWnd);
 		SetWindowPos(hWnd, nullptr, position.GetX(), position.GetY(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
 
-	Vector2D<int> Window_Impl::GetSize() const noexcept
+	Vector2D<int> Display_Impl::GetSize() const noexcept
 	{
 		assert(hWnd);
 		RECT rect;
@@ -72,13 +72,13 @@ namespace TUK::Framework
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
-	void Window_Impl::SetSize(const Vector2D<int>& size) noexcept
+	void Display_Impl::SetSize(const Vector2D<int>& size) noexcept
 	{
 		assert(hWnd);
 		SetWindowPos(hWnd, nullptr, 0, 0, size.GetX(), size.GetY(), SWP_NOMOVE | SWP_NOZORDER);
 	}
 
-	HWND Window_Impl::GetHWND() const noexcept
+	HWND Display_Impl::GetHWND() const noexcept
 	{
 		assert(hWnd);
 		return hWnd;
