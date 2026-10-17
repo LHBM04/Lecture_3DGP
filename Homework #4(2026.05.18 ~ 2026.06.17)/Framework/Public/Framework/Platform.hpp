@@ -1,6 +1,15 @@
 ﻿#pragma once
 
 #include "Platform/Display.hpp"
+#include "Platform/DisplayCloseEvent.hpp"
+#include "Platform/DisplayCreateEvent.hpp"
+#include "Platform/DisplayDestroyEvent.hpp"
+#include "Platform/DisplayEvent.hpp"
+#include "Platform/DisplayFocusEvent.hpp"
+#include "Platform/DisplayMoveEvent.hpp"
 #include "Platform/DisplayOptions.hpp"
+#include "Platform/DisplayResizeEvent.hpp"
 #include "Platform/DisplaySubsystem.hpp"
+#include "Platform/Event.hpp"
+#include "Platform/EventSubsystem.hpp"
 #include "Platform/TimeSubsystem.hpp"

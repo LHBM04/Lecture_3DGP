@@ -4,8 +4,6 @@
 
 namespace TUK::Framework
 {
-	class CommandBuffer;
-
 	class GameSubsystem : public Subsystem
 	{
 		friend class Game;
@@ -15,10 +13,9 @@ namespace TUK::Framework
 		~GameSubsystem() noexcept override;
 
 	protected:
-		virtual void EarlyUpdate();
-		virtual void FixedUpdate();
-		virtual void Update();
-		virtual void LateUpdate();
-		virtual void Render(CommandBuffer& renderer);
+		virtual SystemStatus OnEarlyUpdate();
+		virtual SystemStatus OnFixedUpdate();
+		virtual SystemStatus OnUpdate();
+		virtual SystemStatus OnLateUpdate();
 	};
 }

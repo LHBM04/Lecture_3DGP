@@ -46,7 +46,13 @@ namespace TUK::Framework
 		/** Overloaded for Game */
 		[[nodiscard]] static Game* GetInstance();
 
-		void Tick() override;
+		SystemStatus Routine() override;
+
+		/** 게임 라이프 사이클 */
+		SystemStatus EarlyUpdate();
+		SystemStatus FixedUpdate();
+		SystemStatus Update();
+		SystemStatus LateUpdate();
 
 	protected:
 		Game() noexcept;

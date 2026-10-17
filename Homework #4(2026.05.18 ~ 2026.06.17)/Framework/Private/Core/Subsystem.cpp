@@ -15,8 +15,9 @@ namespace TUK::Framework
 		return priority;
 	}
 
-	void Subsystem::OnStartup()
+	SystemStatus Subsystem::OnStartup()
 	{
+		return SystemStatus::Continue;
 	}
 
 	void Subsystem::OnShutdown()

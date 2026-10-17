@@ -23,45 +23,7 @@ INT APIENTRY wWinMain(
 #endif
 
 	std::unique_ptr<Engine> engine = std::unique_ptr<Engine>(CreateEngineInstance());
-	engine->Ready();
-	engine->Startup();
+	std::unique_ptr<Game> game = std::unique_ptr<Game>(CreateGameInstance());
 
-	if (engine->IsRunning())
-	{
-		std::unique_ptr<Game> game = std::unique_ptr<Game>(CreateGameInstance());
-		game->Ready();
-		game->Startup();
-
-		if (!game->IsRunning())
-		{
-			engine->RequestQuit(game->GetQuitCode());
-		}
-
-		while (engine->IsRunning() && game->IsRunning())
-		{
-			engine->PreTick();
-			game->PreTick();
-
-			engine->Tick();
-			game->Tick();
-
-			engine->PostTick();
-			game->PostTick();
-
-			if (!game->IsRunning())
-			{
-				engine->RequestQuit(game->GetQuitCode());
-			}
-		}
-
-		game->Shutdown();
-
-		if (game->GetQuitCode() != EXIT_SUCCESS)
-		{
-			engine->RequestQuit(game->GetQuitCode());
-		}
-	}
-
-	engine->Shutdown();
-	return engine->GetQuitCode();
+	return engine->Run(*game);
 }

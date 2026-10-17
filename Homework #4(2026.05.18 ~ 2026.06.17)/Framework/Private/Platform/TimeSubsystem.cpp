@@ -5,11 +5,9 @@ namespace TUK::Framework
 {
 	TimeSubsystem::TimeSubsystem() noexcept
 		: EngineSubsystem(0)
-		, startTime()
-		, previousTime()
+		, totalTime(0.0)
 		, secondsPerCount(0.0)
 		, deltaTime(0.0)
-		, totalTime(0.0)
 		, fixedDeltaTime(1.0 / 60.0)
 		, fixedAccumulator(0.0)
 		, maxFixedStepsPerFrame(5)
@@ -37,38 +35,14 @@ namespace TUK::Framework
 		return frameCount;
 	}
 
-	void TimeSubsystem::OnStartup() noexcept
+	SystemStatus TimeSubsystem::OnStartup() noexcept
 	{
-		LARGE_INTEGER frequency{};
-		QueryPerformanceFrequency(&frequency);
-
-		secondsPerCount = 1.0 / static_cast<double>(frequency.QuadPart);
-		
-		QueryPerformanceCounter(&startTime);
-		previousTime = startTime;
-		
-		deltaTime = 0.0;
-		totalTime = 0.0;
-
-		frameCount = 0;
-		
-		fixedAccumulator = 0.0;
-		fixedSteps = 0;
+		return SystemStatus::Continue;
 	}
 
-	void TimeSubsystem::PreTick() noexcept
+	SystemStatus TimeSubsystem::OnPreTick() noexcept
 	{
-		LARGE_INTEGER now{};
-		QueryPerformanceCounter(&now);
-
-		deltaTime = frameCount == 0 ? 0.0 : static_cast<double>(now.QuadPart - previousTime.QuadPart) * secondsPerCount;
-		totalTime = static_cast<double>(now.QuadPart - startTime.QuadPart) * secondsPerCount;
-		previousTime = now;
-
-		++frameCount;
-
-		fixedAccumulator += deltaTime;
-		fixedSteps = 0;
+		return SystemStatus::Continue;
 	}
 
 	float TimeSubsystem::GetUnscaledDeltaTime() const noexcept

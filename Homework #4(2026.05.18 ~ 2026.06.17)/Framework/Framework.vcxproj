@@ -172,6 +172,7 @@
     <ClInclude Include="Private\Graphics\RenderTarget_Impl.hpp" />
     <ClInclude Include="Private\Graphics\SwapChain_Impl.hpp" />
     <ClInclude Include="Private\Platform\Display_Impl.hpp" />
+    <ClInclude Include="Private\Platform\WindowProc.hpp" />
     <ClInclude Include="Public\Framework\Core.hpp" />
     <ClInclude Include="Public\Framework\Core\Engine.hpp" />
     <ClInclude Include="Public\Framework\Core\EngineSubsystem.hpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Public\Framework\Core\GameSubsystem.hpp" />
     <ClInclude Include="Public\Framework\Core\Subsystem.hpp" />
     <ClInclude Include="Public\Framework\Core\System.hpp" />
+    <ClInclude Include="Public\Framework\Core\SystemStatus.hpp" />
     <ClInclude Include="Public\Framework\Entities.hpp" />
     <ClInclude Include="Public\Framework\Entities\Component.hpp" />
     <ClInclude Include="Public\Framework\Entities\Entity.hpp" />
@@ -208,9 +210,18 @@
     <ClInclude Include="Public\Framework\Math\Vector3D.hpp" />
     <ClInclude Include="Public\Framework\Math\Vector4D.hpp" />
     <ClInclude Include="Public\Framework\Platform.hpp" />
+    <ClInclude Include="Public\Framework\Platform\Event.hpp" />
+    <ClInclude Include="Public\Framework\Platform\EventSubsystem.hpp" />
     <ClInclude Include="Public\Framework\Platform\TimeSubsystem.hpp" />
     <ClInclude Include="Public\Framework\Platform\Display.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayCloseEvent.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayCreateEvent.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayDestroyEvent.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayEvent.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayFocusEvent.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayMoveEvent.hpp" />
     <ClInclude Include="Public\Framework\Platform\DisplayOptions.hpp" />
+    <ClInclude Include="Public\Framework\Platform\DisplayResizeEvent.hpp" />
     <ClInclude Include="Public\Framework\Platform\DisplaySubsystem.hpp" />
     <ClInclude Include="Private\Graphics\GraphicsDevice_Impl.hpp" />
     <ClInclude Include="Private\Math\ColorRGB_Impl.hpp" />
@@ -237,6 +248,7 @@
     <ClCompile Include="Private\Entities\Transform.cpp" />
     <ClCompile Include="Private\Entities\World.cpp" />
     <ClCompile Include="Private\Entities\WorldSubsystem.cpp" />
+    <ClCompile Include="Private\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp" />
     <ClCompile Include="Private\Math\ColorRGB.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -259,10 +271,20 @@
     <ClCompile Include="Private\Math\Vector4D.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayCloseEvent.cpp" />
+    <ClCompile Include="Private\Platform\DisplayCreateEvent.cpp" />
+    <ClCompile Include="Private\Platform\DisplayDestroyEvent.cpp" />
+    <ClCompile Include="Private\Platform\DisplayEvent.cpp" />
+    <ClCompile Include="Private\Platform\DisplayFocusEvent.cpp" />
+    <ClCompile Include="Private\Platform\DisplayMoveEvent.cpp" />
+    <ClCompile Include="Private\Platform\DisplayResizeEvent.cpp" />
+    <ClCompile Include="Private\Platform\Event.cpp" />
+    <ClCompile Include="Private\Platform\EventSubsystem.cpp" />
     <ClCompile Include="Private\Platform\TimeSubsystem.cpp" />
     <ClCompile Include="Private\Platform\DisplaySubsystem.cpp" />
     <ClCompile Include="Private\Graphics\GraphicsDevice_Impl.cpp" />
     <ClCompile Include="Private\Platform\Display_Impl.cpp" />
+    <ClCompile Include="Private\Platform\WindowProc.cpp" />
     <ClCompile Include="Private\Precompiled.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

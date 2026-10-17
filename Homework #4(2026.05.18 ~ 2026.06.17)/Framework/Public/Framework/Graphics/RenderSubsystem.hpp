@@ -11,7 +11,6 @@
 namespace TUK::Framework
 {
 	class Display;
-	class DisplaySubsystem;
 
 	class RenderSubsystem : public EngineSubsystem
 	{
@@ -22,12 +21,9 @@ namespace TUK::Framework
 		void RegisterWindow(const Display& window);
 
 	protected:
-		void OnStartup() override;
-		void PreTick() override;
-		void PostTick() override;
+		SystemStatus OnStartup() override;
+		SystemStatus OnPreTick() override;
+		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
-
-	private:
-		
 	};
 }

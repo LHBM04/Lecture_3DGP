@@ -26,9 +26,8 @@ namespace TUK::Framework
 		[[nodiscard]] const std::vector<std::unique_ptr<Display>>& GetDisplays() const noexcept;
 
 	protected:
-		void OnStartup() override;
-		void PreTick() override;
-		void PostTick() override;
+		SystemStatus OnStartup() override;
+		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
 
 	private:

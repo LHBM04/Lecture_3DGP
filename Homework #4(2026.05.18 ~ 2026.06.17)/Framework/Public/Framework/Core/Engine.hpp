@@ -18,6 +18,8 @@
 
 namespace TUK::Framework
 {
+	class Game;
+
 	class Engine : public System
 	{
 	public:
@@ -38,16 +40,22 @@ namespace TUK::Framework
 		/** Overloaded for Engine */
 		[[nodiscard]] static Engine* GetInstance();
 
+		int Run(Game& game);
+
+		SystemStatus Routine() override;
+
 		/** 엔진 라이프 사이클 */
-		void PreTick() override;
-		void Tick() override;
-		void PostTick() override;
+		SystemStatus PreTick();
+		SystemStatus Tick();
+		SystemStatus PostTick();
 
 	protected:
 		Engine() noexcept;
 
 	private:
 		static Engine* instance;
+
+		Game* game;
 	};
 
 	/** 엔진 인스턴스 팩토리 */

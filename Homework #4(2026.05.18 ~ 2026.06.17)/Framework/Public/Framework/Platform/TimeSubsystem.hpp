@@ -1,12 +1,6 @@
 ﻿#pragma once
 
-#include <cstdint>
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
+#include <chrono>
 
 #include "../Core/EngineSubsystem.hpp"
 
@@ -37,14 +31,11 @@ namespace TUK::Framework
 		[[nodiscard]] unsigned long GetFrameCount() const noexcept;
 
 	protected:
-		void OnStartup() noexcept override;
-		void PreTick() noexcept override;
+		SystemStatus OnStartup() noexcept override;
+		SystemStatus OnPreTick() noexcept override;
 
 	private:
 		[[nodiscard]] bool ShouldFixedStep() noexcept;
-
-		LARGE_INTEGER startTime;
-		LARGE_INTEGER previousTime;
 
 		double totalTime;
 		double secondsPerCount;

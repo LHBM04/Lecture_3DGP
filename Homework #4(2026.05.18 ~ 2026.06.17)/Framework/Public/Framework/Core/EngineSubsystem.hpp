@@ -14,8 +14,8 @@ namespace TUK::Framework
 	protected:
 		explicit EngineSubsystem(unsigned short priority) noexcept;
 
-		virtual void PreTick();
-		virtual void Tick();
-		virtual void PostTick();
+		virtual SystemStatus OnPreTick();
+		virtual SystemStatus OnTick();
+		virtual SystemStatus OnPostTick();
 	};
 }

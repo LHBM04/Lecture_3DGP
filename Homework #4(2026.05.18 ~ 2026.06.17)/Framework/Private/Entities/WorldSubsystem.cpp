@@ -9,7 +9,6 @@ namespace TUK::Framework
 		: GameSubsystem(20)
 		, worlds()
 	{
-		
 	}
 
 	WorldSubsystem::~WorldSubsystem() noexcept
@@ -17,11 +16,16 @@ namespace TUK::Framework
 		worlds.clear();
 	}
 
-	void WorldSubsystem::OnStartup()
+	SystemStatus WorldSubsystem::OnStartup()
 	{
-		if (worlds.empty()) return;
+		if (worlds.empty())
+		{
+			return SystemStatus::Failed;
+		}
+
 		currentWorld = worlds.front().get();
 		currentWorld->Enter();
+		return SystemStatus::Continue;
 	}
 
 	World& WorldSubsystem::AddWorld(std::unique_ptr<World> world)
@@ -35,32 +39,37 @@ namespace TUK::Framework
 
 	void WorldSubsystem::OnShutdown()
 	{
-		if (currentWorld) currentWorld->Exit();
 		currentWorld = nullptr;
 		worlds.clear();
 	}
 
-	void WorldSubsystem::FixedUpdate()
+	SystemStatus WorldSubsystem::OnFixedUpdate()
 	{
-		if (!currentWorld) return;
+		if (!currentWorld)
+		{
+			return SystemStatus::Failed;
+		}
+
 		currentWorld->FixedUpdate();
 	}
 
-	void WorldSubsystem::Update()
+	SystemStatus WorldSubsystem::OnUpdate()
 	{
-		if (!currentWorld) return;
+		if (!currentWorld)
+		{
+			return SystemStatus::Failed;
+		}
+
 		currentWorld->Update();
 	}
 
-	void WorldSubsystem::LateUpdate()
+	SystemStatus WorldSubsystem::OnLateUpdate()
 	{
-		if (!currentWorld) return;
-		currentWorld->LateUpdate();
-	}
+		if (!currentWorld)
+		{
+			return SystemStatus::Failed;
+		}
 
-	void WorldSubsystem::Render(CommandBuffer& renderer)
-	{
-		if (!currentWorld) return;
-		currentWorld->Render(renderer);
+		currentWorld->LateUpdate();
 	}
 }

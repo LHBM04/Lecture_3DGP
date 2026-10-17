@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
-#include "../Core/Engine.hpp"
 #include "Display_Impl.hpp"
+#include "WindowProc.hpp"
 
 namespace
 {
@@ -13,39 +13,11 @@ namespace
 	const HINSTANCE Instance = GetModuleHandleW(nullptr);
 
 	/** 윈도우 클래스 */
-	ATOM wndClassEx;
+	bool isWndClassRegistered = false;
 }
 
 namespace TUK::Framework
 {
-	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		auto* window = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-		if (message == WM_NCCREATE)
-		{
-			const auto* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
-
-			window = static_cast<Display*>(creation->lpCreateParams);
-			if (!window)
-			{
-				return FALSE;
-			}
-
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
-		}
-		else if (message == WM_NCDESTROY)
-		{
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
-		}
-
-		if (window)
-		{
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-
 	DisplaySubsystem::DisplaySubsystem() noexcept
 		: EngineSubsystem(2)
 	{
@@ -55,10 +27,10 @@ namespace TUK::Framework
 	{
 		displays.clear();
 
-		if (wndClassEx == 0)
+		if (isWndClassRegistered)
 		{
 			UnregisterClassW(ClassName, Instance);
-			wndClassEx = 0;
+			isWndClassRegistered = false;
 		}
 	}
 
@@ -96,7 +68,7 @@ namespace TUK::Framework
 		return displays;
 	}
 
-	void DisplaySubsystem::OnStartup()
+	SystemStatus DisplaySubsystem::OnStartup()
 	{
 		WNDCLASSEXW description{};
 		description.cbSize = sizeof(description);
@@ -106,46 +78,38 @@ namespace TUK::Framework
 		description.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		description.lpszClassName = ClassName;
 		description.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-		wndClassEx = RegisterClassExW(&description);
-	}
-
-	void DisplaySubsystem::PreTick()
-	{
-		MSG message{};
-		while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
+		
+		if (RegisterClassEx(&description) == 0)
 		{
-			if (message.message == WM_QUIT)
-			{
-				Engine::GetInstance()->RequestQuit(static_cast<int>(message.wParam));
-				break;
-			}
-
-			TranslateMessage(&message);
-			DispatchMessageW(&message);
+			return SystemStatus::Failed;
 		}
+
+		isWndClassRegistered = true;
+
+		return SystemStatus::Continue;
 	}
 
-	void DisplaySubsystem::PostTick()
+	SystemStatus DisplaySubsystem::OnPostTick()
 	{
 		std::erase_if(displays, [](const auto& display)
 		{
 			return display->ShouldClose();
 		});
 
-		if (displays.empty() && Engine::GetInstance()->IsRunning())
+		if (displays.empty())
 		{
-			Engine::GetInstance()->RequestQuit(EXIT_SUCCESS);
+			return SystemStatus::Success;
 		}
+
+		return SystemStatus::Continue;
 	}
 
 	void DisplaySubsystem::OnShutdown()
 	{
-		displays.clear();
-
-		if (wndClassEx)
+		if (isWndClassRegistered)
 		{
 			UnregisterClassW(ClassName, Instance);
-			wndClassEx = 0;
+			isWndClassRegistered = false;
 		}
 	}
 }

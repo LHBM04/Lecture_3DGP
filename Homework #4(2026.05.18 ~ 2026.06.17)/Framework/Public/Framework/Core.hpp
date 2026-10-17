@@ -6,3 +6,4 @@
 #include "Core/GameSubsystem.hpp"
 #include "Core/Subsystem.hpp"
 #include "Core/System.hpp"
+#include "Core/SystemStatus.hpp"

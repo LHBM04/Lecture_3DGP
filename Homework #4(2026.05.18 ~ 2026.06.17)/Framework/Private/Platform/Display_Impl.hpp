@@ -5,7 +5,6 @@
 #endif
 
 #include <windows.h>
-#include <windowsx.h>
 
 #include "Framework/Platform/Display.hpp"
 
@@ -13,6 +12,8 @@ namespace TUK::Framework
 {
 	class Display_Impl : public Display
 	{
+		friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 	public:
 		explicit Display_Impl(HWND hWnd) noexcept;
 		~Display_Impl() noexcept override;
@@ -38,5 +39,6 @@ namespace TUK::Framework
 
 	private:
 		HWND hWnd;
+		bool shouldClose;
 	};
 }

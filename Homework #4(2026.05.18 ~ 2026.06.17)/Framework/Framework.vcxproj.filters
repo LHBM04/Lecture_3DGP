@@ -204,6 +204,39 @@
     <ClInclude Include="Private\Graphics\SwapChain_Impl.hpp">
       <Filter>Private\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\EventSubsystem.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\Event.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayCreateEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayDestroyEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayCloseEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayResizeEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayMoveEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Platform\DisplayFocusEvent.hpp">
+      <Filter>Public\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Core\SystemStatus.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Platform\WindowProc.hpp">
+      <Filter>Private\Platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Platform\TimeSubsystem.cpp">
@@ -280,6 +313,39 @@
     </ClCompile>
     <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp">
       <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\RenderSubsystem.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\Event.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayCreateEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayDestroyEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayCloseEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayResizeEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayMoveEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\DisplayFocusEvent.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\EventSubsystem.cpp">
+      <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Platform\WindowProc.cpp">
+      <Filter>Private\Platform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

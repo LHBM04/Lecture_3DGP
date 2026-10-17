@@ -1,12 +1,13 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Display_Impl.hpp"
 
 namespace TUK::Framework
 {
 	Display_Impl::Display_Impl(HWND hWnd) noexcept
 		: hWnd(hWnd)
+		, shouldClose(false)
 	{
-		assert(hWnd);
+		//assert(hWnd);
 	}
 
 	Display_Impl::~Display_Impl() noexcept
@@ -80,12 +81,12 @@ namespace TUK::Framework
 
 	bool Display_Impl::ShouldClose() const noexcept
 	{
-		return false;
+		return shouldClose;
 	}
 
 	void Display_Impl::SetShouldClose(bool value) noexcept
 	{
-		// TODO: 이거 구현해라
+		shouldClose = value;
 	}
 
 	HWND Display_Impl::GetHWND() const noexcept

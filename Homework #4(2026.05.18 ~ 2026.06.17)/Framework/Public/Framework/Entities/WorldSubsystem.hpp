@@ -17,13 +17,11 @@ namespace TUK::Framework
 		World& AddWorld(std::unique_ptr<World> world);
 
 	protected:
-		void OnStartup() override;
+		SystemStatus OnStartup() override;
+		SystemStatus OnFixedUpdate() override;
+		SystemStatus OnUpdate() override;
+		SystemStatus OnLateUpdate() override;
 		void OnShutdown() override;
-
-		void FixedUpdate() override;
-		void Update() override;
-		void LateUpdate() override;
-		void Render(CommandBuffer& renderer) override;
 
 	private:
 		std::vector<std::unique_ptr<World>> worlds;

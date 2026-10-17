@@ -12,23 +12,23 @@ namespace TUK::Framework
 	{
 	}
 
-	void GameSubsystem::EarlyUpdate()
+	SystemStatus GameSubsystem::OnEarlyUpdate()
 	{
+		return SystemStatus::Continue;
 	}
 
-	void GameSubsystem::FixedUpdate()
+	SystemStatus GameSubsystem::OnFixedUpdate()
 	{
+		return SystemStatus::Continue;
 	}
 
-	void GameSubsystem::Update()
+	SystemStatus GameSubsystem::OnUpdate()
 	{
+		return SystemStatus::Continue;
 	}
 
-	void GameSubsystem::LateUpdate()
+	SystemStatus GameSubsystem::OnLateUpdate()
 	{
-	}
-
-	void GameSubsystem::Render(CommandBuffer&)
-	{
+		return SystemStatus::Continue;
 	}
 }

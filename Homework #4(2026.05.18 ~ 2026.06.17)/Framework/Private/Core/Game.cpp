@@ -18,35 +18,111 @@ namespace TUK::Framework
 		instance = nullptr;
 	}
 
-	void Game::Tick()
+	SystemStatus Game::Routine()
 	{
-		for (GameSubsystem& subsystem : GetSubsystems())
-		{
-			subsystem.EarlyUpdate();
-		}
+		SystemStatus next = SystemStatus::Continue;
 
-		// 시간이 있을 때만 가능해야 함.
-		// 근데 Game이 TimeSubsystem을 알고 있어야 하는 게 맘에 안 듦.
-		if (TimeSubsystem* const time = Engine::GetInstance()->GetSubsystem<TimeSubsystem>())
+		if (SystemStatus current = EarlyUpdate(); current != SystemStatus::Continue)
 		{
-			while (time->ShouldFixedStep())
+			if (current != SystemStatus::Continue)
 			{
-				for (GameSubsystem& subsystem : GetSubsystems())
+				if (next == SystemStatus::Continue)
 				{
-					subsystem.FixedUpdate();
+					next = current;
 				}
 			}
 		}
 
-		for (GameSubsystem& subsystem : GetSubsystems())
+		if (SystemStatus current = FixedUpdate(); current != SystemStatus::Continue)
 		{
-			subsystem.Update();
+			if (current != SystemStatus::Continue)
+			{
+				if (next == SystemStatus::Continue)
+				{
+					next = current;
+				}
+			}
 		}
 
+		if (SystemStatus current = Update(); current != SystemStatus::Continue)
+		{
+			if (current != SystemStatus::Continue)
+			{
+				if (next == SystemStatus::Continue)
+				{
+					next = current;
+				}
+			}
+		}
+		
+		if (SystemStatus current = LateUpdate(); current != SystemStatus::Continue)
+		{
+			if (current != SystemStatus::Continue)
+			{
+				if (next == SystemStatus::Continue)
+				{
+					next = current;
+				}
+			}
+		}
+
+		return SystemStatus::Continue;
+	}
+
+	SystemStatus Game::EarlyUpdate()
+	{
 		for (GameSubsystem& subsystem : GetSubsystems())
 		{
-			subsystem.LateUpdate();
+			const SystemStatus status = subsystem.OnEarlyUpdate();
+			if (status != SystemStatus::Continue)
+			{
+				return status;
+			}
 		}
+
+		return SystemStatus::Success;
+	}
+
+	SystemStatus Game::FixedUpdate()
+	{
+		for (GameSubsystem& subsystem : GetSubsystems())
+		{
+			const SystemStatus status = subsystem.OnFixedUpdate();
+			if (status != SystemStatus::Continue)
+			{
+				return status;
+			}
+		}
+
+		return SystemStatus::Success;
+	}
+
+	SystemStatus Game::Update()
+	{
+		for (GameSubsystem& subsystem : GetSubsystems())
+		{
+			const SystemStatus status = subsystem.OnUpdate();
+			if (status != SystemStatus::Continue)
+			{
+				return status;
+			}
+		}
+
+		return SystemStatus::Success;
+	}
+
+	SystemStatus Game::LateUpdate()
+	{
+		for (GameSubsystem& subsystem : GetSubsystems())
+		{
+			const SystemStatus status = subsystem.OnLateUpdate();
+			if (status != SystemStatus::Continue)
+			{
+				return status;
+			}
+		}
+
+		return SystemStatus::Success;
 	}
 
 	Game* Game::GetInstance()

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "SystemStatus.hpp"
+
 namespace TUK::Framework
 {
 	class Subsystem
@@ -23,7 +25,7 @@ namespace TUK::Framework
 	protected:
 		explicit Subsystem(unsigned short priority) noexcept;
 
-		virtual void OnStartup();
+		virtual SystemStatus OnStartup();
 		virtual void OnShutdown();
 
 	private:

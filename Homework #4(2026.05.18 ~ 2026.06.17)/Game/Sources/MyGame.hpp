@@ -4,6 +4,8 @@
 
 #include "Framework/Platform/Display.hpp"
 
+using SystemStatus = TUK::Framework::SystemStatus;
+
 namespace TUK::Game
 {
 	class MyGame : public Framework::Game
@@ -11,7 +13,7 @@ namespace TUK::Game
 		DECLARE_GAME_INSTANCE();
 
 	public:
-		void Ready() override;
+		SystemStatus Ready() override;
 
 	private:
 		MyGame() noexcept;

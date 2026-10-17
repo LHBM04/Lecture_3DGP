@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "Subsystem.hpp"
+#include "SystemStatus.hpp"
 
 namespace TUK::Framework
 {
@@ -38,12 +39,6 @@ namespace TUK::Framework
 		System(System&&) = delete;
 		System& operator=(System&&) = delete;
 
-		[[nodiscard]] bool IsRunning() const noexcept;
-		void RequestQuit(int code) noexcept;
-
-		void ReportError(std::string_view message);	// TODO: 이거 없애고 Logger 만들기
-		[[nodiscard]] int GetQuitCode() const noexcept;
-
 		template <class TValue>
 		void AddOption(std::string_view key, TValue value);
 
@@ -56,11 +51,9 @@ namespace TUK::Framework
 		template <OptionType TOption>
 		[[nodiscard]] const TOption& GetOption(const std::string& key) const;
 
-		virtual void Ready();
-		virtual void Startup();
-		virtual void PreTick();
-		virtual void Tick();
-		virtual void PostTick();
+		virtual SystemStatus Ready();
+		virtual SystemStatus Startup();
+		virtual SystemStatus Routine();
 		virtual void Shutdown();
 
 	protected:
@@ -82,13 +75,6 @@ namespace TUK::Framework
 		[[nodiscard]] const auto GetSubsystems() const;
 
 	private:
-		/** 종료 여부 */
-		bool isRunning;
-		bool isReady = false;
-
-		/** 종료 코드 */
-		int quitCode;
-		
 		/** 시스템 옵션 */
 		std::unordered_map<std::string, std::variant<std::string, int, float, bool>> options;
 		

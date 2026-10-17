@@ -12,16 +12,19 @@ namespace TUK::Framework
 	{
 	}
 
-	void EngineSubsystem::PreTick()
+	SystemStatus EngineSubsystem::OnPreTick()
 	{
+		return SystemStatus::Continue;
 	}
 
-	void EngineSubsystem::Tick()
+	SystemStatus EngineSubsystem::OnTick()
 	{
+		return SystemStatus::Continue;
 	}
 
-	void EngineSubsystem::PostTick()
+	SystemStatus EngineSubsystem::OnPostTick()
 	{
+		return SystemStatus::Continue;
 	}
 
 }
