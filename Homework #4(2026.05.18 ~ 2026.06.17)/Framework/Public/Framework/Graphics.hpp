@@ -3,6 +3,7 @@
 #include "Graphics/Buffer.hpp"
 #include "Graphics/CommandBuffer.hpp"
 #include "Graphics/ComputePipeline.hpp"
+#include "Graphics/Fence.hpp"
 #include "Graphics/GraphicsDevice.hpp"
 #include "Graphics/GraphicsPipeline.hpp"
 #include "Graphics/Material.hpp"

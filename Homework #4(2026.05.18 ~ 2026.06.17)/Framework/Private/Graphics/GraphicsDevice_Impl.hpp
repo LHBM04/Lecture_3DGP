@@ -12,7 +12,7 @@ namespace TUK::Framework
 		explicit GraphicsDevice_Impl(ID3D12Device10* d3dDevice) noexcept;
 		~GraphicsDevice_Impl() noexcept override;
 
-		/** D3D12 디바이스 Getter */
+		/** D3D12 Device Getter */
 		[[nodiscard]] ID3D12Device10& GetD3D12Device() const noexcept;
 
 	private:

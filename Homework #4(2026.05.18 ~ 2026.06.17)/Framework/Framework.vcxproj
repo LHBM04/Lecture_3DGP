@@ -169,6 +169,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Private\Graphics\CommandBuffer_Impl.hpp" />
+    <ClInclude Include="Private\Graphics\Fence_Impl.hpp" />
     <ClInclude Include="Private\Graphics\RenderTarget_Impl.hpp" />
     <ClInclude Include="Private\Graphics\SwapChain_Impl.hpp" />
     <ClInclude Include="Private\Platform\Display_Impl.hpp" />
@@ -190,6 +192,7 @@
     <ClInclude Include="Public\Framework\Graphics\Buffer.hpp" />
     <ClInclude Include="Public\Framework\Graphics\CommandBuffer.hpp" />
     <ClInclude Include="Public\Framework\Graphics\ComputePipeline.hpp" />
+    <ClInclude Include="Public\Framework\Graphics\Fence.hpp" />
     <ClInclude Include="Public\Framework\Graphics\GraphicsDevice.hpp" />
     <ClInclude Include="Public\Framework\Graphics\GraphicsPipeline.hpp" />
     <ClInclude Include="Public\Framework\Graphics\Material.hpp" />
@@ -248,8 +251,14 @@
     <ClCompile Include="Private\Entities\Transform.cpp" />
     <ClCompile Include="Private\Entities\World.cpp" />
     <ClCompile Include="Private\Entities\WorldSubsystem.cpp" />
+    <ClCompile Include="Private\Graphics\CommandBuffer.cpp" />
+    <ClCompile Include="Private\Graphics\CommandBuffer_Impl.cpp" />
+    <ClCompile Include="Private\Graphics\Fence.cpp" />
+    <ClCompile Include="Private\Graphics\Fence_Impl.cpp" />
     <ClCompile Include="Private\Graphics\GraphicsDevice.cpp" />
     <ClCompile Include="Private\Graphics\RenderSubsystem.cpp" />
+    <ClCompile Include="Private\Graphics\RenderTarget.cpp" />
+    <ClCompile Include="Private\Graphics\RenderTarget_Impl.cpp" />
     <ClCompile Include="Private\Graphics\SwapChain.cpp" />
     <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp" />
     <ClCompile Include="Private\Math\ColorRGB.cpp">

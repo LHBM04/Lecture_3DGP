@@ -1,49 +1,28 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "SwapChain_Impl.hpp"
 
 #include "Framework/Graphics/CommandBuffer.hpp"
+#include "RenderTarget_Impl.hpp"
 
 namespace TUK::Framework
 {
 	SwapChain_Impl::SwapChain_Impl(IDXGISwapChain4* dxgiSwapChain) noexcept
 		: dxgiSwapChain(dxgiSwapChain)
-		, rtvHeap(nullptr)
-		, backBuffers()
-		, rtvDescriptorSize(0)
+		, renderTargets()
 	{
 		assert(dxgiSwapChain);
 
 		DXGI_SWAP_CHAIN_DESC1 description{};
-		dxgiSwapChain->GetDesc1(&description);
-
-		ID3D12Device* d3dDevice = nullptr;
-		if (SUCCEEDED(dxgiSwapChain->GetDevice(IID_PPV_ARGS(&d3dDevice))) && d3dDevice)
+		if (SUCCEEDED(dxgiSwapChain->GetDesc1(&description)))
 		{
-			D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
-			heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-			heapDesc.NumDescriptors = description.BufferCount;
-			heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-			if (SUCCEEDED(d3dDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeap))))
-			{
-				rtvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-				backBuffers.resize(description.BufferCount, nullptr);
-				CreateRenderTargets();
-			}
-
-			d3dDevice->Release();
+			renderTargets.resize(description.BufferCount);
+			CreateRenderTargets();
 		}
 	}
 
 	SwapChain_Impl::~SwapChain_Impl() noexcept
 	{
 		ReleaseRenderTargets();
-
-		if (rtvHeap)
-		{
-			rtvHeap->Release();
-			rtvHeap = nullptr;
-		}
 
 		if (dxgiSwapChain)
 		{
@@ -55,7 +34,12 @@ namespace TUK::Framework
 
 	void SwapChain_Impl::Clear(CommandBuffer& commandBuffer) const
 	{
-		assert(dxgiSwapChain);
+		assert(dxgiSwapChain && !renderTargets.empty());
+
+		const UINT backBufferIndex = dxgiSwapChain->GetCurrentBackBufferIndex();
+		assert(renderTargets[backBufferIndex]);
+
+		commandBuffer.SetRenderTarget(*renderTargets[backBufferIndex]);
 		commandBuffer.ClearRenderTarget(ColorRGBA<float>(0, 0, 0, 0));
 	}
 
@@ -108,36 +92,23 @@ namespace TUK::Framework
 
 	void SwapChain_Impl::CreateRenderTargets()
 	{
-		assert(dxgiSwapChain && rtvHeap);
+		assert(dxgiSwapChain);
 
-		ID3D12Device* d3dDevice = nullptr;
-		if (FAILED(dxgiSwapChain->GetDevice(IID_PPV_ARGS(&d3dDevice))) || !d3dDevice)
+		for (UINT index = 0; index < static_cast<UINT>(renderTargets.size()); ++index)
 		{
-			return;
-		}
-
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeap->GetCPUDescriptorHandleForHeapStart();
-		for (UINT index = 0; index < static_cast<UINT>(backBuffers.size()); ++index)
-		{
-			if (SUCCEEDED(dxgiSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffers[index]))))
+			ID3D12Resource* backBuffer = nullptr;
+			if (SUCCEEDED(dxgiSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer))) && backBuffer)
 			{
-				d3dDevice->CreateRenderTargetView(backBuffers[index], nullptr, rtvHandle);
+				renderTargets[index] = std::make_unique<RenderTarget_Impl>(backBuffer);
 			}
-			rtvHandle.ptr += rtvDescriptorSize;
 		}
-
-		d3dDevice->Release();
 	}
 
 	void SwapChain_Impl::ReleaseRenderTargets() noexcept
 	{
-		for (ID3D12Resource*& backBuffer : backBuffers)
+		for (std::unique_ptr<RenderTarget>& renderTarget : renderTargets)
 		{
-			if (backBuffer)
-			{
-				backBuffer->Release();
-				backBuffer = nullptr;
-			}
+			renderTarget.reset();
 		}
 	}
 }

@@ -1,9 +1,7 @@
-#pragma once
+﻿#pragma once
 
+#include <functional>
 #include <span>
-#include <type_traits>
-
-#include <d3d12.h>
 
 #include "../Math/ColorRGB.hpp"
 #include "../Math/ColorRGBA.hpp"
@@ -21,14 +19,13 @@ namespace TUK::Framework
 		friend class RenderSubsystem;
 
 	public:
-		virtual ~CommandBuffer() noexcept = default;
+		virtual ~CommandBuffer() noexcept;
 
 		CommandBuffer(const CommandBuffer&) = delete;
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
 
-		/** 이동 금지 */
-		CommandBuffer(CommandBuffer&&) = default;
-		CommandBuffer& operator=(CommandBuffer&&) = default;
+		CommandBuffer(CommandBuffer&&) = delete;
+		CommandBuffer& operator=(CommandBuffer&&) = delete;
 
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
@@ -40,6 +37,6 @@ namespace TUK::Framework
 		virtual void ClearRenderTarget(const ColorRGBA<float>& clearColor) const = 0;
 
 	protected:
-		CommandBuffer() noexcept = default;
+		CommandBuffer() noexcept;
 	};
 }

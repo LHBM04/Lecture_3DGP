@@ -7,15 +7,15 @@ namespace TUK::Framework
 		friend class CommandBuffer;
 
 	public:
-		virtual ~RenderTarget() noexcept = default;
+		virtual ~RenderTarget() noexcept;
 
 		RenderTarget(const RenderTarget&) = delete;
 		RenderTarget& operator=(const RenderTarget&) = delete;
 
-		RenderTarget(RenderTarget&&) noexcept = default;
-		RenderTarget& operator=(RenderTarget&&) noexcept = default;
+		RenderTarget(RenderTarget&&) = delete;
+		RenderTarget& operator=(RenderTarget&&) = delete;
 
-	private:
-		RenderTarget() noexcept = default;
+	protected:
+		RenderTarget() noexcept;
 	};
 }

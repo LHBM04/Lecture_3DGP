@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Framework/Platform/DisplayCreateEvent.hpp"
 
 namespace TUK::Framework

@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Framework/Platform/DisplayFocusEvent.hpp"
 
 namespace TUK::Framework

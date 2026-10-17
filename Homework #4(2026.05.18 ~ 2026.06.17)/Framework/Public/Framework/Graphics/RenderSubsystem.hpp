@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <map>
 #include <memory>
@@ -6,6 +6,8 @@
 
 #include "../Core/EngineSubsystem.hpp"
 
+#include "CommandBuffer.hpp"
+#include "Fence.hpp"
 #include "GraphicsDevice.hpp"
 #include "SwapChain.hpp"
 
@@ -29,6 +31,8 @@ namespace TUK::Framework
 
 	private:
 		std::unique_ptr<GraphicsDevice> device;
+		std::unique_ptr<CommandBuffer> commandBuffer;
+		std::unique_ptr<Fence> fence;
 		std::map<const Display*, std::unique_ptr<SwapChain>> swapChains;
 	};
 }

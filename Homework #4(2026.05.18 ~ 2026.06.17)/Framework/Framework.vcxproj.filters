@@ -195,6 +195,9 @@
     <ClInclude Include="Private\Platform\Display_Impl.hpp">
       <Filter>Private\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Private\Graphics\CommandBuffer_Impl.hpp">
+      <Filter>Private\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Private\Graphics\GraphicsDevice_Impl.hpp">
       <Filter>Private\Graphics</Filter>
     </ClInclude>
@@ -236,6 +239,12 @@
     </ClInclude>
     <ClInclude Include="Private\Platform\WindowProc.hpp">
       <Filter>Private\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Framework\Graphics\Fence.hpp">
+      <Filter>Public\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Graphics\Fence_Impl.hpp">
+      <Filter>Private\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -308,10 +317,22 @@
     <ClCompile Include="Private\Platform\DisplaySubsystem.cpp">
       <Filter>Private\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Graphics\CommandBuffer.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\CommandBuffer_Impl.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Private\Graphics\GraphicsDevice.cpp">
       <Filter>Private\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Private\Graphics\GraphicsDevice_Impl.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\RenderTarget.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\RenderTarget_Impl.cpp">
       <Filter>Private\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Private\Graphics\SwapChain.cpp">
@@ -352,6 +373,12 @@
     </ClCompile>
     <ClCompile Include="Private\Platform\WindowProc.cpp">
       <Filter>Private\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\Fence.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\Fence_Impl.cpp">
+      <Filter>Private\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

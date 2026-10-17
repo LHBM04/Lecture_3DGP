@@ -1,13 +1,18 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Framework/Graphics/RenderSubsystem.hpp"
 
+#include "Graphics/CommandBuffer_Impl.hpp"
+#include "Graphics/Fence_Impl.hpp"
 #include "Graphics/GraphicsDevice_Impl.hpp"
 #include "Graphics/SwapChain_Impl.hpp"
 #include "Platform/Display_Impl.hpp"
 
 namespace
 {
+	/** DXGI Factory */
 	IDXGIFactory6* dxgiFactory = nullptr;
+
+	/** D3D12 명령 큐 */
 	ID3D12CommandQueue* d3dCommandQueue = nullptr;
 }
 
@@ -16,13 +21,37 @@ namespace TUK::Framework
 	RenderSubsystem::RenderSubsystem() noexcept
 		: EngineSubsystem(100)
 		, device(nullptr)
-		, swapChains()
+		, commandBuffer(nullptr)
+		, fence(nullptr)
 	{
 	}
 
 	RenderSubsystem::~RenderSubsystem() noexcept
 	{
-		OnShutdown();
+		if (d3dCommandQueue && fence)
+		{
+			Fence_Impl& fenceImpl = dynamic_cast<Fence_Impl&>(*fence);
+			fenceImpl.Signal(*d3dCommandQueue);
+			fenceImpl.Wait();
+		}
+
+		swapChains.clear();
+		commandBuffer.reset();
+		fence.reset();
+
+		if (d3dCommandQueue)
+		{
+			d3dCommandQueue->Release();
+			d3dCommandQueue = nullptr;
+		}
+
+		device.reset();
+
+		if (dxgiFactory)
+		{
+			dxgiFactory->Release();
+			dxgiFactory = nullptr;
+		}
 	}
 
 	void RenderSubsystem::CreateSwapChain(const Display& window)
@@ -34,7 +63,7 @@ namespace TUK::Framework
 
 		assert(dxgiFactory && d3dCommandQueue);
 
-		const HWND hWnd = static_cast<const Display_Impl&>(window).GetHWND();
+		const HWND hWnd = dynamic_cast<const Display_Impl&>(window).GetHWND();
 		assert(hWnd);
 
 		const Vector2D<int> clientSize = window.GetClientSize();
@@ -98,7 +127,10 @@ namespace TUK::Framework
 		for (UINT index = 0; ; ++index)
 		{
 			IDXGIAdapter1* adapter = nullptr;
-			if (dxgiFactory->EnumAdapterByGpuPreference(index, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter)) == DXGI_ERROR_NOT_FOUND)
+			if (dxgiFactory->EnumAdapterByGpuPreference(
+				index,
+				DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+				IID_PPV_ARGS(&adapter)) == DXGI_ERROR_NOT_FOUND)
 			{
 				break;
 			}
@@ -144,29 +176,100 @@ namespace TUK::Framework
 			return SystemStatus::Failed;
 		}
 
+		ID3D12CommandAllocator* d3dCommandAllocator = nullptr;
+		if (FAILED(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&d3dCommandAllocator))))
+		{
+			d3dDevice->Release();
+			return SystemStatus::Failed;
+		}
+
+		ID3D12GraphicsCommandList* d3dCommandList = nullptr;
+		if (FAILED(d3dDevice->CreateCommandList(
+			0,
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			d3dCommandAllocator,
+			nullptr,
+			IID_PPV_ARGS(&d3dCommandList))))
+		{
+			d3dCommandAllocator->Release();
+			d3dDevice->Release();
+			return SystemStatus::Failed;
+		}
+
+		d3dCommandList->Close();
+
+		ID3D12Fence* d3dFence = nullptr;
+		if (FAILED(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&d3dFence))))
+		{
+			d3dCommandList->Release();
+			d3dCommandAllocator->Release();
+			d3dDevice->Release();
+			return SystemStatus::Failed;
+		}
+
+		const HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		if (!fenceEvent)
+		{
+			d3dFence->Release();
+			d3dCommandList->Release();
+			d3dCommandAllocator->Release();
+			d3dDevice->Release();
+			return SystemStatus::Failed;
+		}
+
 		device = std::make_unique<GraphicsDevice_Impl>(d3dDevice);
+		commandBuffer = std::make_unique<CommandBuffer_Impl>(d3dCommandAllocator, d3dCommandList);
+		fence = std::make_unique<Fence_Impl>(d3dFence, fenceEvent);
 
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus RenderSubsystem::OnPreTick()
 	{
+		assert(commandBuffer);
+
+		commandBuffer->BeginFrame();
+		for (const auto& swapChain : swapChains | std::views::values)
+		{
+			swapChain->Clear(*commandBuffer);
+		}
+
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
-		for (const auto& [display, swapChain] : swapChains)
+		assert(commandBuffer && d3dCommandQueue && fence);
+
+		commandBuffer->EndFrame();
+
+		ID3D12CommandList* commandLists[]{ &dynamic_cast<CommandBuffer_Impl&>(*commandBuffer).GetD3D12CommandList() };
+		d3dCommandQueue->ExecuteCommandLists(1, commandLists);
+
+		for (const auto& swapChain : swapChains | std::views::values)
 		{
 			swapChain->Present();
 		}
+
+		Fence_Impl& fenceImpl = dynamic_cast<Fence_Impl&>(*fence);
+		fenceImpl.Signal(*d3dCommandQueue);
+		fenceImpl.Wait();
 
 		return SystemStatus::Continue;
 	}
 
 	void RenderSubsystem::OnShutdown()
 	{
+		if (d3dCommandQueue && fence)
+		{
+			Fence_Impl& fenceImpl = dynamic_cast<Fence_Impl&>(*fence);
+			fenceImpl.Signal(*d3dCommandQueue);
+			fenceImpl.Wait();
+		}
+
 		swapChains.clear();
+		commandBuffer.reset();
+		fence.reset();
 
 		if (d3dCommandQueue)
 		{

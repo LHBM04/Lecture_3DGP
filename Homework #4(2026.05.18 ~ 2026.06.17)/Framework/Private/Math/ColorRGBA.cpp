@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
 #include "ColorRGB.hpp"

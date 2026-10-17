@@ -1,10 +1,11 @@
 ﻿#pragma once
 
+#include <memory>
 #include <vector>
 
-#include <d3d12.h>
 #include <dxgi1_6.h>
 
+#include "Framework/Graphics/RenderTarget.hpp"
 #include "Framework/Graphics/SwapChain.hpp"
 
 namespace TUK::Framework
@@ -21,7 +22,7 @@ namespace TUK::Framework
 		[[nodiscard]] Vector2D<int> GetSize() const noexcept override;
 		void SetSize(const Vector2D<int>& size) noexcept override;
 
-		/** DXGI ?ㅼ솑泥댁씤 Getter */
+		/** DXGI 스왑체인 Getter */
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
 
 	private:
@@ -30,8 +31,6 @@ namespace TUK::Framework
 
 	private:
 		IDXGISwapChain4* dxgiSwapChain;
-		ID3D12DescriptorHeap* rtvHeap;
-		std::vector<ID3D12Resource*> backBuffers;
-		UINT rtvDescriptorSize;
+		std::vector<std::unique_ptr<RenderTarget>> renderTargets;
 	};
 }
