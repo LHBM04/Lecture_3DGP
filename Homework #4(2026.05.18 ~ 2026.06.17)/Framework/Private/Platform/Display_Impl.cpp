@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Display_Impl.hpp"
 
 namespace TUK::Framework
@@ -7,7 +7,7 @@ namespace TUK::Framework
 		: hWnd(hWnd)
 		, shouldClose(false)
 	{
-		//assert(hWnd);
+		assert(hWnd);
 	}
 
 	Display_Impl::~Display_Impl() noexcept
@@ -69,7 +69,7 @@ namespace TUK::Framework
 	{
 		assert(hWnd);
 		RECT rect;
-		GetClientRect(hWnd, &rect);
+		GetWindowRect(hWnd, &rect);
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
@@ -77,6 +77,24 @@ namespace TUK::Framework
 	{
 		assert(hWnd);
 		SetWindowPos(hWnd, nullptr, 0, 0, size.GetX(), size.GetY(), SWP_NOMOVE | SWP_NOZORDER);
+	}
+
+	Vector2D<int> Display_Impl::GetClientSize() const noexcept
+	{
+		assert(hWnd);
+		RECT rect;
+		GetClientRect(hWnd, &rect);
+		return { rect.right - rect.left, rect.bottom - rect.top };
+	}
+
+	void Display_Impl::SetClientSize(const Vector2D<int>& size) noexcept
+	{
+		assert(hWnd);
+		RECT rect{ 0, 0, size.GetX(), size.GetY() };
+		const DWORD style = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
+		const DWORD exStyle = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_EXSTYLE));
+		AdjustWindowRectEx(&rect, style, GetMenu(hWnd) != nullptr, exStyle);
+		SetWindowPos(hWnd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER);
 	}
 
 	bool Display_Impl::ShouldClose() const noexcept

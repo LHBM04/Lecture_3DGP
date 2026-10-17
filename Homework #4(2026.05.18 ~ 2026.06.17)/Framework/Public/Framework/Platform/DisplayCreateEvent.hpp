@@ -4,9 +4,10 @@
 
 namespace TUK::Framework
 {
-	struct DisplayCreateEvent : public DisplayEvent
+	class DisplayCreateEvent : public DisplayEvent
 	{
-		explicit DisplayCreateEvent(Display* display) noexcept;
+	public:
+		explicit DisplayCreateEvent(const Display* display) noexcept;
 		~DisplayCreateEvent() noexcept override;
 	};
 }

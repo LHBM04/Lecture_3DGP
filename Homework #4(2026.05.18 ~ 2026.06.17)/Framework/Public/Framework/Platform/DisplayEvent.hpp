@@ -6,15 +6,17 @@ namespace TUK::Framework
 {
 	class Display;
 
-	struct DisplayEvent : public Event
+	class DisplayEvent : public Event
 	{
 	public:
 		~DisplayEvent() noexcept override;
 
-	protected:
-		explicit DisplayEvent(Display* display) noexcept;
+		[[nodiscard]] const Display* GetDisplay() const noexcept;
 
-	public:
-		Display* display = nullptr;
+	protected:
+		explicit DisplayEvent(const Display* display) noexcept;
+
+	private:
+		const Display* display;
 	};
 }

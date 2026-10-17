@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	DisplayCloseEvent::DisplayCloseEvent(Display* display) noexcept
+	DisplayCloseEvent::DisplayCloseEvent(const Display* display) noexcept
 		: DisplayEvent(display)
 	{
 	}

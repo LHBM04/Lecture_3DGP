@@ -4,11 +4,15 @@
 
 namespace TUK::Framework
 {
-	struct DisplayFocusEvent : public DisplayEvent
+	class DisplayFocusEvent : public DisplayEvent
 	{
-		DisplayFocusEvent(Display* display, bool isFocused) noexcept;
+	public:
+		DisplayFocusEvent(const Display* display, bool isFocused) noexcept;
 		~DisplayFocusEvent() noexcept override;
 
-		bool isFocused = false;
+		[[nodiscard]] bool IsFocused() const noexcept;
+
+	private:
+		bool isFocused;
 	};
 }

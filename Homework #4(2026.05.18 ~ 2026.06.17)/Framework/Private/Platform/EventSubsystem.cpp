@@ -18,7 +18,7 @@ namespace TUK::Framework
 		writeBuffer.clear();
 	}
 
-	void EventSubsystem::PushEvent(std::unique_ptr<Event> event)
+	void EventSubsystem::PushEvent(std::unique_ptr<const Event> event)
 	{
 		if (event)
 		{
@@ -48,7 +48,7 @@ namespace TUK::Framework
 		readBuffer.clear();
 		std::swap(writeBuffer, readBuffer);
 
-		for (const std::unique_ptr<Event>& event : readBuffer)
+		for (const std::unique_ptr<const Event>& event : readBuffer)
 		{
 			if (!event)
 			{

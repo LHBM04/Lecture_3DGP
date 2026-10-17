@@ -23,7 +23,7 @@ namespace TUK::Framework
 		template <std::derived_from<Event> TEvent, class... TArgs>
 		void PushEvent(TArgs&&... args);
 
-		void PushEvent(std::unique_ptr<Event> event);
+		void PushEvent(std::unique_ptr<const Event> event);
 
 		template <std::derived_from<Event> TEvent>
 		void Subscribe(std::function<void(const TEvent&)> callback);
@@ -36,15 +36,15 @@ namespace TUK::Framework
 	private:
 		using Listener = std::function<void(const Event&)>;
 
-		std::vector<std::unique_ptr<Event>> writeBuffer;
-		std::vector<std::unique_ptr<Event>> readBuffer;
+		std::vector<std::unique_ptr<const Event>> writeBuffer;
+		std::vector<std::unique_ptr<const Event>> readBuffer;
 		std::unordered_map<std::type_index, std::vector<Listener>> listeners;
 	};
 
 	template <std::derived_from<Event> TEvent, class... TArgs>
 	void EventSubsystem::PushEvent(TArgs&&... args)
 	{
-		writeBuffer.push_back(std::make_unique<TEvent>(std::forward<TArgs>(args)...));
+		writeBuffer.push_back(std::make_unique<const TEvent>(std::forward<TArgs>(args)...));
 	}
 
 	template <std::derived_from<Event> TEvent>

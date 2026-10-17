@@ -5,11 +5,15 @@
 
 namespace TUK::Framework
 {
-	struct DisplayMoveEvent : public DisplayEvent
+	class DisplayMoveEvent : public DisplayEvent
 	{
-		DisplayMoveEvent(Display* display, const Vector2D<int>& position) noexcept;
+	public:
+		DisplayMoveEvent(const Display* display, const Vector2D<int>& position) noexcept;
 		~DisplayMoveEvent() noexcept override;
 
+		[[nodiscard]] const Vector2D<int>& GetPosition() const noexcept;
+
+	private:
 		Vector2D<int> position;
 	};
 }

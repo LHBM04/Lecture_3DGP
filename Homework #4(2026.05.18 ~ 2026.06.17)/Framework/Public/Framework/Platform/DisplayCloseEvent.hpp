@@ -4,9 +4,10 @@
 
 namespace TUK::Framework
 {
-	struct DisplayCloseEvent : public DisplayEvent
+	class DisplayCloseEvent : public DisplayEvent
 	{
-		explicit DisplayCloseEvent(Display* display) noexcept;
+	public:
+		explicit DisplayCloseEvent(const Display* display) noexcept;
 		~DisplayCloseEvent() noexcept override;
 	};
 }

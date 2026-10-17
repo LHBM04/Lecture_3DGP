@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -31,6 +31,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] Vector2D<int> GetSize() const noexcept override;
 		void SetSize(const Vector2D<int>& size) noexcept override;
+
+		[[nodiscard]] Vector2D<int> GetClientSize() const noexcept override;
+		void SetClientSize(const Vector2D<int>& size) noexcept override;
 
 		[[nodiscard]] bool ShouldClose() const noexcept override;
 		void SetShouldClose(bool value) noexcept override;

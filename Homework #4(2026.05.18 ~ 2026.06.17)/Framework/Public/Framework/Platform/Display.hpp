@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <string_view>
@@ -34,6 +34,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] virtual Vector2D<int> GetSize() const noexcept = 0;
 		virtual void SetSize(const Vector2D<int>& size) noexcept = 0;
+
+		[[nodiscard]] virtual Vector2D<int> GetClientSize() const noexcept = 0;
+		virtual void SetClientSize(const Vector2D<int>& size) noexcept = 0;
 
 		[[nodiscard]] virtual bool ShouldClose() const noexcept = 0;
 		virtual void SetShouldClose(bool value) noexcept = 0;
