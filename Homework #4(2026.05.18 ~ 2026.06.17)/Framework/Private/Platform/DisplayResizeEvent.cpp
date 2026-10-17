@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	DisplayResizeEvent::DisplayResizeEvent(const Display* display, const Vector2D<int>& size) noexcept
+	DisplayResizeEvent::DisplayResizeEvent(const Display& display, const Vector2D<int>& size) noexcept
 		: DisplayEvent(display)
 		, size(size)
 	{

@@ -28,6 +28,14 @@ namespace TUK::Framework
 		template <std::derived_from<Event> TEvent>
 		void Subscribe(std::function<void(const TEvent&)> callback);
 
+		template <std::derived_from<Event> TEvent, class TInstance, class TArg>
+			requires std::convertible_to<const TEvent&, TArg>
+		void Subscribe(TInstance* instance, void (TInstance::*callback)(TArg));
+
+		template <std::derived_from<Event> TEvent, class TInstance, class TArg>
+			requires std::convertible_to<const TEvent&, TArg>
+		void Subscribe(const TInstance* instance, void (TInstance::*callback)(TArg) const);
+
 	protected:
 		SystemStatus OnPreTick() override;
 		SystemStatus OnTick() override;
@@ -54,6 +62,30 @@ namespace TUK::Framework
 			[cb = std::move(callback)](const Event& event)
 			{
 				cb(static_cast<const TEvent&>(event));
+			});
+	}
+
+	template <std::derived_from<Event> TEvent, class TInstance, class TArg>
+		requires std::convertible_to<const TEvent&, TArg>
+	void EventSubsystem::Subscribe(TInstance* instance, void (TInstance::*callback)(TArg))
+	{
+		assert(instance && callback);
+		Subscribe<TEvent>(
+			[instance, callback](const TEvent& event)
+			{
+				(instance->*callback)(event);
+			});
+	}
+
+	template <std::derived_from<Event> TEvent, class TInstance, class TArg>
+		requires std::convertible_to<const TEvent&, TArg>
+	void EventSubsystem::Subscribe(const TInstance* instance, void (TInstance::*callback)(TArg) const)
+	{
+		assert(instance && callback);
+		Subscribe<TEvent>(
+			[instance, callback](const TEvent& event)
+			{
+				(instance->*callback)(event);
 			});
 	}
 }

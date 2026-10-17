@@ -308,7 +308,13 @@
     <ClCompile Include="Private\Platform\DisplaySubsystem.cpp">
       <Filter>Private\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Graphics\GraphicsDevice.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Private\Graphics\GraphicsDevice_Impl.cpp">
+      <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Graphics\SwapChain.cpp">
       <Filter>Private\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp">

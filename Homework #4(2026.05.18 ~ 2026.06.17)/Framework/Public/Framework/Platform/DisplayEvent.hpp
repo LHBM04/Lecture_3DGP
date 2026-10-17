@@ -11,12 +11,14 @@ namespace TUK::Framework
 	public:
 		~DisplayEvent() noexcept override;
 
-		[[nodiscard]] const Display* GetDisplay() const noexcept;
+		[[nodiscard]] const Display& GetDisplay() const noexcept;
+
+		operator const Display&() const noexcept;
 
 	protected:
-		explicit DisplayEvent(const Display* display) noexcept;
+		explicit DisplayEvent(const Display& display) noexcept;
 
 	private:
-		const Display* display;
+		const Display& display;
 	};
 }

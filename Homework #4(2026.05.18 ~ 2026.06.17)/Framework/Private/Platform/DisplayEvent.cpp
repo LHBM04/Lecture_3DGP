@@ -7,12 +7,17 @@ namespace TUK::Framework
 	{
 	}
 
-	const Display* DisplayEvent::GetDisplay() const noexcept
+	const Display& DisplayEvent::GetDisplay() const noexcept
 	{
 		return display;
 	}
 
-	DisplayEvent::DisplayEvent(const Display* display) noexcept
+	DisplayEvent::operator const Display&() const noexcept
+	{
+		return display;
+	}
+
+	DisplayEvent::DisplayEvent(const Display& display) noexcept
 		: display(display)
 	{
 	}

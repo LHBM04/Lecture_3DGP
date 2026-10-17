@@ -7,7 +7,7 @@ namespace TUK::Framework
 	class DisplayCloseEvent : public DisplayEvent
 	{
 	public:
-		explicit DisplayCloseEvent(const Display* display) noexcept;
+		explicit DisplayCloseEvent(const Display& display) noexcept;
 		~DisplayCloseEvent() noexcept override;
 	};
 }

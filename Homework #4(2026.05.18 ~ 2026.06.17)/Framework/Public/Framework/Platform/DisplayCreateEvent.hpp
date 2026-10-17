@@ -7,7 +7,7 @@ namespace TUK::Framework
 	class DisplayCreateEvent : public DisplayEvent
 	{
 	public:
-		explicit DisplayCreateEvent(const Display* display) noexcept;
+		explicit DisplayCreateEvent(const Display& display) noexcept;
 		~DisplayCreateEvent() noexcept override;
 	};
 }

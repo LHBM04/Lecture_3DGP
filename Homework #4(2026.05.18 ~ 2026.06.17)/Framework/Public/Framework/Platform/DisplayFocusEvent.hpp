@@ -7,7 +7,7 @@ namespace TUK::Framework
 	class DisplayFocusEvent : public DisplayEvent
 	{
 	public:
-		DisplayFocusEvent(const Display* display, bool isFocused) noexcept;
+		DisplayFocusEvent(const Display& display, bool isFocused) noexcept;
 		~DisplayFocusEvent() noexcept override;
 
 		[[nodiscard]] bool IsFocused() const noexcept;

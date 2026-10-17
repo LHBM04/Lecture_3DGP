@@ -8,7 +8,7 @@ namespace TUK::Framework
 	class DisplayMoveEvent : public DisplayEvent
 	{
 	public:
-		DisplayMoveEvent(const Display* display, const Vector2D<int>& position) noexcept;
+		DisplayMoveEvent(const Display& display, const Vector2D<int>& position) noexcept;
 		~DisplayMoveEvent() noexcept override;
 
 		[[nodiscard]] const Vector2D<int>& GetPosition() const noexcept;

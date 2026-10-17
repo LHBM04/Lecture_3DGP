@@ -7,7 +7,7 @@ namespace TUK::Framework
 		: hWnd(hWnd)
 		, shouldClose(false)
 	{
-		assert(hWnd);
+		assert(this->hWnd);
 	}
 
 	Display_Impl::~Display_Impl() noexcept

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -60,3 +60,6 @@
 
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
+
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")

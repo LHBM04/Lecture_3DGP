@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <span>
 #include <type_traits>
@@ -16,7 +16,7 @@ namespace TUK::Framework
 	class Shader;
 	class Buffer;
 
-	class CommandBuffer final
+	class CommandBuffer
 	{
 		friend class RenderSubsystem;
 

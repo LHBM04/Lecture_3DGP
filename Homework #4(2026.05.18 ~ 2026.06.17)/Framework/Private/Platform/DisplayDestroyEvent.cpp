@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	DisplayDestroyEvent::DisplayDestroyEvent(const Display* display) noexcept
+	DisplayDestroyEvent::DisplayDestroyEvent(const Display& display) noexcept
 		: DisplayEvent(display)
 	{
 	}

@@ -1,7 +1,8 @@
-﻿#pragma once
+#pragma once
 
-#include <vector>
 #include <map>
+#include <memory>
+#include <vector>
 
 #include "../Core/EngineSubsystem.hpp"
 
@@ -18,12 +19,16 @@ namespace TUK::Framework
 		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
 
-		void RegisterWindow(const Display& window);
+		void CreateSwapChain(const Display& window);
 
 	protected:
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;
 		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
+
+	private:
+		std::unique_ptr<GraphicsDevice> device;
+		std::map<const Display*, std::unique_ptr<SwapChain>> swapChains;
 	};
 }

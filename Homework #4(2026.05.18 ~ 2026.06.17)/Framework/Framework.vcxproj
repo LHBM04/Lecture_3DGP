@@ -248,7 +248,9 @@
     <ClCompile Include="Private\Entities\Transform.cpp" />
     <ClCompile Include="Private\Entities\World.cpp" />
     <ClCompile Include="Private\Entities\WorldSubsystem.cpp" />
+    <ClCompile Include="Private\Graphics\GraphicsDevice.cpp" />
     <ClCompile Include="Private\Graphics\RenderSubsystem.cpp" />
+    <ClCompile Include="Private\Graphics\SwapChain.cpp" />
     <ClCompile Include="Private\Graphics\SwapChain_Impl.cpp" />
     <ClCompile Include="Private\Math\ColorRGB.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

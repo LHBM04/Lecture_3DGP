@@ -1,11 +1,8 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
-#include "Framework/Graphics/RenderSubsystem.hpp"
-
-#include "Framework/Platform/DisplaySubsystem.hpp"
-#include "Framework/Platform/EventSubsystem.hpp"
-#include "Framework/Platform/TimeSubsystem.hpp"
+#include "Framework/Graphics.hpp"
+#include "Framework/Platform.hpp"
 
 DEFINE_ENGINE_INSTANCE(::TUK::Game::MyEngine)
 
@@ -24,9 +21,11 @@ namespace TUK::Game
 		Engine::Ready();
 
 		AddSubsystem<Framework::TimeSubsystem>();
-		AddSubsystem<Framework::EventSubsystem>();
+		Framework::EventSubsystem* eventSubsystem = AddSubsystem<Framework::EventSubsystem>();
 		AddSubsystem<Framework::DisplaySubsystem>();
-		AddSubsystem<Framework::RenderSubsystem>();
+		Framework::RenderSubsystem* renderSubsystem = AddSubsystem<Framework::RenderSubsystem>();
+
+		eventSubsystem->Subscribe<Framework::DisplayCreateEvent>(renderSubsystem, &Framework::RenderSubsystem::CreateSwapChain);
 
 		return SystemStatus::Continue;
 	}

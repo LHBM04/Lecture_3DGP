@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "WindowProc.hpp"
 
 #include "Framework/Core/Engine.hpp"
@@ -44,7 +44,7 @@ namespace TUK::Framework
 		case WM_CREATE:
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayCreateEvent>(display);
+				eventSubsystem->PushEvent<DisplayCreateEvent>(*display);
 			}
 			return 0;
 
@@ -52,14 +52,14 @@ namespace TUK::Framework
 			display->SetShouldClose(true);
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayCloseEvent>(display);
+				eventSubsystem->PushEvent<DisplayCloseEvent>(*display);
 			}
 			return DefWindowProc(hWnd, message, wParam, lParam);
 
 		case WM_DESTROY:
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayDestroyEvent>(display);
+				eventSubsystem->PushEvent<DisplayDestroyEvent>(*display);
 			}
 			return 0;
 
@@ -72,7 +72,7 @@ namespace TUK::Framework
 			if (eventSubsystem)
 			{
 				eventSubsystem->PushEvent<DisplayResizeEvent>(
-					display,
+					*display,
 					Vector2D<int>{ static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam)) });
 			}
 			return 0;
@@ -81,7 +81,7 @@ namespace TUK::Framework
 			if (eventSubsystem)
 			{
 				eventSubsystem->PushEvent<DisplayMoveEvent>(
-					display,
+					*display,
 					Vector2D<int>{ static_cast<int>(GET_X_LPARAM(lParam)), static_cast<int>(GET_Y_LPARAM(lParam)) });
 			}
 			return 0;
@@ -90,7 +90,7 @@ namespace TUK::Framework
 		case WM_KILLFOCUS:
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayFocusEvent>(display, message == WM_SETFOCUS);
+				eventSubsystem->PushEvent<DisplayFocusEvent>(*display, message == WM_SETFOCUS);
 			}
 			return 0;
 		default:

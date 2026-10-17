@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	DisplayFocusEvent::DisplayFocusEvent(const Display* display, bool isFocused) noexcept
+	DisplayFocusEvent::DisplayFocusEvent(const Display& display, bool isFocused) noexcept
 		: DisplayEvent(display)
 		, isFocused(isFocused)
 	{
