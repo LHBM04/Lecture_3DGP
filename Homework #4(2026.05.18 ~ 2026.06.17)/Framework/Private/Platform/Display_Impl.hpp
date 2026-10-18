@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#include <cstdint>
 #include <windows.h>
 
 #include "Framework/Platform/Display.hpp"
@@ -26,14 +27,14 @@ namespace TUK::Framework
 		void SetCaption(std::string_view value) noexcept override;
 #endif
 
-		[[nodiscard]] Vector2D<int> GetPosition() const noexcept override;
-		void SetPosition(const Vector2D<int>& position) noexcept override;
+		[[nodiscard]] Vector2D<std::int32_t> GetPosition() const noexcept override;
+		void SetPosition(const Vector2D<std::int32_t>& position) noexcept override;
 
-		[[nodiscard]] Vector2D<int> GetSize() const noexcept override;
-		void SetSize(const Vector2D<int>& size) noexcept override;
+		[[nodiscard]] Vector2D<std::int32_t> GetSize() const noexcept override;
+		void SetSize(const Vector2D<std::int32_t>& size) noexcept override;
 
-		[[nodiscard]] Vector2D<int> GetClientSize() const noexcept override;
-		void SetClientSize(const Vector2D<int>& size) noexcept override;
+		[[nodiscard]] Vector2D<std::int32_t> GetClientSize() const noexcept override;
+		void SetClientSize(const Vector2D<std::int32_t>& size) noexcept override;
 
 		[[nodiscard]] bool ShouldClose() const noexcept override;
 		void SetShouldClose(bool value) noexcept override;

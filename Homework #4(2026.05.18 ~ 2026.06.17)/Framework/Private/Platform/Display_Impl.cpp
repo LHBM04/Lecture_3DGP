@@ -25,7 +25,7 @@ namespace TUK::Framework
 		assert(hWnd);
 		static std::wstring caption;
 		caption.resize(GetWindowTextLengthW(hWnd) + 1);
-		GetWindowTextW(hWnd, caption.data(), static_cast<int>(caption.size()));
+		GetWindowTextW(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
 		return caption;
 	}
 
@@ -40,7 +40,7 @@ namespace TUK::Framework
 		assert(hWnd);
 		static std::string caption;
 		caption.resize(GetWindowTextLengthA(hWnd) + 1);
-		GetWindowTextA(hWnd, caption.data(), static_cast<int>(caption.size()));
+		GetWindowTextA(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
 		return caption;
 	}
 
@@ -51,7 +51,7 @@ namespace TUK::Framework
 	}
 #endif
 
-	Vector2D<int> Display_Impl::GetPosition() const noexcept
+	Vector2D<std::int32_t> Display_Impl::GetPosition() const noexcept
 	{
 		assert(hWnd);
 		RECT rect;
@@ -59,13 +59,13 @@ namespace TUK::Framework
 		return { rect.left, rect.top };
 	}
 
-	void Display_Impl::SetPosition(const Vector2D<int>& position) noexcept
+	void Display_Impl::SetPosition(const Vector2D<std::int32_t>& position) noexcept
 	{
 		assert(hWnd);
 		SetWindowPos(hWnd, nullptr, position.GetX(), position.GetY(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
 
-	Vector2D<int> Display_Impl::GetSize() const noexcept
+	Vector2D<std::int32_t> Display_Impl::GetSize() const noexcept
 	{
 		assert(hWnd);
 		RECT rect;
@@ -73,13 +73,13 @@ namespace TUK::Framework
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
-	void Display_Impl::SetSize(const Vector2D<int>& size) noexcept
+	void Display_Impl::SetSize(const Vector2D<std::int32_t>& size) noexcept
 	{
 		assert(hWnd);
 		SetWindowPos(hWnd, nullptr, 0, 0, size.GetX(), size.GetY(), SWP_NOMOVE | SWP_NOZORDER);
 	}
 
-	Vector2D<int> Display_Impl::GetClientSize() const noexcept
+	Vector2D<std::int32_t> Display_Impl::GetClientSize() const noexcept
 	{
 		assert(hWnd);
 		RECT rect;
@@ -87,7 +87,7 @@ namespace TUK::Framework
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
-	void Display_Impl::SetClientSize(const Vector2D<int>& size) noexcept
+	void Display_Impl::SetClientSize(const Vector2D<std::int32_t>& size) noexcept
 	{
 		assert(hWnd);
 		RECT rect{ 0, 0, size.GetX(), size.GetY() };

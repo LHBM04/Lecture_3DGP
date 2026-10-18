@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 #include "EngineSubsystem.hpp"
 #include "System.hpp"
 
@@ -40,7 +42,7 @@ namespace TUK::Framework
 		/** Overloaded for Engine */
 		[[nodiscard]] static Engine* GetInstance();
 
-		int Run(Game& game);
+		std::int32_t Run(Game& game);
 
 		SystemStatus Routine() override;
 

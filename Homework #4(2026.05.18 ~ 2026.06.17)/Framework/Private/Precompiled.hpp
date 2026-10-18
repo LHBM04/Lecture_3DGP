@@ -29,6 +29,7 @@
 #include <print>
 #include <ranges>
 #include <span>
+#include <stdfloat>
 #include <string>
 #include <string_view>
 #include <tuple>

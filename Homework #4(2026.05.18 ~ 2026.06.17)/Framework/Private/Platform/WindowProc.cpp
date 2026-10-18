@@ -1,8 +1,9 @@
-﻿#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
+
 #include "WindowProc.hpp"
 
+#include "Display_Impl.hpp"
 #include "Framework/Core/Engine.hpp"
-
 #include "Framework/Platform/DisplayCloseEvent.hpp"
 #include "Framework/Platform/DisplayCreateEvent.hpp"
 #include "Framework/Platform/DisplayDestroyEvent.hpp"
@@ -10,8 +11,6 @@
 #include "Framework/Platform/DisplayMoveEvent.hpp"
 #include "Framework/Platform/DisplayResizeEvent.hpp"
 #include "Framework/Platform/EventSubsystem.hpp"
-
-#include "Display_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -73,7 +72,7 @@ namespace TUK::Framework
 			{
 				eventSubsystem->PushEvent<DisplayResizeEvent>(
 					*display,
-					Vector2D<int>{ static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam)) });
+					Vector2D<std::int32_t>{ static_cast<std::int32_t>(LOWORD(lParam)), static_cast<std::int32_t>(HIWORD(lParam)) });
 			}
 			return 0;
 
@@ -82,7 +81,7 @@ namespace TUK::Framework
 			{
 				eventSubsystem->PushEvent<DisplayMoveEvent>(
 					*display,
-					Vector2D<int>{ static_cast<int>(GET_X_LPARAM(lParam)), static_cast<int>(GET_Y_LPARAM(lParam)) });
+					Vector2D<std::int32_t>{ static_cast<std::int32_t>(GET_X_LPARAM(lParam)), static_cast<std::int32_t>(GET_Y_LPARAM(lParam)) });
 			}
 			return 0;
 

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <cstdint>
 #include <string>
 #include <string_view>
 
@@ -29,14 +30,14 @@ namespace TUK::Framework
 		virtual void SetCaption(std::string_view value) noexcept = 0;
 #endif
 
-		[[nodiscard]] virtual Vector2D<int> GetPosition() const noexcept = 0;
-		virtual void SetPosition(const Vector2D<int>& position) noexcept = 0;
+		[[nodiscard]] virtual Vector2D<std::int32_t> GetPosition() const noexcept = 0;
+		virtual void SetPosition(const Vector2D<std::int32_t>& position) noexcept = 0;
 
-		[[nodiscard]] virtual Vector2D<int> GetSize() const noexcept = 0;
-		virtual void SetSize(const Vector2D<int>& size) noexcept = 0;
+		[[nodiscard]] virtual Vector2D<std::int32_t> GetSize() const noexcept = 0;
+		virtual void SetSize(const Vector2D<std::int32_t>& size) noexcept = 0;
 
-		[[nodiscard]] virtual Vector2D<int> GetClientSize() const noexcept = 0;
-		virtual void SetClientSize(const Vector2D<int>& size) noexcept = 0;
+		[[nodiscard]] virtual Vector2D<std::int32_t> GetClientSize() const noexcept = 0;
+		virtual void SetClientSize(const Vector2D<std::int32_t>& size) noexcept = 0;
 
 		[[nodiscard]] virtual bool ShouldClose() const noexcept = 0;
 		virtual void SetShouldClose(bool value) noexcept = 0;

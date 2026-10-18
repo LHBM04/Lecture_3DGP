@@ -8,7 +8,7 @@ namespace TUK::Framework
 {
 	template <IsNumeric TValue>
 	ColorRGBA<TValue>::ColorRGBA() noexcept
-		: values{static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1)}
+		: values{static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)}
 	{
 	}
 
@@ -26,7 +26,7 @@ namespace TUK::Framework
 
 	template <IsNumeric TValue>
 	ColorRGBA<TValue>::ColorRGBA(const TValue* values) noexcept
-		: values{static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1)}
+		: values{static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)}
 	{
 		assert(values);
 		std::copy_n(values, 4, this->values);
@@ -103,7 +103,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator+(const ColorRGBA<TValue>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(values[0] + other.values[0], values[1] + other.values[1], values[2] + other.values[2], values[3] + other.values[3]);
 		}
@@ -125,7 +125,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator-(const ColorRGBA<TValue>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(values[0] - other.values[0], values[1] - other.values[1], values[2] - other.values[2], values[3] - other.values[3]);
 		}
@@ -147,7 +147,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(const ColorRGBA<TValue>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(values[0] * other.values[0], values[1] * other.values[1], values[2] * other.values[2], values[3] * other.values[3]);
 		}
@@ -162,7 +162,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(TValue scalar) const noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(values[0] * scalar, values[1] * scalar, values[2] * scalar, values[3] * scalar);
 		}
@@ -192,7 +192,7 @@ namespace TUK::Framework
 	ColorRGBA<TValue> ColorRGBA<TValue>::operator/(TValue scalar) const noexcept
 	{
 		assert(scalar != TValue{});
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(values[0] / scalar, values[1] / scalar, values[2] / scalar, values[3] / scalar);
 		}
@@ -214,7 +214,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	bool ColorRGBA<TValue>::operator==(const ColorRGBA<TValue>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return values[0] == other.values[0] && values[1] == other.values[1] && values[2] == other.values[2] && values[3] == other.values[3];
 		}
@@ -299,7 +299,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	bool ColorRGBA<TValue>::IsOpaque(float epsilon) const noexcept
 	{
-		constexpr TValue maximum = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1);
+		constexpr TValue maximum = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1);
 		return values[3] >= maximum - epsilon;
 	}
 
@@ -318,7 +318,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetBlack() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(0, 0, 0, 255);
 		}
@@ -331,7 +331,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetWhite() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(255, 255, 255, 255);
 		}
@@ -344,7 +344,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetRed() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(255, 0, 0, 255);
 		}
@@ -357,7 +357,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetGreen() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(0, 255, 0, 255);
 		}
@@ -370,7 +370,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetBlue() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(0, 0, 255, 255);
 		}
@@ -383,7 +383,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetYellow() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(255, 235, 4, 255);
 		}
@@ -396,7 +396,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetCyan() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(0, 255, 255, 255);
 		}
@@ -409,7 +409,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetMagenta() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(255, 0, 255, 255);
 		}
@@ -422,7 +422,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGBA<TValue> ColorRGBA<TValue>::GetClear() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGBA<TValue>(0, 0, 0, 0);
 		}
@@ -451,6 +451,6 @@ namespace TUK::Framework
 		return result;
 	}
 
-	template class ColorRGBA<int>;
+	template class ColorRGBA<std::int32_t>;
 	template class ColorRGBA<float>;
 }

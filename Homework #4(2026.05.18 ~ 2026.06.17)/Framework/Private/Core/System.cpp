@@ -15,11 +15,6 @@ namespace TUK::Framework
 		subsystems.clear();
 	}
 
-	SystemStatus System::Ready()
-	{
-		return SystemStatus::Continue;
-	}
-
 	SystemStatus System::Startup()
 	{
 		std::ranges::sort(subsystems, std::ranges::less{}, &Subsystem::GetPriority);

@@ -2,8 +2,8 @@
 #include "Vector3D.hpp"
 
 #include "Vector2D.hpp"
-#include "Vector4D.hpp"
 #include "Vector3D_Impl.hpp"
+#include "Vector4D.hpp"
 
 namespace TUK::Framework
 {
@@ -713,10 +713,10 @@ namespace TUK::Framework
 			return output;
 	}
 
-	template class Vector3D<int>;
+	template class Vector3D<std::int32_t>;
 	template class Vector3D<float>;
 
-	Vector3D<int> operator*(int scalar, const Vector3D<int>& vector) noexcept
+	Vector3D<std::int32_t> operator*(std::int32_t scalar, const Vector3D<std::int32_t>& vector) noexcept
 	{
 		return vector * scalar;
 	}

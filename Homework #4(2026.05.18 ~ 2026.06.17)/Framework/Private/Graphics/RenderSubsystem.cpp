@@ -66,7 +66,7 @@ namespace TUK::Framework
 		const HWND hWnd = dynamic_cast<const Display_Impl&>(window).GetHWND();
 		assert(hWnd);
 
-		const Vector2D<int> clientSize = window.GetClientSize();
+		const Vector2D<std::int32_t> clientSize = window.GetClientSize();
 		const UINT width = static_cast<UINT>((std::max)(1, clientSize.GetX()));
 		const UINT height = static_cast<UINT>((std::max)(1, clientSize.GetY()));
 

@@ -17,14 +17,11 @@ namespace TUK::Framework
 		instance = nullptr;
 	}
 
-	int Engine::Run(Game& game)
+	std::int32_t Engine::Run(Game& game)
 	{
 		this->game = &game;
 
-		Ready();
 		Startup();
-
-		this->game->Ready();
 		this->game->Startup();
 
 		while (true)
@@ -34,7 +31,7 @@ namespace TUK::Framework
 				this->game->Shutdown();
 				Shutdown();
 
-				return static_cast<int>(status);
+				return static_cast<std::int32_t>(status);
 			}
 		}
 	}

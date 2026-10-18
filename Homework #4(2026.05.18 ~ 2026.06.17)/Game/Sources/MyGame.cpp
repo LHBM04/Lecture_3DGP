@@ -14,17 +14,21 @@ DEFINE_GAME_INSTANCE(::TUK::Game::MyGame)
 namespace TUK::Game
 {
 	MyGame::MyGame() noexcept
+		: window(nullptr)
 	{
 	}
 
 	MyGame::~MyGame() noexcept
 	{
+		if (window)
+		{
+			window->SetShouldClose(true);
+			window = nullptr;
+		}
 	}
 
-	SystemStatus MyGame::Ready()
+	SystemStatus MyGame::Startup()
 	{
-		Game::Ready();
-
 		DisplayOptions options{};
 		options.caption = TEXT("Homework #4(2026.05.18 ~ 2026.06.17)");
 		options.position = Framework::Vector2D(100, 100);
@@ -40,6 +44,6 @@ namespace TUK::Game
 		}
 		window = &(created.value().get());
 
-		return SystemStatus::Continue;
+		return Game::Startup();
 	}
 }

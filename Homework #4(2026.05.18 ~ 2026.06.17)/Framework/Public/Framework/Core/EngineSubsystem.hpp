@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 #include "Subsystem.hpp"
 
 namespace TUK::Framework
@@ -12,7 +14,7 @@ namespace TUK::Framework
 		~EngineSubsystem() noexcept override;
 
 	protected:
-		explicit EngineSubsystem(unsigned short priority) noexcept;
+		explicit EngineSubsystem(std::uint16_t priority) noexcept;
 
 		virtual SystemStatus OnPreTick();
 		virtual SystemStatus OnTick();

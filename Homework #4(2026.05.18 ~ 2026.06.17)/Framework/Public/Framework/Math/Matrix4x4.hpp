@@ -3,6 +3,7 @@
 #include <compare>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -102,6 +103,6 @@ namespace TUK::Framework
 		TValue values[16];
 	};
 
-	extern template class Matrix4x4<int>;
+	extern template class Matrix4x4<std::int32_t>;
 	extern template class Matrix4x4<float>;
 }

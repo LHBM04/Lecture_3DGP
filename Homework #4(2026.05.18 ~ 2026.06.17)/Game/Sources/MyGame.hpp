@@ -13,15 +13,12 @@ namespace TUK::Game
 		DECLARE_GAME_INSTANCE();
 
 	public:
-		SystemStatus Ready() override;
-
-	private:
 		MyGame() noexcept;
 		~MyGame() noexcept override;
 
-		void RequireWindow();
-		void RequireScenes();
+		SystemStatus Startup() override;
 
-		Framework::Display* window = nullptr;
+	private:
+		Framework::Display* window;
 	};
 }

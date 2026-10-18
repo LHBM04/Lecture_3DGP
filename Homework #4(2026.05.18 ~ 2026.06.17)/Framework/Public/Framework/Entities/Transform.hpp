@@ -6,7 +6,6 @@
 #include "../Math/Matrix4x4.hpp"
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"
-
 #include "Component.hpp"
 
 namespace TUK::Framework

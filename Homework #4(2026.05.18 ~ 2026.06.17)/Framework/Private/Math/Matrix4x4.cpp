@@ -1,8 +1,9 @@
 ﻿#include "Precompiled.hpp"
+
 #include "Matrix4x4.hpp"
 
-#include "Quaternion.hpp"
 #include "Matrix4x4_Impl.hpp"
+#include "Quaternion.hpp"
 #include "Quaternion_Impl.hpp"
 #include "Vector3D_Impl.hpp"
 
@@ -629,6 +630,6 @@ namespace TUK::Framework
 		return input.TryGetInverse(result);
 	}
 
-	template class Matrix4x4<int>;
+	template class Matrix4x4<std::int32_t>;
 	template class Matrix4x4<float>;
 }

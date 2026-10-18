@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <chrono>
+#include <cstdint>
 
 #include "../Core/EngineSubsystem.hpp"
 
@@ -19,8 +20,8 @@ namespace TUK::Framework
 		[[nodiscard]] float GetTimeScale() const noexcept;
 		void SetTimeScale(float timeScale) noexcept;
 
-		[[nodiscard]] unsigned int GetFixedStep() const noexcept;
-		void SetFixedStep(unsigned int count) noexcept;
+		[[nodiscard]] std::uint32_t GetFixedStep() const noexcept;
+		void SetFixedStep(std::uint32_t count) noexcept;
 
 		[[nodiscard]] float GetDeltaTime() const noexcept;
 		[[nodiscard]] float GetUnscaledDeltaTime() const noexcept;
@@ -28,7 +29,7 @@ namespace TUK::Framework
 		[[nodiscard]] float GetFixedDeltaTime() const noexcept;
 		[[nodiscard]] float GetUnscaledFixedDeltaTime() const noexcept;
 
-		[[nodiscard]] unsigned long GetFrameCount() const noexcept;
+		[[nodiscard]] std::uint32_t GetFrameCount() const noexcept;
 
 	protected:
 		SystemStatus OnStartup() noexcept override;
@@ -45,8 +46,8 @@ namespace TUK::Framework
 		double fixedDeltaTime;
 		double fixedAccumulator;
 
-		unsigned int maxFixedStepsPerFrame;
-		unsigned int fixedSteps;
-		unsigned long frameCount;
+		std::uint32_t maxFixedStepsPerFrame;
+		std::uint32_t fixedSteps;
+		std::uint32_t frameCount;
 	};
 }

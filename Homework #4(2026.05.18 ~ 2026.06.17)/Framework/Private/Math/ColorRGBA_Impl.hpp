@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <concepts>
+#include <cstdint>
 
 #include <DirectXMath.h>
 
@@ -11,7 +12,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	[[nodiscard]] inline DirectX::XMVECTOR Load(const ColorRGBA<TValue>& source) noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			const DirectX::XMINT4 temp{ source.GetR(), source.GetG(), source.GetB(), source.GetA() };
 			return DirectX::XMLoadSInt4(&temp);
@@ -26,7 +27,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	inline void Store(ColorRGBA<TValue>& destination, DirectX::FXMVECTOR source) noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			DirectX::XMINT4 temp{};
 			DirectX::XMStoreSInt4(&temp, source);

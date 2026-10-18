@@ -3,6 +3,7 @@
 #include <compare>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -113,6 +114,6 @@ namespace TUK::Framework
 		TValue values[4];
 	};
 
-	extern template class Quaternion<int>;
+	extern template class Quaternion<std::int32_t>;
 	extern template class Quaternion<float>;
 }

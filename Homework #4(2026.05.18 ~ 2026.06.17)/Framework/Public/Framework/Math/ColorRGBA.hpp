@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <concepts>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -19,14 +20,14 @@ namespace TUK::Framework
 	public:
 		ColorRGBA() noexcept;
 		explicit ColorRGBA(TValue value) noexcept;
-		ColorRGBA(TValue r, TValue g, TValue b, TValue a = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1)) noexcept;
+		ColorRGBA(TValue r, TValue g, TValue b, TValue a = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) noexcept;
 		explicit ColorRGBA(const TValue* values) noexcept;
 
 		ColorRGBA(const ColorRGBA& other) noexcept;
 		ColorRGBA(ColorRGBA&& other) noexcept;
 
-		ColorRGBA(const ColorRGB<TValue>& rgb, TValue a = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1)) noexcept;
-		explicit ColorRGBA(const Vector3D<TValue>& vector, TValue alpha = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1)) noexcept;
+		ColorRGBA(const ColorRGB<TValue>& rgb, TValue a = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) noexcept;
+		explicit ColorRGBA(const Vector3D<TValue>& vector, TValue alpha = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) noexcept;
 		ColorRGBA(const Vector4D<TValue>& vector) noexcept;
 
 		ColorRGBA& operator=(const ColorRGBA& other) noexcept;
@@ -98,6 +99,6 @@ namespace TUK::Framework
 		TValue values[4];
 	};
 
-	extern template class ColorRGBA<int>;
+	extern template class ColorRGBA<std::int32_t>;
 	extern template class ColorRGBA<float>;
 }

@@ -1,9 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "Vector2D.hpp"
 
+#include "Vector2D_Impl.hpp"
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
-#include "Vector2D_Impl.hpp"
 
 namespace TUK::Framework
 {
@@ -609,10 +609,10 @@ namespace TUK::Framework
 			return output;
 	}
 
-	template class Vector2D<int>;
+	template class Vector2D<std::int32_t>;
 	template class Vector2D<float>;
 
-	Vector2D<int> operator*(int scalar, const Vector2D<int>& vector) noexcept
+	Vector2D<std::int32_t> operator*(std::int32_t scalar, const Vector2D<std::int32_t>& vector) noexcept
 	{
 		return vector * scalar;
 	}

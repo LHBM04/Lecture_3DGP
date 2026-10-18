@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <concepts>
+#include <cstdint>
 
 #include <DirectXMath.h>
 
@@ -11,7 +12,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	[[nodiscard]] inline DirectX::XMVECTOR Load(const Vector2D<TValue>& source) noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			const DirectX::XMINT2 temp{ source.GetX(), source.GetY() };
 			return DirectX::XMLoadSInt2(&temp);
@@ -26,7 +27,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	inline void Store(Vector2D<TValue>& destination, DirectX::FXMVECTOR source) noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			DirectX::XMINT2 temp{};
 			DirectX::XMStoreSInt2(&temp, source);

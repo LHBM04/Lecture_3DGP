@@ -16,17 +16,15 @@ namespace TUK::Game
 	{
 	}
 
-	SystemStatus MyEngine::Ready()
+	SystemStatus MyEngine::Startup()
 	{
-		Engine::Ready();
-
-		AddSubsystem<Framework::TimeSubsystem>();
+		AddSubsystem<Framework::TimeSubsystem>(); 
 		AddSubsystem<Framework::DisplaySubsystem>();
 		Framework::RenderSubsystem* renderSubsystem = AddSubsystem<Framework::RenderSubsystem>();
 
 		Framework::EventSubsystem* eventSubsystem = AddSubsystem<Framework::EventSubsystem>();
 		eventSubsystem->Subscribe<Framework::DisplayCreateEvent>(renderSubsystem, &Framework::RenderSubsystem::CreateSwapChain);
 
-		return SystemStatus::Continue;
+		return Engine::Startup();
 	}
 }

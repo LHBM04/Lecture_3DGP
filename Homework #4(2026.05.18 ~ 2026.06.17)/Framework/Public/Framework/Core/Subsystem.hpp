@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 #include "SystemStatus.hpp"
 
 namespace TUK::Framework
@@ -20,15 +22,15 @@ namespace TUK::Framework
 		Subsystem& operator=(Subsystem&&) = delete;
 
 		/** 우선도 */
-		[[nodiscard]] unsigned short GetPriority() const noexcept;
+		[[nodiscard]] std::uint16_t GetPriority() const noexcept;
 
 	protected:
-		explicit Subsystem(unsigned short priority) noexcept;
+		explicit Subsystem(std::uint16_t priority) noexcept;
 
 		virtual SystemStatus OnStartup();
 		virtual void OnShutdown();
 
 	private:
-		unsigned short priority;
+		std::uint16_t priority;
 	};
 }

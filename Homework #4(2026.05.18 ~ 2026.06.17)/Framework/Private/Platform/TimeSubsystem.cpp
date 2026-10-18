@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "TimeSubsystem.hpp"
+#include "Framework/Platform/TimeSubsystem.hpp"
 
 namespace TUK::Framework
 {
@@ -30,7 +30,7 @@ namespace TUK::Framework
 		return static_cast<float>(totalTime);
 	}
 
-	unsigned long TimeSubsystem::GetFrameCount() const noexcept
+	std::uint32_t TimeSubsystem::GetFrameCount() const noexcept
 	{
 		return frameCount;
 	}
@@ -60,12 +60,12 @@ namespace TUK::Framework
 		return static_cast<float>(fixedDeltaTime);
 	}
 
-	unsigned int TimeSubsystem::GetFixedStep() const noexcept
+	std::uint32_t TimeSubsystem::GetFixedStep() const noexcept
 	{
 		return maxFixedStepsPerFrame;
 	}
 
-	void TimeSubsystem::SetFixedStep(unsigned int count) noexcept
+	void TimeSubsystem::SetFixedStep(std::uint32_t count) noexcept
 	{
 		maxFixedStepsPerFrame = count;
 	}

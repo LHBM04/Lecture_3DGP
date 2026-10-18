@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 namespace TUK::Framework
 {
-	enum class SystemStatus : unsigned char
+	enum class SystemStatus : std::uint8_t
 	{
 		Success = 0,
 		Failed = 1,

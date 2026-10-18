@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <concepts>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -56,7 +57,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] Vector3D<TValue> ToVector3D() const noexcept;
 		[[nodiscard]] Vector4D<TValue> ToVector4D(TValue alpha) const noexcept;
-		[[nodiscard]] ColorRGBA<TValue> ToColorRGBA(TValue alpha = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1)) const noexcept;
+		[[nodiscard]] ColorRGBA<TValue> ToColorRGBA(TValue alpha = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) const noexcept;
 
 		[[nodiscard]] static ColorRGB GetBlack() noexcept;
 		[[nodiscard]] static ColorRGB GetWhite() noexcept;
@@ -88,6 +89,6 @@ namespace TUK::Framework
 		TValue values[3];
 	};
 
-	extern template class ColorRGB<int>;
+	extern template class ColorRGB<std::int32_t>;
 	extern template class ColorRGB<float>;
 }

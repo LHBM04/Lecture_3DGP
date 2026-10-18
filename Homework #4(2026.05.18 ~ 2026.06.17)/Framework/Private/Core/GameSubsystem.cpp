@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	GameSubsystem::GameSubsystem(unsigned short priority) noexcept
+	GameSubsystem::GameSubsystem(std::uint16_t priority) noexcept
 		: Subsystem(priority)
 	{
 	}

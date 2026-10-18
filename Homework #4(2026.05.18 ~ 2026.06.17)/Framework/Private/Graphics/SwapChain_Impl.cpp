@@ -49,15 +49,15 @@ namespace TUK::Framework
 		dxgiSwapChain->Present(1, 0);
 	}
 
-	Vector2D<int> SwapChain_Impl::GetSize() const noexcept
+	Vector2D<std::int32_t> SwapChain_Impl::GetSize() const noexcept
 	{
 		assert(dxgiSwapChain);
 		DXGI_SWAP_CHAIN_DESC1 description{};
 		dxgiSwapChain->GetDesc1(&description);
-		return { static_cast<int>(description.Width), static_cast<int>(description.Height) };
+		return { static_cast<std::int32_t>(description.Width), static_cast<std::int32_t>(description.Height) };
 	}
 
-	void SwapChain_Impl::SetSize(const Vector2D<int>& size) noexcept
+	void SwapChain_Impl::SetSize(const Vector2D<std::int32_t>& size) noexcept
 	{
 		assert(dxgiSwapChain);
 		if (size.GetX() <= 0 || size.GetY() <= 0)

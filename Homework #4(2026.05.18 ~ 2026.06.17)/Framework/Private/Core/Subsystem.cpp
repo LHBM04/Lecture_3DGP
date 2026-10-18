@@ -3,14 +3,14 @@
 
 namespace TUK::Framework
 {
-	Subsystem::Subsystem(unsigned short priority) noexcept
+	Subsystem::Subsystem(std::uint16_t priority) noexcept
 		: priority(priority)
 	{
 	}
 
 	Subsystem::~Subsystem() noexcept = default;
 
-	unsigned short Subsystem::GetPriority() const noexcept
+	std::uint16_t Subsystem::GetPriority() const noexcept
 	{
 		return priority;
 	}

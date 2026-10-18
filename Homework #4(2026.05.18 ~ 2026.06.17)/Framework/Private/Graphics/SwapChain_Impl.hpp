@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -19,8 +20,8 @@ namespace TUK::Framework
 		void Clear(CommandBuffer& commandBuffer) const override;
 		void Present() const override;
 
-		[[nodiscard]] Vector2D<int> GetSize() const noexcept override;
-		void SetSize(const Vector2D<int>& size) noexcept override;
+		[[nodiscard]] Vector2D<std::int32_t> GetSize() const noexcept override;
+		void SetSize(const Vector2D<std::int32_t>& size) noexcept override;
 
 		/** DXGI 스왑체인 Getter */
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;

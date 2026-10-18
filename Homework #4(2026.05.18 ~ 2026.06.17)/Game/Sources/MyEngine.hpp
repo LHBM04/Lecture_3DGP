@@ -14,6 +14,6 @@ namespace TUK::Game
 		MyEngine() noexcept;
 		~MyEngine() noexcept override;
 
-		SystemStatus Ready() override;
+		SystemStatus Startup() override;
 	};
 }

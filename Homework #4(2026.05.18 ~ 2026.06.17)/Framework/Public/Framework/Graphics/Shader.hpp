@@ -5,7 +5,6 @@ namespace TUK::Framework
 	class Shader
 	{
 	public:
-		Shader() noexcept = default;
 		~Shader() noexcept = default;
 
 		/** 복사 금지 */
@@ -15,6 +14,7 @@ namespace TUK::Framework
 		Shader(Shader&&) noexcept = default;
 		Shader& operator=(Shader&&) noexcept = default;
 
-	private:
+	protected:
+		Shader() noexcept = default;
 	};
 }

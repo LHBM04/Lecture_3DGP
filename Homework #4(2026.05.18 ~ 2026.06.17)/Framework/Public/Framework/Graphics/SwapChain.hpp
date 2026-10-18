@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 #include "../Math/Vector2D.hpp"
 
 namespace TUK::Framework
@@ -20,8 +22,8 @@ namespace TUK::Framework
 		virtual void Clear(CommandBuffer& commandBuffer) const = 0;
 		virtual void Present() const = 0;
 
-		[[nodiscard]] virtual Vector2D<int> GetSize() const noexcept = 0;
-		virtual void SetSize(const Vector2D<int>& size) noexcept = 0;
+		[[nodiscard]] virtual Vector2D<std::int32_t> GetSize() const noexcept = 0;
+		virtual void SetSize(const Vector2D<std::int32_t>& size) noexcept = 0;
 
 	protected:
 		SwapChain() noexcept;

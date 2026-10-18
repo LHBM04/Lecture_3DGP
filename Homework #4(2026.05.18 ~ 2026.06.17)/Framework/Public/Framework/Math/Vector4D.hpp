@@ -3,6 +3,7 @@
 #include <compare>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -126,9 +127,9 @@ namespace TUK::Framework
 		TValue values[4];
 	};
 
-	extern template class Vector4D<int>;
+	extern template class Vector4D<std::int32_t>;
 	extern template class Vector4D<float>;
 
-	[[nodiscard]] Vector4D<int> operator*(int scalar, const Vector4D<int>& vector) noexcept;
+	[[nodiscard]] Vector4D<std::int32_t> operator*(std::int32_t scalar, const Vector4D<std::int32_t>& vector) noexcept;
 	[[nodiscard]] Vector4D<float> operator*(float scalar, const Vector4D<float>& vector) noexcept;
 }

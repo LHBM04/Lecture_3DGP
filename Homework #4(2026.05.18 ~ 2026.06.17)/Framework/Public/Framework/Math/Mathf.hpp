@@ -2,12 +2,13 @@
 
 #include <algorithm>
 #include <concepts>
+#include <cstdint>
 
 namespace TUK::Framework
 {
 	/** 간단한 숫자 콘셉트 */
 	template <class TValue>
-	concept IsNumeric = std::same_as<TValue, int> || std::same_as<TValue, float>;
+	concept IsNumeric = std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>;
 
 	namespace Mathf
 	{

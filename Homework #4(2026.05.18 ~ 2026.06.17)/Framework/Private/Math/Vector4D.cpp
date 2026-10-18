@@ -585,10 +585,10 @@ namespace TUK::Framework
 			return current + (delta / distance) * maxDistanceDelta;
 	}
 
-	template class Vector4D<int>;
+	template class Vector4D<std::int32_t>;
 	template class Vector4D<float>;
 
-	Vector4D<int> operator*(int scalar, const Vector4D<int>& vector) noexcept
+	Vector4D<std::int32_t> operator*(std::int32_t scalar, const Vector4D<std::int32_t>& vector) noexcept
 	{
 		return vector * scalar;
 	}

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <ranges>
@@ -24,7 +25,7 @@ namespace TUK::Framework
 	concept OptionType = std::same_as<T, std::string>
 					  || std::same_as<T, std::string_view>
 					  || std::same_as<T, std::wstring_view>
-					  || std::same_as<T, int>
+					  || std::same_as<T, std::int32_t>
 					  || std::same_as<T, float>
 					  || std::same_as<T, bool>;
 
@@ -39,7 +40,6 @@ namespace TUK::Framework
 		System(System&&) = delete;
 		System& operator=(System&&) = delete;
 
-		virtual SystemStatus Ready();
 		virtual SystemStatus Startup();
 		virtual SystemStatus Routine();
 		virtual void Shutdown();

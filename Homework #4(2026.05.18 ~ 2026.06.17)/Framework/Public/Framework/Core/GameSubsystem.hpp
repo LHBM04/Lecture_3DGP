@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <cstdint>
+
 #include "Subsystem.hpp"
 
 namespace TUK::Framework
@@ -9,7 +11,7 @@ namespace TUK::Framework
 		friend class Game;
 
 	public:
-		explicit GameSubsystem(unsigned short priority) noexcept;
+		explicit GameSubsystem(std::uint16_t priority) noexcept;
 		~GameSubsystem() noexcept override;
 
 	protected:

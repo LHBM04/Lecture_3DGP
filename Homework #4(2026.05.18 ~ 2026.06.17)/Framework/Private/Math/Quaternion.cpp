@@ -617,6 +617,6 @@ namespace TUK::Framework
 		return SlerpUnclamped(from, to, t);
 	}
 
-	template class Quaternion<int>;
+	template class Quaternion<std::int32_t>;
 	template class Quaternion<float>;
 }

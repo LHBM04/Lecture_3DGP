@@ -77,7 +77,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	bool ColorRGB<TValue>::operator==(const ColorRGB<TValue>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return values[0] == other.values[0] && values[1] == other.values[1] && values[2] == other.values[2];
 		}
@@ -179,7 +179,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	bool ColorRGB<TValue>::IsHDR() const noexcept
 	{
-		constexpr TValue maximum = static_cast<TValue>(std::same_as<TValue, int> ? 255 : 1);
+		constexpr TValue maximum = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1);
 		return values[0] > maximum || values[1] > maximum || values[2] > maximum;
 	}
 
@@ -204,7 +204,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetBlack() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(0, 0, 0);
 		}
@@ -217,7 +217,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetWhite() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(255, 255, 255);
 		}
@@ -230,7 +230,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetRed() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(255, 0, 0);
 		}
@@ -243,7 +243,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetGreen() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(0, 255, 0);
 		}
@@ -256,7 +256,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetBlue() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(0, 0, 255);
 		}
@@ -269,7 +269,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetYellow() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(255, 255, 0);
 		}
@@ -282,7 +282,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetCyan() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(0, 255, 255);
 		}
@@ -295,7 +295,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetMagenta() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(255, 0, 255);
 		}
@@ -308,7 +308,7 @@ namespace TUK::Framework
 	template <IsNumeric TValue>
 	ColorRGB<TValue> ColorRGB<TValue>::GetGray() noexcept
 	{
-		if constexpr (std::same_as<TValue, int>)
+		if constexpr (std::same_as<TValue, std::int32_t>)
 		{
 			return ColorRGB<TValue>(128, 128, 128);
 		}
@@ -371,7 +371,7 @@ namespace TUK::Framework
 		}
 
 		const float scaledH = h * 6.0f;
-		const int sector = static_cast<int>(std::floor(scaledH));
+		const std::int32_t sector = static_cast<std::int32_t>(std::floor(scaledH));
 		const float f = scaledH - static_cast<float>(sector);
 		const float p = v * (1.0f - s);
 		const float q = v * (1.0f - s * f);
@@ -447,6 +447,6 @@ namespace TUK::Framework
 		return result;
 	}
 
-	template class ColorRGB<int>;
+	template class ColorRGB<std::int32_t>;
 	template class ColorRGB<float>;
 }

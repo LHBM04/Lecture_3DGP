@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	DisplayMoveEvent::DisplayMoveEvent(const Display& display, const Vector2D<int>& position) noexcept
+	DisplayMoveEvent::DisplayMoveEvent(const Display& display, const Vector2D<std::int32_t>& position) noexcept
 		: DisplayEvent(display)
 		, position(position)
 	{
@@ -13,7 +13,7 @@ namespace TUK::Framework
 	{
 	}
 
-	const Vector2D<int>& DisplayMoveEvent::GetPosition() const noexcept
+	const Vector2D<std::int32_t>& DisplayMoveEvent::GetPosition() const noexcept
 	{
 		return position;
 	}

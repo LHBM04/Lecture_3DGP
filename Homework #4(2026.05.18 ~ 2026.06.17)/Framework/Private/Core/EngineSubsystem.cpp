@@ -3,7 +3,7 @@
 
 namespace TUK::Framework
 {
-	EngineSubsystem::EngineSubsystem(unsigned short priority) noexcept
+	EngineSubsystem::EngineSubsystem(std::uint16_t priority) noexcept
 		: Subsystem(priority)
 	{
 	}
