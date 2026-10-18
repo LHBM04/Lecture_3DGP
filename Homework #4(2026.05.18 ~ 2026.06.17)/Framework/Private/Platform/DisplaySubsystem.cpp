@@ -91,17 +91,11 @@ namespace TUK::Framework
 
 	SystemStatus DisplaySubsystem::OnPostTick()
 	{
-		std::erase_if(displays, [](const auto& display)
-		{
+		std::erase_if(displays, [](const auto& display) {
 			return display->ShouldClose();
 		});
 
-		if (displays.empty())
-		{
-			return SystemStatus::Success;
-		}
-
-		return SystemStatus::Continue;
+		return !displays.empty() ? SystemStatus::Continue : SystemStatus::Success;
 	}
 
 	void DisplaySubsystem::OnShutdown()

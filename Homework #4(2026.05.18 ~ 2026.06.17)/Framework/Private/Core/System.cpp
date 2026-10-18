@@ -4,8 +4,7 @@
 namespace TUK::Framework
 {
 	System::System() noexcept
-		: options()
-		, subsystems()
+		:  subsystems()
 		, subsystemsByType()
 	{
 	}
