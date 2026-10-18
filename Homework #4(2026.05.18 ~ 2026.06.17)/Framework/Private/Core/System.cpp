@@ -20,9 +20,9 @@ namespace TUK::Framework
 		std::ranges::sort(subsystems, std::ranges::less{}, &Subsystem::GetPriority);
 		for (std::unique_ptr<Subsystem>& subsystem : subsystems)
 		{
-			if (subsystem->OnStartup() == SystemStatus::Failed)
+			if (subsystem->OnStartup() == SystemStatus::Failure)
 			{
-				return SystemStatus::Failed;
+				return SystemStatus::Failure;
 			}
 		}
 

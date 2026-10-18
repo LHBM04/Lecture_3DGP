@@ -246,6 +246,9 @@
     <ClInclude Include="Private\Graphics\Fence_Impl.hpp">
       <Filter>Private\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Framework\Core\ConsoleSubsystem.hpp">
+      <Filter>Public\Framework\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Platform\TimeSubsystem.cpp">
@@ -379,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="Private\Graphics\Fence_Impl.cpp">
       <Filter>Private\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Core\ConsoleSubsystem.cpp">
+      <Filter>Private\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

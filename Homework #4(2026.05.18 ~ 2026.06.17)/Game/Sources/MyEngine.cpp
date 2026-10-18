@@ -25,6 +25,8 @@ namespace TUK::Game
 		Framework::EventSubsystem* eventSubsystem = AddSubsystem<Framework::EventSubsystem>();
 		eventSubsystem->Subscribe<Framework::DisplayCreateEvent>(renderSubsystem, &Framework::RenderSubsystem::CreateSwapChain);
 
+		AddSubsystem<Framework::ConsoleSubsystem>();
+
 		return Engine::Startup();
 	}
 }

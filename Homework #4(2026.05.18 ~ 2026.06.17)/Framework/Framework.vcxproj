@@ -176,6 +176,7 @@
     <ClInclude Include="Private\Platform\Display_Impl.hpp" />
     <ClInclude Include="Private\Platform\WindowProc.hpp" />
     <ClInclude Include="Public\Framework\Core.hpp" />
+    <ClInclude Include="Public\Framework\Core\ConsoleSubsystem.hpp" />
     <ClInclude Include="Public\Framework\Core\Engine.hpp" />
     <ClInclude Include="Public\Framework\Core\EngineSubsystem.hpp" />
     <ClInclude Include="Public\Framework\Core\Game.hpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="Public\Framework\Math.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Core\ConsoleSubsystem.cpp" />
     <ClCompile Include="Private\Core\Engine.cpp" />
     <ClCompile Include="Private\Core\EngineSubsystem.cpp" />
     <ClCompile Include="Private\Core\Entry.cpp" />

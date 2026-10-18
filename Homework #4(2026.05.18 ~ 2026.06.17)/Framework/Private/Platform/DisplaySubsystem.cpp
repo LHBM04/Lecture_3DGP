@@ -81,7 +81,7 @@ namespace TUK::Framework
 		
 		if (RegisterClassEx(&description) == 0)
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		isWndClassRegistered = true;

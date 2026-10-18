@@ -120,7 +120,7 @@ namespace TUK::Framework
 
 		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&dxgiFactory))))
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		ID3D12Device10* d3dDevice = nullptr;
@@ -156,14 +156,14 @@ namespace TUK::Framework
 			IDXGIAdapter* warpAdapter = nullptr;
 			if (FAILED(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter))))
 			{
-				return SystemStatus::Failed;
+				return SystemStatus::Failure;
 			}
 
 			const HRESULT hr = D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3dDevice));
 			warpAdapter->Release();
 			if (FAILED(hr))
 			{
-				return SystemStatus::Failed;
+				return SystemStatus::Failure;
 			}
 		}
 
@@ -173,14 +173,14 @@ namespace TUK::Framework
 		if (FAILED(d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&d3dCommandQueue))))
 		{
 			d3dDevice->Release();
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		ID3D12CommandAllocator* d3dCommandAllocator = nullptr;
 		if (FAILED(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&d3dCommandAllocator))))
 		{
 			d3dDevice->Release();
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		ID3D12GraphicsCommandList* d3dCommandList = nullptr;
@@ -193,7 +193,7 @@ namespace TUK::Framework
 		{
 			d3dCommandAllocator->Release();
 			d3dDevice->Release();
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		d3dCommandList->Close();
@@ -204,7 +204,7 @@ namespace TUK::Framework
 			d3dCommandList->Release();
 			d3dCommandAllocator->Release();
 			d3dDevice->Release();
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		const HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -214,7 +214,7 @@ namespace TUK::Framework
 			d3dCommandList->Release();
 			d3dCommandAllocator->Release();
 			d3dDevice->Release();
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		device = std::make_unique<GraphicsDevice_Impl>(d3dDevice);

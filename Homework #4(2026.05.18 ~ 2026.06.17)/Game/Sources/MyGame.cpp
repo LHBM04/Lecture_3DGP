@@ -40,7 +40,7 @@ namespace TUK::Game
 		auto created = windowSubsystem->CreateDisplay(options);
 		if (!created)
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 		window = &(created.value().get());
 

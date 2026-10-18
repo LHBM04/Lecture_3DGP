@@ -20,7 +20,7 @@ namespace TUK::Framework
 	{
 		if (worlds.empty())
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		currentWorld = worlds.front().get();
@@ -47,7 +47,7 @@ namespace TUK::Framework
 	{
 		if (!currentWorld)
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		currentWorld->FixedUpdate();
@@ -57,7 +57,7 @@ namespace TUK::Framework
 	{
 		if (!currentWorld)
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		currentWorld->Update();
@@ -67,7 +67,7 @@ namespace TUK::Framework
 	{
 		if (!currentWorld)
 		{
-			return SystemStatus::Failed;
+			return SystemStatus::Failure;
 		}
 
 		currentWorld->LateUpdate();

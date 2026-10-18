@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Core/ConsoleSubsystem.hpp"
 #include "Core/Engine.hpp"
 #include "Core/EngineSubsystem.hpp"
 #include "Core/Game.hpp"
