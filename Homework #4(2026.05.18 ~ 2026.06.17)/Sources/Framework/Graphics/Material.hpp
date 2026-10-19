@@ -2,7 +2,7 @@
 
 #include <optional>
 #include <utility>
-#include "Framework/Graphics/Shader.hpp"
+#include "Shader.hpp"
 
 namespace TUK::Framework
 {

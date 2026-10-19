@@ -15,8 +15,8 @@
 #include <variant>
 #include <vector>
 
-#include "Framework/Core/Subsystem.hpp"
-#include "Framework/Core/SystemStatus.hpp"
+#include "Subsystem.hpp"
+#include "SystemStatus.hpp"
 
 namespace TUK::Framework
 {

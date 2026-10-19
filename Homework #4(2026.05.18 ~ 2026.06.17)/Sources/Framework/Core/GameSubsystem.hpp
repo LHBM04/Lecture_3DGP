@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "Framework/Core/Subsystem.hpp"
+#include "Subsystem.hpp"
 
 namespace TUK::Framework
 {

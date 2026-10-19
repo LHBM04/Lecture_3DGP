@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Graphics/Fence.hpp"
+#include "Fence.hpp"
 
 namespace TUK::Framework
 {

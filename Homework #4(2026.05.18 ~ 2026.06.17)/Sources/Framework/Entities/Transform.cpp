@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Entities/Transform.hpp"
+#include "Transform.hpp"
 
 namespace TUK::Framework
 {

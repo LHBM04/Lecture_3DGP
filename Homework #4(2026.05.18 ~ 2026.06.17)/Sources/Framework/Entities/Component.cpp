@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Entities/Component.hpp"
+#include "Component.hpp"
 
 namespace TUK::Framework
 {

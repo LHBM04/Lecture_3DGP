@@ -2,8 +2,8 @@
 
 #include <cstdint>
 
-#include "Framework/Core/EngineSubsystem.hpp"
-#include "Framework/Core/System.hpp"
+#include "EngineSubsystem.hpp"
+#include "System.hpp"
 
 #define DECLARE_ENGINE_INSTANCE() \
 	friend ::TUK::Framework::Engine* ::TUK::Framework::CreateEngineInstance()

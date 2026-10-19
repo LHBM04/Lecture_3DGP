@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Graphics/GraphicsDevice.hpp"
+#include "GraphicsDevice.hpp"
 
 namespace TUK::Framework
 {

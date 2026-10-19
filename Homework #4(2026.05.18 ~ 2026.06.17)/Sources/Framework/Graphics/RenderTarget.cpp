@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Graphics/RenderTarget.hpp"
+#include "RenderTarget.hpp"
 
 namespace TUK::Framework
 {

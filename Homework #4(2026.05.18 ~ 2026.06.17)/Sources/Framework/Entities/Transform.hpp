@@ -3,10 +3,10 @@
 #include <span>
 #include <vector>
 
-#include "Framework/Math/Matrix4x4.hpp"
-#include "Framework/Math/Quaternion.hpp"
-#include "Framework/Math/Vector3D.hpp"
-#include "Framework/Entities/Component.hpp"
+#include "../Math/Matrix4x4.hpp"
+#include "../Math/Quaternion.hpp"
+#include "../Math/Vector3D.hpp"
+#include "Component.hpp"
 
 namespace TUK::Framework
 {

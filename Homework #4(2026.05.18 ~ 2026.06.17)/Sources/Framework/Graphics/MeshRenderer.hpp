@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Framework/Entities/Component.hpp"
+#include "../Entities/Component.hpp"
 
 namespace TUK::Framework
 {

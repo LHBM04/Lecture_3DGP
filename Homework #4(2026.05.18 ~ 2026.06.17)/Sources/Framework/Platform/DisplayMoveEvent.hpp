@@ -2,8 +2,8 @@
 
 #include <cstdint>
 
-#include "Framework/Math/Vector2D.hpp"
-#include "Framework/Platform/DisplayEvent.hpp"
+#include "../Math/Vector2D.hpp"
+#include "DisplayEvent.hpp"
 
 namespace TUK::Framework
 {

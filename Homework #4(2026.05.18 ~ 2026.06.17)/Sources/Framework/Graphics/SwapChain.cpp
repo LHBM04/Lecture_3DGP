@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Graphics/SwapChain.hpp"
+#include "SwapChain.hpp"
 
-#include "Framework/Graphics/CommandBuffer.hpp"
-#include "Framework/Graphics/RenderTarget.hpp"
+#include "CommandBuffer.hpp"
+#include "RenderTarget.hpp"
 
 namespace TUK::Framework
 {

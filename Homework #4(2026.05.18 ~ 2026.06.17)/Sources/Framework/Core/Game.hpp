@@ -2,10 +2,10 @@
 
 #include <concepts>
 
-#include "Framework/Platform/DisplayOptions.hpp"
+#include "../Platform/DisplayOptions.hpp"
 
-#include "Framework/Core/GameSubsystem.hpp"
-#include "Framework/Core/System.hpp"
+#include "GameSubsystem.hpp"
+#include "System.hpp"
 
 #define DECLARE_GAME_INSTANCE() \
 	friend ::TUK::Framework::Game* ::TUK::Framework::CreateGameInstance()

@@ -4,12 +4,12 @@
 #include <memory>
 #include <vector>
 
-#include "Framework/Core/EngineSubsystem.hpp"
+#include "../Core/EngineSubsystem.hpp"
 
-#include "Framework/Graphics/CommandBuffer.hpp"
-#include "Framework/Graphics/Fence.hpp"
-#include "Framework/Graphics/GraphicsDevice.hpp"
-#include "Framework/Graphics/SwapChain.hpp"
+#include "CommandBuffer.hpp"
+#include "Fence.hpp"
+#include "GraphicsDevice.hpp"
+#include "SwapChain.hpp"
 
 namespace TUK::Framework
 {

@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Platform/EventSubsystem.hpp"
+#include "EventSubsystem.hpp"
 
 namespace TUK::Framework
 {

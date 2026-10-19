@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "Framework/Core/SystemStatus.hpp"
+#include "SystemStatus.hpp"
 
 namespace TUK::Framework
 {

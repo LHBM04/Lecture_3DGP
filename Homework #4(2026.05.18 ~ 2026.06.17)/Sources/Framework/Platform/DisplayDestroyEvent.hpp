@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Framework/Platform/DisplayEvent.hpp"
+#include "DisplayEvent.hpp"
 
 namespace TUK::Framework
 {

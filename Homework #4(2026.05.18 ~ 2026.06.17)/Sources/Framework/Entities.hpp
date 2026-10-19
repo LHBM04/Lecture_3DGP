@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "Framework/Entities/Component.hpp"
-#include "Framework/Entities/Entity.hpp"
-#include "Framework/Entities/Transform.hpp"
-#include "Framework/Entities/World.hpp"
-#include "Framework/Entities/WorldSubsystem.hpp"
+#include "Entities/Component.hpp"
+#include "Entities/Entity.hpp"
+#include "Entities/Transform.hpp"
+#include "Entities/World.hpp"
+#include "Entities/WorldSubsystem.hpp"

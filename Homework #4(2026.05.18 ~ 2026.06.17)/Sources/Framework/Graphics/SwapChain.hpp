@@ -6,8 +6,8 @@
 
 #include <dxgi1_6.h>
 
-#include "Framework/Math/Vector2D.hpp"
-#include "Framework/Graphics/RenderTarget.hpp"
+#include "../Math/Vector2D.hpp"
+#include "RenderTarget.hpp"
 
 namespace TUK::Framework
 {

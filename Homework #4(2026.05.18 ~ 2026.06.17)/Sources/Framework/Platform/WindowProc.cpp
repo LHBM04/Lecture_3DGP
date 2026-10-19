@@ -1,17 +1,17 @@
 ﻿#include "Precompiled.hpp"
 
 
-#include "Framework/Platform/WindowProc.hpp"
+#include "WindowProc.hpp"
 
-#include "Framework/Platform/Display.hpp"
-#include "Framework/Core/Engine.hpp"
-#include "Framework/Platform/DisplayCloseEvent.hpp"
-#include "Framework/Platform/DisplayCreateEvent.hpp"
-#include "Framework/Platform/DisplayDestroyEvent.hpp"
-#include "Framework/Platform/DisplayFocusEvent.hpp"
-#include "Framework/Platform/DisplayMoveEvent.hpp"
-#include "Framework/Platform/DisplayResizeEvent.hpp"
-#include "Framework/Platform/EventSubsystem.hpp"
+#include "Display.hpp"
+#include "../Core/Engine.hpp"
+#include "DisplayCloseEvent.hpp"
+#include "DisplayCreateEvent.hpp"
+#include "DisplayDestroyEvent.hpp"
+#include "DisplayFocusEvent.hpp"
+#include "DisplayMoveEvent.hpp"
+#include "DisplayResizeEvent.hpp"
+#include "EventSubsystem.hpp"
 
 namespace TUK::Framework
 {

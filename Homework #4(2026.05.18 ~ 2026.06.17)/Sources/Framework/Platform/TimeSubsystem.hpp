@@ -3,7 +3,7 @@
 #include <chrono>
 #include <cstdint>
 
-#include "Framework/Core/EngineSubsystem.hpp"
+#include "../Core/EngineSubsystem.hpp"
 
 namespace TUK::Framework
 {

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Framework/Graphics/Buffer.hpp"
+#include "Buffer.hpp"
 
 namespace TUK::Framework
 {

@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Core/ConsoleSubsystem.hpp"
+#include "ConsoleSubsystem.hpp"
 
 namespace TUK::Framework
 {

@@ -8,7 +8,7 @@
 #include <string_view>
 #include <vector>
 
-#include "Framework/Entities/Component.hpp"
+#include "Component.hpp"
 
 namespace TUK::Framework
 {

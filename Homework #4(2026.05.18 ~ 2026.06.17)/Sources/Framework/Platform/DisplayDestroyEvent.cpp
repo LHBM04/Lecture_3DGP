@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Platform/DisplayDestroyEvent.hpp"
+#include "DisplayDestroyEvent.hpp"
 
 namespace TUK::Framework
 {

@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Entities/World.hpp"
+#include "World.hpp"
 
-#include "Framework/Entities/Entity.hpp"
+#include "Entity.hpp"
 
 namespace TUK::Framework
 {

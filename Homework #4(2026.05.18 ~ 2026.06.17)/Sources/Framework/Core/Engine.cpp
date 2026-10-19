@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Core/Engine.hpp"
+#include "Engine.hpp"
 
-#include "Framework/Core/Game.hpp"
+#include "Game.hpp"
 
 namespace TUK::Framework
 {

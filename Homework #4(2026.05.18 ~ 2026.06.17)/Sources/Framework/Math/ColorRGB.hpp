@@ -7,8 +7,8 @@
 
 #include <DirectXMath.h>
 
-#include "Framework/Math/Vector3D.hpp"
-#include "Framework/Math/Vector4D.hpp"
+#include "Vector3D.hpp"
+#include "Vector4D.hpp"
 
 namespace TUK::Framework
 {

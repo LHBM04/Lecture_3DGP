@@ -6,10 +6,10 @@
 #include <string>
 #include <vector>
 
-#include "Framework/Core/EngineSubsystem.hpp"
+#include "../Core/EngineSubsystem.hpp"
 
-#include "Framework/Platform/Display.hpp"
-#include "Framework/Platform/DisplayOptions.hpp"
+#include "Display.hpp"
+#include "DisplayOptions.hpp"
 
 namespace TUK::Framework
 {

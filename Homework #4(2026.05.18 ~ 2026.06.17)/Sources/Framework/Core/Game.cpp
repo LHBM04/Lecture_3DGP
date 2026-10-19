@@ -1,9 +1,9 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Core/Game.hpp"
+#include "Game.hpp"
 
-#include "Framework/Platform/TimeSubsystem.hpp"
+#include "../Platform/TimeSubsystem.hpp"
 
-#include "Framework/Core/Engine.hpp"
+#include "Engine.hpp"
 
 namespace TUK::Framework
 {

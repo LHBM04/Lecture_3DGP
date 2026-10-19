@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Platform/DisplaySubsystem.hpp"
+#include "DisplaySubsystem.hpp"
 
 
-#include "Framework/Platform/WindowProc.hpp"
+#include "WindowProc.hpp"
 
 namespace
 {

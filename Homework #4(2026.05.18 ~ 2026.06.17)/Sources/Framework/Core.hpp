@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "Framework/Core/ConsoleSubsystem.hpp"
-#include "Framework/Core/Engine.hpp"
-#include "Framework/Core/EngineSubsystem.hpp"
-#include "Framework/Core/Game.hpp"
-#include "Framework/Core/GameSubsystem.hpp"
-#include "Framework/Core/Subsystem.hpp"
-#include "Framework/Core/System.hpp"
-#include "Framework/Core/SystemStatus.hpp"
+#include "Core/ConsoleSubsystem.hpp"
+#include "Core/Engine.hpp"
+#include "Core/EngineSubsystem.hpp"
+#include "Core/Game.hpp"
+#include "Core/GameSubsystem.hpp"
+#include "Core/Subsystem.hpp"
+#include "Core/System.hpp"
+#include "Core/SystemStatus.hpp"

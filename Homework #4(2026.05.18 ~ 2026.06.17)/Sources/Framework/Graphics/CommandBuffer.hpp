@@ -6,8 +6,8 @@
 
 #include <d3d12.h>
 
-#include "Framework/Math/ColorRGB.hpp"
-#include "Framework/Math/ColorRGBA.hpp"
+#include "../Math/ColorRGB.hpp"
+#include "../Math/ColorRGBA.hpp"
 
 namespace TUK::Framework
 {

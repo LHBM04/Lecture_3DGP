@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Platform/DisplayCloseEvent.hpp"
+#include "DisplayCloseEvent.hpp"
 
 namespace TUK::Framework
 {

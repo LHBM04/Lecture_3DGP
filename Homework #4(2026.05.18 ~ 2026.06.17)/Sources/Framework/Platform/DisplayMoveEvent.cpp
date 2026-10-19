@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Platform/DisplayMoveEvent.hpp"
+#include "DisplayMoveEvent.hpp"
 
 namespace TUK::Framework
 {

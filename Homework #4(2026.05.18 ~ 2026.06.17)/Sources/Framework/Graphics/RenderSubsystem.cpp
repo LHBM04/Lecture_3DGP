@@ -1,12 +1,12 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Graphics/RenderSubsystem.hpp"
+#include "RenderSubsystem.hpp"
 
-#include "Framework/Platform/Display.hpp"
+#include "../Platform/Display.hpp"
 
-#include "Framework/Graphics/CommandBuffer.hpp"
-#include "Framework/Graphics/Fence.hpp"
-#include "Framework/Graphics/GraphicsDevice.hpp"
-#include "Framework/Graphics/SwapChain.hpp"
+#include "CommandBuffer.hpp"
+#include "Fence.hpp"
+#include "GraphicsDevice.hpp"
+#include "SwapChain.hpp"
 
 namespace
 {

@@ -8,9 +8,9 @@
 #include <utility>
 #include <vector>
 
-#include "Framework/Core/EngineSubsystem.hpp"
+#include "../Core/EngineSubsystem.hpp"
 
-#include "Framework/Platform/Event.hpp"
+#include "Event.hpp"
 
 namespace TUK::Framework
 {

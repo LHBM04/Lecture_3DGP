@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Platform/DisplayResizeEvent.hpp"
+#include "DisplayResizeEvent.hpp"
 
 namespace TUK::Framework
 {

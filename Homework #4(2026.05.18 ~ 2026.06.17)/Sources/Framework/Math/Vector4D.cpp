@@ -1,10 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "Precompiled.hpp"
-#include "Framework/Math/Mathf.hpp"
-#include "Framework/Math/Vector4D.hpp"
+#include "Mathf.hpp"
+#include "Vector4D.hpp"
 
-#include "Framework/Math/Vector2D.hpp"
-#include "Framework/Math/Vector3D.hpp"
+#include "Vector2D.hpp"
+#include "Vector3D.hpp"
 
 namespace TUK::Framework
 {

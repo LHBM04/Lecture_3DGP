@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Framework/Core/EngineSubsystem.hpp"
+#include "EngineSubsystem.hpp"
 
 namespace TUK::Framework
 {

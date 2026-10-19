@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Graphics/CommandBuffer.hpp"
+#include "CommandBuffer.hpp"
 
-#include "Framework/Graphics/RenderTarget.hpp"
+#include "RenderTarget.hpp"
 
 namespace TUK::Framework
 {

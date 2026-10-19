@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-#include "Framework/Math/Vector2D.hpp"
+#include "../Math/Vector2D.hpp"
 
 namespace TUK::Framework
 {

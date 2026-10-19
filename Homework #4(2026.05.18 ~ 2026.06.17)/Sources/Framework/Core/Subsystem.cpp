@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Framework/Core/Subsystem.hpp"
+#include "Subsystem.hpp"
 
 namespace TUK::Framework
 {

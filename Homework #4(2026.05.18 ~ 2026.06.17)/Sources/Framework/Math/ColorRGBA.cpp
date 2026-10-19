@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "Precompiled.hpp"
-#include "Framework/Math/ColorRGBA.hpp"
+#include "ColorRGBA.hpp"
 
-#include "Framework/Math/ColorRGB.hpp"
+#include "ColorRGB.hpp"
 
 namespace TUK::Framework
 {
