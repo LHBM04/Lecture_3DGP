@@ -1,0 +1,287 @@
+﻿#include "Precompiled.hpp"
+#include "Framework/Graphics/RenderSubsystem.hpp"
+
+#include "Framework/Platform/Display.hpp"
+
+#include "Framework/Graphics/CommandBuffer.hpp"
+#include "Framework/Graphics/Fence.hpp"
+#include "Framework/Graphics/GraphicsDevice.hpp"
+#include "Framework/Graphics/SwapChain.hpp"
+
+namespace
+{
+	/** DXGI Factory */
+	IDXGIFactory6* dxgiFactory = nullptr;
+
+	/** D3D12 명령 큐 */
+	ID3D12CommandQueue* d3dCommandQueue = nullptr;
+}
+
+namespace TUK::Framework
+{
+	RenderSubsystem::RenderSubsystem() noexcept
+		: EngineSubsystem(100)
+		, device(nullptr)
+		, commandBuffer(nullptr)
+		, fence(nullptr)
+	{
+	}
+
+	RenderSubsystem::~RenderSubsystem() noexcept
+	{
+		if (d3dCommandQueue && fence)
+		{
+			fence->Signal(*d3dCommandQueue);
+			fence->Wait();
+		}
+
+		swapChains.clear();
+		commandBuffer.reset();
+		fence.reset();
+
+		if (d3dCommandQueue)
+		{
+			d3dCommandQueue->Release();
+			d3dCommandQueue = nullptr;
+		}
+
+		device.reset();
+
+		if (dxgiFactory)
+		{
+			dxgiFactory->Release();
+			dxgiFactory = nullptr;
+		}
+	}
+
+	void RenderSubsystem::CreateSwapChain(const Display& window)
+	{
+		if (swapChains.contains(&window))
+		{
+			return;
+		}
+
+		assert(dxgiFactory && d3dCommandQueue);
+
+		const HWND hWnd = window.GetHWND();
+		assert(hWnd);
+
+		const Vector2D<std::int32_t> clientSize = window.GetClientSize();
+		const UINT width = static_cast<UINT>((std::max)(1, clientSize.GetX()));
+		const UINT height = static_cast<UINT>((std::max)(1, clientSize.GetY()));
+
+		DXGI_SWAP_CHAIN_DESC1 description{};
+		description.Width = width;
+		description.Height = height;
+		description.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		description.SampleDesc.Count = 1;
+		description.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		description.BufferCount = 2;
+		description.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+		IDXGISwapChain1* createdSwapChain = nullptr;
+		if (FAILED(dxgiFactory->CreateSwapChainForHwnd(
+			d3dCommandQueue,
+			hWnd,
+			&description,
+			nullptr,
+			nullptr,
+			&createdSwapChain)))
+		{
+			return;
+		}
+
+		dxgiFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
+
+		IDXGISwapChain4* dxgiSwapChain = nullptr;
+		const HRESULT hr = createdSwapChain->QueryInterface(IID_PPV_ARGS(&dxgiSwapChain));
+		createdSwapChain->Release();
+		if (FAILED(hr) || !dxgiSwapChain)
+		{
+			return;
+		}
+
+		swapChains.emplace(&window, std::make_unique<SwapChain>(dxgiSwapChain));
+	}
+
+	SystemStatus RenderSubsystem::OnStartup()
+	{
+		UINT factoryFlags = 0;
+
+#ifdef _DEBUG
+		ID3D12Debug* debugController = nullptr;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+		{
+			debugController->EnableDebugLayer();
+			factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+			debugController->Release();
+		}
+#endif
+
+		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&dxgiFactory))))
+		{
+			return SystemStatus::Failure;
+		}
+
+		ID3D12Device10* d3dDevice = nullptr;
+		for (UINT index = 0; ; ++index)
+		{
+			IDXGIAdapter1* adapter = nullptr;
+			if (dxgiFactory->EnumAdapterByGpuPreference(
+				index,
+				DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+				IID_PPV_ARGS(&adapter)) == DXGI_ERROR_NOT_FOUND)
+			{
+				break;
+			}
+
+			DXGI_ADAPTER_DESC1 adapterDesc{};
+			adapter->GetDesc1(&adapterDesc);
+
+			if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+			{
+				adapter->Release();
+				continue;
+			}
+
+			const HRESULT hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3dDevice));
+			adapter->Release();
+			if (SUCCEEDED(hr))
+			{
+				break;
+			}
+		}
+
+		if (!d3dDevice)
+		{
+			IDXGIAdapter* warpAdapter = nullptr;
+			if (FAILED(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter))))
+			{
+				return SystemStatus::Failure;
+			}
+
+			const HRESULT hr = D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3dDevice));
+			warpAdapter->Release();
+			if (FAILED(hr))
+			{
+				return SystemStatus::Failure;
+			}
+		}
+
+		D3D12_COMMAND_QUEUE_DESC queueDesc{};
+		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+		if (FAILED(d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&d3dCommandQueue))))
+		{
+			d3dDevice->Release();
+			return SystemStatus::Failure;
+		}
+
+		ID3D12CommandAllocator* d3dCommandAllocator = nullptr;
+		if (FAILED(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&d3dCommandAllocator))))
+		{
+			d3dDevice->Release();
+			return SystemStatus::Failure;
+		}
+
+		ID3D12GraphicsCommandList* d3dCommandList = nullptr;
+		if (FAILED(d3dDevice->CreateCommandList(
+			0,
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			d3dCommandAllocator,
+			nullptr,
+			IID_PPV_ARGS(&d3dCommandList))))
+		{
+			d3dCommandAllocator->Release();
+			d3dDevice->Release();
+			return SystemStatus::Failure;
+		}
+
+		d3dCommandList->Close();
+
+		ID3D12Fence* d3dFence = nullptr;
+		if (FAILED(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&d3dFence))))
+		{
+			d3dCommandList->Release();
+			d3dCommandAllocator->Release();
+			d3dDevice->Release();
+			return SystemStatus::Failure;
+		}
+
+		const HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		if (!fenceEvent)
+		{
+			d3dFence->Release();
+			d3dCommandList->Release();
+			d3dCommandAllocator->Release();
+			d3dDevice->Release();
+			return SystemStatus::Failure;
+		}
+
+		device = std::make_unique<GraphicsDevice>(d3dDevice);
+		commandBuffer = std::make_unique<CommandBuffer>(d3dCommandAllocator, d3dCommandList);
+		fence = std::make_unique<Fence>(d3dFence, fenceEvent);
+
+		return SystemStatus::Continue;
+	}
+
+	SystemStatus RenderSubsystem::OnPreTick()
+	{
+		assert(commandBuffer);
+
+		commandBuffer->BeginFrame();
+		for (const auto& swapChain : swapChains | std::views::values)
+		{
+			swapChain->Clear(*commandBuffer);
+		}
+
+		return SystemStatus::Continue;
+	}
+
+	SystemStatus RenderSubsystem::OnPostTick()
+	{
+		assert(commandBuffer && d3dCommandQueue && fence);
+
+		commandBuffer->EndFrame();
+
+		ID3D12CommandList* commandLists[]{ &commandBuffer->GetD3D12CommandList() };
+		d3dCommandQueue->ExecuteCommandLists(1, commandLists);
+
+		for (const auto& swapChain : swapChains | std::views::values)
+		{
+			swapChain->Present();
+		}
+
+		fence->Signal(*d3dCommandQueue);
+		fence->Wait();
+
+		return SystemStatus::Continue;
+	}
+
+	void RenderSubsystem::OnShutdown()
+	{
+		if (d3dCommandQueue && fence)
+		{
+			fence->Signal(*d3dCommandQueue);
+			fence->Wait();
+		}
+
+		swapChains.clear();
+		commandBuffer.reset();
+		fence.reset();
+
+		if (d3dCommandQueue)
+		{
+			d3dCommandQueue->Release();
+			d3dCommandQueue = nullptr;
+		}
+
+		device.reset();
+
+		if (dxgiFactory)
+		{
+			dxgiFactory->Release();
+			dxgiFactory = nullptr;
+		}
+	}
+}
