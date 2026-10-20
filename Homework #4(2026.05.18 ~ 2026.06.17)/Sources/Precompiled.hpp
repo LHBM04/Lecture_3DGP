@@ -24,6 +24,7 @@
 #include <iterator>
 #include <limits>
 #include <memory>
+#include <memory_resource>
 #include <numbers>
 #include <optional>
 #include <print>

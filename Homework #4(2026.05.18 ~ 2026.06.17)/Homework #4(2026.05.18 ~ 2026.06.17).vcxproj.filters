@@ -207,6 +207,9 @@
     <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Memory.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp">
@@ -337,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="Sources\Precompiled.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Memory.cpp">
+      <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
