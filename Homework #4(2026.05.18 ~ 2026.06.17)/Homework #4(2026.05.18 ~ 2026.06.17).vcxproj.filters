@@ -210,6 +210,9 @@
     <ClInclude Include="Sources\Framework\Core\Memory.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Logger.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp">
@@ -342,6 +345,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Memory.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Logger.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
   </ItemGroup>

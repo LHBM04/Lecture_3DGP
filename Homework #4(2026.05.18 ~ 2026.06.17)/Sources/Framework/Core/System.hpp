@@ -55,8 +55,8 @@ namespace TUK::Framework
 
 	private:
 		/** 포함된 서브시스템 */
-		std::vector<std::unique_ptr<Subsystem>> subsystems;
-		std::unordered_map<std::type_index, std::reference_wrapper<Subsystem>> subsystemsByType;
+		std::pmr::vector<std::unique_ptr<Subsystem>> subsystems;
+		std::pmr::unordered_map<std::type_index, std::reference_wrapper<Subsystem>> subsystemsByType;
 	};
 
 	template <std::derived_from<Subsystem> TSubsystem>

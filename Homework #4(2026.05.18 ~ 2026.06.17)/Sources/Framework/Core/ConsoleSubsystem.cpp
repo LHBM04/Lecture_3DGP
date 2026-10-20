@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "ConsoleSubsystem.hpp"
 
+#include "Logger.hpp"
+
 namespace TUK::Framework
 {
 	ConsoleSubsystem::ConsoleSubsystem() noexcept
@@ -25,8 +27,6 @@ namespace TUK::Framework
 		FILE* fp = nullptr;
 		freopen_s(&fp, "CONOUT$", "w", stdout);
 		freopen_s(&fp, "CONOUT$", "w", stderr);
-
-		std::print(fp, "Debug console initialized.\n");
 
 		return SystemStatus::Continue;
 	}

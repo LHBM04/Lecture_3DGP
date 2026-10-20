@@ -1,12 +1,18 @@
 ﻿#include "Precompiled.hpp"
 #include "System.hpp"
 
+#include "Memory.hpp"
+
 namespace TUK::Framework
 {
 	System::System() noexcept
-		:  subsystems()
-		, subsystemsByType()
+		: subsystems(Memory::GetPersistentResource())
+		, subsystemsByType(Memory::GetPersistentResource())
 	{
+		constexpr std::size_t DefaultCapacity = 16;
+
+		subsystems.reserve(DefaultCapacity);
+		subsystemsByType.reserve(DefaultCapacity);
 	}
 
 	System::~System() noexcept

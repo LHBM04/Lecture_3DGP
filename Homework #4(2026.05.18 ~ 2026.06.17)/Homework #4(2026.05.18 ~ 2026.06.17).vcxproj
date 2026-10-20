@@ -169,6 +169,7 @@
     <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\Game.hpp" />
     <ClInclude Include="Sources\Framework\Core\GameSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Core\Logger.hpp" />
     <ClInclude Include="Sources\Framework\Core\Memory.hpp" />
     <ClInclude Include="Sources\Framework\Core\Subsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\System.hpp" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Sources\Framework\Core\Entry.cpp" />
     <ClCompile Include="Sources\Framework\Core\Game.cpp" />
     <ClCompile Include="Sources\Framework\Core\GameSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Core\Logger.cpp" />
     <ClCompile Include="Sources\Framework\Core\Memory.cpp" />
     <ClCompile Include="Sources\Framework\Core\Subsystem.cpp" />
     <ClCompile Include="Sources\Framework\Core\System.cpp" />

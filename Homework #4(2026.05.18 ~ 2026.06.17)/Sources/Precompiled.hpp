@@ -33,6 +33,7 @@
 #include <stdfloat>
 #include <string>
 #include <string_view>
+#include <tchar.h>
 #include <tuple>
 #include <type_traits>
 #include <typeindex>
@@ -51,6 +52,8 @@
 
 #include <windows.h>
 #include <windowsx.h>
+
+#include <shellapi.h>
 
 #include <wrl.h>
 
