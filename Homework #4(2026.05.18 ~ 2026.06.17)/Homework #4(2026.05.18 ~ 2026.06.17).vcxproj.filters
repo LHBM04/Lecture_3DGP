@@ -84,9 +84,6 @@
     <ClInclude Include="Sources\Framework\Graphics\CommandBuffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Fence.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>

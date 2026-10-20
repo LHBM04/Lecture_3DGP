@@ -183,7 +183,6 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\CommandBuffer.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\ComputePipeline.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Fence.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.hpp" />
