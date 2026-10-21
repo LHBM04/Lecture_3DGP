@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
@@ -7,28 +7,28 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{552518bb-1e8c-47a5-bc67-880a02c3bf59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
+    <Filter Include="Sources\Header Files">
       <UniqueIdentifier>{9a8cb2fc-1d37-4920-ac36-79feb9ea979f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
+    <Filter Include="Sources\Source Files">
       <UniqueIdentifier>{d30a1a80-925e-429e-9461-73cb310e402b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Shaders">
+    <Filter Include="Resources\Shaders">
       <UniqueIdentifier>{ef795c5c-9dff-4d56-9d37-3ab965ccedf1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Meshes">
+    <Filter Include="Resources\Meshes">
       <UniqueIdentifier>{1dce1b01-01db-4574-9b47-dedf5fdb95cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Materials">
+    <Filter Include="Resources\Materials">
       <UniqueIdentifier>{f04b5e07-d4c5-4fb6-afaa-a8c53f5846e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Terrains">
+    <Filter Include="Resources\Terrains">
       <UniqueIdentifier>{a80ebf56-c4d0-4123-8f56-536d4a8b2670}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Animations">
+    <Filter Include="Resources\Animations">
       <UniqueIdentifier>{b97f4947-62d6-44f7-8e3c-e0e3ed42ce8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Models">
+    <Filter Include="Resources\Models">
       <UniqueIdentifier>{c99fdbc5-452a-4f85-be95-60dc67c30595}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

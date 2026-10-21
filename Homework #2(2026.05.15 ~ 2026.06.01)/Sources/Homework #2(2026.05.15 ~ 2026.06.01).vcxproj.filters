@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
@@ -7,22 +7,22 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{2e11dd9a-ab51-46d3-b07e-db2138fb4d13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
+    <Filter Include="Sources\Header Files">
       <UniqueIdentifier>{a34e4bd2-ef31-4aa2-a282-377f45c3eb00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
+    <Filter Include="Sources\Source Files">
       <UniqueIdentifier>{8a3775ec-04de-40ad-a7f8-9ef65761f71e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Shaders">
+    <Filter Include="Resources\Shaders">
       <UniqueIdentifier>{eab1ef25-5d60-4cc9-afa3-d58cf10048c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Materials">
+    <Filter Include="Resources\Materials">
       <UniqueIdentifier>{38b8df1b-9156-43ac-8e43-7e6eb2c2bf4c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Meshes">
+    <Filter Include="Resources\Meshes">
       <UniqueIdentifier>{08e2fe9b-47a4-4fc4-9e5e-ff3175267bea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Resources\Scenes">
+    <Filter Include="Resources\Scenes">
       <UniqueIdentifier>{f9d486a4-6cbc-4f99-9fda-cf56b15fe974}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
