@@ -17,6 +17,10 @@ namespace TUK::Framework
 	{
 		void Initialize(std::size_t persistentBufferSize, std::size_t frameBufferSize)
 		{
+#ifdef _DEBUG
+			_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
 			// 영구 메모리 확보
 			persistentBuffer = std::malloc(persistentBufferSize);
 			persistentArena = new std::pmr::monotonic_buffer_resource(
