@@ -34,8 +34,6 @@ namespace TUK::Framework
 
 				return static_cast<std::int32_t>(status);
 			}
-
-			Memory::EndFrame();
 		}
 	}
 
