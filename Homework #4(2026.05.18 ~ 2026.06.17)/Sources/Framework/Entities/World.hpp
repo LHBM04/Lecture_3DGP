@@ -26,7 +26,9 @@ namespace TUK::Framework
 		void FixedUpdate();
 		void Update();
 		void LateUpdate();
+		void PreRender(CommandBuffer& renderer);
 		void Render(CommandBuffer& renderer);
+		void PostRender(CommandBuffer& renderer);
 		void Exit();
 
 		Entity& CreateEntity();
@@ -37,7 +39,9 @@ namespace TUK::Framework
 		virtual void OnFixedUpdate();
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
+		virtual void OnPreRender(CommandBuffer& renderer);
 		virtual void OnRender(CommandBuffer& renderer);
+		virtual void OnPostRender(CommandBuffer& renderer);
 		virtual void OnExit();
 
 	private:

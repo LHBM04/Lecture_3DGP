@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "Fence.hpp"
 
+#include <utility>
+
 namespace TUK::Framework
 {
 	Fence::Fence(ID3D12Fence* d3dFence, HANDLE fenceEvent) noexcept
@@ -28,6 +30,34 @@ namespace TUK::Framework
 		fenceValue = 0;
 	}
 
+	Fence::Fence(Fence&& other) noexcept
+		: d3dFence(std::exchange(other.d3dFence, nullptr))
+		, fenceEvent(std::exchange(other.fenceEvent, nullptr))
+		, fenceValue(std::exchange(other.fenceValue, 0))
+	{
+	}
+
+	Fence& Fence::operator=(Fence&& other) noexcept
+	{
+		if (this != &other)
+		{
+			if (fenceEvent)
+			{
+				CloseHandle(fenceEvent);
+			}
+
+			if (d3dFence)
+			{
+				d3dFence->Release();
+			}
+
+			d3dFence = std::exchange(other.d3dFence, nullptr);
+			fenceEvent = std::exchange(other.fenceEvent, nullptr);
+			fenceValue = std::exchange(other.fenceValue, 0);
+		}
+		return *this;
+	}
+
 	void Fence::Wait() const
 	{
 		assert(d3dFence && fenceEvent);
@@ -41,12 +71,6 @@ namespace TUK::Framework
 		}
 	}
 
-	bool Fence::IsCompleted() const noexcept
-	{
-		assert(d3dFence);
-		return d3dFence->GetCompletedValue() >= fenceValue;
-	}
-
 	void Fence::Signal(ID3D12CommandQueue& d3dCommandQueue)
 	{
 		assert(d3dFence);
@@ -56,6 +80,12 @@ namespace TUK::Framework
 		{
 			fenceValue = nextFenceValue;
 		}
+	}
+
+	bool Fence::IsCompleted() const noexcept
+	{
+		assert(d3dFence);
+		return d3dFence->GetCompletedValue() >= fenceValue;
 	}
 
 	ID3D12Fence& Fence::GetD3D12Fence() const noexcept

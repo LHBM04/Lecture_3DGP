@@ -18,25 +18,25 @@ namespace TUK::Framework
 		Fence(const Fence&) = delete;
 		Fence& operator=(const Fence&) = delete;
 
-		Fence(Fence&&) = delete;
-		Fence& operator=(Fence&&) = delete;
+		Fence(Fence&& other) noexcept;
+		Fence& operator=(Fence&& other) noexcept;
 
 		void Wait() const;
 		void Signal(ID3D12CommandQueue& d3dCommandQueue);
 
 		[[nodiscard]] bool IsCompleted() const noexcept;
 
-		/** D3D12 ?쒖뒪 Getter */
+		/** D3D12 펜스 Getter */
 		[[nodiscard]] ID3D12Fence& GetD3D12Fence() const noexcept;
 
 	private:
-		/** D3D12 ?쒖뒪 */
+		/** D3D12 펜스 */
 		ID3D12Fence* d3dFence = nullptr;
 
-		/** ?쒖뒪 ?대깽??*/
+		/** 펜스 이벤트 */
 		HANDLE fenceEvent = nullptr;
 
-		/** ?쒖뒪 媛?*/
+		/** 펜스 값 */
 		UINT64 fenceValue = 0;
 	};
 }

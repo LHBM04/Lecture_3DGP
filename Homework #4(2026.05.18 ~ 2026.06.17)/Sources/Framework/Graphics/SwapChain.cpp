@@ -1,7 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "SwapChain.hpp"
 
-#include "CommandBuffer.hpp"
 #include "RenderTarget.hpp"
 
 namespace TUK::Framework
@@ -11,13 +10,7 @@ namespace TUK::Framework
 		, renderTargets()
 	{
 		assert(dxgiSwapChain);
-
-		DXGI_SWAP_CHAIN_DESC1 description{};
-		if (SUCCEEDED(dxgiSwapChain->GetDesc1(&description)))
-		{
-			renderTargets.resize(description.BufferCount);
-			CreateRenderTargets();
-		}
+		CreateRenderTargets();
 	}
 
 	SwapChain::~SwapChain() noexcept
@@ -32,21 +25,54 @@ namespace TUK::Framework
 		}
 	}
 
-	void SwapChain::Clear(CommandBuffer& commandBuffer) const
+	SwapChain::SwapChain(SwapChain&& other) noexcept
+		: dxgiSwapChain(std::exchange(other.dxgiSwapChain, nullptr))
+		, renderTargets(std::move(other.renderTargets))
 	{
-		assert(dxgiSwapChain && !renderTargets.empty());
+	}
 
-		const UINT backBufferIndex = dxgiSwapChain->GetCurrentBackBufferIndex();
-		assert(renderTargets[backBufferIndex]);
+	SwapChain& SwapChain::operator=(SwapChain&& other) noexcept
+	{
+		if (this != &other)
+		{
+			ReleaseRenderTargets();
 
-		commandBuffer.SetRenderTarget(*renderTargets[backBufferIndex]);
-		commandBuffer.ClearRenderTarget(ColorRGBA<float>(0, 0, 0, 0));
+			if (dxgiSwapChain)
+			{
+				dxgiSwapChain->SetFullscreenState(FALSE, nullptr);
+				dxgiSwapChain->Release();
+			}
+
+			dxgiSwapChain = std::exchange(other.dxgiSwapChain, nullptr);
+			renderTargets = std::move(other.renderTargets);
+		}
+		return *this;
 	}
 
 	void SwapChain::Present() const
 	{
 		assert(dxgiSwapChain);
 		dxgiSwapChain->Present(1, 0);
+	}
+
+	RenderTarget& SwapChain::GetCurrentRenderTarget()
+	{
+		assert(dxgiSwapChain && !renderTargets.empty());
+
+		const UINT backBufferIndex = dxgiSwapChain->GetCurrentBackBufferIndex();
+		assert(backBufferIndex < renderTargets.size());
+
+		return renderTargets[backBufferIndex];
+	}
+
+	const RenderTarget& SwapChain::GetCurrentRenderTarget() const
+	{
+		assert(dxgiSwapChain && !renderTargets.empty());
+
+		const UINT backBufferIndex = dxgiSwapChain->GetCurrentBackBufferIndex();
+		assert(backBufferIndex < renderTargets.size());
+
+		return renderTargets[backBufferIndex];
 	}
 
 	Vector2D<std::int32_t> SwapChain::GetSize() const noexcept
@@ -94,21 +120,27 @@ namespace TUK::Framework
 	{
 		assert(dxgiSwapChain);
 
-		for (UINT index = 0; index < static_cast<UINT>(renderTargets.size()); ++index)
+		DXGI_SWAP_CHAIN_DESC1 description{};
+		if (FAILED(dxgiSwapChain->GetDesc1(&description)))
+		{
+			return;
+		}
+
+		renderTargets.clear();
+		renderTargets.reserve(description.BufferCount);
+
+		for (UINT index = 0; index < description.BufferCount; ++index)
 		{
 			ID3D12Resource* backBuffer = nullptr;
 			if (SUCCEEDED(dxgiSwapChain->GetBuffer(index, IID_PPV_ARGS(&backBuffer))) && backBuffer)
 			{
-				renderTargets[index] = std::make_unique<RenderTarget>(backBuffer);
+				renderTargets.emplace_back(backBuffer);
 			}
 		}
 	}
 
 	void SwapChain::ReleaseRenderTargets() noexcept
 	{
-		for (std::unique_ptr<RenderTarget>& renderTarget : renderTargets)
-		{
-			renderTarget.reset();
-		}
+		renderTargets.clear();
 	}
 }

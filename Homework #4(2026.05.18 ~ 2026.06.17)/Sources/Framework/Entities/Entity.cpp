@@ -115,6 +115,19 @@ namespace TUK::Framework
 		}
 	}
 
+	void Entity::PreRender(CommandBuffer& renderer)
+	{
+		const std::size_t count = components.size();
+		for (std::size_t index = 0; index < count; ++index)
+		{
+			Component* component = components[index].get();
+			if (component->isStared && component->isEnabled && !component->isDestroyed)
+			{
+				component->OnPreRender(renderer);
+			}
+		}
+	}
+
 	void Entity::Render(CommandBuffer& renderer)
 	{
 		const std::size_t count = components.size();
@@ -124,6 +137,19 @@ namespace TUK::Framework
 			if (component->isStared && component->isEnabled && !component->isDestroyed)
 			{
 				component->OnRender(renderer);
+			}
+		}
+	}
+
+	void Entity::PostRender(CommandBuffer& renderer)
+	{
+		const std::size_t count = components.size();
+		for (std::size_t index = 0; index < count; ++index)
+		{
+			Component* component = components[index].get();
+			if (component->isStared && component->isEnabled && !component->isDestroyed)
+			{
+				component->OnPostRender(renderer);
 			}
 		}
 	}

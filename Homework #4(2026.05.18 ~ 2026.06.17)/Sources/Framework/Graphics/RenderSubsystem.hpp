@@ -1,13 +1,11 @@
 ﻿#pragma once
 
+#include <functional>
 #include <map>
-#include <memory>
 #include <vector>
 
 #include "../Core/EngineSubsystem.hpp"
 
-#include "CommandBuffer.hpp"
-#include "Fence.hpp"
 #include "GraphicsDevice.hpp"
 #include "SwapChain.hpp"
 
@@ -18,10 +16,21 @@ namespace TUK::Framework
 	class RenderSubsystem : public EngineSubsystem
 	{
 	public:
+		struct RenderCallbacks final
+		{
+			std::function<void(CommandBuffer&)> preRender;
+			std::function<void(CommandBuffer&)> render;
+			std::function<void(CommandBuffer&)> postRender;
+		};
+
 		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
 
-		void CreateSwapChain(const Display& window);
+		void RegisterDisplay(const Display& window);
+		void UnregisterDisplay(const Display& window);
+
+		void SetRenderCallback(const Display& window, std::function<void(CommandBuffer&)> callback);
+		void SetRenderCallbacks(const Display& window, RenderCallbacks callbacks);
 
 	protected:
 		SystemStatus OnStartup() override;
@@ -30,9 +39,12 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		std::unique_ptr<GraphicsDevice> device;
-		std::unique_ptr<CommandBuffer> commandBuffer;
-		std::unique_ptr<Fence> fence;
-		std::map<const Display*, std::unique_ptr<SwapChain>> swapChains;
+		void RemovePendingDisplays();
+
+		GraphicsDevice device;
+		std::map<const Display*, SwapChain> swapChains;
+		std::map<const Display*, RenderCallbacks> renderCallbacks;
+		std::vector<const Display*> pendingDisplayRemovals;
+		CommandBuffer* activeCommandBuffer = nullptr;
 	};
 }

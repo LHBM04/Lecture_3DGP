@@ -1,10 +1,9 @@
 ﻿#include "Precompiled.hpp"
-
-
 #include "WindowProc.hpp"
 
-#include "Display.hpp"
 #include "../Core/Engine.hpp"
+
+#include "Display.hpp"
 #include "DisplayCloseEvent.hpp"
 #include "DisplayCreateEvent.hpp"
 #include "DisplayDestroyEvent.hpp"
@@ -17,10 +16,16 @@ namespace TUK::Framework
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		auto* display = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		Display* display = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		if (!display)
+		{
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+
 		if (message == WM_NCCREATE)
 		{
-			const auto* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
+			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
+
 			display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)
 			{
@@ -29,11 +34,7 @@ namespace TUK::Framework
 
 			display->hWnd = hWnd;
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(display));
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
 
-		if (!display)
-		{
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 
@@ -41,60 +42,70 @@ namespace TUK::Framework
 
 		switch (message)
 		{
-		case WM_CREATE:
-			if (eventSubsystem)
+			case WM_CREATE:
 			{
-				eventSubsystem->PushEvent<DisplayCreateEvent>(*display);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent<DisplayCreateEvent>(*display);
+				}
+				return 0;
 			}
-			return 0;
-
-		case WM_CLOSE:
-			display->SetShouldClose(true);
-			if (eventSubsystem)
+			case WM_SIZE:
 			{
-				eventSubsystem->PushEvent<DisplayCloseEvent>(*display);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent<DisplayResizeEvent>(
+						*display,
+						Vector2D<std::int32_t>{ LOWORD(lParam), HIWORD(lParam) });
+				}
+				return 0;
 			}
-			return DefWindowProc(hWnd, message, wParam, lParam);
-
-		case WM_DESTROY:
-			if (eventSubsystem)
+			case WM_MOVE:
 			{
-				eventSubsystem->PushEvent<DisplayDestroyEvent>(*display);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent<DisplayMoveEvent>(
+						*display,
+						Vector2D<std::int32_t>{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+				}
+				return 0;
 			}
-			return 0;
-
-		case WM_NCDESTROY:
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
-			display->hWnd = nullptr;
-			return 0;
-
-		case WM_SIZE:
-			if (eventSubsystem)
+			case WM_SETFOCUS: [[fallthrough]];
+			case WM_KILLFOCUS:
 			{
-				eventSubsystem->PushEvent<DisplayResizeEvent>(
-					*display,
-					Vector2D<std::int32_t>{ static_cast<std::int32_t>(LOWORD(lParam)), static_cast<std::int32_t>(HIWORD(lParam)) });
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent<DisplayFocusEvent>(*display, message == WM_SETFOCUS);
+				}
+				return 0;
 			}
-			return 0;
-
-		case WM_MOVE:
-			if (eventSubsystem)
+			case WM_CLOSE:
 			{
-				eventSubsystem->PushEvent<DisplayMoveEvent>(
-					*display,
-					Vector2D<std::int32_t>{ static_cast<std::int32_t>(GET_X_LPARAM(lParam)), static_cast<std::int32_t>(GET_Y_LPARAM(lParam)) });
+				display->SetShouldClose(true);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent<DisplayCloseEvent>(*display);
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
-			return 0;
-
-		case WM_SETFOCUS:
-		case WM_KILLFOCUS:
-			if (eventSubsystem)
+			case WM_DESTROY:
 			{
-				eventSubsystem->PushEvent<DisplayFocusEvent>(*display, message == WM_SETFOCUS);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent<DisplayDestroyEvent>(*display);
+				}
+				return 0;
 			}
-			return 0;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			case WM_NCDESTROY:
+			{
+				SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+				display->hWnd = nullptr;
+				return 0;
+			}
+			default:
+			{
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
 		}
 
 		std::unreachable();

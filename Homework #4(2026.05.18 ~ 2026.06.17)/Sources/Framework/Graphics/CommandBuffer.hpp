@@ -1,17 +1,15 @@
 ﻿#pragma once
 
 #include <functional>
-#include <span>
 #include <vector>
 
 #include <d3d12.h>
 
-#include "../Math/ColorRGB.hpp"
-#include "../Math/ColorRGBA.hpp"
-
 namespace TUK::Framework
 {
-	class RenderSubsystem;
+	struct RenderPassInfo;
+
+	class GraphicsDevice;
 	class RenderTarget;
 	class Texture;
 	class Shader;
@@ -19,36 +17,33 @@ namespace TUK::Framework
 
 	class CommandBuffer
 	{
-		friend class RenderSubsystem;
+		friend class GraphicsDevice;
 
 	public:
-		CommandBuffer(ID3D12CommandAllocator* d3dCommandAllocator, ID3D12GraphicsCommandList* d3dCommandList) noexcept;
+		CommandBuffer(ID3D12CommandAllocator* d3dCommandAllocator, ID3D12GraphicsCommandList4* d3dCommandList) noexcept;
 		~CommandBuffer() noexcept;
 
 		CommandBuffer(const CommandBuffer&) = delete;
 		CommandBuffer& operator=(const CommandBuffer&) = delete;
 
-		CommandBuffer(CommandBuffer&&) = delete;
-		CommandBuffer& operator=(CommandBuffer&&) = delete;
+		CommandBuffer(CommandBuffer&& other) noexcept;
+		CommandBuffer& operator=(CommandBuffer&& other) noexcept;
 
-		void BeginFrame();
-		void EndFrame();
+		void BeginRenderPass(const RenderPassInfo& renderPassInfo);
+		void EndRenderPass();
 
-		void SetRenderTarget(std::reference_wrapper<RenderTarget> renderTarget);
-		void SetRenderTargets(std::span<std::reference_wrapper<RenderTarget>> renderTargets);
-
-		void ClearRenderTarget(const ColorRGB<float>& clearColor) const;
-		void ClearRenderTarget(const ColorRGBA<float>& clearColor) const;
+		void DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation, UINT startInstanceLocation);
 
 		/** D3D12 커맨드 할당자 Getter */
 		[[nodiscard]] ID3D12CommandAllocator& GetD3D12CommandAllocator() const noexcept;
 
 		/** D3D12 커맨드 리스트 Getter */
-		[[nodiscard]] ID3D12GraphicsCommandList& GetD3D12CommandList() const noexcept;
+		[[nodiscard]] ID3D12GraphicsCommandList4& GetD3D12CommandList() const noexcept;
 
 	private:
 		ID3D12CommandAllocator* d3dCommandAllocator;
-		ID3D12GraphicsCommandList* d3dCommandList;
+		ID3D12GraphicsCommandList4* d3dCommandList;
 		std::vector<std::reference_wrapper<RenderTarget>> currentRenderTargets;
+		D3D12_RESOURCE_STATES stateAfterRenderPass = D3D12_RESOURCE_STATE_PRESENT;
 	};
 }

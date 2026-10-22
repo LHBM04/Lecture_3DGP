@@ -37,6 +37,30 @@ namespace TUK::Framework
 		return result;
 	}
 
+	void WorldSubsystem::PreRender(CommandBuffer& renderer)
+	{
+		if (currentWorld)
+		{
+			currentWorld->PreRender(renderer);
+		}
+	}
+
+	void WorldSubsystem::Render(CommandBuffer& renderer)
+	{
+		if (currentWorld)
+		{
+			currentWorld->Render(renderer);
+		}
+	}
+
+	void WorldSubsystem::PostRender(CommandBuffer& renderer)
+	{
+		if (currentWorld)
+		{
+			currentWorld->PostRender(renderer);
+		}
+	}
+
 	void WorldSubsystem::OnShutdown()
 	{
 		currentWorld = nullptr;
@@ -51,6 +75,7 @@ namespace TUK::Framework
 		}
 
 		currentWorld->FixedUpdate();
+		return SystemStatus::Continue;
 	}
 
 	SystemStatus WorldSubsystem::OnUpdate()
@@ -61,6 +86,7 @@ namespace TUK::Framework
 		}
 
 		currentWorld->Update();
+		return SystemStatus::Continue;
 	}
 
 	SystemStatus WorldSubsystem::OnLateUpdate()
@@ -71,5 +97,6 @@ namespace TUK::Framework
 		}
 
 		currentWorld->LateUpdate();
+		return SystemStatus::Continue;
 	}
 }

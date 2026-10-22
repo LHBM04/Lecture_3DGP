@@ -1,13 +1,15 @@
 ﻿#include "Precompiled.hpp"
 #include "EventSubsystem.hpp"
 
+#include "../Core/Memory.hpp"
+
 namespace TUK::Framework
 {
 	EventSubsystem::EventSubsystem() noexcept
 		: EngineSubsystem(10)
-		, writeBuffer()
-		, readBuffer()
-		, listeners()
+		, writeBuffer(Memory::GetPersistentResource())
+		, readBuffer(Memory::GetPersistentResource())
+		, listeners(Memory::GetPersistentResource())
 	{
 	}
 

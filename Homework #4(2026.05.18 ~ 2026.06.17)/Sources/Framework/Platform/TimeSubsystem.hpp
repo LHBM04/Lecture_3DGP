@@ -1,12 +1,19 @@
 ﻿#pragma once
 
-#include <chrono>
 #include <cstdint>
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
 
 #include "../Core/EngineSubsystem.hpp"
 
 namespace TUK::Framework
 {
+	class Game;
+
 	class TimeSubsystem : public EngineSubsystem
 	{
 		friend class Game;
@@ -38,16 +45,20 @@ namespace TUK::Framework
 	private:
 		[[nodiscard]] bool ShouldFixedStep() noexcept;
 
-		double totalTime;
-		double secondsPerCount;
+		LARGE_INTEGER startTime{};
+		LARGE_INTEGER previousTime{};
 
-		double deltaTime;
+		double totalTime = 0.0;
+		double secondsPerCount = 0.0;
 
-		double fixedDeltaTime;
-		double fixedAccumulator;
+		double deltaTime = 0.0;
+		float timeScale = 1.0f;
 
-		std::uint32_t maxFixedStepsPerFrame;
-		std::uint32_t fixedSteps;
-		std::uint32_t frameCount;
+		double fixedDeltaTime = 1.0 / 60.0;
+		double fixedAccumulator = 0.0;
+
+		std::uint32_t maxFixedStepsPerFrame = 5;
+		std::uint32_t fixedSteps = 0;
+		std::uint32_t frameCount = 0;
 	};
 }

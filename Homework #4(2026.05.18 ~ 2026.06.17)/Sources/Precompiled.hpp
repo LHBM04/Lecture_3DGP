@@ -57,6 +57,10 @@
 
 #include <wrl.h>
 
+#ifndef _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
+#endif
+
 #include <crtdbg.h>
 
 #include <DirectXMath.h>
@@ -69,3 +73,4 @@
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")

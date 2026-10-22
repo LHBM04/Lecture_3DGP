@@ -1,21 +1,24 @@
 ﻿#pragma once
 
-#include "Buffer.hpp"
-
 namespace TUK::Framework
 {
 	class Mesh
 	{
 	public:
-		virtual ~Mesh() noexcept = default;
+		explicit Mesh(ID3D12Resource2* vertexBuffer, ID3D12Resource2* indexBuffer) noexcept;
+		~Mesh() noexcept;
 
 		Mesh(const Mesh&) = delete;
 		Mesh& operator=(const Mesh&) = delete;
 		
-		Mesh(Mesh&&) noexcept = default;
-		Mesh& operator=(Mesh&&) noexcept = default;
+		Mesh(Mesh&&) noexcept;
+		Mesh& operator=(Mesh&&) noexcept;
 
 	private:
-		Mesh() noexcept = default;
+		ID3D12Resource2* vertexBuffer;
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+
+		ID3D12Resource2* indexBuffer;
+		D3D12_INDEX_BUFFER_VIEW indexBufferView;
 	};
 }

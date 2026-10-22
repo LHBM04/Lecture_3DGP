@@ -1,18 +1,16 @@
 ﻿#pragma once
 
 #include <cstdint>
-#include <memory>
 #include <vector>
 
 #include <dxgi1_6.h>
 
 #include "../Math/Vector2D.hpp"
+
 #include "RenderTarget.hpp"
 
 namespace TUK::Framework
 {
-	class CommandBuffer;
-
 	class SwapChain
 	{
 	public:
@@ -22,11 +20,13 @@ namespace TUK::Framework
 		SwapChain(const SwapChain&) = delete;
 		SwapChain& operator=(const SwapChain&) = delete;
 
-		SwapChain(SwapChain&&) = delete;
-		SwapChain& operator=(SwapChain&&) = delete;
+		SwapChain(SwapChain&& other) noexcept;
+		SwapChain& operator=(SwapChain&& other) noexcept;
 
-		void Clear(CommandBuffer& commandBuffer) const;
 		void Present() const;
+
+		[[nodiscard]] RenderTarget& GetCurrentRenderTarget();
+		[[nodiscard]] const RenderTarget& GetCurrentRenderTarget() const;
 
 		[[nodiscard]] Vector2D<std::int32_t> GetSize() const noexcept;
 		void SetSize(const Vector2D<std::int32_t>& size) noexcept;
@@ -38,8 +38,9 @@ namespace TUK::Framework
 		void CreateRenderTargets();
 		void ReleaseRenderTargets() noexcept;
 
-	private:
 		IDXGISwapChain4* dxgiSwapChain;
-		std::vector<std::unique_ptr<RenderTarget>> renderTargets;
+
+		/** 해당 스왑체인에서 사용할 렌더 타겟들 */
+		std::vector<RenderTarget> renderTargets;
 	};
 }

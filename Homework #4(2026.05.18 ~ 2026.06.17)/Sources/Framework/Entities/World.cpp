@@ -80,17 +80,72 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::Render(CommandBuffer& renderer)
+	void World::PreRender(CommandBuffer& renderer)
 	{
-		if (!isEntered) return;
-		OnRender(renderer);
-		if (!isEntered) return;
+		if (!isEntered)
+		{
+			return;
+		}
+		OnPreRender(renderer);
+		if (!isEntered)
+		{
+			return;
+		}
 		const std::size_t count = entities.size();
 		for (std::size_t index = 0; index < count; ++index)
 		{
-			if (!isEntered) return;
+			if (!isEntered)
+			{
+				return;
+			}
+			Entity* entity = entities[index].get();
+			entity->PreRender(renderer);
+		}
+	}
+
+	void World::Render(CommandBuffer& renderer)
+	{
+		if (!isEntered)
+		{
+			return;
+		}
+		OnRender(renderer);
+		if (!isEntered)
+		{
+			return;
+		}
+		const std::size_t count = entities.size();
+		for (std::size_t index = 0; index < count; ++index)
+		{
+			if (!isEntered)
+			{
+				return;
+			}
 			Entity* entity = entities[index].get();
 			entity->Render(renderer);
+		}
+	}
+
+	void World::PostRender(CommandBuffer& renderer)
+	{
+		if (!isEntered)
+		{
+			return;
+		}
+		OnPostRender(renderer);
+		if (!isEntered)
+		{
+			return;
+		}
+		const std::size_t count = entities.size();
+		for (std::size_t index = 0; index < count; ++index)
+		{
+			if (!isEntered)
+			{
+				return;
+			}
+			Entity* entity = entities[index].get();
+			entity->PostRender(renderer);
 		}
 	}
 
@@ -110,7 +165,15 @@ namespace TUK::Framework
 	{
 	}
 
+	void World::OnPreRender(CommandBuffer&)
+	{
+	}
+
 	void World::OnRender(CommandBuffer&)
+	{
+	}
+
+	void World::OnPostRender(CommandBuffer&)
 	{
 	}
 

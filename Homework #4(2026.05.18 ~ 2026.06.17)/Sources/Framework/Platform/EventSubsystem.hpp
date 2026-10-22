@@ -44,9 +44,9 @@ namespace TUK::Framework
 	private:
 		using Listener = std::function<void(const Event&)>;
 
-		std::vector<std::unique_ptr<const Event>> writeBuffer;
-		std::vector<std::unique_ptr<const Event>> readBuffer;
-		std::unordered_map<std::type_index, std::vector<Listener>> listeners;
+		std::pmr::vector<std::unique_ptr<const Event>> writeBuffer;
+		std::pmr::vector<std::unique_ptr<const Event>> readBuffer;
+		std::pmr::unordered_map<std::type_index, std::vector<Listener>> listeners;
 	};
 
 	template <std::derived_from<Event> TEvent, class... TArgs>

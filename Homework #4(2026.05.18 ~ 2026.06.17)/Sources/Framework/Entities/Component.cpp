@@ -53,7 +53,15 @@ namespace TUK::Framework
 	{
 	}
 
+	void Component::OnPreRender(CommandBuffer&)
+	{
+	}
+
 	void Component::OnRender(CommandBuffer&)
+	{
+	}
+
+	void Component::OnPostRender(CommandBuffer&)
 	{
 	}
 

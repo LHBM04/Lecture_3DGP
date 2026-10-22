@@ -55,7 +55,9 @@ namespace TUK::Framework
 		void FixedUpdate();
 		void Update();
 		void LateUpdate();
+		void PreRender(CommandBuffer& renderer);
 		void Render(CommandBuffer& renderer);
+		void PostRender(CommandBuffer& renderer);
 
 	private:
 		void RemoveDestroyedComponents();

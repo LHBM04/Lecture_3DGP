@@ -17,8 +17,8 @@ namespace TUK::Framework
 		RenderTarget(const RenderTarget&) = delete;
 		RenderTarget& operator=(const RenderTarget&) = delete;
 
-		RenderTarget(RenderTarget&&) = delete;
-		RenderTarget& operator=(RenderTarget&&) = delete;
+		RenderTarget(RenderTarget&& other) noexcept;
+		RenderTarget& operator=(RenderTarget&& other) noexcept;
 
 		/** D3D12 리소스 Getter */
 		[[nodiscard]] ID3D12Resource& GetD3D12Resource() const noexcept;

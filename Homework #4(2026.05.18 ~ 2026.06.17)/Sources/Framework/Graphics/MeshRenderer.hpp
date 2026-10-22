@@ -13,17 +13,17 @@ namespace TUK::Framework
 		MeshRenderer() noexcept;
 		~MeshRenderer() noexcept override;
 
-		[[nodiscard]] Mesh* GetMesh() const noexcept;
-		void SetMesh(Mesh* mesh) noexcept;
+		[[nodiscard]] Mesh& GetMesh() const noexcept;
+		void SetMesh(Mesh& value) noexcept;
 
-		[[nodiscard]] Material* GetMaterial() const noexcept;
-		void SetMaterial(Material* material) noexcept;
+		[[nodiscard]] Material& GetMaterial() const noexcept;
+		void SetMaterial(Material& value) noexcept;
 
 	protected:
-		void OnRender(CommandBuffer& renderer) override;
+		void OnRender(CommandBuffer& commandBuffer) override;
 
 	private:
-		Mesh* mesh{ nullptr };
-		Material* material{ nullptr };
+		Mesh* mesh;
+		Material* material;
 	};
 }

@@ -181,7 +181,6 @@
     <ClInclude Include="Sources\Framework\Entities\World.hpp" />
     <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\CommandBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Fence.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp" />
@@ -190,11 +189,14 @@
     <ClInclude Include="Sources\Framework\Graphics\Mesh.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\MeshRenderer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Pipeline.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\RenderPassInfo.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderTarget.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Shader.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\SwapChainCreateInfo.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Texture.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\Vertex.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
@@ -243,8 +245,12 @@
     <ClCompile Include="Sources\Framework\Graphics\CommandBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Fence.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\Mesh.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderTarget.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\Shader.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />

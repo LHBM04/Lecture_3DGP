@@ -5,63 +5,70 @@
 
 #include "CommandBuffer.hpp"
 #include "Fence.hpp"
-#include "GraphicsDevice.hpp"
-#include "SwapChain.hpp"
+#include "RenderPassInfo.hpp"
+#include "../../../../Homework #3(2026.05.18 ~ 2026.06.08)/Sources/Logger.h"
 
 namespace
 {
 	/** DXGI Factory */
 	IDXGIFactory6* dxgiFactory = nullptr;
 
-	/** D3D12 명령 큐 */
-	ID3D12CommandQueue* d3dCommandQueue = nullptr;
+	std::expected<ID3D12RootSignature*, std::string> CreateRootSignature(ID3D12Device10& device)
+	{
+		D3D12_ROOT_SIGNATURE_DESC description{};
+		description.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+		Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
+		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+		if (FAILED(D3D12SerializeRootSignature(
+			&description,
+			D3D_ROOT_SIGNATURE_VERSION_1,
+			signatureBlob.GetAddressOf(),
+			errorBlob.GetAddressOf())))
+		{
+			if (errorBlob)
+			{
+				return std::unexpected(std::string(
+					static_cast<const char*>(errorBlob->GetBufferPointer()),
+					errorBlob->GetBufferSize()));
+			}
+			return std::unexpected("Failed to serialize root signature");
+		}
+
+		ID3D12RootSignature* rootSignature = nullptr;
+		if (FAILED(device.CreateRootSignature(
+			0,
+			signatureBlob->GetBufferPointer(),
+			signatureBlob->GetBufferSize(),
+			IID_PPV_ARGS(&rootSignature))))
+		{
+			return std::unexpected("Failed to create root signature");
+		}
+
+		return rootSignature;
+	}
 }
 
 namespace TUK::Framework
 {
 	RenderSubsystem::RenderSubsystem() noexcept
 		: EngineSubsystem(100)
-		, device(nullptr)
-		, commandBuffer(nullptr)
-		, fence(nullptr)
 	{
 	}
 
 	RenderSubsystem::~RenderSubsystem() noexcept
 	{
-		if (d3dCommandQueue && fence)
-		{
-			fence->Signal(*d3dCommandQueue);
-			fence->Wait();
-		}
-
-		swapChains.clear();
-		commandBuffer.reset();
-		fence.reset();
-
-		if (d3dCommandQueue)
-		{
-			d3dCommandQueue->Release();
-			d3dCommandQueue = nullptr;
-		}
-
-		device.reset();
-
-		if (dxgiFactory)
-		{
-			dxgiFactory->Release();
-			dxgiFactory = nullptr;
-		}
+		
 	}
 
-	void RenderSubsystem::CreateSwapChain(const Display& window)
+	void RenderSubsystem::RegisterDisplay(const Display& window)
 	{
 		if (swapChains.contains(&window))
 		{
 			return;
 		}
 
-		assert(dxgiFactory && d3dCommandQueue);
+		assert(dxgiFactory && device.GetD3D12CommandQueue());
 
 		const HWND hWnd = window.GetHWND();
 		assert(hWnd);
@@ -81,7 +88,7 @@ namespace TUK::Framework
 
 		IDXGISwapChain1* createdSwapChain = nullptr;
 		if (FAILED(dxgiFactory->CreateSwapChainForHwnd(
-			d3dCommandQueue,
+			device.GetD3D12CommandQueue(),
 			hWnd,
 			&description,
 			nullptr,
@@ -101,7 +108,39 @@ namespace TUK::Framework
 			return;
 		}
 
-		swapChains.emplace(&window, std::make_unique<SwapChain>(dxgiSwapChain));
+		swapChains.try_emplace(&window, dxgiSwapChain);
+	}
+
+	void RenderSubsystem::UnregisterDisplay(const Display& window)
+	{
+		if (activeCommandBuffer)
+		{
+			pendingDisplayRemovals.push_back(&window);
+			return;
+		}
+
+		renderCallbacks.erase(&window);
+		swapChains.erase(&window);
+	}
+
+	void RenderSubsystem::SetRenderCallback(const Display& window, std::function<void(CommandBuffer&)> callback)
+	{
+		SetRenderCallbacks(window, RenderCallbacks{ .render = std::move(callback) });
+	}
+
+	void RenderSubsystem::SetRenderCallbacks(const Display& window, RenderCallbacks callbacks)
+	{
+		renderCallbacks.insert_or_assign(&window, std::move(callbacks));
+	}
+
+	void RenderSubsystem::RemovePendingDisplays()
+	{
+		for (const Display* window : pendingDisplayRemovals)
+		{
+			renderCallbacks.erase(window);
+			swapChains.erase(window);
+		}
+		pendingDisplayRemovals.clear();
 	}
 
 	SystemStatus RenderSubsystem::OnStartup()
@@ -127,12 +166,19 @@ namespace TUK::Framework
 		for (UINT index = 0; ; ++index)
 		{
 			IDXGIAdapter1* adapter = nullptr;
-			if (dxgiFactory->EnumAdapterByGpuPreference(
+			const HRESULT adapterResult = dxgiFactory->EnumAdapterByGpuPreference(
 				index,
 				DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
-				IID_PPV_ARGS(&adapter)) == DXGI_ERROR_NOT_FOUND)
+				IID_PPV_ARGS(&adapter));
+			if (adapterResult == DXGI_ERROR_NOT_FOUND)
 			{
 				break;
+			}
+			if (FAILED(adapterResult))
+			{
+				dxgiFactory->Release();
+				dxgiFactory = nullptr;
+				return SystemStatus::Failure;
 			}
 
 			DXGI_ADAPTER_DESC1 adapterDesc{};
@@ -157,6 +203,8 @@ namespace TUK::Framework
 			IDXGIAdapter* warpAdapter = nullptr;
 			if (FAILED(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter))))
 			{
+				dxgiFactory->Release();
+				dxgiFactory = nullptr;
 				return SystemStatus::Failure;
 			}
 
@@ -164,119 +212,199 @@ namespace TUK::Framework
 			warpAdapter->Release();
 			if (FAILED(hr))
 			{
+				dxgiFactory->Release();
+				dxgiFactory = nullptr;
 				return SystemStatus::Failure;
 			}
 		}
 
+		ID3D12CommandQueue* d3dCommandQueue = nullptr;
 		D3D12_COMMAND_QUEUE_DESC queueDesc{};
 		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		if (FAILED(d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&d3dCommandQueue))))
 		{
 			d3dDevice->Release();
+			dxgiFactory->Release();
+			dxgiFactory = nullptr;
 			return SystemStatus::Failure;
 		}
 
-		ID3D12CommandAllocator* d3dCommandAllocator = nullptr;
-		if (FAILED(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&d3dCommandAllocator))))
+		auto rootSignature = CreateRootSignature(*d3dDevice);
+		if (!rootSignature.has_value())
 		{
+			d3dCommandQueue->Release();
 			d3dDevice->Release();
+			dxgiFactory->Release();
+			dxgiFactory = nullptr;
 			return SystemStatus::Failure;
 		}
 
-		ID3D12GraphicsCommandList* d3dCommandList = nullptr;
-		if (FAILED(d3dDevice->CreateCommandList(
-			0,
-			D3D12_COMMAND_LIST_TYPE_DIRECT,
-			d3dCommandAllocator,
-			nullptr,
-			IID_PPV_ARGS(&d3dCommandList))))
-		{
-			d3dCommandAllocator->Release();
-			d3dDevice->Release();
-			return SystemStatus::Failure;
-		}
-
-		d3dCommandList->Close();
-
-		ID3D12Fence* d3dFence = nullptr;
-		if (FAILED(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&d3dFence))))
-		{
-			d3dCommandList->Release();
-			d3dCommandAllocator->Release();
-			d3dDevice->Release();
-			return SystemStatus::Failure;
-		}
-
-		const HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-		if (!fenceEvent)
-		{
-			d3dFence->Release();
-			d3dCommandList->Release();
-			d3dCommandAllocator->Release();
-			d3dDevice->Release();
-			return SystemStatus::Failure;
-		}
-
-		device = std::make_unique<GraphicsDevice>(d3dDevice);
-		commandBuffer = std::make_unique<CommandBuffer>(d3dCommandAllocator, d3dCommandList);
-		fence = std::make_unique<Fence>(d3dFence, fenceEvent);
+		device = GraphicsDevice(d3dDevice, d3dCommandQueue, *rootSignature);
 
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus RenderSubsystem::OnPreTick()
 	{
-		assert(commandBuffer);
-
-		commandBuffer->BeginFrame();
-		for (const auto& swapChain : swapChains | std::views::values)
+		assert(!activeCommandBuffer);
+		if (swapChains.empty())
 		{
-			swapChain->Clear(*commandBuffer);
+			return SystemStatus::Continue;
 		}
 
+		auto expectedCommandBuffer = device.AcquireCommandBuffer();
+		if (!expectedCommandBuffer.has_value())
+		{
+			return SystemStatus::Failure;
+		}
+
+		activeCommandBuffer = &expectedCommandBuffer->get();
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
-		assert(commandBuffer && d3dCommandQueue && fence);
-
-		commandBuffer->EndFrame();
-
-		ID3D12CommandList* commandLists[]{ &commandBuffer->GetD3D12CommandList() };
-		d3dCommandQueue->ExecuteCommandLists(1, commandLists);
-
-		for (const auto& swapChain : swapChains | std::views::values)
+		if (!activeCommandBuffer)
 		{
-			swapChain->Present();
+			return SystemStatus::Continue;
 		}
 
-		fence->Signal(*d3dCommandQueue);
-		fence->Wait();
+		auto expectedFence = device.AcquireFence();
+		if (!expectedFence.has_value())
+		{
+			activeCommandBuffer->GetD3D12CommandList().Close();
+			activeCommandBuffer = nullptr;
+			RemovePendingDisplays();
+			return SystemStatus::Failure;
+		}
+
+		std::vector<const Display*> displays;
+		displays.reserve(swapChains.size());
+		for (const auto& [window, swapChain] : swapChains)
+		{
+			displays.push_back(window);
+		}
+
+		std::vector<const Display*> renderedDisplays;
+		renderedDisplays.reserve(displays.size());
+		for (const Display* window : displays)
+		{
+			if (std::ranges::find(pendingDisplayRemovals, window) != pendingDisplayRemovals.end())
+			{
+				continue;
+			}
+
+			SwapChain& swapChain = swapChains.at(window);
+			RenderCallbacks callbacks;
+			if (auto result = renderCallbacks.find(window); result != renderCallbacks.end())
+			{
+				callbacks = result->second;
+			}
+
+			std::array renderTargets{ std::ref(swapChain.GetCurrentRenderTarget()) };
+			RenderPassInfo renderPassInfo{};
+			renderPassInfo.renderTargets = renderTargets;
+			renderPassInfo.clearColor = ColorRGBA(0.5f, 0.5f, 0.5f, 1.0f);
+			renderPassInfo.operationBefore = RenderPassBeginningOperation::Clear;
+
+			bool isRenderPassActive = false;
+			try
+			{
+				if (callbacks.preRender)
+				{
+					callbacks.preRender(*activeCommandBuffer);
+				}
+				if (std::ranges::find(pendingDisplayRemovals, window) != pendingDisplayRemovals.end())
+				{
+					continue;
+				}
+
+				activeCommandBuffer->BeginRenderPass(renderPassInfo);
+				isRenderPassActive = true;
+				const auto size = swapChain.GetSize();
+				D3D12_VIEWPORT viewport{};
+				viewport.Width = static_cast<float>(size.GetX());
+				viewport.Height = static_cast<float>(size.GetY());
+				viewport.MaxDepth = 1.0f;
+				const D3D12_RECT scissorRect{ 0, 0, size.GetX(), size.GetY() };
+				activeCommandBuffer->GetD3D12CommandList().RSSetViewports(1, &viewport);
+				activeCommandBuffer->GetD3D12CommandList().RSSetScissorRects(1, &scissorRect);
+				if (callbacks.render)
+				{
+					callbacks.render(*activeCommandBuffer);
+				}
+				activeCommandBuffer->EndRenderPass();
+				isRenderPassActive = false;
+
+				if (callbacks.postRender)
+				{
+					callbacks.postRender(*activeCommandBuffer);
+				}
+			}
+			catch (...)
+			{
+				if (isRenderPassActive)
+				{
+					activeCommandBuffer->EndRenderPass();
+				}
+				activeCommandBuffer->GetD3D12CommandList().Close();
+				activeCommandBuffer = nullptr;
+				RemovePendingDisplays();
+				throw;
+			}
+			renderedDisplays.push_back(window);
+		}
+
+		auto submitted = device.SubmitCommandBuffer(*activeCommandBuffer);
+		activeCommandBuffer = nullptr;
+		if (!submitted.has_value())
+		{
+			RemovePendingDisplays();
+			return SystemStatus::Failure;
+		}
+
+		for (const Display* window : renderedDisplays)
+		{
+			if (std::ranges::find(pendingDisplayRemovals, window) == pendingDisplayRemovals.end())
+			{
+				swapChains.at(window).Present();
+			}
+		}
+
+		Fence& fence = expectedFence->get();
+		assert(device.GetD3D12CommandQueue());
+		fence.Signal(*device.GetD3D12CommandQueue());
+		fence.Wait();
+		RemovePendingDisplays();
 
 		return SystemStatus::Continue;
 	}
 
 	void RenderSubsystem::OnShutdown()
 	{
-		if (d3dCommandQueue && fence)
+		if (activeCommandBuffer)
 		{
-			fence->Signal(*d3dCommandQueue);
-			fence->Wait();
+			activeCommandBuffer->GetD3D12CommandList().Close();
+			activeCommandBuffer = nullptr;
+		}
+		renderCallbacks.clear();
+		pendingDisplayRemovals.clear();
+
+		if (device.GetD3D12CommandQueue())
+		{
+			auto expectedFence = device.AcquireFence();
+			if (expectedFence.has_value())
+			{
+				Fence& fence = expectedFence->get();
+				fence.Signal(*device.GetD3D12CommandQueue());
+				fence.Wait();
+			}
 		}
 
+		activeCommandBuffer = nullptr;
 		swapChains.clear();
-		commandBuffer.reset();
-		fence.reset();
-
-		if (d3dCommandQueue)
-		{
-			d3dCommandQueue->Release();
-			d3dCommandQueue = nullptr;
-		}
-
-		device.reset();
+		device = GraphicsDevice();
 
 		if (dxgiFactory)
 		{

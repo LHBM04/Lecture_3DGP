@@ -78,9 +78,6 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Buffer.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\CommandBuffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
@@ -209,6 +206,15 @@
     </ClInclude>
     <ClInclude Include="Sources\Framework\Core\Logger.hpp">
       <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\SwapChainCreateInfo.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\RenderPassInfo.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Vertex.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -346,6 +352,18 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Logger.cpp">
       <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\Mesh.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\Shader.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

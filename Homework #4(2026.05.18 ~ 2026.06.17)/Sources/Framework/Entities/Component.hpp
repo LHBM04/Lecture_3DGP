@@ -36,7 +36,9 @@ namespace TUK::Framework
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
 
+		virtual void OnPreRender(CommandBuffer& renderer);
 		virtual void OnRender(CommandBuffer& renderer);
+		virtual void OnPostRender(CommandBuffer& renderer);
 
 		virtual void OnDestroy();
 

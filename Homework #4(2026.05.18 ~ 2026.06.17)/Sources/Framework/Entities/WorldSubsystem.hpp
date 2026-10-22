@@ -7,6 +7,7 @@
 
 namespace TUK::Framework
 {
+	class CommandBuffer;
 	class World;
 
 	class WorldSubsystem : public GameSubsystem
@@ -15,6 +16,10 @@ namespace TUK::Framework
 		WorldSubsystem() noexcept;
 		~WorldSubsystem() noexcept override;
 		World& AddWorld(std::unique_ptr<World> world);
+
+		void PreRender(CommandBuffer& renderer);
+		void Render(CommandBuffer& renderer);
+		void PostRender(CommandBuffer& renderer);
 
 	protected:
 		SystemStatus OnStartup() override;

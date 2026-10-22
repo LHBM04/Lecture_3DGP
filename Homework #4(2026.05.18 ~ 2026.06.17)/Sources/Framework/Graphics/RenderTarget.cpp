@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderTarget.hpp"
 
+#include <utility>
+
 namespace TUK::Framework
 {
 	RenderTarget::RenderTarget(ID3D12Resource* d3dResource) noexcept
@@ -39,6 +41,32 @@ namespace TUK::Framework
 			d3dResource->Release();
 			d3dResource = nullptr;
 		}
+	}
+
+	RenderTarget::RenderTarget(RenderTarget&& other) noexcept
+		: d3dResource(std::exchange(other.d3dResource, nullptr))
+		, d3dRtvHeap(std::exchange(other.d3dRtvHeap, nullptr))
+	{
+	}
+
+	RenderTarget& RenderTarget::operator=(RenderTarget&& other) noexcept
+	{
+		if (this != &other)
+		{
+			if (d3dRtvHeap)
+			{
+				d3dRtvHeap->Release();
+			}
+
+			if (d3dResource)
+			{
+				d3dResource->Release();
+			}
+
+			d3dResource = std::exchange(other.d3dResource, nullptr);
+			d3dRtvHeap = std::exchange(other.d3dRtvHeap, nullptr);
+		}
+		return *this;
 	}
 
 	ID3D12Resource& RenderTarget::GetD3D12Resource() const noexcept
