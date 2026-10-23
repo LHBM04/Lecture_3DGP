@@ -1,9 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
-
-#include "WindowProc.hpp"
-
 namespace
 {
 	/** 윈도우 클래스 이름 */

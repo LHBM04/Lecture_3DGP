@@ -58,4 +58,6 @@ namespace TUK::Framework
 		HWND hWnd;
 		bool shouldClose;
 	};
+
+	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 }

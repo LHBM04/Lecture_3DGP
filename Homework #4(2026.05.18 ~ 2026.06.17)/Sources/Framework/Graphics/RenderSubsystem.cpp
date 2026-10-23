@@ -53,6 +53,7 @@ namespace TUK::Framework
 {
 	RenderSubsystem::RenderSubsystem() noexcept
 		: EngineSubsystem(100)
+		, device(std::nullopt)
 	{
 	}
 
@@ -88,7 +89,7 @@ namespace TUK::Framework
 
 		IDXGISwapChain1* createdSwapChain = nullptr;
 		if (FAILED(dxgiFactory->CreateSwapChainForHwnd(
-			device.GetD3D12CommandQueue(),
+			device.value().GetD3D12CommandQueue(),
 			hWnd,
 			&description,
 			nullptr,
@@ -253,7 +254,7 @@ namespace TUK::Framework
 			return SystemStatus::Continue;
 		}
 
-		auto expectedCommandBuffer = device.AcquireCommandBuffer();
+		auto expectedCommandBuffer = device.value().AcquireCommandBuffer();
 		if (!expectedCommandBuffer.has_value())
 		{
 			return SystemStatus::Failure;
@@ -270,7 +271,7 @@ namespace TUK::Framework
 			return SystemStatus::Continue;
 		}
 
-		auto expectedFence = device.AcquireFence();
+		auto expectedFence = device.value().AcquireFence();
 		if (!expectedFence.has_value())
 		{
 			activeCommandBuffer->GetD3D12CommandList().Close();
@@ -356,7 +357,7 @@ namespace TUK::Framework
 			renderedDisplays.push_back(window);
 		}
 
-		auto submitted = device.SubmitCommandBuffer(*activeCommandBuffer);
+		auto submitted = device.value().SubmitCommandBuffer(*activeCommandBuffer);
 		activeCommandBuffer = nullptr;
 		if (!submitted.has_value())
 		{
@@ -373,8 +374,8 @@ namespace TUK::Framework
 		}
 
 		Fence& fence = expectedFence->get();
-		assert(device.GetD3D12CommandQueue());
-		fence.Signal(*device.GetD3D12CommandQueue());
+		assert(device.value().GetD3D12CommandQueue());
+		fence.Signal(*device.value().GetD3D12CommandQueue());
 		fence.Wait();
 		RemovePendingDisplays();
 
@@ -391,20 +392,20 @@ namespace TUK::Framework
 		renderCallbacks.clear();
 		pendingDisplayRemovals.clear();
 
-		if (device.GetD3D12CommandQueue())
+		if (device.has_value() && device.value().GetD3D12CommandQueue())
 		{
-			auto expectedFence = device.AcquireFence();
+			auto expectedFence = device.value().AcquireFence();
 			if (expectedFence.has_value())
 			{
 				Fence& fence = expectedFence->get();
-				fence.Signal(*device.GetD3D12CommandQueue());
+				fence.Signal(*device.value().GetD3D12CommandQueue());
 				fence.Wait();
 			}
 		}
 
 		activeCommandBuffer = nullptr;
 		swapChains.clear();
-		device = GraphicsDevice();
+		device = std::nullopt;
 
 		if (dxgiFactory)
 		{

@@ -78,43 +78,7 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\CommandBuffer.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Fence.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsDevice.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GraphicsPipeline.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Material.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Mesh.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\MeshRenderer.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Pipeline.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\RenderTarget.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Shader.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\SwapChain.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Texture.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Math.hpp">
@@ -186,9 +150,6 @@
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\WindowProc.hpp">
-      <Filter>Sources\Framework\Platform</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Game\MyEngine.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
@@ -206,15 +167,6 @@
     </ClInclude>
     <ClInclude Include="Sources\Framework\Core\Logger.hpp">
       <Filter>Sources\Framework\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\SwapChainCreateInfo.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\RenderPassInfo.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Vertex.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -257,22 +209,7 @@
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
       <Filter>Sources\Framework\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\CommandBuffer.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\Fence.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GraphicsDevice.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\RenderTarget.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\SwapChain.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
@@ -332,9 +269,6 @@
     <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Platform\WindowProc.cpp">
-      <Filter>Sources\Framework\Platform</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Game\MyEngine.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
@@ -352,18 +286,6 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Logger.cpp">
       <Filter>Sources\Framework\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\Mesh.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\Shader.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GraphicsPipeline.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
