@@ -1,24 +1,40 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
+
 #include <d3d12.h>
+
+#include <wrl/client.h>
+
+#include "GPUCommandBuffer.hpp"
 
 namespace TUK::Framework
 {
 	class GPUDevice
 	{
+		friend class RenderSubsystem;
+
 	public:
-		explicit GPUDevice(ID3D12Device* d3dDevice) noexcept;
 		~GPUDevice() noexcept;
 
 		GPUDevice(const GPUDevice&) = delete;
 		GPUDevice& operator=(const GPUDevice&) = delete;
 
-		GPUDevice(GPUDevice&&) noexcept = delete;
-		GPUDevice& operator=(GPUDevice&&) noexcept = delete;
+		GPUDevice(GPUDevice&&) noexcept = default;
+		GPUDevice& operator=(GPUDevice&&) noexcept = default;
+
+		[[nodiscard]] std::expected<GPUCommandBuffer, std::string> CreateGPUCommandBuffer() const;
 
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;
+		[[nodiscard]] ID3D12CommandQueue& GetD3DCommandQueue() const noexcept;
 
 	private:
-		ID3D12Device* d3dDevice;
+		explicit GPUDevice(
+			ID3D12Device* d3dDevice,
+			ID3D12CommandQueue* d3dCommandQueue) noexcept;
+
+		Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue;
 	};
 }

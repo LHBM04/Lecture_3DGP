@@ -1,20 +1,27 @@
 ﻿#pragma once
 
+#include <expected>
 #include <optional>
 
 #include "../Core/EngineSubsystem.hpp"
 
 #include "GPUDevice.hpp"
+#include "GPUSwapChain.hpp"
 
 namespace TUK::Framework
 {
 	class Display;
+	class GPUCommandBuffer;
+	class GPUFence;
 
 	class RenderSubsystem : public EngineSubsystem
 	{
 	public:
 		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
+
+		void RegisterDisplay(const Display& display);
+		void UnregisterDisplay();
 
 	protected:
 		SystemStatus OnStartup() override;
@@ -23,8 +30,13 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		std::expected<void, std::string> InitializeGPUDevice();
+		std::expected<GPUDevice, std::string> CreateGPUDevice();
+		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const GPUSwapChainProperties& properties);
 		
 		std::optional<GPUDevice> device;
+		GPUCommandBuffer& commandBuffer;
+		GPUFence& fence;
+
+		std::unordered_map<const Display*, GPUSwapChain> swapChains;
 	};
 }
