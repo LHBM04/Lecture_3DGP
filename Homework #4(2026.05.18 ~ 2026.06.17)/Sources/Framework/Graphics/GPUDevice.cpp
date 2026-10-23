@@ -17,4 +17,9 @@ namespace TUK::Framework
 			d3dDevice = nullptr;
 		}
 	}
+
+	ID3D12Device& GPUDevice::GetD3DDevice() const noexcept
+	{
+		return *d3dDevice;
+	}
 }
