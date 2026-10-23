@@ -171,6 +171,9 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp">
@@ -291,6 +294,9 @@
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

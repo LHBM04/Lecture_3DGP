@@ -182,6 +182,7 @@
     <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
@@ -228,6 +229,7 @@
     <ClCompile Include="Sources\Framework\Entities\World.cpp" />
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />

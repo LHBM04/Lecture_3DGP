@@ -24,7 +24,7 @@ namespace TUK::Framework
 
 	private:
 		std::expected<void, std::string> InitializeGPUDevice();
-
+		
 		std::optional<GPUDevice> device;
 	};
 }

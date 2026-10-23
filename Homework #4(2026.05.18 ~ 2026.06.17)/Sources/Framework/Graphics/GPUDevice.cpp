@@ -3,11 +3,6 @@
 
 namespace TUK::Framework
 {
-	GPUDevice::GPUDevice(ID3D12Device* d3dDevice) noexcept
-		: d3dDevice(d3dDevice)
-	{
-	}
-
 	GPUDevice::~GPUDevice() noexcept
 	{
 		// D3D12Device 해제
@@ -21,5 +16,10 @@ namespace TUK::Framework
 	ID3D12Device& GPUDevice::GetD3DDevice() const noexcept
 	{
 		return *d3dDevice;
+	}
+
+	GPUDevice::GPUDevice(ID3D12Device* d3dDevice) noexcept
+		: d3dDevice(d3dDevice)
+	{
 	}
 }
