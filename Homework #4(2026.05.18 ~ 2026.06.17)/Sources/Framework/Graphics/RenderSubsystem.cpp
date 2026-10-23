@@ -6,7 +6,7 @@
 namespace
 {
 	/** DXGI Factory */
-	IDXGIFactory6* dxgiFactory = nullptr;
+	Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory = nullptr;
 }
 
 namespace TUK::Framework
@@ -23,16 +23,12 @@ namespace TUK::Framework
 
 	RenderSubsystem::~RenderSubsystem() noexcept
 	{
-		if (dxgiFactory)
-		{
-			dxgiFactory->Release();
-			dxgiFactory = nullptr;
-		}
+		dxgiFactory.Reset();
 	}
 
 	void RenderSubsystem::RegisterDisplay(const Display& display)
 	{
-		GPUSwapChainProperties properties{};
+		GPUSwapChainCreateInfo properties{};
 		properties.display = &display;
 		properties.width = display.GetClientSize().GetX();
 		properties.height = display.GetClientSize().GetY();
@@ -50,12 +46,16 @@ namespace TUK::Framework
 
 	void RenderSubsystem::UnregisterDisplay(const Display& display)
 	{
-		// TODO: 이거 구현해라.
+		auto result = swapChains.find(&display);
+		if (result != swapChains.end())
+		{
+			swapChains.erase(result);
+		}
 	}
 
 	SystemStatus RenderSubsystem::OnStartup()
 	{
-		// GPU 디바이스 초기화
+		// GPU 디바이스 생성
 		{
 			auto newDevice = CreateGPUDevice();
 			if (!newDevice)
@@ -67,7 +67,7 @@ namespace TUK::Framework
 			device = std::move(newDevice.value());
 		}
 
-		// GPU 명령 버퍼 초기화
+		// GPU 명령 버퍼 생성
 		{
 			auto newCommandBuffer = device->CreateGPUCommandBuffer();
 			if (!newCommandBuffer)
@@ -79,7 +79,7 @@ namespace TUK::Framework
 			commandBuffer = std::move(newCommandBuffer.value());
 		}
 
-		// GPU 펜스 초기화
+		// GPU 펜스 생성
 		{
 			auto newFence = device->CreateGPUFence();
 			if (!newFence)
@@ -101,17 +101,58 @@ namespace TUK::Framework
 
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
-		for (auto& swapChain : swapChains | std::views::values)
+		// 직전 프레임의 Fence 대기가 끝난 뒤 기록용 메모리를 재사용합니다.
+		ID3D12CommandAllocator& allocator = commandBuffer->GetD3DCommandAllocator();
+		ID3D12GraphicsCommandList10& commandList = commandBuffer->GetD3DCommandList();
+
+		if (FAILED(allocator.Reset()))
 		{
-			commandBuffer->BeginRenderPass(swapChain);
-			commandBuffer->EndRenderPass();
+			std::cerr << "D3D12 Command Allocator Reset 실패!" << std::endl;
+			return SystemStatus::Failure;
 		}
 
-		device->SubmitCommandBuffer(*commandBuffer);
+		if (FAILED(commandList.Reset(&allocator, nullptr)))
+		{
+			std::cerr << "D3D12 Command List Reset 실패!" << std::endl;
+			return SystemStatus::Failure;
+		}
 
+		// 각 스왑 체인을 돌면서 명령을 기록한다.
+		for (auto& swapChain : swapChains | std::views::values)
+		{
+			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
+			const GPUTexture& backBuffer = target.GetTexture();
+
+			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			commandBuffer->ClearGPUTarget(target, ColorRGBA<float>::GetBlack());
+			commandBuffer->SetGPUTarget(target);
+
+			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		}
+
+		// 그리고 디바이스(정확히는 명령 큐)에 제출한다.
+		if (auto result = device->SubmitCommandBuffer(*commandBuffer); !result)
+		{
+			std::cerr << result.error() << std::endl;
+			return SystemStatus::Failure;
+		}
+
+		// 모든 스왑 체인을 Present합니다.
 		for (auto& swapChain : swapChains | std::views::values)
 		{
 			swapChain.Present();
+		}
+
+		if (auto result = fence->Signal(*device); !result)
+		{
+			std::cerr << result.error() << std::endl;
+			return SystemStatus::Failure;
+		}
+		
+		if (auto result = fence->Wait(); !result)
+		{
+			std::cerr << result.error() << std::endl;
+			return SystemStatus::Failure;
 		}
 
 		return SystemStatus::Continue;
@@ -119,14 +160,31 @@ namespace TUK::Framework
 
 	void RenderSubsystem::OnShutdown()
 	{
-		if (dxgiFactory)
+		if (device && fence)
 		{
-			dxgiFactory->Release();
-			dxgiFactory = nullptr;
+			auto signalResult = fence->Signal(*device);
+			if (!signalResult)
+			{
+				std::cerr << signalResult.error() << std::endl;
+			}
+			else
+			{
+				auto waitResult = fence->Wait();
+				if (!waitResult)
+				{
+					std::cerr << waitResult.error() << std::endl;
+				}
+			}
 		}
+
+		commandBuffer.reset();
+		swapChains.clear();
+		fence.reset();
+		device.reset();
+		dxgiFactory.Reset();
 	}
 
-	std::expected<GPUDevice, std::string> RenderSubsystem::CreateGPUDevice()
+	std::expected<GPUDevice, std::string> RenderSubsystem::CreateGPUDevice() const
 	{
 		UINT factoryFlags = 0;
 
@@ -184,20 +242,25 @@ namespace TUK::Framework
 		return std::unexpected("GPU 장치 생성 실패!");
 	}
 
-	std::expected<GPUSwapChain, std::string> RenderSubsystem::CreateGPUSwapChain(const GPUSwapChainProperties& properties)
+	std::expected<GPUSwapChain, std::string> RenderSubsystem::CreateGPUSwapChain(const GPUSwapChainCreateInfo& info) const
 	{
 		if (!device)
 		{
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
+		if (!dxgiFactory)
+		{
+			return std::unexpected("DXGI Factory가 초기화되지 않았습니다.");
+		}
+
 		ID3D12Device& d3dDevice = device->GetD3DDevice();
 		ID3D12CommandQueue& d3dCommandQueue = device->GetD3DCommandQueue();
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-		swapChainDesc.BufferCount = properties.bufferCount;
-		swapChainDesc.Width = properties.width;
-		swapChainDesc.Height = properties.height;
+		swapChainDesc.BufferCount = info.bufferCount;
+		swapChainDesc.Width = info.width;
+		swapChainDesc.Height = info.height;
 		swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -206,7 +269,7 @@ namespace TUK::Framework
 		Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
 		if (FAILED(dxgiFactory->CreateSwapChainForHwnd(
 			&d3dCommandQueue,
-			properties.display->GetHWND(),
+			info.display->GetHWND(),
 			&swapChainDesc,
 			nullptr,
 			nullptr,
@@ -223,7 +286,7 @@ namespace TUK::Framework
 
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-		heapDesc.NumDescriptors = properties.bufferCount;
+		heapDesc.NumDescriptors = info.bufferCount;
 		
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
 		if (FAILED(d3dDevice.CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(rtvHeap.GetAddressOf()))))
@@ -234,22 +297,26 @@ namespace TUK::Framework
 		const UINT descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
 		
-		std::vector<GPUTarget> renderTargets;
-		renderTargets.reserve(properties.bufferCount);
-		
-		for (UINT index = 0; index < properties.bufferCount; ++index)
+		std::vector<GPUTexture> backBuffers;
+		backBuffers.reserve(info.bufferCount);
+
+		for (std::uint32_t index = 0; index < info.bufferCount; ++index)
 		{
-			Microsoft::WRL::ComPtr<ID3D12Resource2> backBuffer;
+			Microsoft::WRL::ComPtr<ID3D12Resource> backBuffer;
 			if (FAILED(swapChain4->GetBuffer(index, IID_PPV_ARGS(backBuffer.GetAddressOf()))))
 			{
-				return std::unexpected("Swap Chain 백 버퍼 조회 실패!");
+				return std::unexpected("D3D12 Back Buffer 가져오기 실패!");
 			}
-		
-			d3dDevice.CreateRenderTargetView(backBuffer.Get(), nullptr, rtv);
-			renderTargets.emplace_back(std::move(backBuffer), rtv);
+
+			backBuffers.push_back(GPUTexture(std::move(backBuffer)));
+		}
+
+		for (const GPUTexture& backBuffer : backBuffers)
+		{
+			d3dDevice.CreateRenderTargetView(&backBuffer.GetD3DResource(), nullptr, rtv);
 			rtv.ptr += descriptorSize;
 		}
 
-		return GPUSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(renderTargets));
+		return GPUSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(backBuffers), descriptorSize);
 	}
 }

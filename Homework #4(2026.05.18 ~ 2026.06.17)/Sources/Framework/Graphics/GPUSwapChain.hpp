@@ -9,12 +9,13 @@
 #include <wrl/client.h>
 
 #include "GPUTarget.hpp"
+#include "GPUTexture.hpp"
 
 namespace TUK::Framework
 {
 	class Display;
 
-	struct GPUSwapChainProperties final
+	struct GPUSwapChainCreateInfo final
 	{
 		const Display* display;
 		std::uint32_t width;
@@ -37,18 +38,20 @@ namespace TUK::Framework
 
 		void Present() const;
 
+		[[nodiscard]] GPUTarget GetCurrentBackBufferTarget() const noexcept;
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
-		[[nodiscard]] ID3D12Resource& GetD3DBackBuffer(UINT index) const;
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetD3DRTVHandle(UINT index) const;
 
 	private:
-		GPUSwapChain(
+		explicit GPUSwapChain(
 			Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
 			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
-			std::vector<GPUTarget> renderTargets) noexcept;
+			std::vector<GPUTexture> backBuffers,
+			std::uint32_t rtvDescriptorSize) noexcept;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
-		std::vector<GPUTarget> renderTargets;
+
+		std::vector<GPUTexture> backBuffers;
+		std::uint32_t rtvDescriptorSize;
 	};
 }

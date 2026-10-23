@@ -3,19 +3,19 @@
 
 namespace TUK::Framework
 {
-	ID3D12Resource& GPUSwapChain::GetD3DBackBuffer(UINT index) const
-	{
-		return renderTargets.at(index).GetD3DResource();
-	}
-
-	D3D12_CPU_DESCRIPTOR_HANDLE GPUSwapChain::GetD3DRTVHandle(UINT index) const
-	{
-		return renderTargets.at(index).GetRTVHandle();
-	}
-
 	void GPUSwapChain::Present() const
 	{
 		dxgiSwapChain->Present(1, 0);
+	}
+
+	GPUTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
+	{
+		const std::uint32_t index = dxgiSwapChain->GetCurrentBackBufferIndex();
+		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
+		rtv.ptr += static_cast<SIZE_T>(index) * rtvDescriptorSize;
+
+		const GPUTexture& texture = backBuffers[index];
+		return GPUTarget(texture, rtv, texture.GetD3DResource().GetDesc().Format);
 	}
 
 	IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
@@ -26,10 +26,12 @@ namespace TUK::Framework
 	GPUSwapChain::GPUSwapChain(
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		std::vector<GPUTarget> renderTargets) noexcept
+		std::vector<GPUTexture> backBuffers,
+		std::uint32_t rtvDescriptorSize) noexcept
 		: dxgiSwapChain(std::move(dxgiSwapChain))
 		, rtvHeap(std::move(rtvHeap))
-		, renderTargets(std::move(renderTargets))
+		, backBuffers(std::move(backBuffers))
+		, rtvDescriptorSize(rtvDescriptorSize)
 	{
 	}
 }

@@ -180,6 +180,9 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
@@ -308,13 +311,16 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUTexture.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUTarget.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUTarget.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

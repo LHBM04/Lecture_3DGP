@@ -27,7 +27,10 @@ namespace TUK::Framework
 			return std::unexpected("D3D12 Command List 생성에 실패했습니다.");
 		}
 
-		d3dCommandList->Close();
+		if (FAILED(d3dCommandList->Close()))
+		{
+			return std::unexpected("D3D12 Command List 초기 Close에 실패했습니다.");
+		}
 
 		return GPUCommandBuffer(std::move(d3dCommandList), std::move(d3dCommandAllocator));
 	}
@@ -47,16 +50,19 @@ namespace TUK::Framework
 
 		return GPUFence(std::move(d3dFence));
 	}
-
-	void GPUDevice::SubmitCommandBuffer(GPUCommandBuffer& commandBuffer)
+	
+	std::expected<void, std::string> GPUDevice::SubmitCommandBuffer(GPUCommandBuffer& commandBuffer)
 	{
 		ID3D12GraphicsCommandList10& d3dCommandList = commandBuffer.GetD3DCommandList();
-		ID3D12CommandAllocator& d3dCommandAllocator = commandBuffer.GetD3DCommandAllocator();
-		d3dCommandList.Close();
+		if (FAILED(d3dCommandList.Close()))
+		{
+			return std::unexpected("D3D12 Command List Close에 실패했습니다.");
+		}
+
 		ID3D12CommandList* commandLists[] = { &d3dCommandList };
 		d3dCommandQueue->ExecuteCommandLists(1, commandLists);
-		d3dCommandAllocator.Reset();
-		d3dCommandList.Reset(&d3dCommandAllocator, nullptr);
+
+		return {};
 	}
 
 	ID3D12Device& GPUDevice::GetD3DDevice() const noexcept

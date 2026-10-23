@@ -28,7 +28,7 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<GPUCommandBuffer, std::string> CreateGPUCommandBuffer() const;
 		[[nodiscard]] std::expected<GPUFence, std::string> CreateGPUFence() const;
 
-		void SubmitCommandBuffer(GPUCommandBuffer& commandBuffer);
+		[[nodiscard]] std::expected<void, std::string> SubmitCommandBuffer(GPUCommandBuffer& commandBuffer);
 
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;
 		[[nodiscard]] ID3D12CommandQueue& GetD3DCommandQueue() const noexcept;

@@ -31,8 +31,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		std::expected<GPUDevice, std::string> CreateGPUDevice();
-		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const GPUSwapChainProperties& properties);
+		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
+		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const GPUSwapChainCreateInfo& info) const;
 		
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;

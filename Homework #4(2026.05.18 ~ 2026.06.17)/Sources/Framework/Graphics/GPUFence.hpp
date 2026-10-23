@@ -1,10 +1,8 @@
 ﻿#pragma once
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
+#include <cstdint>
+#include <expected>
+#include <string>
 
 #include <d3d12.h>
 
@@ -27,8 +25,8 @@ namespace TUK::Framework
 		GPUFence(GPUFence&&) noexcept = default;
 		GPUFence& operator=(GPUFence&&) noexcept = default;
 
-		void Wait() const;
-		void Signal(const GPUDevice& device);
+		[[nodiscard]] std::expected<void, std::string> Wait() const;
+		[[nodiscard]] std::expected<void, std::string> Signal(const GPUDevice& device);
 
 		[[nodiscard]] bool IsCompleted() const noexcept;
 
@@ -36,7 +34,6 @@ namespace TUK::Framework
 		explicit GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence;
-		HANDLE fenceEvent;
-		int fenceValue;
+		std::uint64_t fenceValue;
 	};
 }
