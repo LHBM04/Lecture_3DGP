@@ -9,7 +9,7 @@ namespace TUK::Framework
 	class GPUTarget
 	{
 	public:
-		GPUTarget(
+		explicit GPUTarget(
 			Microsoft::WRL::ComPtr<ID3D12Resource2> d3dResource,
 			D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle) noexcept;
 		~GPUTarget() noexcept = default;
