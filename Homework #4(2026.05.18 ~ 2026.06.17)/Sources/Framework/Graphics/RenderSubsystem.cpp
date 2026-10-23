@@ -14,7 +14,11 @@ namespace TUK::Framework
 	RenderSubsystem::RenderSubsystem() noexcept
 		: EngineSubsystem(100)
 		, device(std::nullopt)
+		, commandBuffer(std::nullopt)
+		, fence(std::nullopt)
+		, swapChains()
 	{
+		swapChains.reserve(10);
 	}
 
 	RenderSubsystem::~RenderSubsystem() noexcept

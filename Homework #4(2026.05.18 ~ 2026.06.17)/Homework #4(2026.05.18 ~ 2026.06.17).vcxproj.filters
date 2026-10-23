@@ -177,6 +177,9 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp">
@@ -303,6 +306,9 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

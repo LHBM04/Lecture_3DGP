@@ -183,6 +183,7 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />

@@ -3,15 +3,6 @@
 
 namespace TUK::Framework
 {
-	GPUSwapChain::~GPUSwapChain() noexcept
-	{
-		if (dxgiSwapChain)
-		{
-			dxgiSwapChain->Release();
-			dxgiSwapChain = nullptr;
-		}
-	}
-
 	IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
 	{
 		return *(dxgiSwapChain.Get());

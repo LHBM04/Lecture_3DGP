@@ -13,7 +13,7 @@ namespace TUK::Framework
 		friend class GPUDevice;
 
 	public:
-		~GPUCommandBuffer() noexcept;
+		~GPUCommandBuffer() noexcept = default;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
 		GPUCommandBuffer& operator=(const GPUCommandBuffer&) = delete;
@@ -22,9 +22,7 @@ namespace TUK::Framework
 		GPUCommandBuffer& operator=(GPUCommandBuffer&&) noexcept = default;
 
 		// 리소스 상태 전환은 호출자가 패스 시작 전과 종료 후에 처리합니다.
-		void BeginRenderPass(
-			std::span<const D3D12_RENDER_PASS_RENDER_TARGET_DESC> renderTargets,
-			const D3D12_RENDER_PASS_DEPTH_STENCIL_DESC* depthStencil = nullptr);
+		void BeginRenderPass();
 		void EndRenderPass();
 
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;

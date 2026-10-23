@@ -21,7 +21,7 @@ namespace TUK::Framework
 		friend class RenderSubsystem;
 
 	public:
-		~GPUSwapChain() noexcept;
+		~GPUSwapChain() noexcept = default;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
 		GPUSwapChain& operator=(const GPUSwapChain&) = delete;

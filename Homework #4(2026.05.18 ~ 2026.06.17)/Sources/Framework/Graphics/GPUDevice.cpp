@@ -3,16 +3,6 @@
 
 namespace TUK::Framework
 {
-	GPUDevice::~GPUDevice() noexcept
-	{
-		// D3D12Device 해제
-		if (d3dDevice)
-		{
-			d3dDevice->Release();
-			d3dDevice = nullptr;
-		}
-	}
-
 	std::expected<GPUCommandBuffer, std::string> GPUDevice::CreateGPUCommandBuffer() const
 	{
 		if (!d3dDevice)
@@ -41,6 +31,22 @@ namespace TUK::Framework
 		d3dCommandList->Close();
 
 		return GPUCommandBuffer(d3dCommandList, d3dCommandAllocator);
+	}
+
+	std::expected<GPUFence, std::string> GPUDevice::CreateGPUFence() const
+	{
+		if (!d3dDevice)
+		{
+			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
+		}
+		
+		ID3D12Fence* d3dFence = nullptr;
+		if (FAILED(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&d3dFence))))
+		{
+			return std::unexpected("D3D12 Fence 생성에 실패했습니다.");
+		}
+
+		return GPUFence(d3dFence);
 	}
 
 	ID3D12Device& GPUDevice::GetD3DDevice() const noexcept

@@ -8,6 +8,7 @@
 #include <wrl/client.h>
 
 #include "GPUCommandBuffer.hpp"
+#include "GPUFence.hpp"
 
 namespace TUK::Framework
 {
@@ -16,7 +17,7 @@ namespace TUK::Framework
 		friend class RenderSubsystem;
 
 	public:
-		~GPUDevice() noexcept;
+		~GPUDevice() noexcept = default;
 
 		GPUDevice(const GPUDevice&) = delete;
 		GPUDevice& operator=(const GPUDevice&) = delete;
@@ -25,6 +26,7 @@ namespace TUK::Framework
 		GPUDevice& operator=(GPUDevice&&) noexcept = default;
 
 		[[nodiscard]] std::expected<GPUCommandBuffer, std::string> CreateGPUCommandBuffer() const;
+		[[nodiscard]] std::expected<GPUFence, std::string> CreateGPUFence() const;
 
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;
 		[[nodiscard]] ID3D12CommandQueue& GetD3DCommandQueue() const noexcept;

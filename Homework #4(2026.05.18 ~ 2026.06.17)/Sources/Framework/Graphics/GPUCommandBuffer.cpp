@@ -5,24 +5,23 @@
 
 namespace TUK::Framework
 {
-	GPUCommandBuffer::~GPUCommandBuffer() noexcept = default;
-
-	void GPUCommandBuffer::BeginRenderPass(
-		std::span<const D3D12_RENDER_PASS_RENDER_TARGET_DESC> renderTargets,
-		const D3D12_RENDER_PASS_DEPTH_STENCIL_DESC* depthStencil)
+	void GPUCommandBuffer::BeginRenderPass()
 	{
+		D3D12_RENDER_PASS_RENDER_TARGET_DESC renderTargetDesc{};
+		renderTargetDesc.BeginningAccess.
+
+		D3D12_RENDER_PASS_DEPTH_STENCIL_DESC depthStencilDesc{};
+
 		d3dCommandList->BeginRenderPass(
-			static_cast<UINT>(renderTargets.size()),
-			renderTargets.empty() ? nullptr : renderTargets.data(),
-			depthStencil,
+			1,
+			&renderTargetDesc,
+			&depthStencilDesc,
 			D3D12_RENDER_PASS_FLAG_NONE);
-		isRenderPassActive = true;
 	}
 
 	void GPUCommandBuffer::EndRenderPass()
 	{
 		d3dCommandList->EndRenderPass();
-		isRenderPassActive = false;
 	}
 
 	ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept

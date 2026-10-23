@@ -34,9 +34,8 @@ namespace TUK::Framework
 		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const GPUSwapChainProperties& properties);
 		
 		std::optional<GPUDevice> device;
-		GPUCommandBuffer& commandBuffer;
-		GPUFence& fence;
-
+		std::optional<GPUCommandBuffer> commandBuffer;
+		std::optional<GPUFence> fence;
 		std::unordered_map<const Display*, GPUSwapChain> swapChains;
 	};
 }
