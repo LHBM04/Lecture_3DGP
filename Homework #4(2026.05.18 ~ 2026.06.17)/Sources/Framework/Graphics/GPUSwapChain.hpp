@@ -1,8 +1,14 @@
 ﻿#pragma once
 
+#include <cstdint>
+#include <vector>
+
+#include <d3d12.h>
 #include <dxgi1_6.h>
 
 #include <wrl/client.h>
+
+#include "GPUTarget.hpp"
 
 namespace TUK::Framework
 {
@@ -29,11 +35,20 @@ namespace TUK::Framework
 		GPUSwapChain(GPUSwapChain&&) noexcept = default;
 		GPUSwapChain& operator=(GPUSwapChain&&) noexcept = default;
 
+		void Present() const;
+
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
+		[[nodiscard]] ID3D12Resource& GetD3DBackBuffer(UINT index) const;
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetD3DRTVHandle(UINT index) const;
 
 	private:
-		explicit GPUSwapChain(IDXGISwapChain4* dxgiSwapChain) noexcept;
+		GPUSwapChain(
+			Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
+			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
+			std::vector<GPUTarget> renderTargets) noexcept;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		std::vector<GPUTarget> renderTargets;
 	};
 }

@@ -30,8 +30,8 @@ namespace TUK::Framework
 		return d3dFence->GetCompletedValue() >= fenceValue;
 	}
 
-	GPUFence::GPUFence(ID3D12Fence* d3dFence) noexcept
-		: d3dFence(d3dFence)
+	GPUFence::GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept
+		: d3dFence(std::move(d3dFence))
 		, fenceEvent(CreateEvent(nullptr, FALSE, FALSE, nullptr))
 		, fenceValue(0)
 	{

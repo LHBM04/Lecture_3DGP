@@ -28,13 +28,15 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<GPUCommandBuffer, std::string> CreateGPUCommandBuffer() const;
 		[[nodiscard]] std::expected<GPUFence, std::string> CreateGPUFence() const;
 
+		void SubmitCommandBuffer(GPUCommandBuffer& commandBuffer);
+
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;
 		[[nodiscard]] ID3D12CommandQueue& GetD3DCommandQueue() const noexcept;
 
 	private:
 		explicit GPUDevice(
-			ID3D12Device* d3dDevice,
-			ID3D12CommandQueue* d3dCommandQueue) noexcept;
+			Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice,
+			Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue;

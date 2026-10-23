@@ -8,6 +8,8 @@
 
 #include <d3d12.h>
 
+#include <wrl/client.h>
+
 namespace TUK::Framework
 {
 	class GPUDevice;
@@ -31,7 +33,7 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsCompleted() const noexcept;
 
 	private:
-		explicit GPUFence(ID3D12Fence* d3dFence) noexcept;
+		explicit GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence;
 		HANDLE fenceEvent;

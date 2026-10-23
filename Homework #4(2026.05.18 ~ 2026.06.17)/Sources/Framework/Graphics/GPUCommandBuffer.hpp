@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <span>
+#include <array>
 
 #include <d3d12.h>
 
@@ -8,6 +8,8 @@
 
 namespace TUK::Framework
 {
+	class GPUSwapChain;
+
 	class GPUCommandBuffer
 	{
 		friend class GPUDevice;
@@ -21,8 +23,8 @@ namespace TUK::Framework
 		GPUCommandBuffer(GPUCommandBuffer&&) noexcept = default;
 		GPUCommandBuffer& operator=(GPUCommandBuffer&&) noexcept = default;
 
-		// 리소스 상태 전환은 호출자가 패스 시작 전과 종료 후에 처리합니다.
-		void BeginRenderPass();
+		// 명령 목록은 기록 중이어야 하며, 패스 도중 Present/ResizeBuffers를 호출하지 않습니다.
+		void BeginRenderPass(const GPUSwapChain& swapChain);
 		void EndRenderPass();
 
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
@@ -30,11 +32,11 @@ namespace TUK::Framework
 
 	private:
 		explicit GPUCommandBuffer(
-			ID3D12GraphicsCommandList10* d3dCommandList,
-			ID3D12CommandAllocator* d3dCommandAllocator) noexcept;
+			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
+			Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
-		bool isRenderPassActive = false;
+		Microsoft::WRL::ComPtr<ID3D12Resource> activeRenderTarget;
 	};
 }

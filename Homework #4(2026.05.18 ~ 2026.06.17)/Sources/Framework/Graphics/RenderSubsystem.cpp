@@ -42,12 +42,13 @@ namespace TUK::Framework
 		if (!newSwapChain)
 		{
 			std::cerr << "Render Subsystem Display Registration 실패: " << newSwapChain.error() << std::endl;
+			return;
 		}
 
 		swapChains.emplace(&display, std::move(newSwapChain.value()));
 	}
 
-	void RenderSubsystem::UnregisterDisplay()
+	void RenderSubsystem::UnregisterDisplay(const Display& display)
 	{
 		// TODO: 이거 구현해라.
 	}
@@ -66,6 +67,30 @@ namespace TUK::Framework
 			device = std::move(newDevice.value());
 		}
 
+		// GPU 명령 버퍼 초기화
+		{
+			auto newCommandBuffer = device->CreateGPUCommandBuffer();
+			if (!newCommandBuffer)
+			{
+				std::cerr << "Render Subsystem Startup 실패: " << newCommandBuffer.error() << std::endl;
+				return SystemStatus::Failure;
+			}
+
+			commandBuffer = std::move(newCommandBuffer.value());
+		}
+
+		// GPU 펜스 초기화
+		{
+			auto newFence = device->CreateGPUFence();
+			if (!newFence)
+			{
+				std::cerr << "Render Subsystem Startup 실패: " << newFence.error() << std::endl;
+				return SystemStatus::Failure;
+			}
+
+			fence = std::move(newFence.value());
+		}
+
 		return SystemStatus::Continue;
 	}
 
@@ -76,13 +101,17 @@ namespace TUK::Framework
 
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
-		for (auto& [display, swapChain] : swapChains)
+		for (auto& swapChain : swapChains | std::views::values)
 		{
-			D3D12_RENDER_PASS_RENDER_TARGET_DESC renderTargetDesc{};
+			commandBuffer->BeginRenderPass(swapChain);
+			commandBuffer->EndRenderPass();
+		}
 
-			D3D12_RENDER_PASS_DEPTH_STENCIL_DESC depthStencilDesc{};
+		device->SubmitCommandBuffer(*commandBuffer);
 
-			commandBuffer.
+		for (auto& swapChain : swapChains | std::views::values)
+		{
+			swapChain.Present();
 		}
 
 		return SystemStatus::Continue;
@@ -116,48 +145,40 @@ namespace TUK::Framework
 			return std::unexpected("DXGI Factory 생성 실패!");
 		}
 
-		ID3D12CommandQueue* d3dCommandQueue = nullptr;
-		if (FAILED(dxgiFactory->EnumAdapters1(0, nullptr)))
-		{
-			return std::unexpected("DXGI 어댑터 열거 실패!");
-		}
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue;
 
 		for (UINT adapterIndex = 0; ; ++adapterIndex)
 		{
-			IDXGIAdapter1* adapter = nullptr;
-			if (FAILED(dxgiFactory->EnumAdapters1(adapterIndex, &adapter)))
+			Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
+			if (FAILED(dxgiFactory->EnumAdapters1(adapterIndex, adapter.GetAddressOf())))
 			{
-				break; // 더 이상 어댑터가 없음
+				break;
 			}
 
 			DXGI_ADAPTER_DESC1 desc;
 			adapter->GetDesc1(&desc);
 			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
 			{
-				adapter->Release();
-				continue; // 소프트웨어 어댑터는 건너뜀
+				continue;
 			}
 
-			ID3D12Device* d3dDevice = nullptr;
-			if (SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&d3dDevice))))
+			Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
+			if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(d3dDevice.GetAddressOf()))))
 			{
-				D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-				queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT; // 명령 큐의 타입 (DIRECT, COMPUTE, COPY 등)
-				queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; // 우선순위
-				queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE; // 플래그 (예: 타임아웃 방지 등)
-				queueDesc.NodeMask = 0; // 단일 GPU인 경우 0
+				D3D12_COMMAND_QUEUE_DESC queueDesc{};
+				queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+				queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+				queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+				queueDesc.NodeMask = 0;
 
-				HRESULT hr = d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&d3dCommandQueue));
-				if (FAILED(hr))
+				if (FAILED(d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(d3dCommandQueue.GetAddressOf()))))
 				{
 					return std::unexpected("D3D12 Command Queue 생성 실패!");
 				}
 
-				adapter->Release();
-				return GPUDevice(d3dDevice, d3dCommandQueue);
+				return GPUDevice(std::move(d3dDevice), std::move(d3dCommandQueue));
 			}
 			
-			adapter->Release();
 		}
 
 		return std::unexpected("GPU 장치 생성 실패!");
@@ -170,9 +191,10 @@ namespace TUK::Framework
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
-		ID3D12Device& d3dDevice = device.value().GetD3DDevice();
+		ID3D12Device& d3dDevice = device->GetD3DDevice();
+		ID3D12CommandQueue& d3dCommandQueue = device->GetD3DCommandQueue();
 
-		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 		swapChainDesc.BufferCount = properties.bufferCount;
 		swapChainDesc.Width = properties.width;
 		swapChainDesc.Height = properties.height;
@@ -181,29 +203,53 @@ namespace TUK::Framework
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		swapChainDesc.SampleDesc.Count = 1;
 
-		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreenDesc = {};
-		fullscreenDesc.Windowed = TRUE;
-
-		IDXGISwapChain1* d3dSwapChain1 = nullptr;
+		Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
 		if (FAILED(dxgiFactory->CreateSwapChainForHwnd(
-			&d3dDevice,
-			properties.display.GetHWND(),
+			&d3dCommandQueue,
+			properties.display->GetHWND(),
 			&swapChainDesc,
-			&fullscreenDesc,
 			nullptr,
-			&d3dSwapChain1
-		)))
+			nullptr,
+			swapChain1.GetAddressOf())))
 		{
 			return std::unexpected("DXGI Swap Chain 생성 실패!");
 		}
 
-		IDXGISwapChain4* d3dSwapChain4 = nullptr;
-		if (FAILED(d3dSwapChain1->QueryInterface(IID_PPV_ARGS(&d3dSwapChain4))))
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain4;
+		if (FAILED(swapChain1.As(&swapChain4)))
 		{
-			d3dSwapChain1->Release();
-			return std::unexpected("DXGI Swap Chain 4 -> 1 변환 실패!");
+			return std::unexpected("IDXGISwapChain4 인터페이스 조회 실패!");
 		}
 
-		return GPUSwapChain(d3dSwapChain4);
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		heapDesc.NumDescriptors = properties.bufferCount;
+		
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		if (FAILED(d3dDevice.CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(rtvHeap.GetAddressOf()))))
+		{
+			return std::unexpected("RTV Descriptor Heap 생성 실패!");
+		}
+
+		const UINT descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
+		
+		std::vector<GPUTarget> renderTargets;
+		renderTargets.reserve(properties.bufferCount);
+		
+		for (UINT index = 0; index < properties.bufferCount; ++index)
+		{
+			Microsoft::WRL::ComPtr<ID3D12Resource2> backBuffer;
+			if (FAILED(swapChain4->GetBuffer(index, IID_PPV_ARGS(backBuffer.GetAddressOf()))))
+			{
+				return std::unexpected("Swap Chain 백 버퍼 조회 실패!");
+			}
+		
+			d3dDevice.CreateRenderTargetView(backBuffer.Get(), nullptr, rtv);
+			renderTargets.emplace_back(std::move(backBuffer), rtv);
+			rtv.ptr += descriptorSize;
+		}
+
+		return GPUSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(renderTargets));
 	}
 }
