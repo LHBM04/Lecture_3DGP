@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include <functional>
-#include <map>
 #include <optional>
-#include <vector>
 
 #include "../Core/EngineSubsystem.hpp"
+
+#include "GPUDevice.hpp"
 
 namespace TUK::Framework
 {
@@ -17,9 +16,6 @@ namespace TUK::Framework
 		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
 
-		void RegisterDisplay(const Display& window);
-		void UnregisterDisplay(const Display& window);
-
 	protected:
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;
@@ -27,12 +23,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		using GraphicsDevice = Microsoft::WRL::ComPtr<ID3D12Device>;
-		using SwapChain = Microsoft::WRL::ComPtr<IDXGISwapChain4>;
+		std::expected<void, std::string> InitializeGPUDevice();
 
-		void RemovePendingDisplays();
-
-		GraphicsDevice d3dDevice;
-		std::unordered_map<const Display*, SwapChain> swapChains;
+		std::optional<GPUDevice> device;
 	};
 }
