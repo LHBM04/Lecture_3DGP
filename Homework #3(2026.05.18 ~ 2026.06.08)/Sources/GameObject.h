@@ -1,0 +1,266 @@
+﻿#pragma once
+
+#include <algorithm>
+#include <cassert>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "Component.h"
+#include "Matrix4x4.h"
+
+class Scene;
+
+struct alignas(256) ObjectConstants final
+{
+	Matrix4x4 worldMatrix;
+};
+
+class GameObject final
+{
+	friend class Scene;
+
+public:
+	GameObject() = default;
+	virtual ~GameObject() = default;
+
+	void Update();
+	void LateUpdate();
+	void FixedUpdate();
+	void Render();
+
+	void Destroy();
+
+	void NotifyCollisionEnter(Collider* other_);
+	void NotifyCollisionStay(Collider* other_);
+	void NotifyCollisionExit(Collider* other_);
+
+	[[nodiscard]] const std::wstring& GetName() const noexcept;
+	void SetName(const std::wstring& name_);
+
+	[[nodiscard]] const std::wstring& GetTag() const noexcept;
+	void SetTag(const std::wstring& tag_);
+
+	[[nodiscard]] bool IsActive() const noexcept;
+	void SetActive(bool isActive_);
+
+	[[nodiscard]] bool IsDestroyed() const noexcept;
+	[[nodiscard]] bool IsDestroyPending() const noexcept;
+
+	[[nodiscard]] Scene* GetScene() const noexcept;
+
+	template <class TComponent>
+	TComponent* AddComponent();
+
+	template <class TComponent>
+	TComponent* GetComponent();
+
+	template <class TComponent>
+	const TComponent* GetComponent() const;
+
+	template <class TComponent>
+	bool TryGetComponent(TComponent** component_);
+
+	template <class TComponent>
+	bool TryGetComponent(const TComponent** component_) const;
+
+	template <class TComponent>
+	void RemoveComponent();
+
+private:
+	void FlushPendingComponents();
+	[[nodiscard]] bool IsComponentPendingRemoval(const Component* component_) const noexcept;
+
+	GameObject(const GameObject&) = delete;
+	GameObject& operator=(const GameObject&) = delete;
+
+	GameObject(GameObject&&) = delete;
+	GameObject& operator=(GameObject&&) = delete;
+
+	std::wstring name{ L"New GameObject" };
+	std::wstring tag{ L"Untagged" };
+
+	bool isActive{ true };
+	bool isDestroyed{ false };
+	bool isDestroyPending{ false };
+
+	Scene* scene{ nullptr };
+	
+	std::vector<std::unique_ptr<Component>> components;
+	std::vector<std::unique_ptr<Component>> addComponents;
+	std::vector<Component*> removeComponents;
+};
+
+template <class TComponent>
+inline TComponent* GameObject::AddComponent()
+{
+	std::unique_ptr<TComponent> component{ std::make_unique<TComponent>() };
+	component->owner = this;
+	
+	TComponent* componentPtr{ component.get() };
+	addComponents.emplace_back(std::move(component));
+
+	return componentPtr;
+}
+
+template <class TComponent>
+inline TComponent* GameObject::GetComponent()
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
+	{
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	assert(false && "Required component missing!");
+	return nullptr;
+}
+
+template <class TComponent>
+inline const TComponent* GameObject::GetComponent() const
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
+	{
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			return casted;
+		}
+	}
+
+	assert(false && "Required component missing!");
+	return nullptr;
+}
+
+template <class TComponent>
+inline bool GameObject::TryGetComponent(TComponent** component_)
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
+	{
+		if (TComponent* casted{ dynamic_cast<TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	if (component_ != nullptr)
+	{
+		*component_ = nullptr;
+	}
+	return false;
+}
+
+template <class TComponent>
+inline bool GameObject::TryGetComponent(const TComponent** component_) const
+{
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (IsComponentPendingRemoval(component.get()))
+		{
+			continue;
+		}
+
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	for (const std::unique_ptr<Component>& component : addComponents)
+	{
+		if (const TComponent* casted{ dynamic_cast<const TComponent*>(component.get()) }; casted != nullptr)
+		{
+			if (component_ != nullptr)
+			{
+				*component_ = casted;
+			}
+			return true;
+		}
+	}
+
+	if (component_ != nullptr)
+	{
+		*component_ = nullptr;
+	}
+	return false;
+}
+
+template <class TComponent>
+inline void GameObject::RemoveComponent()
+{
+	std::erase_if(addComponents, [](const std::unique_ptr<Component>& component)
+	{
+		if (dynamic_cast<TComponent*>(component.get()) == nullptr)
+		{
+			return false;
+		}
+
+		component->Destroy();
+		return true;
+	});
+
+	for (const std::unique_ptr<Component>& component : components)
+	{
+		if (dynamic_cast<TComponent*>(component.get()) == nullptr)
+		{
+			continue;
+		}
+
+		if (std::ranges::find(removeComponents, component.get()) == removeComponents.end())
+		{
+			removeComponents.emplace_back(component.get());
+		}
+	}
+}
