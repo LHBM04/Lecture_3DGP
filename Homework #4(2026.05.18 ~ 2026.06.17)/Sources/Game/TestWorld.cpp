@@ -122,13 +122,13 @@ namespace TUK::Game
 	std::expected<void, std::string> TestWorld::CreateTriangle(const GPUDevice& device, DXGI_FORMAT targetFormat)
 	{
 		// 실행 파일 옆 Resources/Shaders를 사용하므로 디버거의 작업 디렉터리에 의존하지 않습니다.
-		std::array<wchar_t, 32768> executablePath{};
-		const DWORD pathLength = GetModuleFileNameW(nullptr, executablePath.data(), static_cast<DWORD>(executablePath.size()));
+		std::array<char, 32768> executablePath{};
+		const DWORD pathLength = GetModuleFileNameA(nullptr, executablePath.data(), static_cast<DWORD>(executablePath.size()));
 		if (pathLength == 0 || pathLength >= executablePath.size())
 		{
 			return std::unexpected("실행 파일 경로를 가져오지 못했습니다.");
 		}
-		const std::filesystem::path shaderPath = std::filesystem::path(executablePath.data()).parent_path() / L"Resources" / L"Shaders" / L"Triangle.hlsl";
+		const std::filesystem::path shaderPath = std::filesystem::path(executablePath.data()).parent_path() / "Resources" / "Shaders" / "Triangle.hlsl";
 
 		GPUShaderCreateInfo shaderInfo
 		{

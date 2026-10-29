@@ -15,17 +15,19 @@ INT exitCode = 0;
 
 using namespace TUK::Framework;
 
-INT APIENTRY wWinMain(
+INT APIENTRY WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR lpCmdLine,
+	_In_ LPSTR lpCmdLine,
 	_In_ INT nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(nCmdShow);
+	UNREFERENCED_PARAMETER(hInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 	
-	int argc = 0;
-	LPWSTR* const argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+	const int argc = __argc;
+	char** const argv = __argv;
 	
 	if (argc >= 3)
 	{

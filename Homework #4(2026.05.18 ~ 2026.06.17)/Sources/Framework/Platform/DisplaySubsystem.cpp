@@ -4,10 +4,10 @@
 namespace
 {
 	/** 윈도우 클래스 이름 */
-	constexpr LPCTSTR ClassName = TEXT("TUK.Framework.Window");
+	constexpr const char* ClassName = "TUK.Framework.Window";
 
 	/** 인스턴스 핸들 */
-	const HINSTANCE Instance = GetModuleHandleW(nullptr);
+	const HINSTANCE Instance = GetModuleHandleA(nullptr);
 
 	/** 윈도우 클래스 */
 	bool isWndClassRegistered = false;
@@ -26,7 +26,7 @@ namespace TUK::Framework
 
 		if (isWndClassRegistered)
 		{
-			UnregisterClassW(ClassName, Instance);
+			UnregisterClassA(ClassName, Instance);
 			isWndClassRegistered = false;
 		}
 	}
@@ -35,7 +35,7 @@ namespace TUK::Framework
 	{
 		std::unique_ptr<Display> newWindow = std::make_unique<Display>(nullptr);
 
-		HWND hWnd = CreateWindowEx(
+		HWND hWnd = CreateWindowExA(
 			0, 
 			ClassName, 
 			options.caption.data(),
@@ -67,16 +67,16 @@ namespace TUK::Framework
 
 	SystemStatus DisplaySubsystem::OnStartup()
 	{
-		WNDCLASSEXW description{};
+		WNDCLASSEXA description{};
 		description.cbSize = sizeof(description);
 		description.style = CS_HREDRAW | CS_VREDRAW;
 		description.lpfnWndProc = WindowProc;
 		description.hInstance = Instance;
-		description.hCursor = LoadCursor(nullptr, IDC_ARROW);
+		description.hCursor = LoadCursorA(nullptr, IDC_ARROW);
 		description.lpszClassName = ClassName;
-		description.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+		description.hIcon = LoadIconA(nullptr, IDI_APPLICATION);
 		
-		if (RegisterClassEx(&description) == 0)
+		if (RegisterClassExA(&description) == 0)
 		{
 			return SystemStatus::Failure;
 		}
@@ -99,7 +99,7 @@ namespace TUK::Framework
 	{
 		if (isWndClassRegistered)
 		{
-			UnregisterClassW(ClassName, Instance);
+			UnregisterClassA(ClassName, Instance);
 			isWndClassRegistered = false;
 		}
 	}

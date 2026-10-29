@@ -22,7 +22,7 @@ namespace TUK::Framework
 	SystemStatus EventSubsystem::OnPreTick()
 	{
 		MSG message{};
-		while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
+		while (PeekMessageA(&message, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (message.message == WM_QUIT)
 			{
@@ -30,7 +30,7 @@ namespace TUK::Framework
 			}
 
 			TranslateMessage(&message);
-			DispatchMessage(&message);
+			DispatchMessageA(&message);
 		}
 
 		return SystemStatus::Continue;

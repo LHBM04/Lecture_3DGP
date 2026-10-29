@@ -23,37 +23,21 @@ namespace TUK::Framework
 		}
 	}
 
-#if defined(_UNICODE) || defined(UNICODE)
-	const std::wstring& Display::GetCaption() const noexcept
-	{
-		assert(hWnd);
-		static std::wstring caption;
-		caption.resize(GetWindowTextLengthW(hWnd) + 1);
-		GetWindowTextW(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
-		return caption;
-	}
-
-	void Display::SetCaption(std::wstring_view value) noexcept
-	{
-		assert(hWnd);
-		SetWindowTextW(hWnd, value.data());
-	}
-#else
-	const std::string& Display::GetCaption() const
+	const std::string& Display::GetCaption() const noexcept
 	{
 		assert(hWnd);
 		static std::string caption;
 		caption.resize(GetWindowTextLengthA(hWnd) + 1);
-		GetWindowTextA(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
+		const int length = GetWindowTextA(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
+		caption.resize(length);
 		return caption;
 	}
 
 	void Display::SetCaption(std::string_view value) noexcept
 	{
 		assert(hWnd);
-		SetWindowTextA(hWnd, value.data());
+		SetWindowTextA(hWnd, std::string(value).c_str());
 	}
-#endif
 
 	Vector2D<std::int32_t> Display::GetPosition() const noexcept
 	{
@@ -143,7 +127,7 @@ namespace TUK::Framework
 	{
 		if (message == WM_NCCREATE)
 		{
-			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
+			const CREATESTRUCTA* creation = reinterpret_cast<const CREATESTRUCTA*>(lParam);
 
 			Display* display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)
@@ -154,13 +138,13 @@ namespace TUK::Framework
 			display->hWnd = hWnd;
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(display));
 
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return DefWindowProcA(hWnd, message, wParam, lParam);
 		}
 
 		Display* display = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 		if (!display)
 		{
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return DefWindowProcA(hWnd, message, wParam, lParam);
 		}
 
 		EventSubsystem* eventSubsystem = Engine::GetInstance()->GetSubsystem<EventSubsystem>();
@@ -215,7 +199,7 @@ namespace TUK::Framework
 			{
 				eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
 			}
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return DefWindowProcA(hWnd, message, wParam, lParam);
 		}
 		case WM_DESTROY:
 		{
@@ -233,7 +217,7 @@ namespace TUK::Framework
 		}
 		default:
 		{
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return DefWindowProcA(hWnd, message, wParam, lParam);
 		}
 		}
 
