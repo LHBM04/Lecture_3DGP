@@ -10,7 +10,7 @@
 #include "../Core/EngineSubsystem.hpp"
 
 #include "Display.hpp"
-#include "DisplayOptions.hpp"
+#include "DisplayCreateInfo.hpp"
 
 namespace TUK::Framework
 {
@@ -26,7 +26,7 @@ namespace TUK::Framework
 
 		~DisplaySubsystem() noexcept override;
 
-		DisplayCreateResult CreateDisplay(const DisplayOptions& options);
+		DisplayCreateResult CreateDisplay(const DisplayCreateInfo& options);
 
 		[[nodiscard]] auto GetDisplays() noexcept;
 		[[nodiscard]] const auto GetDisplays() const noexcept;

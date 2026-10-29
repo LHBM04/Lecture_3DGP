@@ -4,7 +4,7 @@ namespace TUK::Framework
 {
 	class Display;
 
-	struct GPUSwapChainOptions final
+	struct GPUSwapChainCreateInfo final
 	{
 		const Display* display;
 		std::uint32_t width;

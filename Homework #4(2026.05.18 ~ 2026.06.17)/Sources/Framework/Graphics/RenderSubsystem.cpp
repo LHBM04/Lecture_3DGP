@@ -3,7 +3,7 @@
 
 #include "Framework/Platform/Display.hpp"
 
-#include "GPUSwapChainOptions.hpp"
+#include "GPUSwapChainCreateInfo.hpp"
 
 namespace
 {
@@ -31,7 +31,7 @@ namespace TUK::Framework
 
 	void RenderSubsystem::RegisterDisplay(const Display& display)
 	{
-		GPUSwapChainOptions properties{};
+		GPUSwapChainCreateInfo properties{};
 		properties.display = &display;
 		properties.width = display.GetClientSize().GetX();
 		properties.height = display.GetClientSize().GetY();
@@ -297,7 +297,7 @@ namespace TUK::Framework
 		return std::unexpected("GPU 장치 생성 실패!");
 	}
 
-	std::expected<GPUSwapChain, std::string> RenderSubsystem::CreateGPUSwapChain(const GPUSwapChainOptions& info) const
+	std::expected<GPUSwapChain, std::string> RenderSubsystem::CreateGPUSwapChain(const GPUSwapChainCreateInfo& info) const
 	{
 		if (!device)
 		{

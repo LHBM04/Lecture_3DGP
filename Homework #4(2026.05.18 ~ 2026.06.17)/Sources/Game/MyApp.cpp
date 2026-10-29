@@ -3,7 +3,7 @@
 
 #include "Framework/Entities/WorldSubsystem.hpp"
 #include "Framework/Graphics/RenderSubsystem.hpp"
-#include "Framework/Platform/DisplayOptions.hpp"
+#include "Framework/Platform/DisplayCreateInfo.hpp"
 #include "Framework/Platform/DisplaySubsystem.hpp"
 
 #include "MyEngine.hpp"
@@ -29,7 +29,7 @@ namespace TUK::Game
 
 	SystemStatus MyApp::Startup()
 	{
-		DisplayOptions options{};
+		DisplayCreateInfo options{};
 		options.caption = "Homework #4(2026.05.18 ~ 2026.06.17)";
 		options.position = Framework::Vector2D(100, 100);
 		options.size = Framework::Vector2D(1280, 960);

@@ -191,7 +191,7 @@
     <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainOptions.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainCreateInfo.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp" />
@@ -211,7 +211,7 @@
     <ClInclude Include="Sources\Framework\Math\Vector4D.hpp" />
     <ClInclude Include="Sources\Framework\Platform.hpp" />
     <ClInclude Include="Sources\Framework\Platform\Display.hpp" />
-    <ClInclude Include="Sources\Framework\Platform\DisplayOptions.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\DisplayCreateInfo.hpp" />
     <ClInclude Include="Sources\Framework\Platform\DisplaySubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Platform\Event.hpp" />
     <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp" />

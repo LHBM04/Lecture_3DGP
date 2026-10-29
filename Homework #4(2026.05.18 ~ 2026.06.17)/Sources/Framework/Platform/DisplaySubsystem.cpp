@@ -31,7 +31,7 @@ namespace TUK::Framework
 		}
 	}
 
-	std::expected<std::reference_wrapper<Display>, std::string> DisplaySubsystem::CreateDisplay(const DisplayOptions& options)
+	std::expected<std::reference_wrapper<Display>, std::string> DisplaySubsystem::CreateDisplay(const DisplayCreateInfo& options)
 	{
 		std::unique_ptr<Display> newWindow = std::make_unique<Display>(nullptr);
 
