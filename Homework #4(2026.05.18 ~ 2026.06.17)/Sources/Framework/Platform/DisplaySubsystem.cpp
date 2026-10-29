@@ -4,7 +4,7 @@
 namespace
 {
 	/** 윈도우 클래스 이름 */
-	constexpr const char* ClassName = "TUK.Framework.Window";
+	constexpr LPCSTR ClassName = "TUK.Framework.Window";
 
 	/** 인스턴스 핸들 */
 	const HINSTANCE Instance = GetModuleHandleA(nullptr);
