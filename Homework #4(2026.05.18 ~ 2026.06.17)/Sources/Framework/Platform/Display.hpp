@@ -32,13 +32,8 @@ namespace TUK::Framework
 		Display(Display&&) = default;
 		Display& operator=(Display&&) = default;
 
-#if defined(_UNICODE) || defined(UNICODE)
-		[[nodiscard]] const std::wstring& GetCaption() const noexcept;
-		void SetCaption(std::wstring_view value) noexcept;
-#else
-		[[nodiscard]] const std::string& GetCaption() const;
+		[[nodiscard]] const std::string& GetCaption() const noexcept;
 		void SetCaption(std::string_view value) noexcept;
-#endif
 
 		[[nodiscard]] Vector2D<std::int32_t> GetPosition() const noexcept;
 		void SetPosition(const Vector2D<std::int32_t>& position) noexcept;
