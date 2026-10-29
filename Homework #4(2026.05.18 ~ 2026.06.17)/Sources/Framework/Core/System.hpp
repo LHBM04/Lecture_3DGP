@@ -68,7 +68,7 @@ namespace TUK::Framework
 			return dynamic_cast<TSubsystem*>(&result->second.get());
 		}
 
-		auto subsystem = std::make_unique<TSubsystem>();
+		auto subsystem = std::unique_ptr<TSubsystem>(new TSubsystem());
 		auto* pointer = subsystem.get();
 		subsystems.push_back(std::move(subsystem));
 		subsystemsByType.emplace(typeid(TSubsystem), std::ref(*pointer));

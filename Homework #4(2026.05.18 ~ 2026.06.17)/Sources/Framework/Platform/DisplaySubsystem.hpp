@@ -16,13 +16,14 @@ namespace TUK::Framework
 {
 	class DisplaySubsystem : public EngineSubsystem
 	{
+		friend class System;
+
 	public:
 		using DisplayPtr = std::unique_ptr<Display>;
 		using DisplayRef = std::reference_wrapper<Display>;
 		using DisplayList = std::vector<DisplayPtr>;
 		using DisplayCreateResult = std::expected<DisplayRef, std::string>;
 
-		DisplaySubsystem() noexcept;
 		~DisplaySubsystem() noexcept override;
 
 		DisplayCreateResult CreateDisplay(const DisplayOptions& options);
@@ -36,6 +37,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		DisplaySubsystem() noexcept;
+
 		DisplayList displays;
 	};
 

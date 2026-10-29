@@ -24,8 +24,9 @@ namespace TUK::Framework
 
 	class RenderSubsystem : public EngineSubsystem
 	{
+		friend class System;
+
 	public:
-		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
 
 		void RegisterDisplay(const Display& display);
@@ -50,6 +51,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		RenderSubsystem() noexcept;
+
 		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
 
 		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
