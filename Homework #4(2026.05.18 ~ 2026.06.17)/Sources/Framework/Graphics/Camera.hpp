@@ -32,9 +32,6 @@ namespace TUK::Framework
 		Camera(Entity& owner) noexcept;
 		~Camera() noexcept override;
 
-		void OnEnable() override;
-		void OnDisable() override;
-
 		[[nodiscard]] CameraClearFlags GetClearFlags() const noexcept;
 		void SetClearFlags(CameraClearFlags value) noexcept;
 
@@ -50,6 +47,10 @@ namespace TUK::Framework
 		[[nodiscard]] Matrix4x4<float> GetViewMatrix() const noexcept;
 		[[nodiscard]] Matrix4x4<float> GetProjectionMatrix() const noexcept;
 		[[nodiscard]] Matrix4x4<float> GetViewProjectionMatrix() const noexcept;
+
+	protected:
+		void OnEnable() override;
+		void OnDisable() override;
 
 	private:
 		CameraClearFlags clearFlags;
