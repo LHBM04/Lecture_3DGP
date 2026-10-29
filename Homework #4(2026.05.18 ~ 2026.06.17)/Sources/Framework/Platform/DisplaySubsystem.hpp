@@ -3,6 +3,7 @@
 #include <expected>
 #include <functional>
 #include <memory>
+#include <ranges>
 #include <string>
 #include <vector>
 
@@ -24,11 +25,10 @@ namespace TUK::Framework
 		DisplaySubsystem() noexcept;
 		~DisplaySubsystem() noexcept override;
 
-		/** OnStartup 이후 호출. 크기는 창 전체 영역 기준. */
 		DisplayCreateResult CreateDisplay(const DisplayOptions& options);
 
-		/** 생성된 모든 창을 반환합니다. */
-		[[nodiscard]] const DisplayList& GetDisplays() const noexcept;
+		[[nodiscard]] auto GetDisplays() noexcept;
+		[[nodiscard]] const auto GetDisplays() const noexcept;
 
 	protected:
 		SystemStatus OnStartup() override;
@@ -38,5 +38,21 @@ namespace TUK::Framework
 	private:
 		DisplayList displays;
 	};
+
+	inline auto DisplaySubsystem::GetDisplays() noexcept
+	{
+		return displays | std::views::transform([](const DisplayPtr& displayPtr) -> DisplayRef
+			{
+				return *displayPtr;
+			});
+	}
+
+	inline const auto DisplaySubsystem::GetDisplays() const noexcept
+	{
+		return displays | std::views::transform([](const DisplayPtr& displayPtr) -> DisplayRef
+			{
+				return *displayPtr;
+			});
+	}
 }
 

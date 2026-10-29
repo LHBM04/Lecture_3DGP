@@ -60,11 +60,6 @@ namespace TUK::Framework
 		return reference;
 	}
 
-	const std::vector<std::unique_ptr<Display>>& DisplaySubsystem::GetDisplays() const noexcept
-	{
-		return displays;
-	}
-
 	SystemStatus DisplaySubsystem::OnStartup()
 	{
 		WNDCLASSEXA description{};
