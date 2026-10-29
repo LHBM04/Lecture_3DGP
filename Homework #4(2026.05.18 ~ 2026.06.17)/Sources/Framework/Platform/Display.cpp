@@ -3,7 +3,7 @@
 
 #include "../Core/Engine.hpp"
 
-#include "DisplayEvents.hpp"
+#include "DisplayEventData.hpp"
 #include "EventSubsystem.hpp"
 
 namespace TUK::Framework
@@ -171,7 +171,7 @@ namespace TUK::Framework
 		{
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayCreateEvent>(*display);
+				eventSubsystem->PushEvent({ *display, DisplayCreateData{} });
 			}
 			return 0;
 		}
@@ -179,9 +179,11 @@ namespace TUK::Framework
 		{
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayResizeEvent>(
+				eventSubsystem->PushEvent(
+				{
 					*display,
-					Vector2D<std::int32_t>{ LOWORD(lParam), HIWORD(lParam) });
+					DisplayResizeData{ LOWORD(lParam), HIWORD(lParam) }
+				});
 			}
 			return 0;
 		}
@@ -189,9 +191,11 @@ namespace TUK::Framework
 		{
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayMoveEvent>(
+				eventSubsystem->PushEvent(
+				{
 					*display,
-					Vector2D<std::int32_t>{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+					DisplayMoveData{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }
+				});
 			}
 			return 0;
 		}
@@ -200,7 +204,7 @@ namespace TUK::Framework
 		{
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayFocusEvent>(*display, message == WM_SETFOCUS);
+				eventSubsystem->PushEvent({ *display, DisplayFocusData{ message == WM_SETFOCUS } });
 			}
 			return 0;
 		}
@@ -209,7 +213,7 @@ namespace TUK::Framework
 			display->SetShouldClose(true);
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayCloseEvent>(*display);
+				eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
 			}
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -217,7 +221,7 @@ namespace TUK::Framework
 		{
 			if (eventSubsystem)
 			{
-				eventSubsystem->PushEvent<DisplayDestroyEvent>(*display);
+				eventSubsystem->PushEvent({ *display, DisplayDestroyData{} });
 			}
 			return 0;
 		}

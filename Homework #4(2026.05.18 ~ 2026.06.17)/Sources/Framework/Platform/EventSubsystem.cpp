@@ -9,23 +9,14 @@ namespace TUK::Framework
 		: EngineSubsystem(10)
 		, writeBuffer(Memory::GetPersistentResource())
 		, readBuffer(Memory::GetPersistentResource())
-		, listeners(Memory::GetPersistentResource())
 	{
 	}
 
-	EventSubsystem::~EventSubsystem() noexcept
-	{
-		listeners.clear();
-		readBuffer.clear();
-		writeBuffer.clear();
-	}
+	EventSubsystem::~EventSubsystem() noexcept = default;
 
-	void EventSubsystem::PushEvent(std::unique_ptr<const Event> event)
+	void EventSubsystem::PushEvent(Event event)
 	{
-		if (event)
-		{
-			writeBuffer.push_back(std::move(event));
-		}
+		writeBuffer.push_back(std::move(event));
 	}
 
 	SystemStatus EventSubsystem::OnPreTick()
@@ -50,21 +41,11 @@ namespace TUK::Framework
 		readBuffer.clear();
 		std::swap(writeBuffer, readBuffer);
 
-		for (const std::unique_ptr<const Event>& event : readBuffer)
+		for (const Event& event : readBuffer)
 		{
-			if (!event)
+			for (const Listener& listener : listeners[event.data.index()])
 			{
-				continue;
-			}
-
-			const Event& rawEvent = *event;
-			const auto found = listeners.find(typeid(rawEvent));
-			if (found != listeners.end())
-			{
-				for (const Listener& listener : found->second)
-				{
-					listener(rawEvent);
-				}
+				listener(event);
 			}
 		}
 
@@ -73,7 +54,10 @@ namespace TUK::Framework
 
 	void EventSubsystem::OnShutdown()
 	{
-		listeners.clear();
+		for (std::vector<Listener>& eventListeners : listeners)
+		{
+			eventListeners.clear();
+		}
 		readBuffer.clear();
 		writeBuffer.clear();
 	}

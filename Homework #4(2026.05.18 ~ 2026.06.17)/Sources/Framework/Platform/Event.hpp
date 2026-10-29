@@ -1,19 +1,24 @@
 ﻿#pragma once
 
+#include <variant>
+
+#include "DisplayEventData.hpp"
+
 namespace TUK::Framework
 {
-	class Event
+	class Display;
+
+	using EventData = std::variant<
+		DisplayCreateData,
+		DisplayCloseData,
+		DisplayDestroyData,
+		DisplayFocusData,
+		DisplayMoveData,
+		DisplayResizeData>;
+
+	struct Event final
 	{
-	public:
-		virtual ~Event() noexcept = default;
-
-		Event(const Event&) = delete;
-		Event& operator=(const Event&) = delete;
-
-		Event(Event&&) = delete;
-		Event& operator=(Event&&) = delete;
-
-	protected:
-		Event() noexcept = default;
+		const Display& display;
+		EventData data;
 	};
 }
