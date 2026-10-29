@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <cstdint>
-#include <optional>
 
 #include <d3d12.h>
 
@@ -25,7 +24,7 @@ namespace TUK::Framework
 		PrimitiveTopology topology = PrimitiveTopology::TriangleList;
 	};
 
-	// 정점 스트림 하나와 선택적인 인덱스 버퍼를 소유합니다.
+	// 정점 스트림 하나와 인덱스 버퍼를 소유합니다.
 	class GPUMesh
 	{
 		friend class GPUDevice;
@@ -43,21 +42,21 @@ namespace TUK::Framework
 		[[nodiscard]] std::uint32_t GetVertexCount() const noexcept;
 		[[nodiscard]] D3D12_VERTEX_BUFFER_VIEW GetD3DVertexBufferView() const noexcept;
 
-		[[nodiscard]] const GPUBuffer* GetIndexBuffer() const noexcept;
+		[[nodiscard]] const GPUBuffer& GetIndexBuffer() const noexcept;
 		[[nodiscard]] std::uint32_t GetIndexCount() const noexcept;
-		[[nodiscard]] std::optional<D3D12_INDEX_BUFFER_VIEW> GetD3DIndexBufferView() const noexcept;
+		[[nodiscard]] D3D12_INDEX_BUFFER_VIEW GetD3DIndexBufferView() const noexcept;
 		
 		[[nodiscard]] D3D_PRIMITIVE_TOPOLOGY GetD3DTopology() const noexcept;
 
 	private:
 		explicit GPUMesh(
 			GPUBuffer vertexBuffer,
-			std::optional<GPUBuffer> indexBuffer,
+			GPUBuffer indexBuffer,
 			const GPUMeshCreateInfo& info) noexcept;
 
 		GPUBuffer vertexBuffer;
 		std::uint32_t vertexStride;
-		std::optional<GPUBuffer> indexBuffer;
+		GPUBuffer indexBuffer;
 		DXGI_FORMAT indexFormat;
 		PrimitiveTopology topology;
 	};

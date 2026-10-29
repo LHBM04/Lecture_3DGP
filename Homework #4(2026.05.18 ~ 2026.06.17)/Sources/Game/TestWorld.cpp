@@ -96,7 +96,7 @@ namespace TUK::Game
 		renderer.SetViewport(camera->GetViewport());
 		renderer.SetScissorRect(camera->GetScissorRect());
 		renderer.SetGPUMesh(*mesh);
-		renderer.Draw(mesh->GetVertexCount());
+		renderer.DrawIndexed(mesh->GetIndexCount());
 	}
 
 	void TestWorld::OnExit()
@@ -202,8 +202,24 @@ namespace TUK::Game
 			return std::unexpected(result.error());
 		}
 
+		const std::array<std::uint32_t, 3> indices{ 0, 1, 2 };
+		const GPUBufferDescription indexBufferInfo
+		{
+			.sizeInBytes = sizeof(indices),
+			.heapType = D3D12_HEAP_TYPE_UPLOAD,
+		};
+		auto indexBuffer = device.CreateGPUBuffer(indexBufferInfo);
+		if (!indexBuffer)
+		{
+			return std::unexpected(indexBuffer.error());
+		}
+		if (auto result = indexBuffer->Write(std::as_bytes(std::span(indices))); !result)
+		{
+			return std::unexpected(result.error());
+		}
+
 		const GPUMeshCreateInfo meshInfo{ .vertexStride = static_cast<std::uint32_t>(sizeof(Vertex)) };
-		auto newMesh = device.CreateGPUMesh(std::move(vertexBuffer.value()), meshInfo);
+		auto newMesh = device.CreateGPUMesh(std::move(vertexBuffer.value()), std::move(indexBuffer.value()), meshInfo);
 		if (!newMesh)
 		{
 			return std::unexpected(newMesh.error());

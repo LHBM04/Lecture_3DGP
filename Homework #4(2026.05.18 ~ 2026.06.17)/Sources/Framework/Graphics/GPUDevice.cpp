@@ -61,8 +61,8 @@ namespace TUK::Framework
 
 	std::expected<GPUMesh, std::string> GPUDevice::CreateGPUMesh(
 		GPUBuffer vertexBuffer,
-		const GPUMeshCreateInfo& info,
-		std::optional<GPUBuffer> indexBuffer) const
+		GPUBuffer indexBuffer,
+		const GPUMeshCreateInfo& info) const
 	{
 		if (!vertexBuffer.d3dResource || vertexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
 		{
@@ -89,24 +89,21 @@ namespace TUK::Framework
 			return std::unexpected("지원하지 않는 메쉬 topology입니다.");
 		}
 
-		if (indexBuffer)
+		if (!indexBuffer.d3dResource || indexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
 		{
-			if (!indexBuffer->d3dResource || indexBuffer->GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
-			{
-				return std::unexpected("인덱스 버퍼가 유효하지 않습니다.");
-			}
+			return std::unexpected("인덱스 버퍼가 유효하지 않습니다.");
+		}
 
-			if (info.indexFormat != DXGI_FORMAT_R16_UINT && info.indexFormat != DXGI_FORMAT_R32_UINT)
-			{
-				return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
-			}
+		if (info.indexFormat != DXGI_FORMAT_R16_UINT && info.indexFormat != DXGI_FORMAT_R32_UINT)
+		{
+			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
+		}
 
-			const std::uint32_t indexSize = info.indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-			const std::uint64_t bufferSize = indexBuffer->GetSizeInBytes();
-			if (bufferSize > std::numeric_limits<std::uint32_t>::max() || bufferSize % indexSize != 0)
-			{
-				return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
-			}
+		const std::uint32_t indexSize = info.indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
+		const std::uint64_t bufferSize = indexBuffer.GetSizeInBytes();
+		if (bufferSize > std::numeric_limits<std::uint32_t>::max() || bufferSize % indexSize != 0)
+		{
+			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
 		}
 
 		return GPUMesh(std::move(vertexBuffer), std::move(indexBuffer), info);

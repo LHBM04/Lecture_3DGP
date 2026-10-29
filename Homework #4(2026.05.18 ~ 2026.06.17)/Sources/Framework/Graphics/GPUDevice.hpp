@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <expected>
-#include <optional>
 #include <string>
 
 #include <d3d12.h>
@@ -36,8 +35,8 @@ namespace TUK::Framework
 		// 버퍼 전체를 메쉬 데이터로 사용합니다. 실패 시에도 전달된 버퍼의 소유권은 소비됩니다.
 		[[nodiscard]] std::expected<GPUMesh, std::string> CreateGPUMesh(
 			GPUBuffer vertexBuffer,
-			const GPUMeshCreateInfo& info,
-			std::optional<GPUBuffer> indexBuffer = std::nullopt) const;
+			GPUBuffer indexBuffer,
+			const GPUMeshCreateInfo& info) const;
 
 		[[nodiscard]] std::expected<GPUShader, std::string> CreateGPUShader(const GPUShaderCreateInfo& info) const;
 		[[nodiscard]] std::expected<GPURootSignature, std::string> CreateGPURootSignature(const GPURootSignatureCreateInfo& info) const;

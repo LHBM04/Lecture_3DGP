@@ -108,11 +108,11 @@ namespace TUK::Framework
 	void GPUCommandBuffer::SetGPUMesh(const GPUMesh& mesh)
 	{
 		const D3D12_VERTEX_BUFFER_VIEW vertexView = mesh.GetD3DVertexBufferView();
-		const auto indexView = mesh.GetD3DIndexBufferView();
+		const D3D12_INDEX_BUFFER_VIEW indexView = mesh.GetD3DIndexBufferView();
 
 		d3dCommandList->IASetPrimitiveTopology(mesh.GetD3DTopology());
 		d3dCommandList->IASetVertexBuffers(0, 1, &vertexView);
-		d3dCommandList->IASetIndexBuffer(indexView ? &indexView.value() : nullptr);
+		d3dCommandList->IASetIndexBuffer(&indexView);
 	}
 
 	void GPUCommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t firstVertex)
