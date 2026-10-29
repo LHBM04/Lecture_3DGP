@@ -24,8 +24,16 @@ namespace TUK::Game
 		Framework::RenderSubsystem* renderSubsystem = AddSubsystem<Framework::RenderSubsystem>();
 
 		Framework::EventSubsystem* eventSubsystem = AddSubsystem<Framework::EventSubsystem>();
-		eventSubsystem->AddListener<Framework::DisplayCreateEvent>(renderSubsystem, &Framework::RenderSubsystem::RegisterDisplay);
-		eventSubsystem->AddListener<Framework::DisplayCloseEvent>(renderSubsystem, &Framework::RenderSubsystem::UnregisterDisplay);
+		eventSubsystem->AddListener<Framework::DisplayCreateData>(
+			[renderSubsystem](const Framework::Display& display, const Framework::DisplayCreateData&)
+			{
+				renderSubsystem->RegisterDisplay(display);
+			});
+		eventSubsystem->AddListener<Framework::DisplayCloseData>(
+			[renderSubsystem](const Framework::Display& display, const Framework::DisplayCloseData&)
+			{
+				renderSubsystem->UnregisterDisplay(display);
+			});
 
 		AddSubsystem<Framework::ConsoleSubsystem>();
 

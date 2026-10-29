@@ -286,6 +286,6 @@ copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Triangle.hlsl"</Command>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Platform\DisplayEvents.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\DisplayEventData.hpp" />
   </ItemGroup>
 </Project>

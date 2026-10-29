@@ -331,7 +331,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Platform\DisplayEvents.hpp">
+    <ClInclude Include="Sources\Framework\Platform\DisplayEventData.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
   </ItemGroup>
