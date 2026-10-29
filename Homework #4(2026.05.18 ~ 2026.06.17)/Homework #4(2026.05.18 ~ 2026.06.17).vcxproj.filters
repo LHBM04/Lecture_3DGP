@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{2c54f4a4-9dc6-40c9-9f39-0d622e2929f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{abf36fbd-4350-4139-b33c-0b683b74bf31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{18ec0870-8f79-43d1-b25a-9eb11b39e388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Framework">
+      <UniqueIdentifier>{9ad0666e-97a0-495e-85c7-453627f3180e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Framework\Core">
+      <UniqueIdentifier>{e8b2329d-7cea-4a8a-8593-fb2cc75fdb15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Framework\Entities">
+      <UniqueIdentifier>{e7117a06-f9be-4641-9d31-e3e3e7ac47d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Framework\Graphics">
+      <UniqueIdentifier>{f4a2fb6d-ad7c-40a9-99ec-6901d4006c35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Framework\Math">
+      <UniqueIdentifier>{98459d61-409e-4761-88a9-34c3c03e1ec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Framework\Platform">
+      <UniqueIdentifier>{bab638fa-b7a6-425e-ac41-0fdcd73f0462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game">
+      <UniqueIdentifier>{840b0938-26c2-49ad-95e7-074fbc96bbc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Icon">
+      <UniqueIdentifier>{76f5a56f-bb6b-4b1b-a197-99b9bf0785a5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\ConsoleSubsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Engine.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\App.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\System.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\Component.hpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\Entity.hpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\Transform.hpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\World.hpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\Mathf.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\Matrix4x4.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\Quaternion.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\Vector2D.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\Vector3D.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Math\Vector4D.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\Display.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\DisplayOptions.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\DisplaySubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\Event.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\MyEngine.hpp">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\MyApp.hpp">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\TestWorld.hpp">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Precompiled.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Memory.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Logger.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Viewport.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\Rect.hpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainOptions.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Resource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Engine.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Entry.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\App.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\AppSubsystem.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\System.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Entities\Entity.cpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Entities\Transform.cpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Entities\World.cpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
+      <Filter>Sources\Framework\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\Quaternion.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\Vector2D.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\Vector3D.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Math\Vector4D.cpp">
+      <Filter>Sources\Framework\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\Display.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\DisplaySubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\MyEngine.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\MyApp.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\TestWorld.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Precompiled.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Memory.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Logger.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\Shaders\Triangle.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\Homework #4(2026.05.18 ~ 2026.06.17).rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Icon\Homework #4%282026.05.18 ~ 2026.06.17%29.ico">
+      <Filter>Resources\Icon</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\Platform\DisplayEvents.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
