@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
+#include "Resource.h"
+
 namespace
 {
 	/** 윈도우 클래스 이름 */
@@ -67,9 +69,9 @@ namespace TUK::Framework
 		description.style = CS_HREDRAW | CS_VREDRAW;
 		description.lpfnWndProc = WindowProc;
 		description.hInstance = Instance;
-		description.hCursor = LoadCursorA(nullptr, IDC_ARROW);
+		description.hCursor = LoadCursorA(Instance, IDC_ARROW);
 		description.lpszClassName = ClassName;
-		description.hIcon = LoadIconA(nullptr, IDI_APPLICATION);
+		description.hIcon = LoadIconA(Instance, MAKEINTRESOURCE(IDI_HOMEWORK04));
 		
 		if (RegisterClassExA(&description) == 0)
 		{
