@@ -163,6 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Assets\Asset.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\AssetSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\ConsoleSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\Engine.hpp" />

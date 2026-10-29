@@ -34,6 +34,9 @@
     <Filter Include="Resources\Icon">
       <UniqueIdentifier>{76f5a56f-bb6b-4b1b-a197-99b9bf0785a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\Assets">
+      <UniqueIdentifier>{34c235ff-bf7c-4aa3-b43a-ad80c95e1ce4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Core.hpp">
@@ -203,6 +206,12 @@
     </ClInclude>
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\AssetSubsystem.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\Asset.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
