@@ -5,7 +5,7 @@ namespace TUK::Framework
 	class Asset
 	{
 	public:
-		~Asset() noexcept = default;
+		virtual ~Asset() noexcept = default;
 
 		Asset(const Asset&) = delete;
 		Asset& operator=(const Asset&) = delete;

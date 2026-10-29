@@ -19,7 +19,7 @@ namespace TUK::Framework
 	{
 		const GPURootSignature& rootSignature;
 		const GPUShader& vertexShader;
-		const GPUShader* pixelShader = nullptr;
+		const GPUShader& pixelShader;
 
 		// 입력 배열, SemanticName과 셰이더는 생성 호출이 끝날 때까지 유효해야 합니다.
 		std::span<const D3D12_INPUT_ELEMENT_DESC> inputElements;

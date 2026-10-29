@@ -18,8 +18,8 @@ namespace TUK::Framework
 		, device(std::nullopt)
 		, commandBuffer(std::nullopt)
 		, swapChains()
-		, listeners()
 		, fence(std::nullopt)
+		, listeners()
 	{
 		swapChains.reserve(10);
 	}

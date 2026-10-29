@@ -26,10 +26,9 @@ namespace TUK::Framework
 
 	struct GPUShaderCreateInfo final
 	{
-		ShaderStage stage = ShaderStage::Unknown;
 		std::filesystem::path path;
+		ShaderStage stage = ShaderStage::Unknown;
 		std::string entryPoint = "main";
-
 		std::uint32_t compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 	};
 

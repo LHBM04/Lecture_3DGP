@@ -61,8 +61,9 @@ namespace TUK::Framework
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
 		std::unordered_map<const Display*, GPUSwapChain> swapChains;
-		std::vector<RenderCallback> listeners;
 		std::optional<GPUFence> fence;
+
+		std::vector<RenderCallback> listeners;
 	};
 
 	template <class TInstance>

@@ -1,6 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "TestWorld.hpp"
 
+#include "Framework/Assets/AssetSubsystem.hpp"
+#include "Framework/Assets/ShaderAsset.hpp"
+
+#include "Framework/Core/App.hpp"
 #include "Framework/Core/Engine.hpp"
 
 #include "Framework/Entities/Entity.hpp"
@@ -121,36 +125,17 @@ namespace TUK::Game
 
 	std::expected<void, std::string> TestWorld::CreateTriangle(const GPUDevice& device, DXGI_FORMAT targetFormat)
 	{
-		// 실행 파일 옆 Resources/Shaders를 사용하므로 디버거의 작업 디렉터리에 의존하지 않습니다.
-		std::array<char, 32768> executablePath{};
-		const DWORD pathLength = GetModuleFileNameA(nullptr, executablePath.data(), static_cast<DWORD>(executablePath.size()));
-		if (pathLength == 0 || pathLength >= executablePath.size())
+		auto* assetSubsystem = App::GetInstance()->GetSubsystem<AssetSubsystem>();
+		if (!assetSubsystem)
 		{
-			return std::unexpected("실행 파일 경로를 가져오지 못했습니다.");
-		}
-		const std::filesystem::path shaderPath = std::filesystem::path(executablePath.data()).parent_path() / "Resources" / "Shaders" / "Triangle.hlsl";
-
-		GPUShaderCreateInfo shaderInfo
-		{
-			.stage = ShaderStage::Vertex,
-			.path = shaderPath,
-			.entryPoint = "VSMain",
-		};
-#if defined(_DEBUG)
-		shaderInfo.compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-		auto vertexShader = device.CreateGPUShader(shaderInfo);
-		if (!vertexShader)
-		{
-			return std::unexpected(vertexShader.error());
+			return std::unexpected("AssetSubsystem이 없습니다.");
 		}
 
-		shaderInfo.entryPoint = "PSMain";
-		shaderInfo.stage = ShaderStage::Pixel;
-		auto pixelShader = device.CreateGPUShader(shaderInfo);
-		if (!pixelShader)
+		auto* vertexShader = assetSubsystem->LoadAsset<ShaderAsset>("Resources\\Shaders\\Triangle.vert.hlsl");
+		auto* pixelShader = assetSubsystem->LoadAsset<ShaderAsset>("Resources\\Shaders\\Triangle.frag.hlsl");
+		if (!vertexShader || !pixelShader)
 		{
-			return std::unexpected(pixelShader.error());
+			return std::unexpected("삼각형 셰이더 에셋 로딩에 실패했습니다.");
 		}
 
 		D3D12_ROOT_PARAMETER cameraParameter{};
@@ -252,8 +237,8 @@ namespace TUK::Game
 		const GPUGraphicsPipelineStateCreateInfo pipelineInfo
 		{
 			.rootSignature = newRootSignature.value(),
-			.vertexShader = vertexShader.value(),
-			.pixelShader = &pixelShader.value(),
+			.vertexShader = vertexShader->GetShader(),
+			.pixelShader = pixelShader->GetShader(),
 			.inputElements = inputElements,
 			.renderTargetFormats = targetFormats,
 		};

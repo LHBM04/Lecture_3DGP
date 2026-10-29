@@ -1,8 +1,12 @@
 ﻿#include "Precompiled.hpp"
 #include "MyApp.hpp"
 
+#include "Framework/Assets/AssetSubsystem.hpp"
+
 #include "Framework/Entities/WorldSubsystem.hpp"
+
 #include "Framework/Graphics/RenderSubsystem.hpp"
+
 #include "Framework/Platform/DisplayCreateInfo.hpp"
 #include "Framework/Platform/DisplaySubsystem.hpp"
 
@@ -52,6 +56,8 @@ namespace TUK::Game
 		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::PreRender);
 		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::Render);
 		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::PostRender);
+
+		AddSubsystem<AssetSubsystem>();
 
 		return App::Startup();
 	}

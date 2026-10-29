@@ -235,25 +235,6 @@ namespace TUK::Framework
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
-		if (!info.rootSignature.d3dRootSignature || !info.vertexShader.d3dBlob
-			|| (info.pixelShader && !info.pixelShader->d3dBlob))
-		{
-			return std::unexpected("GPUGraphicsPipelineState의 루트 시그니처 또는 셰이더가 유효하지 않습니다.");
-		}
-
-		if (info.vertexShader.GetStage() != ShaderStage::Vertex
-			|| (info.pixelShader && info.pixelShader->GetStage() != ShaderStage::Pixel))
-		{
-			return std::unexpected("그래픽스 파이프라인의 셰이더 스테이지가 올바르지 않습니다.");
-		}
-
-		if (info.inputElements.size() > D3D12_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT
-			|| info.renderTargetFormats.size() > D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT
-			|| info.sampleDescription.Count == 0)
-		{
-			return std::unexpected("입력 요소 개수, 렌더 타겟 개수 또는 샘플 개수가 유효하지 않습니다.");
-		}
-
 		switch (info.topologyType)
 		{
 		case D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT:
@@ -273,10 +254,7 @@ namespace TUK::Framework
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
 		description.pRootSignature = &info.rootSignature.GetD3DRootSignature();
 		description.VS = info.vertexShader.GetD3DBytecode();
-		if (info.pixelShader)
-		{
-			description.PS = info.pixelShader->GetD3DBytecode();
-		}
+		description.PS = info.pixelShader.GetD3DBytecode();
 		description.BlendState = info.blendState;
 		description.SampleMask = info.sampleMask;
 		description.RasterizerState = info.rasterizerState;

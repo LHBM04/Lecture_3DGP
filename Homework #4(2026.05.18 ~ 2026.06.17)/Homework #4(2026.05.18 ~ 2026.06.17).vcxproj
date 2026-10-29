@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Assets\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Assets\AssetSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\ConsoleSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\Engine.hpp" />
@@ -183,20 +184,20 @@
     <ClInclude Include="Sources\Framework\Entities\World.hpp" />
     <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\Camera.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainCreateInfo.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\Camera.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Rect.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Viewport.hpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Sources\Resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Assets\AssetSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp" />
@@ -236,11 +238,11 @@
     <ClCompile Include="Sources\Framework\Entities\Transform.cpp" />
     <ClCompile Include="Sources\Framework\Entities\World.cpp" />
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\Camera.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\Camera.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
@@ -266,11 +268,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Resources\Shaders\Triangle.hlsl">
+    <CustomBuild Include="Resources\Shaders\Triangle.vert.hlsl">
       <Command>if not exist "$(OutDir)Resources\Shaders" mkdir "$(OutDir)Resources\Shaders"
-copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Triangle.hlsl"</Command>
-      <Message>Copying Triangle.hlsl</Message>
-      <Outputs>$(OutDir)Resources\Shaders\Triangle.hlsl</Outputs>
+copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Triangle.vert.hlsl"</Command>
+      <Message>Copying Triangle.vert.hlsl</Message>
+      <Outputs>$(OutDir)Resources\Shaders\Triangle.vert.hlsl</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\Triangle.frag.hlsl">
+      <Command>if not exist "$(OutDir)Resources\Shaders" mkdir "$(OutDir)Resources\Shaders"
+copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Triangle.frag.hlsl"</Command>
+      <Message>Copying Triangle.frag.hlsl</Message>
+      <Outputs>$(OutDir)Resources\Shaders\Triangle.frag.hlsl</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

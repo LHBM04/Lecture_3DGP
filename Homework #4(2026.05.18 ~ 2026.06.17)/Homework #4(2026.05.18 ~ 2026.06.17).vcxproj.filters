@@ -87,6 +87,30 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainCreateInfo.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
@@ -156,24 +180,6 @@
     <ClInclude Include="Sources\Framework\Core\Logger.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
@@ -198,12 +204,6 @@
     <ClInclude Include="Sources\Framework\Graphics\Rect.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainCreateInfo.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -211,6 +211,9 @@
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Assets\Asset.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
   </ItemGroup>
@@ -247,6 +250,18 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
       <Filter>Sources\Framework\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
@@ -302,22 +317,10 @@
     <ClCompile Include="Sources\Framework\Core\Logger.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
@@ -325,7 +328,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Resources\Shaders\Triangle.hlsl">
+    <CustomBuild Include="Resources\Shaders\Triangle.vert.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\Triangle.frag.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

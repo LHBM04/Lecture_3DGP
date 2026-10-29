@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <d3d12.h>
-
 #include "../Entities/Component.hpp"
 
 #include "../Graphics/Rect.hpp"
