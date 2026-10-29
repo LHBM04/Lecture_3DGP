@@ -132,9 +132,9 @@ namespace TUK::Game
 
 		GPUShaderCreateInfo shaderInfo
 		{
+			.stage = ShaderStage::Vertex,
 			.path = shaderPath,
 			.entryPoint = "VSMain",
-			.target = "vs_5_1",
 		};
 #if defined(_DEBUG)
 		shaderInfo.compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -146,7 +146,7 @@ namespace TUK::Game
 		}
 
 		shaderInfo.entryPoint = "PSMain";
-		shaderInfo.target = "ps_5_1";
+		shaderInfo.stage = ShaderStage::Pixel;
 		auto pixelShader = device.CreateGPUShader(shaderInfo);
 		if (!pixelShader)
 		{

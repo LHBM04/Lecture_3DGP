@@ -111,9 +111,22 @@ namespace TUK::Framework
 
 	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(const GPUShaderCreateInfo& info) const
 	{
-		if (info.path.empty() || info.entryPoint.empty() || info.target.empty())
+		if (info.path.empty() || info.entryPoint.empty())
 		{
-			return std::unexpected("GPUShader 파일 경로, 진입점과 타깃을 지정해야 합니다.");
+			return std::unexpected("GPUShader 파일 경로와 진입점을 지정해야 합니다.");
+		}
+
+		const char* target = nullptr;
+		switch (info.stage)
+		{
+		case ShaderStage::Vertex: target = "vs_5_1"; break;
+		case ShaderStage::Hull: target = "hs_5_1"; break;
+		case ShaderStage::Domain: target = "ds_5_1"; break;
+		case ShaderStage::Geometry: target = "gs_5_1"; break;
+		case ShaderStage::Pixel: target = "ps_5_1"; break;
+		case ShaderStage::Compute: target = "cs_5_1"; break;
+		default:
+			return std::unexpected("GPUShader 스테이지가 유효하지 않습니다.");
 		}
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
@@ -123,7 +136,7 @@ namespace TUK::Framework
 			nullptr,
 			D3D_COMPILE_STANDARD_FILE_INCLUDE,
 			info.entryPoint.c_str(),
-			info.target.c_str(),
+			target,
 			info.compileFlags,
 			0,
 			d3dBlob.GetAddressOf(),
@@ -133,7 +146,7 @@ namespace TUK::Framework
 		{
 			std::string message = std::format(
 				"GPUShader 컴파일에 실패했습니다. Entry: {}, Target: {}, HRESULT: 0x{:08X}",
-				info.entryPoint, info.target, static_cast<std::uint32_t>(result));
+				info.entryPoint, target, static_cast<std::uint32_t>(result));
 
 			if (errorBlob && errorBlob->GetBufferSize() > 0)
 			{
@@ -151,7 +164,7 @@ namespace TUK::Framework
 			return std::unexpected(std::move(message));
 		}
 
-		return GPUShader(std::move(d3dBlob));
+		return GPUShader(std::move(d3dBlob), info.stage);
 	}
 
 	std::expected<GPURootSignature, std::string> GPUDevice::CreateGPURootSignature(const GPURootSignatureCreateInfo& info) const
@@ -226,6 +239,12 @@ namespace TUK::Framework
 			|| (info.pixelShader && !info.pixelShader->d3dBlob))
 		{
 			return std::unexpected("GPUGraphicsPipelineState의 루트 시그니처 또는 셰이더가 유효하지 않습니다.");
+		}
+
+		if (info.vertexShader.GetStage() != ShaderStage::Vertex
+			|| (info.pixelShader && info.pixelShader->GetStage() != ShaderStage::Pixel))
+		{
+			return std::unexpected("그래픽스 파이프라인의 셰이더 스테이지가 올바르지 않습니다.");
 		}
 
 		if (info.inputElements.size() > D3D12_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT

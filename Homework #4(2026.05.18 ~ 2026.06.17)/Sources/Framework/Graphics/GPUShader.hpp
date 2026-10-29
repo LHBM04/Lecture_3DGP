@@ -13,13 +13,23 @@
 
 namespace TUK::Framework
 {
+	enum class ShaderStage : std::uint8_t
+	{
+		Unknown,
+		Vertex,
+		Hull,
+		Domain,
+		Geometry,
+		Pixel,
+		Compute,
+	};
+
 	struct GPUShaderCreateInfo final
 	{
+		ShaderStage stage = ShaderStage::Unknown;
 		std::filesystem::path path;
 		std::string entryPoint = "main";
 
-		// 예: "vs_5_1", "ps_5_1", "cs_5_1". D3DCompiler용 타깃을 지정합니다.
-		std::string target;
 		std::uint32_t compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 	};
 
@@ -38,11 +48,13 @@ namespace TUK::Framework
 
 		[[nodiscard]] ID3DBlob& GetD3DBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
+		[[nodiscard]] ShaderStage GetStage() const noexcept;
 
 	private:
-		explicit GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept;
+		GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, ShaderStage stage) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
+		ShaderStage stage;
 	};
 
 	inline ID3DBlob& GPUShader::GetD3DBlob() const noexcept
@@ -57,8 +69,14 @@ namespace TUK::Framework
 		return { d3dBlob->GetBufferPointer(), d3dBlob->GetBufferSize() };
 	}
 
-	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept
+	inline ShaderStage GPUShader::GetStage() const noexcept
+	{
+		return stage;
+	}
+
+	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, ShaderStage stage) noexcept
 		: d3dBlob(std::move(d3dBlob))
+		, stage(stage)
 	{
 	}
 }
