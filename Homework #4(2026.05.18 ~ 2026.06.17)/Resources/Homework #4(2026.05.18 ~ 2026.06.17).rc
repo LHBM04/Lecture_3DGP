@@ -63,7 +63,7 @@ IDI_HOMEWORK04     ICON                    "Icon/Homework #4(2026.05.18 ~ 2026.0
 
 STRINGTABLE
 BEGIN
-    IDS_STRING_WNDCLASS     "TUK Framework"
+    IDS_WNDCLASS     "TUK Framework"
 END
 
 #endif    // 한국어(대한민국) resources

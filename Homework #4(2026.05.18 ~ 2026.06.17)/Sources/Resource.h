@@ -3,7 +3,7 @@
 // Homework #4(2026.05.18 ~ 2026.06.17).rc에서 사용되고 있습니다.
 //
 #define IDI_HOMEWORK04             101
-#define IDS_STRING_WNDCLASS             102
+#define IDS_WNDCLASS             102
 
 // Next default values for new objects
 // 
