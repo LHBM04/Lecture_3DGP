@@ -4,6 +4,7 @@
 #include "MyApp.hpp"
 
 #include "Framework/Assets/AssetSubsystem.hpp"
+#include "Framework/Assets/ModelAssetLoader.hpp"
 #include "Framework/Assets/ShaderAsset.hpp"
 #include "Framework/Assets/ShaderAssetLoader.hpp"
 
@@ -62,7 +63,8 @@ namespace TUK::Game
 		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::PostRender);
 
 		AssetSubsystem* assetSubsystem = AddSubsystem<AssetSubsystem>();
-		assetSubsystem->AddLoader<ShaderAssetLoader>(*renderSubsystem->GetGPUDevice());
+		assetSubsystem->AddLoader<Framework::ShaderAssetLoader>(*renderSubsystem->GetGPUDevice());
+		assetSubsystem->AddLoader<Framework::ModelAssetLoader>(*renderSubsystem->GetGPUDevice());
 
 		// 셰이더 로드
 		for (const auto& entry : std::filesystem::recursive_directory_iterator("Resources\\Shaders"))

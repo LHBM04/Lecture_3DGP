@@ -7,6 +7,9 @@
     <Filter Include="Resources\Shaders">
       <UniqueIdentifier>{abf36fbd-4350-4139-b33c-0b683b74bf31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\Models">
+      <UniqueIdentifier>{6d401975-5a6d-49c5-921a-9bfc4cb51cf0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Sources">
       <UniqueIdentifier>{18ec0870-8f79-43d1-b25a-9eb11b39e388}</UniqueIdentifier>
     </Filter>
@@ -216,10 +219,16 @@
     <ClInclude Include="Sources\Framework\Assets\ShaderAssetLoader.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\ModelAssetLoader.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Assets\AssetLoader.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\ModelAsset.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
   </ItemGroup>
@@ -338,14 +347,31 @@
     <ClCompile Include="Sources\Framework\Assets\ShaderAssetLoader.cpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Assets\ModelAssetLoader.cpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="Resources\Models\Triangle.obj">
+      <Filter>Resources\Models</Filter>
+    </CustomBuild>
     <CustomBuild Include="Resources\Shaders\Triangle.vert.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Resources\Shaders\Triangle.frag.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Resources\Models\Airplane.obj">
+      <Filter>Resources\Models</Filter>
+    </Object>
+    <Object Include="Resources\Models\Cube.obj">
+      <Filter>Resources\Models</Filter>
+    </Object>
+    <Object Include="Resources\Models\Sphere.obj">
+      <Filter>Resources\Models</Filter>
+    </Object>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\Homework #4(2026.05.18 ~ 2026.06.17).rc">

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "AssetLoader.hpp"
+#include "ShaderAsset.hpp"
 
 namespace TUK::Framework
 {
 	class GPUDevice;
-	class ShaderAsset;
 
 	class ShaderAssetLoader final : public AssetLoader
 	{

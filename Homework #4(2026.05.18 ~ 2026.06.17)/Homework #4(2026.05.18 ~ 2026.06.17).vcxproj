@@ -165,9 +165,11 @@
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Assets\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Assets\ShaderAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\ModelAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Assets\AssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Assets\AssetSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\ModelAsset.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\ConsoleSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\Engine.hpp" />
@@ -228,6 +230,7 @@
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Assets\AssetSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Assets\ShaderAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Assets\ModelAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp" />
@@ -271,6 +274,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="Resources\Models\Triangle.obj">
+      <Command>if not exist "$(OutDir)Resources\Models" mkdir "$(OutDir)Resources\Models"
+copy /Y "%(FullPath)" "$(OutDir)Resources\Models\Triangle.obj"</Command>
+      <Message>Copying Triangle.obj</Message>
+      <Outputs>$(OutDir)Resources\Models\Triangle.obj</Outputs>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </CustomBuild>
     <CustomBuild Include="Resources\Shaders\Triangle.vert.hlsl">
       <Command>if not exist "$(OutDir)Resources\Shaders" mkdir "$(OutDir)Resources\Shaders"
 copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Triangle.vert.hlsl"</Command>
@@ -300,5 +313,26 @@ copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Triangle.frag.hlsl"</Command>
   </ImportGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\DisplayEventData.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Resources\Models\Airplane.obj">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="Resources\Models\Cube.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="Resources\Models\Sphere.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
 </Project>

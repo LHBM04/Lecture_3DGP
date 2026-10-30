@@ -1,7 +1,6 @@
 struct VertexInput
 {
 	float3 position : POSITION;
-	float4 color : COLOR0;
 };
 
 struct VertexOutput
@@ -21,6 +20,6 @@ VertexOutput main(VertexInput input)
 	VertexOutput output;
 	float4 position = mul(float4(input.position, 1.0f), view);
 	output.position = mul(position, projection);
-	output.color = input.color;
+	output.color = float4(1.0f, 0.6f, 0.2f, 1.0f);
 	return output;
 }

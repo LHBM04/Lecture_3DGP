@@ -2,6 +2,7 @@
 #include "TestWorld.hpp"
 
 #include "Framework/Assets/AssetSubsystem.hpp"
+#include "Framework/Assets/ModelAsset.hpp"
 #include "Framework/Assets/ShaderAsset.hpp"
 
 #include "Framework/Core/App.hpp"
@@ -15,12 +16,6 @@
 
 namespace
 {
-	struct Vertex final
-	{
-		float position[3];
-		float color[4];
-	};
-
 	// HLSL의 row_major float4x4 두 개와 같은 저장 형식입니다.
 	struct CameraConstants final
 	{
@@ -74,7 +69,7 @@ namespace TUK::Game
 
 	void TestWorld::OnRender(GPUCommandBuffer& renderer)
 	{
-		if (!rootSignature || !pipelineState || !mesh || !cameraBuffer)
+		if (!rootSignature || !pipelineState || !model || !cameraBuffer)
 		{
 			return;
 		}
@@ -99,15 +94,16 @@ namespace TUK::Game
 		renderer.SetGPUGraphicsConstantBuffer(0, *cameraBuffer);
 		renderer.SetViewport(camera->GetViewport());
 		renderer.SetScissorRect(camera->GetScissorRect());
-		renderer.SetGPUMesh(*mesh);
-		renderer.DrawIndexed(mesh->GetIndexCount());
+		const GPUMesh& mesh = model->GetMesh();
+		renderer.SetGPUMesh(mesh);
+		renderer.DrawIndexed(mesh.GetIndexCount());
 	}
 
 	void TestWorld::OnExit()
 	{
 		if (renderSubsystem)
 		{
-			if (mesh || pipelineState || rootSignature || cameraBuffer)
+			if (model || pipelineState || rootSignature || cameraBuffer)
 			{
 				if (auto result = renderSubsystem->WaitForGPU(); !result)
 				{
@@ -116,7 +112,7 @@ namespace TUK::Game
 			}
 		}
 
-		mesh.reset();
+		model = nullptr;
 		cameraBuffer.reset();
 		pipelineState.reset();
 		rootSignature.reset();
@@ -164,53 +160,13 @@ namespace TUK::Game
 			return std::unexpected(newCameraBuffer.error());
 		}
 
-		const std::array<Vertex, 3> vertices
+		ModelAsset* newModel = assetSubsystem->LoadAsset<ModelAsset>("Resources\\Models\\Airplane.obj");
+		if (!newModel)
 		{
-			Vertex{ { 0.0f, 0.6f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-			Vertex{ { 0.6f, -0.6f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-			Vertex{ { -0.6f, -0.6f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
-		};
-
-		// 정점 세 개를 한 번만 기록하는 예제이므로 UPLOAD 버퍼를 직접 사용합니다.
-		const GPUBufferDescription bufferInfo
-		{
-			.sizeInBytes = sizeof(vertices),
-			.heapType = D3D12_HEAP_TYPE_UPLOAD,
-		};
-		auto vertexBuffer = device.CreateGPUBuffer(bufferInfo);
-		if (!vertexBuffer)
-		{
-			return std::unexpected(vertexBuffer.error());
-		}
-		if (auto result = vertexBuffer->Write(std::as_bytes(std::span(vertices))); !result)
-		{
-			return std::unexpected(result.error());
+			return std::unexpected("삼각형 모델 에셋 로딩에 실패했습니다.");
 		}
 
-		const std::array<std::uint32_t, 3> indices{ 0, 1, 2 };
-		const GPUBufferDescription indexBufferInfo
-		{
-			.sizeInBytes = sizeof(indices),
-			.heapType = D3D12_HEAP_TYPE_UPLOAD,
-		};
-		auto indexBuffer = device.CreateGPUBuffer(indexBufferInfo);
-		if (!indexBuffer)
-		{
-			return std::unexpected(indexBuffer.error());
-		}
-		if (auto result = indexBuffer->Write(std::as_bytes(std::span(indices))); !result)
-		{
-			return std::unexpected(result.error());
-		}
-
-		const GPUMeshCreateInfo meshInfo{ .vertexStride = static_cast<std::uint32_t>(sizeof(Vertex)) };
-		auto newMesh = device.CreateGPUMesh(std::move(vertexBuffer.value()), std::move(indexBuffer.value()), meshInfo);
-		if (!newMesh)
-		{
-			return std::unexpected(newMesh.error());
-		}
-
-		const std::array<D3D12_INPUT_ELEMENT_DESC, 2> inputElements
+		const std::array<D3D12_INPUT_ELEMENT_DESC, 1> inputElements
 		{
 			D3D12_INPUT_ELEMENT_DESC
 			{
@@ -218,17 +174,7 @@ namespace TUK::Game
 				.SemanticIndex = 0,
 				.Format = DXGI_FORMAT_R32G32B32_FLOAT,
 				.InputSlot = 0,
-				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(Vertex, position)),
-				.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-				.InstanceDataStepRate = 0,
-			},
-			D3D12_INPUT_ELEMENT_DESC
-			{
-				.SemanticName = "COLOR",
-				.SemanticIndex = 0,
-				.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-				.InputSlot = 0,
-				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(Vertex, color)),
+				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(ModelVertex, position)),
 				.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 				.InstanceDataStepRate = 0,
 			},
@@ -250,7 +196,7 @@ namespace TUK::Game
 
 		rootSignature = std::move(newRootSignature.value());
 		pipelineState = std::move(newPipelineState.value());
-		mesh = std::move(newMesh.value());
+		model = newModel;
 		cameraBuffer = std::move(newCameraBuffer.value());
 		return {};
 	}
