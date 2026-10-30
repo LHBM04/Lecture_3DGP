@@ -6,13 +6,15 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <typeindex>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "../Core/AppSubsystem.hpp"
 
 #include "Asset.hpp"
-#include "ShaderAsset.hpp"
+#include "AssetLoader.hpp"
 
 namespace TUK::Framework
 {
@@ -29,11 +31,11 @@ namespace TUK::Framework
 		AssetSubsystem(AssetSubsystem&&) noexcept = delete;
 		AssetSubsystem& operator=(AssetSubsystem&&) noexcept = delete;
 
-		template <std::derived_from<Asset> TAsset>
-		TAsset* LoadAsset(const std::filesystem::path& path);
+		template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
+		void AddLoader(TArgs&&... args);
 
 		template <std::derived_from<Asset> TAsset>
-		const TAsset* LoadAsset(const std::filesystem::path& path) const noexcept;
+		TAsset* LoadAsset(const std::filesystem::path& path);
 
 	protected:
 		SystemStatus OnStartup() override;
@@ -44,11 +46,18 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		using AssetLoaderList = std::pmr::vector<std::unique_ptr<AssetLoader>>;
+		using AssetLoaderDict = std::pmr::unordered_map<std::type_index, AssetLoader*>;
+
+		using AssetList = std::pmr::vector<std::unique_ptr<Asset>>;
+		using AssetDict = std::pmr::unordered_map<std::filesystem::path, AssetList>;
+
 		AssetSubsystem() noexcept;
 
-		std::expected<ShaderAsset, std::string> LoadShaderAsset(const std::filesystem::path& path);
+		AssetLoaderList assetLoaders;
+		AssetLoaderDict assetLoadersByType;
 
-		std::pmr::vector<std::unique_ptr<Asset>> assets;
+		AssetList assets;
 	};
 
 	inline AssetSubsystem::AssetSubsystem() noexcept
@@ -56,29 +65,46 @@ namespace TUK::Framework
 	{
 	}
 
-	template <std::derived_from<Asset> TAsset>
-	TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
+	template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
+	void AssetSubsystem::AddLoader(TArgs&&... args)
 	{
-		TAsset* result = nullptr;
-		if constexpr (std::is_same_v<TAsset, ShaderAsset>)
+		using TAsset = typename TAssetLoader::AssetType;
+		static_assert(std::derived_from<TAsset, Asset>);
+
+		const std::type_index assetType(typeid(TAsset));
+		if (assetLoadersByType.contains(assetType))
 		{
-			std::expected<ShaderAsset, std::string> shaderAsset = LoadShaderAsset(path);
-			if (shaderAsset)
-			{
-				result = (TAsset*)assets.emplace_back(std::make_unique<ShaderAsset>(std::move(*shaderAsset))).get();
-			}
-			else
-			{
-				std::cerr << "ShaderAsset: " << path << ": " << shaderAsset.error() << std::endl;
-			}
+			return;
 		}
 
-		return result;
+		auto loader = std::make_unique<TAssetLoader>(std::forward<TArgs>(args)...);
+		AssetLoader* pointer = loader.get();
+		assetLoaders.emplace_back(std::move(loader));
+		assetLoadersByType.emplace(assetType, pointer);
 	}
 
 	template <std::derived_from<Asset> TAsset>
-	const TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path) const noexcept
+	TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
 	{
-		return static_cast<const TAsset*>(LoadAsset<TAsset>(path));
+		const auto assetLoader = assetLoadersByType.find(std::type_index(typeid(TAsset)));
+		if (assetLoader == assetLoadersByType.end())
+		{
+			return nullptr;
+		}
+
+		auto asset = assetLoader->second->Load(path);
+		if (!asset)
+		{
+			return nullptr;
+		}
+
+		auto* result = dynamic_cast<TAsset*>(asset->get());
+		if (!result)
+		{
+			return nullptr;
+		}
+
+		assets.emplace_back(std::move(*asset));
+		return result;
 	}
 }

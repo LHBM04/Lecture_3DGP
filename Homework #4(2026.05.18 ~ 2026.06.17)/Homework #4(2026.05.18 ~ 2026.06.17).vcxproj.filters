@@ -213,6 +213,12 @@
     <ClInclude Include="Sources\Framework\Assets\Asset.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\ShaderAssetLoader.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\AssetLoader.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
@@ -325,6 +331,12 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Assets\AssetSubsystem.cpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Assets\ShaderAssetLoader.cpp">
+      <Filter>Sources\Framework\Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

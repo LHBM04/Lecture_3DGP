@@ -164,6 +164,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Assets\Asset.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\ShaderAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\AssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Assets\AssetSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
@@ -225,6 +227,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Assets\AssetSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Assets\ShaderAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Core\ConsoleSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\EngineSubsystem.cpp" />
