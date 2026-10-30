@@ -33,52 +33,22 @@ namespace TUK::Framework
 
 	std::expected<D3DMesh, std::string> D3DDevice::CreateD3DMesh(
 		D3DBuffer vertexBuffer,
+		std::uint32_t vertextStride,
 		D3DBuffer indexBuffer,
-		std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) const
+		DXGI_FORMAT indexFormat,
+		D3D12_PRIMITIVE_TOPOLOGY topology) const
 	{
-		if (!vertexBuffer.d3dResource || vertexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
-		{
-			return std::unexpected("정점 버퍼가 유효하지 않습니다.");
-		}
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+		vertexBufferView.BufferLocation = vertexBuffer.GetGPUVirtualAddress();
+		vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBuffer.GetSizeInBytes());
+		vertexBufferView.StrideInBytes = vertextStride;
 
-		const std::uint64_t vertexSize = vertexBuffer.GetSizeInBytes();
-		if (vertexStride == 0 || vertexStride > D3D12_REQ_MULTI_ELEMENT_STRUCTURE_SIZE_IN_BYTES
-			|| vertexSize > std::numeric_limits<std::uint32_t>::max()
-			|| vertexSize % vertexStride != 0)
-		{
-			return std::unexpected("정점 버퍼 크기 또는 stride가 유효하지 않습니다.");
-		}
+		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+		indexBufferView.BufferLocation = indexBuffer.GetGPUVirtualAddress();
+		indexBufferView.SizeInBytes = static_cast<UINT>(indexBuffer.GetSizeInBytes());
+		indexBufferView.Format = indexFormat;
 
-		switch (topology)
-		{
-		case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
-		case D3D_PRIMITIVE_TOPOLOGY_LINELIST:
-		case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP:
-		case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST:
-		case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP:
-			break;
-		default:
-			return std::unexpected("지원하지 않는 메쉬 topology입니다.");
-		}
-
-		if (!indexBuffer.d3dResource || indexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
-		{
-			return std::unexpected("인덱스 버퍼가 유효하지 않습니다.");
-		}
-
-		if (indexFormat != DXGI_FORMAT_R16_UINT && indexFormat != DXGI_FORMAT_R32_UINT)
-		{
-			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
-		}
-
-		const std::uint32_t indexSize = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		const std::uint64_t bufferSize = indexBuffer.GetSizeInBytes();
-		if (bufferSize > std::numeric_limits<std::uint32_t>::max() || bufferSize % indexSize != 0)
-		{
-			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
-		}
-
-		return D3DMesh(std::move(vertexBuffer), std::move(indexBuffer), vertexStride, indexFormat, topology);
+		return D3DMesh(std::move(vertexBuffer), vertexBufferView, std::move(indexBuffer), indexBufferView, topology);
 	}
 
 	std::expected<D3DShader, std::string> D3DDevice::CreateD3DShader(const std::filesystem::path& path, std::string_view target, const std::string& entryPoint, std::uint32_t compileFlags) const

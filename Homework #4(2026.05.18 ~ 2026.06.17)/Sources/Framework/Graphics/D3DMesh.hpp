@@ -35,8 +35,10 @@ namespace TUK::Framework
 	private:
 		explicit D3DMesh(
 			D3DBuffer vertexBuffer,
+			D3D12_VERTEX_BUFFER_VIEW vertexBufferView,
 			D3DBuffer indexBuffer,
-			std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
+			D3D12_INDEX_BUFFER_VIEW indexBufferView,
+			D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
 
 		D3DBuffer vertexBuffer;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
