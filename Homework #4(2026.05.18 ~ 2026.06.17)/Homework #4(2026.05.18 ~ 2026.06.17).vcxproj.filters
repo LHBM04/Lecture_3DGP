@@ -90,22 +90,22 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DRootSignature.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DGraphicsPipelineState.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DFence.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DDevice.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DCommandBuffer.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DSwapChain.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp">
@@ -177,19 +177,19 @@
     <ClInclude Include="Sources\Framework\Core\Logger.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DBuffer.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DMesh.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DTexture.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DTarget.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPURenderTarget.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\D3DShader.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
@@ -254,16 +254,16 @@
     <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
       <Filter>Sources\Framework\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\D3DFence.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\D3DDevice.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\D3DCommandBuffer.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\D3DSwapChain.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
@@ -320,10 +320,10 @@
     <ClCompile Include="Sources\Framework\Core\Logger.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\D3DBuffer.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\D3DMesh.cpp">
+    <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">

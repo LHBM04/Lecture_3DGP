@@ -107,7 +107,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::PreRender(D3DCommandBuffer& renderer)
+	void World::PreRender(GPUCommandBuffer& renderer)
 	{
 		if (!isEntered)
 		{
@@ -130,7 +130,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::Render(D3DCommandBuffer& renderer)
+	void World::Render(GPUCommandBuffer& renderer)
 	{
 		if (!isEntered)
 		{
@@ -153,7 +153,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::PostRender(D3DCommandBuffer& renderer)
+	void World::PostRender(GPUCommandBuffer& renderer)
 	{
 		if (!isEntered)
 		{
@@ -192,15 +192,15 @@ namespace TUK::Framework
 	{
 	}
 
-	void World::OnPreRender(D3DCommandBuffer&)
+	void World::OnPreRender(GPUCommandBuffer&)
 	{
 	}
 
-	void World::OnRender(D3DCommandBuffer&)
+	void World::OnRender(GPUCommandBuffer&)
 	{
 	}
 
-	void World::OnPostRender(D3DCommandBuffer&)
+	void World::OnPostRender(GPUCommandBuffer&)
 	{
 	}
 

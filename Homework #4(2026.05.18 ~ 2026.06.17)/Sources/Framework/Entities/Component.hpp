@@ -3,7 +3,7 @@
 namespace TUK::Framework
 {
 	class Entity;
-	class D3DCommandBuffer;
+	class GPUCommandBuffer;
 	class World;
 
 	class Component
@@ -36,9 +36,9 @@ namespace TUK::Framework
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
 
-		virtual void OnPreRender(D3DCommandBuffer& renderer);
-		virtual void OnRender(D3DCommandBuffer& renderer);
-		virtual void OnPostRender(D3DCommandBuffer& renderer);
+		virtual void OnPreRender(GPUCommandBuffer& renderer);
+		virtual void OnRender(GPUCommandBuffer& renderer);
+		virtual void OnPostRender(GPUCommandBuffer& renderer);
 
 		virtual void OnDestroy();
 
@@ -96,15 +96,15 @@ namespace TUK::Framework
 	{
 	}
 
-	inline void Component::OnPreRender(D3DCommandBuffer&)
+	inline void Component::OnPreRender(GPUCommandBuffer&)
 	{
 	}
 
-	inline void Component::OnRender(D3DCommandBuffer&)
+	inline void Component::OnRender(GPUCommandBuffer&)
 	{
 	}
 
-	inline void Component::OnPostRender(D3DCommandBuffer&)
+	inline void Component::OnPostRender(GPUCommandBuffer&)
 	{
 	}
 

@@ -18,14 +18,14 @@
 
 namespace TUK::Framework
 {
-	class D3DDevice;
+	class GPUDevice;
 
 	class ModelAssetLoader final : public AssetLoader
 	{
 	public:
 		using AssetType = ModelAsset;
 
-		explicit ModelAssetLoader(const D3DDevice& device) noexcept;
+		explicit ModelAssetLoader(const GPUDevice& device) noexcept;
 		~ModelAssetLoader() noexcept override = default;
 
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
@@ -47,10 +47,10 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> ReadOBJ(
 			const std::filesystem::path& path, std::vector<ModelVertex>& vertices, std::vector<std::uint32_t>& indices) const;
 
-		[[nodiscard]] std::expected<D3DBuffer, std::string> CreateUploadBuffer(std::span<const std::byte> bytes) const;
-		[[nodiscard]] std::expected<D3DMesh, std::string> CreateMesh(
+		[[nodiscard]] std::expected<GPUBuffer, std::string> CreateUploadBuffer(std::span<const std::byte> bytes) const;
+		[[nodiscard]] std::expected<GPUMesh, std::string> CreateMesh(
 			std::span<const ModelVertex> vertices, std::span<const std::uint32_t> indices) const;
 
-		const D3DDevice& device;
+		const GPUDevice& device;
 	};
 }

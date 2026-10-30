@@ -13,7 +13,7 @@
 namespace TUK::Framework
 {
 	class World;
-	class D3DCommandBuffer;
+	class GPUCommandBuffer;
 
 	class Entity
 	{
@@ -53,9 +53,9 @@ namespace TUK::Framework
 		void FixedUpdate();
 		void Update();
 		void LateUpdate();
-		void PreRender(D3DCommandBuffer& commandBuffer);
-		void Render(D3DCommandBuffer& commandBuffer);
-		void PostRender(D3DCommandBuffer& commandBuffer);
+		void PreRender(GPUCommandBuffer& commandBuffer);
+		void Render(GPUCommandBuffer& commandBuffer);
+		void PostRender(GPUCommandBuffer& commandBuffer);
 
 	private:
 		void RemoveDestroyedComponents();

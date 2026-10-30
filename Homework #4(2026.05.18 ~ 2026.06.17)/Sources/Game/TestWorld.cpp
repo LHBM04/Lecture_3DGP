@@ -45,10 +45,10 @@ namespace TUK::Game
 			return;
 		}
 
-		const D3DDevice* device = renderSubsystem->GetD3DDevice();
+		const GPUDevice* device = renderSubsystem->GetGPUDevice();
 		if (!device)
 		{
-			std::cerr << "TestWorld: D3DDevice가 없습니다." << std::endl;
+			std::cerr << "TestWorld: GPUDevice가 없습니다." << std::endl;
 			return;
 		}
 
@@ -67,7 +67,7 @@ namespace TUK::Game
 		}
 	}
 
-	void TestWorld::OnRender(D3DCommandBuffer& renderer)
+	void TestWorld::OnRender(GPUCommandBuffer& renderer)
 	{
 		if (!rootSignature || !pipelineState || !model || !cameraBuffer)
 		{
@@ -90,12 +90,12 @@ namespace TUK::Game
 		}
 
 		renderer.SetGPUGraphicsRootSignature(*rootSignature);
-		renderer.SetD3DGraphicsPipelineState(*pipelineState);
+		renderer.SetGPUGraphicsPipelineState(*pipelineState);
 		renderer.SetGPUGraphicsConstantBuffer(0, *cameraBuffer);
 		renderer.SetViewport(camera->GetViewport());
 		renderer.SetScissorRect(camera->GetScissorRect());
-		const D3DMesh& mesh = model->GetMesh();
-		renderer.SetD3DMesh(mesh);
+		const GPUMesh& mesh = model->GetMesh();
+		renderer.SetGPUMesh(mesh);
 		renderer.DrawIndexed(mesh.GetIndexCount());
 	}
 
@@ -119,7 +119,7 @@ namespace TUK::Game
 		renderSubsystem = nullptr;
 	}
 
-	std::expected<void, std::string> TestWorld::CreateTriangle(const D3DDevice& device, DXGI_FORMAT targetFormat)
+	std::expected<void, std::string> TestWorld::CreateTriangle(const GPUDevice& device, DXGI_FORMAT targetFormat)
 	{
 		auto* assetSubsystem = App::GetInstance()->GetSubsystem<AssetSubsystem>();
 		if (!assetSubsystem)
@@ -144,7 +144,7 @@ namespace TUK::Game
 		rootSignatureInfo.Desc_1_0.NumParameters = 1;
 		rootSignatureInfo.Desc_1_0.pParameters = &cameraParameter;
 		rootSignatureInfo.Desc_1_0.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-		auto newRootSignature = device.CreateD3DRootSignature(rootSignatureInfo);
+		auto newRootSignature = device.CreateGPURootSignature(rootSignatureInfo);
 		if (!newRootSignature)
 		{
 			return std::unexpected(newRootSignature.error());
@@ -162,7 +162,7 @@ namespace TUK::Game
 		bufferDescription.MipLevels = 1;
 		bufferDescription.SampleDesc.Count = 1;
 		bufferDescription.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		auto newCameraBuffer = device.CreateD3DBuffer(heapProperties, bufferDescription, D3D12_RESOURCE_STATE_GENERIC_READ);
+		auto newCameraBuffer = device.CreateGPUBuffer(heapProperties, bufferDescription, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!newCameraBuffer)
 		{
 			return std::unexpected(newCameraBuffer.error());
@@ -227,7 +227,7 @@ namespace TUK::Game
 		pipelineInfo.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
 		pipelineInfo.DepthStencilState.FrontFace = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
 		pipelineInfo.DepthStencilState.BackFace = pipelineInfo.DepthStencilState.FrontFace;
-		auto newPipelineState = device.CreateD3DGraphicsPipelineState(pipelineInfo);
+		auto newPipelineState = device.CreateGPUGraphicsPipelineState(pipelineInfo);
 		if (!newPipelineState)
 		{
 			return std::unexpected(newPipelineState.error());

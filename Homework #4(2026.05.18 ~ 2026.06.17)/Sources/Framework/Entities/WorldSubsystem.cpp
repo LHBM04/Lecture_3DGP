@@ -55,7 +55,7 @@ namespace TUK::Framework
 		return result;
 	}
 
-	void WorldSubsystem::PreRender(D3DCommandBuffer& renderer)
+	void WorldSubsystem::PreRender(GPUCommandBuffer& renderer)
 	{
 		if (currentWorld)
 		{
@@ -63,7 +63,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void WorldSubsystem::Render(D3DCommandBuffer& renderer)
+	void WorldSubsystem::Render(GPUCommandBuffer& renderer)
 	{
 		if (currentWorld)
 		{
@@ -71,7 +71,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void WorldSubsystem::PostRender(D3DCommandBuffer& renderer)
+	void WorldSubsystem::PostRender(GPUCommandBuffer& renderer)
 	{
 		if (currentWorld)
 		{

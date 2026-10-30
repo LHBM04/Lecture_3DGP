@@ -16,11 +16,11 @@
 #include "ModelAssetLoader.hpp"
 #include "ModelAsset.hpp"
 
-#include "Framework/Graphics/D3DDevice.hpp"
+#include "Framework/Graphics/GPUDevice.hpp"
 
 namespace TUK::Framework
 {
-	ModelAssetLoader::ModelAssetLoader(const D3DDevice& device) noexcept
+	ModelAssetLoader::ModelAssetLoader(const GPUDevice& device) noexcept
 		: device(device)
 	{
 	}
@@ -201,7 +201,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<D3DBuffer, std::string> ModelAssetLoader::CreateUploadBuffer(
+	std::expected<GPUBuffer, std::string> ModelAssetLoader::CreateUploadBuffer(
 		std::span<const std::byte> bytes) const
 	{
 		D3D12_HEAP_PROPERTIES heapProperties{};
@@ -218,7 +218,7 @@ namespace TUK::Framework
 		description.SampleDesc.Count = 1;
 		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-		auto buffer = device.CreateD3DBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
+		auto buffer = device.CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!buffer)
 		{
 			return std::unexpected(buffer.error());
@@ -230,7 +230,7 @@ namespace TUK::Framework
 		return buffer;
 	}
 
-	std::expected<D3DMesh, std::string> ModelAssetLoader::CreateMesh(
+	std::expected<GPUMesh, std::string> ModelAssetLoader::CreateMesh(
 		std::span<const ModelVertex> vertices, std::span<const std::uint32_t> indices) const
 	{
 		auto vertexBuffer = ModelAssetLoader::CreateUploadBuffer(std::as_bytes(vertices));
@@ -243,7 +243,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected(indexBuffer.error());
 		}
-		return device.CreateD3DMesh(
+		return device.CreateGPUMesh(
 			std::move(*vertexBuffer), sizeof(ModelVertex),
 			std::move(*indexBuffer), DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}

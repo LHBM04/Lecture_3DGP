@@ -63,8 +63,8 @@ namespace TUK::Game
 		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::PostRender);
 
 		AssetSubsystem* assetSubsystem = AddSubsystem<AssetSubsystem>();
-		assetSubsystem->AddLoader<Framework::ShaderAssetLoader>(*renderSubsystem->GetD3DDevice());
-		assetSubsystem->AddLoader<Framework::ModelAssetLoader>(*renderSubsystem->GetD3DDevice());
+		assetSubsystem->AddLoader<Framework::ShaderAssetLoader>(*renderSubsystem->GetGPUDevice());
+		assetSubsystem->AddLoader<Framework::ModelAssetLoader>(*renderSubsystem->GetGPUDevice());
 
 		// 셰이더 로드
 		for (const auto& entry : std::filesystem::recursive_directory_iterator("Resources\\Shaders"))

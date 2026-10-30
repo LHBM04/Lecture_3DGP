@@ -1,48 +1,48 @@
 ﻿#include "Precompiled.hpp"
-#include "D3DMesh.hpp"
+#include "GPUMesh.hpp"
 
 namespace TUK::Framework
 {
-	const D3DBuffer& D3DMesh::GetVertexBuffer() const noexcept
+	const GPUBuffer& GPUMesh::GetVertexBuffer() const noexcept
 	{
 		return vertexBuffer;
 	}
 
-	const D3DBuffer& D3DMesh::GetIndexBuffer() const noexcept
+	const GPUBuffer& GPUMesh::GetIndexBuffer() const noexcept
 	{
 		return indexBuffer;
 	}
 
-	std::uint32_t D3DMesh::GetVertexCount() const noexcept
+	std::uint32_t GPUMesh::GetVertexCount() const noexcept
 	{
 		return static_cast<std::uint32_t>(vertexBufferView.SizeInBytes / vertexBufferView.StrideInBytes);
 	}
 
-	std::uint32_t D3DMesh::GetIndexCount() const noexcept
+	std::uint32_t GPUMesh::GetIndexCount() const noexcept
 	{
 		const std::uint32_t indexSize = indexBufferView.Format == DXGI_FORMAT_R16_UINT ? 2 : 4;
 		return static_cast<std::uint32_t>(indexBufferView.SizeInBytes / indexSize);
 	}
 
-	D3D12_PRIMITIVE_TOPOLOGY D3DMesh::GetD3DTopology() const noexcept
+	D3D12_PRIMITIVE_TOPOLOGY GPUMesh::GetD3DTopology() const noexcept
 	{
 		return topology;
 	}
 
-	D3D12_VERTEX_BUFFER_VIEW D3DMesh::GetD3DVertexBufferView() const noexcept
+	D3D12_VERTEX_BUFFER_VIEW GPUMesh::GetD3DVertexBufferView() const noexcept
 	{
 		return vertexBufferView;
 	}
 
-	D3D12_INDEX_BUFFER_VIEW D3DMesh::GetD3DIndexBufferView() const noexcept
+	D3D12_INDEX_BUFFER_VIEW GPUMesh::GetD3DIndexBufferView() const noexcept
 	{
 		return indexBufferView;
 	}
 
-	D3DMesh::D3DMesh(
-		D3DBuffer vertexBuffer,
+	GPUMesh::GPUMesh(
+		GPUBuffer vertexBuffer,
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView,
-		D3DBuffer indexBuffer,
+		GPUBuffer indexBuffer,
 		D3D12_INDEX_BUFFER_VIEW indexBufferView,
 		D3D12_PRIMITIVE_TOPOLOGY topology) noexcept
 		: vertexBuffer(std::move(vertexBuffer))

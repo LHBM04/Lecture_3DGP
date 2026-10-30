@@ -14,41 +14,41 @@
 
 namespace TUK::Framework
 {
-	class D3DShader
+	class GPUShader
 	{
-		friend class D3DDevice;
+		friend class GPUDevice;
 		
 	public:
-		~D3DShader() noexcept = default;
+		~GPUShader() noexcept = default;
 
-		D3DShader(const D3DShader&) = delete;
-		D3DShader& operator=(const D3DShader&) = delete;
+		GPUShader(const GPUShader&) = delete;
+		GPUShader& operator=(const GPUShader&) = delete;
 
-		D3DShader(D3DShader&&) noexcept = default;
-		D3DShader& operator=(D3DShader&&) noexcept = default;
+		GPUShader(GPUShader&&) noexcept = default;
+		GPUShader& operator=(GPUShader&&) noexcept = default;
 
 		[[nodiscard]] ID3DBlob& GetD3DBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
 
 	private:
-		D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept;
+		GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
 	};
 
-	inline ID3DBlob& D3DShader::GetD3DBlob() const noexcept
+	inline ID3DBlob& GPUShader::GetD3DBlob() const noexcept
 	{
 		assert(d3dBlob);
 		return *d3dBlob.Get();
 	}
 
-	inline D3D12_SHADER_BYTECODE D3DShader::GetD3DBytecode() const noexcept
+	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
 	{
 		assert(d3dBlob);
 		return { d3dBlob->GetBufferPointer(), d3dBlob->GetBufferSize() };
 	}
 
-	inline D3DShader::D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept
+	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept
 		: d3dBlob(std::move(d3dBlob))
 	{
 	}

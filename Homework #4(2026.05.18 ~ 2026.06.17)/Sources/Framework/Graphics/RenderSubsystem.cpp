@@ -39,7 +39,7 @@ namespace TUK::Framework
 		description.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		description.SampleDesc.Count = 1;
 
-		auto newSwapChain = CreateD3DSwapChain(display.GetHWND(), description);
+		auto newSwapChain = CreateGPUSwapChain(display.GetHWND(), description);
 		if (!newSwapChain)
 		{
 			std::cerr << "Render Subsystem Display Registration 실패: " << newSwapChain.error() << std::endl;
@@ -58,7 +58,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void RenderSubsystem::Subscribe(std::function<void(D3DCommandBuffer&)> callback)
+	void RenderSubsystem::Subscribe(std::function<void(GPUCommandBuffer&)> callback)
 	{
 		if (callback)
 		{
@@ -66,12 +66,12 @@ namespace TUK::Framework
 		}
 	}
 
-	const D3DDevice* RenderSubsystem::GetD3DDevice() const noexcept
+	const GPUDevice* RenderSubsystem::GetGPUDevice() const noexcept
 	{
 		return device ? &device.value() : nullptr;
 	}
 
-	const D3DSwapChain* RenderSubsystem::GetD3DSwapChain(const Display& display) const noexcept
+	const GPUSwapChain* RenderSubsystem::GetGPUSwapChain(const Display& display) const noexcept
 	{
 		const auto result = swapChains.find(&display);
 		return result != swapChains.end() ? &result->second : nullptr;
@@ -81,7 +81,7 @@ namespace TUK::Framework
 	{
 		if (!device || !fence)
 		{
-			return std::unexpected("D3DDevice 또는 D3DFence가 초기화되지 않았습니다.");
+			return std::unexpected("GPUDevice 또는 GPUFence가 초기화되지 않았습니다.");
 		}
 		if (auto result = fence->Signal(*device); !result)
 		{
@@ -94,7 +94,7 @@ namespace TUK::Framework
 	{
 		// GPU 디바이스 생성
 		{
-			auto newDevice = CreateD3DDevice();
+			auto newDevice = CreateGPUDevice();
 			if (!newDevice)
 			{
 				std::cerr << "Render Subsystem Startup 실패: " << newDevice.error() << std::endl;
@@ -106,7 +106,7 @@ namespace TUK::Framework
 
 		// GPU 명령 버퍼 생성
 		{
-			auto newCommandBuffer = device->CreateD3DCommandBuffer();
+			auto newCommandBuffer = device->CreateGPUCommandBuffer();
 			if (!newCommandBuffer)
 			{
 				std::cerr << "Render Subsystem Startup 실패: " << newCommandBuffer.error() << std::endl;
@@ -118,7 +118,7 @@ namespace TUK::Framework
 
 		// GPU 펜스 생성
 		{
-			auto newFence = device->CreateD3DFence();
+			auto newFence = device->CreateGPUFence();
 			if (!newFence)
 			{
 				std::cerr << "Render Subsystem Startup 실패: " << newFence.error() << std::endl;
@@ -157,12 +157,12 @@ namespace TUK::Framework
 		// 각 스왑 체인을 돌면서 명령을 기록한다.
 		for (auto& [display, swapChain] : swapChains)
 		{
-			const D3DTarget target = swapChain.GetCurrentBackBufferTarget();
-			const D3DTexture& backBuffer = target.GetTexture();
+			const GPURenderTarget target = swapChain.GetCurrentBackBufferTarget();
+			const GPUTexture& backBuffer = target.GetTexture();
 
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-			commandBuffer->ClearD3DTarget(target, ColorRGBA<float>::GetBlack());
-			commandBuffer->SetD3DTarget(target);
+			commandBuffer->ClearGPURenderTarget(target, ColorRGBA<float>::GetBlack());
+			commandBuffer->SetGPURenderTarget(target);
 
 			const D3D12_RESOURCE_DESC targetDescription = backBuffer.GetD3DResource().GetDesc();
 			const D3D12_VIEWPORT viewport
@@ -241,7 +241,7 @@ namespace TUK::Framework
 		dxgiFactory.Reset();
 	}
 
-	std::expected<D3DDevice, std::string> RenderSubsystem::CreateD3DDevice() const
+	std::expected<GPUDevice, std::string> RenderSubsystem::CreateGPUDevice() const
 	{
 		UINT factoryFlags = 0;
 
@@ -291,7 +291,7 @@ namespace TUK::Framework
 					return std::unexpected("D3D12 Command Queue 생성 실패!");
 				}
 
-				return D3DDevice(std::move(d3dDevice), std::move(d3dCommandQueue));
+				return GPUDevice(std::move(d3dDevice), std::move(d3dCommandQueue));
 			}
 			
 		}
@@ -299,11 +299,11 @@ namespace TUK::Framework
 		return std::unexpected("GPU 장치 생성 실패!");
 	}
 
-	std::expected<D3DSwapChain, std::string> RenderSubsystem::CreateD3DSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const
+	std::expected<GPUSwapChain, std::string> RenderSubsystem::CreateGPUSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const
 	{
 		if (!device)
 		{
-			return std::unexpected("D3DDevice가 초기화되지 않았습니다.");
+			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
 		if (!dxgiFactory)
@@ -345,7 +345,7 @@ namespace TUK::Framework
 		const UINT descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
 		
-		std::vector<D3DTexture> backBuffers;
+		std::vector<GPUTexture> backBuffers;
 		backBuffers.reserve(description.BufferCount);
 
 		for (std::uint32_t index = 0; index < description.BufferCount; ++index)
@@ -356,15 +356,15 @@ namespace TUK::Framework
 				return std::unexpected("D3D12 Back Buffer 가져오기 실패!");
 			}
 
-			backBuffers.push_back(D3DTexture(std::move(backBuffer)));
+			backBuffers.push_back(GPUTexture(std::move(backBuffer)));
 		}
 
-		for (const D3DTexture& backBuffer : backBuffers)
+		for (const GPUTexture& backBuffer : backBuffers)
 		{
 			d3dDevice.CreateRenderTargetView(&backBuffer.GetD3DResource(), nullptr, rtv);
 			rtv.ptr += descriptorSize;
 		}
 
-		return D3DSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(backBuffers), descriptorSize);
+		return GPUSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(backBuffers), descriptorSize);
 	}
 }
