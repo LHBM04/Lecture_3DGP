@@ -9,7 +9,7 @@
 #include <string_view>
 #include <windows.h>
 
-#include "DisplayCreateInfo.hpp"
+#include "DisplayOptions.hpp"
 
 namespace TUK::Framework
 {

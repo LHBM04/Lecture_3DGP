@@ -12,6 +12,7 @@ namespace TUK::Game
 
 	protected:
 		void OnEnter() override;
+		void OnUpdate() override;
 
 	};
 

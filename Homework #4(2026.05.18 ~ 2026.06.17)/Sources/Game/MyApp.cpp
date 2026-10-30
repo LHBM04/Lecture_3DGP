@@ -1,18 +1,12 @@
 ﻿#include "Precompiled.hpp"
 #include "MyApp.hpp"
 
-#include <cassert>
-#include <memory>
-
+#include "Framework/Entities.hpp"
+#include "Framework/Graphics.hpp"
+#include "Framework/Platform.hpp"
 #include "Framework/Resources.hpp"
 
-#include "Framework/Entities/WorldSubsystem.hpp"
-
-#include "Framework/Graphics/RenderSubsystem.hpp"
-
-#include "Framework/Platform/DisplayCreateInfo.hpp"
-#include "Framework/Platform/DisplaySubsystem.hpp"
-
+#include "Input.hpp"
 #include "MyEngine.hpp"
 #include "TestWorld.hpp"
 
@@ -36,7 +30,7 @@ namespace TUK::Game
 
 	SystemStatus MyApp::Startup()
 	{
-		Framework::DisplayCreateInfo options{};
+		Framework::DisplayOptions options{};
 		options.caption = "Homework #4(2026.05.18 ~ 2026.06.17)";
 		options.position = Framework::Vector2D(100, 100);
 		options.size = Framework::Vector2D(1280, 960);
@@ -69,6 +63,28 @@ namespace TUK::Game
 		assetSubsystem->AddLoader<Framework::ShaderAssetLoader>(*renderSubsystem->GetGPUDevice());
 		assetSubsystem->AddLoader<Framework::ModelAssetLoader>(*device, *assetSubsystem);
 		assetSubsystem->AddLoader<Framework::MaterialAssetLoader>(*device, *assetSubsystem);
+
+		Framework::InputSubsystem* inputSubsystem = AddSubsystem<Framework::InputSubsystem>();
+
+		Framework::EventSubsystem* eventSubsystem = MyEngine::GetInstance()->GetSubsystem<Framework::EventSubsystem>();
+		eventSubsystem->AddListener<Framework::DisplayCreateData>([inputSubsystem](const Framework::Display& display, const Framework::DisplayCreateData& event) {
+			inputSubsystem->AddProvider(display);
+			Input::Startup(inputSubsystem->GetProvider(display));
+		});
+		eventSubsystem->AddListener<Framework::DisplayDestroyData>([inputSubsystem](const Framework::Display& display, const Framework::DisplayDestroyData& event) {
+			Input::Shutdown();
+			inputSubsystem->RemoveProvider(display);
+		});
+		eventSubsystem->AddListener<Framework::KeyInteractData>([inputSubsystem](const Framework::Display& display, const Framework::KeyInteractData& event) {
+			if (event.action == WM_KEYDOWN)
+			{
+				inputSubsystem->GetProvider(display).OnKeyPressed(event.key);
+			}
+			else if (event.action == WM_KEYUP)
+			{
+				inputSubsystem->GetProvider(display).OnKeyReleased(event.key);
+			}
+		});
 
 		return App::Startup();
 	}

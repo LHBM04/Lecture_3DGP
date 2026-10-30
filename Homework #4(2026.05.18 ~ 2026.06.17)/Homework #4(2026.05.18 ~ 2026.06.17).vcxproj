@@ -163,6 +163,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Platform\InputEventData.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\InputState.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp" />
@@ -215,11 +219,12 @@
     <ClInclude Include="Sources\Framework\Math\Vector4D.hpp" />
     <ClInclude Include="Sources\Framework\Platform.hpp" />
     <ClInclude Include="Sources\Framework\Platform\Display.hpp" />
-    <ClInclude Include="Sources\Framework\Platform\DisplayCreateInfo.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\DisplayOptions.hpp" />
     <ClInclude Include="Sources\Framework\Platform\DisplaySubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Platform\Event.hpp" />
     <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp" />
+    <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyApp.hpp" />
     <ClInclude Include="Sources\Game\TestWorld.hpp" />
@@ -227,6 +232,8 @@
     <ClInclude Include="Sources\Resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Platform\InputProvider.cpp" />
+    <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\AssetSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\MaterialAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp" />
@@ -265,6 +272,7 @@
     <ClCompile Include="Sources\Framework\Platform\DisplaySubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp" />
+    <ClCompile Include="Sources\Game\Input.cpp" />
     <ClCompile Include="Sources\Game\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\MyApp.cpp" />
     <ClCompile Include="Sources\Game\TestWorld.cpp" />

@@ -151,74 +151,90 @@ namespace TUK::Framework
 
 		switch (message)
 		{
-		case WM_CREATE:
-		{
-			if (eventSubsystem)
+			case WM_CREATE:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayCreateData{} });
-			}
-			return 0;
-		}
-		case WM_SIZE:
-		{
-			if (eventSubsystem)
-			{
-				eventSubsystem->PushEvent(
+				if (eventSubsystem)
 				{
-					*display,
-					DisplayResizeData{ LOWORD(lParam), HIWORD(lParam) }
-				});
+					eventSubsystem->PushEvent({ *display, DisplayCreateData{} });
+				}
+				return 0;
 			}
-			return 0;
-		}
-		case WM_MOVE:
-		{
-			if (eventSubsystem)
+			case WM_SIZE:
 			{
-				eventSubsystem->PushEvent(
+				if (eventSubsystem)
 				{
-					*display,
-					DisplayMoveData{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }
-				});
+					eventSubsystem->PushEvent(
+					{
+						*display,
+						DisplayResizeData{ LOWORD(lParam), HIWORD(lParam) }
+					});
+				}
+				return 0;
 			}
-			return 0;
-		}
-		case WM_SETFOCUS: [[fallthrough]];
-		case WM_KILLFOCUS:
-		{
-			if (eventSubsystem)
+			case WM_MOVE:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayFocusData{ message == WM_SETFOCUS } });
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(
+					{
+						*display,
+						DisplayMoveData{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }
+					});
+				}
+				return 0;
 			}
-			return 0;
-		}
-		case WM_CLOSE:
-		{
-			display->SetShouldClose(true);
-			if (eventSubsystem)
+			case WM_SETFOCUS: [[fallthrough]];
+			case WM_KILLFOCUS:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, DisplayFocusData{ message == WM_SETFOCUS } });
+				}
+				return 0;
 			}
-			return DefWindowProcA(hWnd, message, wParam, lParam);
-		}
-		case WM_DESTROY:
-		{
-			if (eventSubsystem)
+			case WM_CLOSE:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayDestroyData{} });
+				display->SetShouldClose(true);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
+				}
+				return DefWindowProcA(hWnd, message, wParam, lParam);
 			}
-			return 0;
-		}
-		case WM_NCDESTROY:
-		{
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
-			display->hWnd = nullptr;
-			return 0;
-		}
-		default:
-		{
-			return DefWindowProcA(hWnd, message, wParam, lParam);
-		}
+			case WM_DESTROY:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, DisplayDestroyData{} });
+				}
+				return 0;
+			}
+			case WM_NCDESTROY:
+			{
+				SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+				display->hWnd = nullptr;
+				return 0;
+			}
+			case WM_KEYDOWN:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, KeyInteractData{ static_cast<int>(wParam), WM_KEYDOWN } });
+				}
+				return 0;
+			}
+			case WM_KEYUP:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, KeyInteractData{ static_cast<int>(wParam), WM_KEYUP } });
+				}
+				return 0;
+			}
+			default:
+			{
+				return DefWindowProcA(hWnd, message, wParam, lParam);
+			}
 		}
 
 		std::unreachable();

@@ -12,7 +12,9 @@ namespace TUK::Framework
 	{
 	}
 
-	EventSubsystem::~EventSubsystem() noexcept = default;
+	EventSubsystem::~EventSubsystem() noexcept
+	{
+	}
 
 	void EventSubsystem::PushEvent(Event event)
 	{

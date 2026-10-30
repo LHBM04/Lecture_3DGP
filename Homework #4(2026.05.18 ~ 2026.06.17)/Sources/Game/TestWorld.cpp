@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "TestWorld.hpp"
 
-#include <iostream>
-
 #include "Framework/Resources.hpp"
 
 #include "Framework/Core/App.hpp"
@@ -13,14 +11,18 @@
 #include "Framework/Graphics/Camera.hpp"
 #include "Framework/Graphics/MeshRenderer.hpp"
 
+#include "Input.hpp"
+#include "Framework/Entities/WorldSubsystem.hpp"
+
 namespace TUK::Game
 {
 	void TestWorld::OnEnter()
 	{
 		using namespace Framework;
 
-		Entity& cameraEntity = CreateEntity("Camera", "Camera");
+		Entity& cameraEntity = CreateEntity("Camera", "Main Camera");
 		cameraEntity.AddComponent<Transform>()->SetLocalPosition(Vector3D<float>(0.0f, 0.0f, -2.0f));
+
 		Camera* camera = cameraEntity.AddComponent<Camera>();
 		camera->SetViewport(D3D12_VIEWPORT{ 0.0f, 0.0f, 1280.0f, 960.0f, 0.0f, 1.0f });
 		camera->SetScissorRect(D3D12_RECT{ 0, 0, 1280, 960 });
@@ -43,5 +45,18 @@ namespace TUK::Game
 		modelEntity.AddComponent<Transform>()->SetLocalScale(Vector3D<float>(0.01f, 0.01f, 0.01f));
 		MeshRenderer* meshRenderer = modelEntity.AddComponent<MeshRenderer>();
 		meshRenderer->SetModel(model);
+	}
+
+	void TestWorld::OnUpdate()
+	{
+		if (Input::IsKeyPressed(VK_SPACE))
+		{
+			Framework::WorldSubsystem* worldSubsystem = Framework::App::GetInstance()->GetSubsystem<Framework::WorldSubsystem>();
+			if (worldSubsystem)
+			{
+				worldSubsystem->ExitWorld();
+				return;
+			}
+		}
 	}
 }
