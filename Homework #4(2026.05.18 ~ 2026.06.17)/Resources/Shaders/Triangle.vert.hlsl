@@ -10,7 +10,7 @@ struct VertexOutput
 	float4 color : COLOR0;
 };
 
-cbuffer CameraConstants : register(b0)
+cbuffer CameraConstants : register(b0, space0)
 {
 	row_major float4x4 view;
 	row_major float4x4 projection;

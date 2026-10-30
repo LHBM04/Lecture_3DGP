@@ -4,12 +4,22 @@
 #include "GPUBuffer.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 #include "GPUMesh.hpp"
-#include "GPURootSignature.hpp"
 #include "GPURenderTarget.hpp"
 #include "GPUTexture.hpp"
 
 namespace TUK::Framework
 {
+	namespace
+	{
+		enum class GPUConstantBufferSlot : std::uint32_t
+		{
+			CAMERA = 0,
+			OBJECT = 1,
+			MATERIAL = 2,
+			COUNT = 3
+		};
+	}
+
 	void GPUCommandBuffer::TransitionTexture(
 		const GPUTexture& texture,
 		D3D12_RESOURCE_STATES stateBefore,
@@ -75,28 +85,31 @@ namespace TUK::Framework
 			&source.GetD3DResource(), sourceOffset, sizeInBytes);
 	}
 
-	void GPUCommandBuffer::SetGPUGraphicsRootSignature(const GPURootSignature& rootSignature)
-	{
-		d3dCommandList->SetGraphicsRootSignature(&rootSignature.GetD3DRootSignature());
-	}
-
 	void GPUCommandBuffer::SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState)
 	{
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
-	void GPUCommandBuffer::SetGPUGraphicsConstantBuffer(std::uint32_t rootParameterIndex, const GPUBuffer& buffer, std::uint64_t offset)
+	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset)
 	{
-		assert(buffer.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK);
-		assert(offset < buffer.GetSizeInBytes());
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		assert(address % D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT == 0);
-		d3dCommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, address);
+		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::CAMERA), address);
+	}
+
+	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset)
+	{
+		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
+		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::OBJECT), address);
+	}
+
+	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset)
+	{
+		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
+		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::MATERIAL), address);
 	}
 
 	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport)
 	{
-		assert(viewport.Width > 0.0f && viewport.Height > 0.0f);
 		d3dCommandList->RSSetViewports(1, &viewport);
 	}
 

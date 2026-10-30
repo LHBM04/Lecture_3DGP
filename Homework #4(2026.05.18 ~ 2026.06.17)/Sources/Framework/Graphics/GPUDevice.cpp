@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUDevice.hpp"
 
+#include <array>
+
 namespace TUK::Framework
 {
 	std::expected<GPUBuffer, std::string> GPUDevice::CreateGPUBuffer(const D3D12_HEAP_PROPERTIES& heapProperties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initialState) const
@@ -92,12 +94,29 @@ namespace TUK::Framework
 		return GPUShader(std::move(d3dBlob));
 	}
 
-	std::expected<GPURootSignature, std::string> GPUDevice::CreateGPURootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& description) const
+	std::expected<void, std::string> GPUDevice::InitializeRootSignature()
 	{
 		if (!d3dDevice)
 		{
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
+
+		// b0: 카메라, b1: 오브젝트, b2: 머터리얼 (모두 space0).
+		constexpr std::uint32_t CONSTANT_BUFFER_SLOT_COUNT = 3;
+		std::array<D3D12_ROOT_PARAMETER, CONSTANT_BUFFER_SLOT_COUNT> parameters{};
+		for (std::uint32_t index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
+		{
+			parameters[index].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			parameters[index].Descriptor.ShaderRegister = index;
+			parameters[index].Descriptor.RegisterSpace = 0;
+			parameters[index].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		}
+
+		D3D12_VERSIONED_ROOT_SIGNATURE_DESC description{};
+		description.Version = D3D_ROOT_SIGNATURE_VERSION_1_0;
+		description.Desc_1_0.NumParameters = CONSTANT_BUFFER_SLOT_COUNT;
+		description.Desc_1_0.pParameters = parameters.data();
+		description.Desc_1_0.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> serializedBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
@@ -106,7 +125,7 @@ namespace TUK::Framework
 		if (FAILED(serializeResult))
 		{
 			std::string message = std::format(
-				"GPURootSignature 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
+				"공통 루트 시그니처 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
 				static_cast<std::uint32_t>(serializeResult));
 			if (errorBlob && errorBlob->GetBufferSize() > 0)
 			{
@@ -123,7 +142,6 @@ namespace TUK::Framework
 			return std::unexpected(std::move(message));
 		}
 
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature;
 		const HRESULT createResult = d3dDevice->CreateRootSignature(
 			0,
 			serializedBlob->GetBufferPointer(),
@@ -132,11 +150,11 @@ namespace TUK::Framework
 		if (FAILED(createResult))
 		{
 			return std::unexpected(std::format(
-				"GPURootSignature 생성에 실패했습니다. HRESULT: 0x{:08X}",
+				"공통 루트 시그니처 생성에 실패했습니다. HRESULT: 0x{:08X}",
 				static_cast<std::uint32_t>(createResult)));
 		}
 
-		return GPURootSignature(std::move(d3dRootSignature));
+		return {};
 	}
 
 	std::expected<GPUGraphicsPipelineState, std::string> GPUDevice::CreateGPUGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description) const
@@ -146,9 +164,17 @@ namespace TUK::Framework
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
+		if (!d3dRootSignature)
+		{
+			return std::unexpected("공통 루트 시그니처가 초기화되지 않았습니다.");
+		}
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDescription = description;
+		pipelineDescription.pRootSignature = d3dRootSignature.Get();
+
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState;
 		const HRESULT result = d3dDevice->CreateGraphicsPipelineState(
-			&description, IID_PPV_ARGS(d3dPipelineState.GetAddressOf()));
+			&pipelineDescription, IID_PPV_ARGS(d3dPipelineState.GetAddressOf()));
 		if (FAILED(result))
 		{
 			return std::unexpected(std::format(
@@ -229,6 +255,12 @@ namespace TUK::Framework
 	ID3D12CommandQueue& GPUDevice::GetD3DCommandQueue() const noexcept
 	{
 		return *(d3dCommandQueue.Get());
+	}
+
+	ID3D12RootSignature& GPUDevice::GetD3DRootSignature() const noexcept
+	{
+		assert(d3dRootSignature);
+		return *d3dRootSignature.Get();
 	}
 
 	GPUDevice::GPUDevice(

@@ -90,9 +90,6 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
@@ -214,6 +211,9 @@
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp">
+      <Filter>Sources\Framework\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Assets\MaterialAsset.hpp">
       <Filter>Sources\Framework\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Assets\ModelAsset.hpp">

@@ -169,6 +169,7 @@
     <ClInclude Include="Sources\Framework\Assets\AssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Assets\AssetSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Assets\ShaderAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Assets\MaterialAsset.hpp" />
     <ClInclude Include="Sources\Framework\Assets\ModelAsset.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\ConsoleSubsystem.hpp" />
@@ -188,7 +189,6 @@
     <ClInclude Include="Sources\Framework\Entities\World.hpp" />
     <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />

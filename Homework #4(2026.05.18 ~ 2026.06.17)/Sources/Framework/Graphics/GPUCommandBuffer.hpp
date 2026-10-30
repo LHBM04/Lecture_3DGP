@@ -13,7 +13,6 @@ namespace TUK::Framework
 	class GPUBuffer;
 	class GPUGraphicsPipelineState;
 	class GPUMesh;
-	class GPURootSignature;
 	class GPURenderTarget;
 	class GPUTexture;
 
@@ -47,10 +46,11 @@ namespace TUK::Framework
 			std::uint64_t sourceOffset,
 			std::uint64_t sizeInBytes);
 
-		void SetGPUGraphicsRootSignature(const GPURootSignature& rootSignature);
 		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState);
 
-		void SetGPUGraphicsConstantBuffer(std::uint32_t rootParameterIndex, const GPUBuffer& buffer, std::uint64_t offset = 0);
+		void SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0);
+		void SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0);
+		void SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0);
 		void SetViewport(const D3D12_VIEWPORT& viewport);
 		void SetScissorRect(const D3D12_RECT& scissorRect);
 

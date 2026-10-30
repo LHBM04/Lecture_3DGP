@@ -154,6 +154,8 @@ namespace TUK::Framework
 			return SystemStatus::Failure;
 		}
 
+		commandList.SetGraphicsRootSignature(&device->GetD3DRootSignature());
+
 		// 각 스왑 체인을 돌면서 명령을 기록한다.
 		for (auto& [display, swapChain] : swapChains)
 		{
@@ -291,7 +293,12 @@ namespace TUK::Framework
 					return std::unexpected("D3D12 Command Queue 생성 실패!");
 				}
 
-				return GPUDevice(std::move(d3dDevice), std::move(d3dCommandQueue));
+				GPUDevice device(std::move(d3dDevice), std::move(d3dCommandQueue));
+				if (auto result = device.InitializeRootSignature(); !result)
+				{
+					return std::unexpected(result.error());
+				}
+				return device;
 			}
 			
 		}

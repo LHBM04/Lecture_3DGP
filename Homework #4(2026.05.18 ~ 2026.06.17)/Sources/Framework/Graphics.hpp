@@ -7,7 +7,6 @@
 #include "Graphics/GPUFence.hpp"
 #include "Graphics/GPUGraphicsPipelineState.hpp"
 #include "Graphics/GPUMesh.hpp"
-#include "Graphics/GPURootSignature.hpp"
 #include "Graphics/GPUShader.hpp"
 #include "Graphics/GPUSwapChain.hpp"
 #include "Graphics/GPURenderTarget.hpp"

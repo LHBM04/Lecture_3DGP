@@ -31,6 +31,9 @@ namespace TUK::Framework
 		template <std::derived_from<Asset> TAsset>
 		TAsset* LoadAsset(const std::filesystem::path& path);
 
+		template <std::derived_from<Asset> TAsset, class... TArgs>
+		TAsset* CreateAsset(TArgs&&... args);
+
 	protected:
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;
@@ -99,6 +102,14 @@ namespace TUK::Framework
 		}
 
 		assets.emplace_back(std::move(*asset));
+		return result;
+	}
+	template <std::derived_from<Asset> TAsset, class... TArgs>
+	TAsset* AssetSubsystem::CreateAsset(TArgs&&... args)
+	{
+		auto asset = std::make_unique<TAsset>(std::forward<TArgs>(args)...);
+		TAsset* result = asset.get();
+		assets.emplace_back(std::move(asset));
 		return result;
 	}
 }

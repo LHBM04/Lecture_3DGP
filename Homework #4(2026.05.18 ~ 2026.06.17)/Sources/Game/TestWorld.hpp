@@ -7,11 +7,11 @@
 #include "Framework/Entities/World.hpp"
 #include "Framework/Graphics/GPUBuffer.hpp"
 #include "Framework/Graphics/GPUGraphicsPipelineState.hpp"
-#include "Framework/Graphics/GPURootSignature.hpp"
 
 namespace TUK::Framework
 {
 	class GPUDevice;
+	class MaterialAsset;
 	class ModelAsset;
 	class RenderSubsystem;
 }
@@ -34,9 +34,12 @@ namespace TUK::Game
 	private:
 		[[nodiscard]] std::expected<void, std::string> CreateTriangle(const GPUDevice& device, DXGI_FORMAT targetFormat);
 
+		[[nodiscard]] std::expected<GPUGraphicsPipelineState, std::string> CreateMaterialPipeline(
+			const GPUDevice& device, const MaterialAsset& material, DXGI_FORMAT targetFormat) const;
+
 		RenderSubsystem* renderSubsystem = nullptr;
-		std::optional<GPURootSignature> rootSignature;
 		std::optional<GPUGraphicsPipelineState> pipelineState;
+		MaterialAsset* material = nullptr;
 		ModelAsset* model = nullptr;
 		std::optional<GPUBuffer> cameraBuffer;
 	};

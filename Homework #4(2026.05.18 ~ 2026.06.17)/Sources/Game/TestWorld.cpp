@@ -2,6 +2,7 @@
 #include "TestWorld.hpp"
 
 #include "Framework/Assets/AssetSubsystem.hpp"
+#include "Framework/Assets/MaterialAsset.hpp"
 #include "Framework/Assets/ModelAsset.hpp"
 #include "Framework/Assets/ShaderAsset.hpp"
 
@@ -69,7 +70,7 @@ namespace TUK::Game
 
 	void TestWorld::OnRender(GPUCommandBuffer& renderer)
 	{
-		if (!rootSignature || !pipelineState || !model || !cameraBuffer)
+		if (!material || !pipelineState || !model || !cameraBuffer)
 		{
 			return;
 		}
@@ -89,9 +90,8 @@ namespace TUK::Game
 			return;
 		}
 
-		renderer.SetGPUGraphicsRootSignature(*rootSignature);
 		renderer.SetGPUGraphicsPipelineState(*pipelineState);
-		renderer.SetGPUGraphicsConstantBuffer(0, *cameraBuffer);
+		renderer.SetGPUCameraConstantBuffer(*cameraBuffer);
 		renderer.SetViewport(camera->GetViewport());
 		renderer.SetScissorRect(camera->GetScissorRect());
 		const GPUMesh& mesh = model->GetMesh();
@@ -103,7 +103,7 @@ namespace TUK::Game
 	{
 		if (renderSubsystem)
 		{
-			if (model || pipelineState || rootSignature || cameraBuffer)
+			if (material || model || pipelineState || cameraBuffer)
 			{
 				if (auto result = renderSubsystem->WaitForGPU(); !result)
 				{
@@ -112,10 +112,10 @@ namespace TUK::Game
 			}
 		}
 
+		material = nullptr;
 		model = nullptr;
 		cameraBuffer.reset();
 		pipelineState.reset();
-		rootSignature.reset();
 		renderSubsystem = nullptr;
 	}
 
@@ -132,22 +132,6 @@ namespace TUK::Game
 		if (!vertexShader || !pixelShader)
 		{
 			return std::unexpected("삼각형 셰이더 에셋 로딩에 실패했습니다.");
-		}
-
-		D3D12_ROOT_PARAMETER cameraParameter{};
-		cameraParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-		cameraParameter.Descriptor.ShaderRegister = 0;
-		cameraParameter.Descriptor.RegisterSpace = 0;
-		cameraParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-		D3D12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureInfo{};
-		rootSignatureInfo.Version = D3D_ROOT_SIGNATURE_VERSION_1_0;
-		rootSignatureInfo.Desc_1_0.NumParameters = 1;
-		rootSignatureInfo.Desc_1_0.pParameters = &cameraParameter;
-		rootSignatureInfo.Desc_1_0.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-		auto newRootSignature = device.CreateGPURootSignature(rootSignatureInfo);
-		if (!newRootSignature)
-		{
-			return std::unexpected(newRootSignature.error());
 		}
 
 		D3D12_HEAP_PROPERTIES heapProperties{};
@@ -174,6 +158,23 @@ namespace TUK::Game
 			return std::unexpected("삼각형 모델 에셋 로딩에 실패했습니다.");
 		}
 
+		MaterialAsset newMaterial(*vertexShader, *pixelShader);
+		auto newPipelineState = CreateMaterialPipeline(device, newMaterial, targetFormat);
+		if (!newPipelineState)
+		{
+			return std::unexpected(newPipelineState.error());
+		}
+
+		material = assetSubsystem->CreateAsset<MaterialAsset>(std::move(newMaterial));
+		pipelineState = std::move(newPipelineState.value());
+		model = newModel;
+		cameraBuffer = std::move(newCameraBuffer.value());
+		return {};
+	}
+
+	std::expected<GPUGraphicsPipelineState, std::string> TestWorld::CreateMaterialPipeline(
+		const GPUDevice& device, const MaterialAsset& material, DXGI_FORMAT targetFormat) const
+	{
 		const std::array<D3D12_INPUT_ELEMENT_DESC, 2> inputElements
 		{
 			D3D12_INPUT_ELEMENT_DESC
@@ -195,17 +196,16 @@ namespace TUK::Game
 			},
 		};
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineInfo{};
-		pipelineInfo.pRootSignature = &newRootSignature->GetD3DRootSignature();
-		pipelineInfo.VS = vertexShader->GetShader().GetD3DBytecode();
-		pipelineInfo.PS = pixelShader->GetShader().GetD3DBytecode();
+		pipelineInfo.VS = material.GetVertexShader().GetShader().GetD3DBytecode();
+		pipelineInfo.PS = material.GetPixelShader().GetShader().GetD3DBytecode();
 		pipelineInfo.InputLayout = { inputElements.data(), static_cast<UINT>(inputElements.size()) };
 		pipelineInfo.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineInfo.NumRenderTargets = 1;
 		pipelineInfo.RTVFormats[0] = targetFormat;
 		pipelineInfo.SampleMask = UINT_MAX;
 		pipelineInfo.SampleDesc = { 1, 0 };
-		pipelineInfo.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		pipelineInfo.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+		pipelineInfo.RasterizerState.FillMode = material.GetFillMode();
+		pipelineInfo.RasterizerState.CullMode = material.GetCullMode();
 		pipelineInfo.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
 		pipelineInfo.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
 		pipelineInfo.RasterizerState.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
@@ -227,16 +227,7 @@ namespace TUK::Game
 		pipelineInfo.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
 		pipelineInfo.DepthStencilState.FrontFace = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
 		pipelineInfo.DepthStencilState.BackFace = pipelineInfo.DepthStencilState.FrontFace;
-		auto newPipelineState = device.CreateGPUGraphicsPipelineState(pipelineInfo);
-		if (!newPipelineState)
-		{
-			return std::unexpected(newPipelineState.error());
-		}
-
-		rootSignature = std::move(newRootSignature.value());
-		pipelineState = std::move(newPipelineState.value());
-		model = newModel;
-		cameraBuffer = std::move(newCameraBuffer.value());
-		return {};
+		return device.CreateGPUGraphicsPipelineState(pipelineInfo);
 	}
+
 }
