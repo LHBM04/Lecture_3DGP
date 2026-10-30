@@ -228,6 +228,7 @@
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyApp.hpp" />
     <ClInclude Include="Sources\Game\TestWorld.hpp" />
+    <ClInclude Include="Sources\Game\Time.hpp" />
     <ClInclude Include="Sources\Precompiled.hpp" />
     <ClInclude Include="Sources\Resource.h" />
   </ItemGroup>
@@ -276,6 +277,7 @@
     <ClCompile Include="Sources\Game\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\MyApp.cpp" />
     <ClCompile Include="Sources\Game\TestWorld.cpp" />
+    <ClCompile Include="Sources\Game\Time.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
