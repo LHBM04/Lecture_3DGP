@@ -195,12 +195,6 @@
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Viewport.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\Rect.hpp">
-      <Filter>Sources\Framework\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources</Filter>
     </ClInclude>

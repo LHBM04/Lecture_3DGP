@@ -12,6 +12,4 @@
 #include "Graphics/D3DSwapChain.hpp"
 #include "Graphics/D3DTarget.hpp"
 #include "Graphics/D3DTexture.hpp"
-#include "Graphics/Rect.hpp"
 #include "Graphics/RenderSubsystem.hpp"
-#include "Graphics/Viewport.hpp"

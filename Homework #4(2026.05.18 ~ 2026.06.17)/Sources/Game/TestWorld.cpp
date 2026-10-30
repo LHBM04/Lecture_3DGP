@@ -52,11 +52,11 @@ namespace TUK::Game
 			return;
 		}
 
-		camera->SetViewport(Viewport
+		camera->SetViewport(D3D12_VIEWPORT
 		{
 			0.0f, 0.0f, 1280.0f, 960.0f, 0.0f, 1.0f
 		});
-		camera->SetScissorRect(Rect
+		camera->SetScissorRect(D3D12_RECT
 		{
 			0, 0, 1280, 960
 		});

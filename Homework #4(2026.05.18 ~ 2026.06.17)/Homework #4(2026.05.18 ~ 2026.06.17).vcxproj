@@ -200,9 +200,7 @@
     <ClInclude Include="Sources\Framework\Graphics\D3DBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\D3DMesh.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\D3DTexture.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\Rect.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\Viewport.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />

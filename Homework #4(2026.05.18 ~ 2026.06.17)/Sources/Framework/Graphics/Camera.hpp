@@ -1,9 +1,14 @@
 ﻿#pragma once
 
-#include "../Entities/Component.hpp"
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 
-#include "../Graphics/Rect.hpp"
-#include "../Graphics/Viewport.hpp"
+#include <windows.h>
+
+#include <d3d12.h>
+
+#include "../Entities/Component.hpp"
 
 #include "../Math/Matrix4x4.hpp"
 
@@ -36,11 +41,11 @@ namespace TUK::Framework
 		[[nodiscard]] CameraProjectionType GetProjectionType() const noexcept;
 		void SetProjectionType(CameraProjectionType value) noexcept;
 
-		[[nodiscard]] const Viewport& GetViewport() const noexcept;
-		void SetViewport(const Viewport& value) noexcept;
+		[[nodiscard]] const D3D12_VIEWPORT& GetViewport() const noexcept;
+		void SetViewport(const D3D12_VIEWPORT& value) noexcept;
 
-		[[nodiscard]] const Rect& GetScissorRect() const noexcept;
-		void SetScissorRect(const Rect& value) noexcept;
+		[[nodiscard]] const D3D12_RECT& GetScissorRect() const noexcept;
+		void SetScissorRect(const D3D12_RECT& value) noexcept;
 
 		[[nodiscard]] Matrix4x4<float> GetViewMatrix() const noexcept;
 		[[nodiscard]] Matrix4x4<float> GetProjectionMatrix() const noexcept;
@@ -59,8 +64,8 @@ namespace TUK::Framework
 		float nearPlane;
 		float farPlane;
 
-		Viewport viewport;
-		Rect scissorRect;
+		D3D12_VIEWPORT viewport;
+		D3D12_RECT scissorRect;
 
 		float orthoSize;
 	};
@@ -98,22 +103,22 @@ namespace TUK::Framework
 		projectionType = value;
 	}
 
-	inline const Viewport& Camera::GetViewport() const noexcept
+	inline const D3D12_VIEWPORT& Camera::GetViewport() const noexcept
 	{
 		return viewport;
 	}
 
-	inline void Camera::SetViewport(const Viewport& value) noexcept
+	inline void Camera::SetViewport(const D3D12_VIEWPORT& value) noexcept
 	{
 		viewport = value;
 	}
 
-	inline const Rect& Camera::GetScissorRect() const noexcept
+	inline const D3D12_RECT& Camera::GetScissorRect() const noexcept
 	{
 		return scissorRect;
 	}
 
-	inline void Camera::SetScissorRect(const Rect& value) noexcept
+	inline void Camera::SetScissorRect(const D3D12_RECT& value) noexcept
 	{
 		scissorRect = value;
 	}
