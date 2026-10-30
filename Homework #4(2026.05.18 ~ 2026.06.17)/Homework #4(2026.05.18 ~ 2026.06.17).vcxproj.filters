@@ -90,9 +90,6 @@
     <ClInclude Include="Sources\Framework\Graphics.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
@@ -106,9 +103,6 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainCreateInfo.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">

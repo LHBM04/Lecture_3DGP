@@ -1,18 +1,28 @@
 #pragma once
 
+#include <type_traits>
 #include <utility>
 
 #include "Asset.hpp"
 #include "Framework/Graphics/GPUMesh.hpp"
 
+#include "Framework/Math/ColorRGB.hpp"
+#include "Framework/Math/Vector3D.hpp"
+
 namespace TUK::Framework
 {
 	struct ModelVertex final
 	{
-		float position[3]{};
-		float texcoord[2]{};
-		float normal[3]{};
+		Vector3D<float> position{};
+		Vector3D<float> normal{};
+		ColorRGB<float> color{ 1.0f, 1.0f, 1.0f };
 	};
+
+	static_assert(std::is_standard_layout_v<Vector3D<float>>);
+	static_assert(sizeof(Vector3D<float>) == sizeof(float) * 3);
+	static_assert(std::is_standard_layout_v<ColorRGB<float>>);
+	static_assert(sizeof(ColorRGB<float>) == sizeof(float) * 3);
+	static_assert(std::is_standard_layout_v<ModelVertex>);
 
 	class ModelAsset : public Asset
 	{

@@ -18,8 +18,6 @@
 
 namespace TUK::Framework
 {
-	struct GPUSwapChainCreateInfo;
-
 	class Display;
 
 	class RenderSubsystem : public EngineSubsystem
@@ -56,7 +54,7 @@ namespace TUK::Framework
 		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
 
 		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
-		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const GPUSwapChainCreateInfo& info) const;
+		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const;
 		
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;

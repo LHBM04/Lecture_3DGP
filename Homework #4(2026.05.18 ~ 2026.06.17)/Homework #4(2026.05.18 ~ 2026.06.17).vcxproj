@@ -188,13 +188,11 @@
     <ClInclude Include="Sources\Framework\Entities\World.hpp" />
     <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\PrimitiveTopology.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPURootSignature.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChainCreateInfo.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />

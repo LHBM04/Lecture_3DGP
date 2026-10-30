@@ -23,47 +23,44 @@ namespace TUK::Framework
 			return std::unexpected("ShaderAssetLoader requires an .hlsl file.");
 		}
 
-		GPUShaderCreateInfo createInfo{};
-		createInfo.path = path;
-		createInfo.entryPoint = "main";
-		createInfo.compileFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS;
+		std::string_view target;
 
 		const std::string stageExtension = path.stem().extension().string();
 		if (stageExtension == ".vert")
 		{
-			createInfo.stage = ShaderStage::Vertex;
+			target = "vs_5_1";
 		}
 		else if (stageExtension == ".tesc")
 		{
-			createInfo.stage = ShaderStage::Hull;
+			target = "hs_5_1";
 		}
 		else if (stageExtension == ".tese")
 		{
-			createInfo.stage = ShaderStage::Domain;
+			target = "ds_5_1";
 		}
 		else if (stageExtension == ".geom")
 		{
-			createInfo.stage = ShaderStage::Geometry;
+			target = "gs_5_1";
 		}
 		else if (stageExtension == ".frag")
 		{
-			createInfo.stage = ShaderStage::Pixel;
+			target = "ps_5_1";
 		}
 		else if (stageExtension == ".comp")
 		{
-			createInfo.stage = ShaderStage::Compute;
+			target = "cs_5_1";
 		}
 		else
 		{
 			return std::unexpected("Unsupported shader stage extension: " + stageExtension);
 		}
 
-		auto shader = device.CreateGPUShader(createInfo);
+		auto shader = device.CreateGPUShader(path, target, "main", D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS);
 		if (!shader)
 		{
 			return std::unexpected(shader.error());
 		}
 
-		return std::make_unique<ShaderAsset>(std::move(*shader), std::move(createInfo));
+		return std::make_unique<ShaderAsset>(std::move(*shader));
 	}
 }

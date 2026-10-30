@@ -15,47 +15,39 @@ namespace TUK::Framework
 
 	std::uint32_t GPUMesh::GetVertexCount() const noexcept
 	{
-		return static_cast<std::uint32_t>(vertexBuffer.GetSizeInBytes() / vertexStride);
+		return static_cast<std::uint32_t>(vertexBufferView.SizeInBytes / vertexBufferView.StrideInBytes);
 	}
 
 	std::uint32_t GPUMesh::GetIndexCount() const noexcept
 	{
-		const std::uint32_t indexSize = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		return static_cast<std::uint32_t>(indexBuffer.GetSizeInBytes() / indexSize);
+		const std::uint32_t indexSize = indexBufferView.Format == DXGI_FORMAT_R16_UINT ? 2 : 4;
+		return static_cast<std::uint32_t>(indexBufferView.SizeInBytes / indexSize);
 	}
 
-	D3D_PRIMITIVE_TOPOLOGY GPUMesh::GetD3DTopology() const noexcept
+	D3D12_PRIMITIVE_TOPOLOGY GPUMesh::GetD3DTopology() const noexcept
 	{
-		return static_cast<D3D_PRIMITIVE_TOPOLOGY>(topology);
+		return topology;
 	}
 
 	D3D12_VERTEX_BUFFER_VIEW GPUMesh::GetD3DVertexBufferView() const noexcept
 	{
-		D3D12_VERTEX_BUFFER_VIEW view{};
-		view.BufferLocation = vertexBuffer.GetGPUVirtualAddress();
-		view.SizeInBytes = static_cast<UINT>(vertexBuffer.GetSizeInBytes());
-		view.StrideInBytes = vertexStride;
-		return view;
+		return vertexBufferView;
 	}
 
 	D3D12_INDEX_BUFFER_VIEW GPUMesh::GetD3DIndexBufferView() const noexcept
 	{
-		D3D12_INDEX_BUFFER_VIEW view{};
-		view.BufferLocation = indexBuffer.GetGPUVirtualAddress();
-		view.SizeInBytes = static_cast<UINT>(indexBuffer.GetSizeInBytes());
-		view.Format = indexFormat;
-		return view;
+		return indexBufferView;
 	}
 
 	GPUMesh::GPUMesh(
 		GPUBuffer vertexBuffer,
 		GPUBuffer indexBuffer,
-		const GPUMeshCreateInfo& info) noexcept
+		std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) noexcept
 		: vertexBuffer(std::move(vertexBuffer))
-		, vertexStride(info.vertexStride)
+		, vertexBufferView{ this->vertexBuffer.GetGPUVirtualAddress(), static_cast<UINT>(this->vertexBuffer.GetSizeInBytes()), vertexStride }
 		, indexBuffer(std::move(indexBuffer))
-		, indexFormat(info.indexFormat)
-		, topology(info.topology)
+		, indexBufferView{ this->indexBuffer.GetGPUVirtualAddress(), static_cast<UINT>(this->indexBuffer.GetSizeInBytes()), indexFormat }
+		, topology(topology)
 	{
 	}
 }

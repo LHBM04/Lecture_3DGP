@@ -12,15 +12,6 @@
 
 namespace TUK::Framework
 {
-	struct GPUBufferDescription final
-	{
-		std::uint64_t sizeInBytes = 0;
-		D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT;
-
-		// DEFAULT에 적용합니다. UPLOAD는 GENERIC_READ, READBACK은 COPY_DEST로 고정합니다.
-		D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON;
-	};
-
 	class GPUBuffer
 	{
 		friend class GPUDevice;

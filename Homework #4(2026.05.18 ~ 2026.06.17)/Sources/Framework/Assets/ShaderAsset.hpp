@@ -10,7 +10,7 @@ namespace TUK::Framework
 	class ShaderAsset : public Asset
 	{
 	public:
-		ShaderAsset(GPUShader shader, GPUShaderCreateInfo createInfo) noexcept;
+		ShaderAsset(GPUShader shader) noexcept;
 		~ShaderAsset() noexcept override = default;
 
 		ShaderAsset(const ShaderAsset&) = delete;
@@ -20,11 +20,9 @@ namespace TUK::Framework
 		ShaderAsset& operator=(ShaderAsset&&) noexcept = default;
 
 		[[nodiscard]] const GPUShader& GetShader() const noexcept;
-		[[nodiscard]] const GPUShaderCreateInfo& GetCreateInfo() const noexcept;
 
 	private:
 		GPUShader shader;
-		GPUShaderCreateInfo createInfo;
 	};
 
 	inline const GPUShader& ShaderAsset::GetShader() const noexcept
@@ -32,14 +30,8 @@ namespace TUK::Framework
 		return shader;
 	}
 
-	inline const GPUShaderCreateInfo& ShaderAsset::GetCreateInfo() const noexcept
-	{
-		return createInfo;
-	}
-
-	inline ShaderAsset::ShaderAsset(GPUShader shader, GPUShaderCreateInfo createInfo) noexcept
+	inline ShaderAsset::ShaderAsset(GPUShader shader) noexcept
 		: shader(std::move(shader))
-		, createInfo(std::move(createInfo))
 	{
 	}
 }

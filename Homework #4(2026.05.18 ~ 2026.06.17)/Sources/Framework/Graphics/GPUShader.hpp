@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <d3d12.h>
@@ -13,25 +14,6 @@
 
 namespace TUK::Framework
 {
-	enum class ShaderStage : std::uint8_t
-	{
-		Unknown,
-		Vertex,
-		Hull,
-		Domain,
-		Geometry,
-		Pixel,
-		Compute,
-	};
-
-	struct GPUShaderCreateInfo final
-	{
-		std::filesystem::path path;
-		ShaderStage stage = ShaderStage::Unknown;
-		std::string entryPoint = "main";
-		std::uint32_t compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-	};
-
 	class GPUShader
 	{
 		friend class GPUDevice;
@@ -47,13 +29,13 @@ namespace TUK::Framework
 
 		[[nodiscard]] ID3DBlob& GetD3DBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
-		[[nodiscard]] ShaderStage GetStage() const noexcept;
+		[[nodiscard]] std::string_view GetStage() const noexcept;
 
 	private:
-		GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, ShaderStage stage) noexcept;
+		GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
-		ShaderStage stage;
+		std::string stage;
 	};
 
 	inline ID3DBlob& GPUShader::GetD3DBlob() const noexcept
@@ -68,14 +50,14 @@ namespace TUK::Framework
 		return { d3dBlob->GetBufferPointer(), d3dBlob->GetBufferSize() };
 	}
 
-	inline ShaderStage GPUShader::GetStage() const noexcept
+	inline std::string_view GPUShader::GetStage() const noexcept
 	{
 		return stage;
 	}
 
-	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, ShaderStage stage) noexcept
+	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept
 		: d3dBlob(std::move(d3dBlob))
-		, stage(stage)
+		, stage(std::move(stage))
 	{
 	}
 }
