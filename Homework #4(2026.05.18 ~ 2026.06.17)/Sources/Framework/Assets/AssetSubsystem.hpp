@@ -25,12 +25,6 @@ namespace TUK::Framework
 	public:
 		~AssetSubsystem() noexcept override = default;
 
-		AssetSubsystem(const AssetSubsystem&) = delete;
-		AssetSubsystem& operator=(const AssetSubsystem&) = delete;
-
-		AssetSubsystem(AssetSubsystem&&) noexcept = delete;
-		AssetSubsystem& operator=(AssetSubsystem&&) noexcept = delete;
-
 		template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
 		void AddLoader(TArgs&&... args);
 
