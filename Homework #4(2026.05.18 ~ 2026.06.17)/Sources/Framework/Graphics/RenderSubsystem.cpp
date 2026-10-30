@@ -1,6 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
+#include <cstdint>
+#include <iostream>
+
 #include "Framework/Platform/Display.hpp"
 
 
@@ -139,22 +142,11 @@ namespace TUK::Framework
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
 		// 직전 프레임의 Fence 대기가 끝난 뒤 기록용 메모리를 재사용합니다.
-		ID3D12CommandAllocator& allocator = commandBuffer->GetD3DCommandAllocator();
-		ID3D12GraphicsCommandList10& commandList = commandBuffer->GetD3DCommandList();
-
-		if (FAILED(allocator.Reset()))
+		if (auto result = commandBuffer->Reset(); !result)
 		{
-			std::cerr << "D3D12 Command Allocator Reset 실패!" << std::endl;
+			std::cerr << result.error() << std::endl;
 			return SystemStatus::Failure;
 		}
-
-		if (FAILED(commandList.Reset(&allocator, nullptr)))
-		{
-			std::cerr << "D3D12 Command List Reset 실패!" << std::endl;
-			return SystemStatus::Failure;
-		}
-
-		commandList.SetGraphicsRootSignature(&device->GetD3DRootSignature());
 
 		// 각 스왑 체인을 돌면서 명령을 기록한다.
 		for (auto& [display, swapChain] : swapChains)
@@ -177,8 +169,8 @@ namespace TUK::Framework
 			{
 				0, 0, static_cast<LONG>(targetDescription.Width), static_cast<LONG>(targetDescription.Height)
 			};
-			commandList.RSSetViewports(1, &viewport);
-			commandList.RSSetScissorRects(1, &scissor);
+			commandBuffer->SetViewport(viewport);
+			commandBuffer->SetScissorRect(scissor);
 
 			for (const RenderCallback& listener : listeners)
 			{
@@ -374,4 +366,5 @@ namespace TUK::Framework
 
 		return GPUSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(backBuffers), descriptorSize);
 	}
+
 }

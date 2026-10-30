@@ -1,7 +1,17 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUCommandBuffer.hpp"
 
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <span>
+#include <utility>
+
+#include "../Resources/MaterialAsset.hpp"
+
+#include "Camera.hpp"
 #include "GPUBuffer.hpp"
+#include "GPUDevice.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 #include "GPUMesh.hpp"
 #include "GPURenderTarget.hpp"
@@ -11,6 +21,26 @@ namespace TUK::Framework
 {
 	namespace
 	{
+		struct CameraConstants final
+		{
+			DirectX::XMFLOAT4X4 view;
+			DirectX::XMFLOAT4X4 projection;
+		};
+
+		struct ObjectConstants final
+		{
+			DirectX::XMFLOAT4X4 world;
+		};
+
+		struct MaterialConstants final
+		{
+			DirectX::XMFLOAT4 baseColor;
+			DirectX::XMFLOAT4 emissiveColor;
+			float metallic;
+			float roughness;
+			float padding[2]{};
+		};
+
 		enum class GPUConstantBufferSlot : std::uint32_t
 		{
 			CAMERA = 0,
@@ -18,6 +48,94 @@ namespace TUK::Framework
 			MATERIAL = 2,
 			COUNT = 3
 		};
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::Reset()
+	{
+		if (FAILED(d3dCommandAllocator->Reset()))
+		{
+			return std::unexpected("D3D12 Command Allocator Reset에 실패했습니다.");
+		}
+		if (FAILED(d3dCommandList->Reset(d3dCommandAllocator.Get(), nullptr)))
+		{
+			return std::unexpected("D3D12 Command List Reset에 실패했습니다.");
+		}
+
+		constantBufferPageIndex = 0;
+		constantBufferOffset = 0;
+		activeTargetFormat = DXGI_FORMAT_UNKNOWN;
+		cameraPrepared = false;
+		d3dCommandList->SetGraphicsRootSignature(&device->GetD3DRootSignature());
+		return {};
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera& camera) noexcept
+	{
+		cameraPrepared = false;
+		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
+		{
+			return std::unexpected("카메라 적용 전에 렌더 타깃을 지정해야 합니다.");
+		}
+
+		CameraConstants constants{};
+		DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<float>::Load(camera.GetViewMatrix()));
+		DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<float>::Load(camera.GetProjectionMatrix()));
+		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
+		if (!allocation)
+		{
+			return std::unexpected(allocation.error());
+		}
+		SetGPUCameraConstantBuffer(*allocation->first, allocation->second);
+		SetViewport(camera.GetViewport());
+		SetScissorRect(camera.GetScissorRect());
+		cameraPrepared = true;
+		return {};
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::SetMaterial(const MaterialAsset& material) noexcept
+	{
+		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
+		{
+			return std::unexpected("머터리얼 적용 전에 렌더 타깃을 지정해야 합니다.");
+		}
+
+		if (material.GetTargetFormat() != activeTargetFormat)
+		{
+			return std::unexpected("머터리얼의 PSO와 렌더 타깃 포맷이 일치하지 않습니다.");
+		}
+		const ColorRGBA<float>& baseColor = material.GetBaseColor();
+		const ColorRGBA<float>& emissiveColor = material.GetEmissiveColor();
+		MaterialConstants constants{};
+		constants.baseColor = { baseColor.GetR(), baseColor.GetG(), baseColor.GetB(), baseColor.GetA() };
+		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
+		constants.metallic = material.GetMetallic();
+		constants.roughness = material.GetRoughness();
+		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
+		if (!allocation)
+		{
+			return std::unexpected(allocation.error());
+		}
+		SetGPUMaterialConstantBuffer(*allocation->first, allocation->second);
+		SetGPUGraphicsPipelineState(material.GetGraphicsPipelineState());
+		return {};
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::SetObjectTransform(const Matrix4x4<float>& worldMatrix) noexcept
+	{
+		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN)
+		{
+			return std::unexpected("오브젝트 변환 적용 전에 카메라를 지정해야 합니다.");
+		}
+
+		ObjectConstants constants{};
+		DirectX::XMStoreFloat4x4(&constants.world, Matrix4x4<float>::Load(worldMatrix));
+		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
+		if (!allocation)
+		{
+			return std::unexpected(allocation.error());
+		}
+		SetGPUObjectConstantBuffer(*allocation->first, allocation->second);
+		return {};
 	}
 
 	void GPUCommandBuffer::TransitionTexture(
@@ -153,6 +271,8 @@ namespace TUK::Framework
 
 	void GPUCommandBuffer::SetGPURenderTarget(const GPURenderTarget& target)
 	{
+		activeTargetFormat = target.GetTexture().GetD3DResource().GetDesc().Format;
+		cameraPrepared = false;
 		const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = target.GetD3DRTVHandle();
 		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	}
@@ -168,10 +288,61 @@ namespace TUK::Framework
 	}
 
 	GPUCommandBuffer::GPUCommandBuffer(
+		const GPUDevice& device,
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
-		: d3dCommandList(std::move(d3dCommandList))
+		: device(&device)
+		, d3dCommandList(std::move(d3dCommandList))
 		, d3dCommandAllocator(std::move(d3dCommandAllocator))
 	{
 	}
+	std::expected<std::pair<const GPUBuffer*, std::uint64_t>, std::string> GPUCommandBuffer::UploadConstants(
+		std::span<const std::byte> bytes)
+	{
+		constexpr std::uint64_t CONSTANT_BUFFER_PAGE_SIZE = 64 * 1024;
+		constexpr std::uint64_t ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
+		if (!device || bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
+		{
+			return std::unexpected("상수 버퍼 데이터 또는 GPUDevice가 유효하지 않습니다.");
+		}
+		const std::uint64_t alignedSize = (bytes.size() + ALIGNMENT - 1) / ALIGNMENT * ALIGNMENT;
+		if (constantBufferOffset + alignedSize > CONSTANT_BUFFER_PAGE_SIZE)
+		{
+			++constantBufferPageIndex;
+			constantBufferOffset = 0;
+		}
+
+		if (constantBufferPageIndex == constantBufferPages.size())
+		{
+			D3D12_HEAP_PROPERTIES heapProperties{};
+			heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+			heapProperties.CreationNodeMask = 1;
+			heapProperties.VisibleNodeMask = 1;
+			D3D12_RESOURCE_DESC description{};
+			description.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+			description.Width = CONSTANT_BUFFER_PAGE_SIZE;
+			description.Height = 1;
+			description.DepthOrArraySize = 1;
+			description.MipLevels = 1;
+			description.SampleDesc.Count = 1;
+			description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+			auto page = device->CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
+			if (!page)
+			{
+				return std::unexpected(page.error());
+			}
+			constantBufferPages.emplace_back(std::move(*page));
+		}
+
+		const std::uint64_t offset = constantBufferOffset;
+		GPUBuffer& page = constantBufferPages[constantBufferPageIndex];
+		if (auto result = page.Write(bytes, offset); !result)
+		{
+			return std::unexpected(result.error());
+		}
+		constantBufferOffset += alignedSize;
+		return std::pair<const GPUBuffer*, std::uint64_t>{ &page, offset };
+	}
+
+
 }

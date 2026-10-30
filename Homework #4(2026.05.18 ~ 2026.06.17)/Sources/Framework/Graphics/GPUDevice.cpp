@@ -214,7 +214,7 @@ namespace TUK::Framework
 			return std::unexpected("D3D12 Command List 초기 Close에 실패했습니다.");
 		}
 
-		return GPUCommandBuffer(std::move(d3dCommandList), std::move(d3dCommandAllocator));
+		return GPUCommandBuffer(*this, std::move(d3dCommandList), std::move(d3dCommandAllocator));
 	}
 
 	std::expected<GPUFence, std::string> GPUDevice::CreateGPUFence() const

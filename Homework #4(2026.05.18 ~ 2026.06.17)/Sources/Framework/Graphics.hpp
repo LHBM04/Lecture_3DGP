@@ -11,4 +11,5 @@
 #include "Graphics/GPUSwapChain.hpp"
 #include "Graphics/GPURenderTarget.hpp"
 #include "Graphics/GPUTexture.hpp"
+#include "Graphics/MeshRenderer.hpp"
 #include "Graphics/RenderSubsystem.hpp"

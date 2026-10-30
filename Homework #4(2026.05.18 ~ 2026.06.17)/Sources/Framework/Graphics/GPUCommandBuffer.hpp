@@ -1,17 +1,28 @@
 ﻿#pragma once
 
+#include <cstddef>
 #include <cstdint>
+#include <expected>
+#include <span>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <d3d12.h>
 
 #include <wrl/client.h>
 
+#include "GPUBuffer.hpp"
+#include "GPUGraphicsPipelineState.hpp"
+
 #include "../Math/ColorRGBA.hpp"
+#include "../Math/Matrix4x4.hpp"
 
 namespace TUK::Framework
 {
-	class GPUBuffer;
-	class GPUGraphicsPipelineState;
+	class Camera;
+	class GPUDevice;
+	class MaterialAsset;
 	class GPUMesh;
 	class GPURenderTarget;
 	class GPUTexture;
@@ -28,6 +39,12 @@ namespace TUK::Framework
 
 		GPUCommandBuffer(GPUCommandBuffer&&) noexcept = default;
 		GPUCommandBuffer& operator=(GPUCommandBuffer&&) noexcept = default;
+
+		// 이전 제출의 GPU 작업이 끝난 뒤 호출합니다.
+		[[nodiscard]] std::expected<void, std::string> Reset();
+		[[nodiscard]] std::expected<void, std::string> SetCamera(const Camera& camera) noexcept;
+		[[nodiscard]] std::expected<void, std::string> SetMaterial(const MaterialAsset& material) noexcept;
+		[[nodiscard]] std::expected<void, std::string> SetObjectTransform(const Matrix4x4<float>& worldMatrix) noexcept;
 
 		void TransitionTexture(
 			const GPUTexture& texture,
@@ -67,10 +84,20 @@ namespace TUK::Framework
 
 	private:
 		explicit GPUCommandBuffer(
+			const GPUDevice& device,
 			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
 			Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
 
+		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, std::uint64_t>, std::string> UploadConstants(
+			std::span<const std::byte> bytes);
+
+		const GPUDevice* device;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+		std::vector<GPUBuffer> constantBufferPages;
+		std::size_t constantBufferPageIndex = 0;
+		std::uint64_t constantBufferOffset = 0;
+		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
+		bool cameraPrepared = false;
 	};
 }

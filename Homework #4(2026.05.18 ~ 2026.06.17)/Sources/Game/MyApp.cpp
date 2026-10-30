@@ -1,12 +1,10 @@
 ﻿#include "Precompiled.hpp"
-#include <filesystem>
-
 #include "MyApp.hpp"
 
-#include "Framework/Assets/AssetSubsystem.hpp"
-#include "Framework/Assets/ModelAssetLoader.hpp"
-#include "Framework/Assets/ShaderAsset.hpp"
-#include "Framework/Assets/ShaderAssetLoader.hpp"
+#include <cassert>
+#include <memory>
+
+#include "Framework/Resources.hpp"
 
 #include "Framework/Entities/WorldSubsystem.hpp"
 
@@ -38,12 +36,12 @@ namespace TUK::Game
 
 	SystemStatus MyApp::Startup()
 	{
-		DisplayCreateInfo options{};
+		Framework::DisplayCreateInfo options{};
 		options.caption = "Homework #4(2026.05.18 ~ 2026.06.17)";
 		options.position = Framework::Vector2D(100, 100);
 		options.size = Framework::Vector2D(1280, 960);
 
-		DisplaySubsystem* windowSubsystem = MyEngine::GetInstance()->GetSubsystem<DisplaySubsystem>();
+		Framework::DisplaySubsystem* windowSubsystem = MyEngine::GetInstance()->GetSubsystem<Framework::DisplaySubsystem>();
 		assert(windowSubsystem);
 
 		auto created = windowSubsystem->CreateDisplay(options);
@@ -53,27 +51,24 @@ namespace TUK::Game
 		}
 		window = &(created.value().get());
 
-		WorldSubsystem* worldSubsystem = AddSubsystem<WorldSubsystem>();
-		worldSubsystem->AddWorld(std::make_unique<TestWorld>());
-
-		RenderSubsystem* renderSubsystem = MyEngine::GetInstance()->GetSubsystem<RenderSubsystem>();
+		Framework::RenderSubsystem* renderSubsystem = MyEngine::GetInstance()->GetSubsystem<Framework::RenderSubsystem>();
 		assert(renderSubsystem);
-		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::PreRender);
-		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::Render);
-		renderSubsystem->Subscribe(worldSubsystem, &WorldSubsystem::PostRender);
-
-		AssetSubsystem* assetSubsystem = AddSubsystem<AssetSubsystem>();
-		assetSubsystem->AddLoader<Framework::ShaderAssetLoader>(*renderSubsystem->GetGPUDevice());
-		assetSubsystem->AddLoader<Framework::ModelAssetLoader>(*renderSubsystem->GetGPUDevice());
-
-		// 셰이더 로드
-		for (const auto& entry : std::filesystem::recursive_directory_iterator("Resources\\Shaders"))
+		const Framework::GPUDevice* device = renderSubsystem->GetGPUDevice();
+		if (!device)
 		{
-			if (entry.is_regular_file() && entry.path().extension() == ".hlsl")
-			{
-				assetSubsystem->LoadAsset<ShaderAsset>(entry.path());
-			}
+			return SystemStatus::Failure;
 		}
+
+		Framework::WorldSubsystem* worldSubsystem = AddSubsystem<Framework::WorldSubsystem>();
+		worldSubsystem->AddWorld(std::make_unique<TestWorld>());
+		renderSubsystem->Subscribe(worldSubsystem, &Framework::WorldSubsystem::PreRender);
+		renderSubsystem->Subscribe(worldSubsystem, &Framework::WorldSubsystem::Render);
+		renderSubsystem->Subscribe(worldSubsystem, &Framework::WorldSubsystem::PostRender);
+
+		Framework::AssetSubsystem* assetSubsystem = AddSubsystem<Framework::AssetSubsystem>();
+		assetSubsystem->AddLoader<Framework::ShaderAssetLoader>(*renderSubsystem->GetGPUDevice());
+		assetSubsystem->AddLoader<Framework::ModelAssetLoader>(*device, *assetSubsystem);
+		assetSubsystem->AddLoader<Framework::MaterialAssetLoader>(*device, *assetSubsystem);
 
 		return App::Startup();
 	}

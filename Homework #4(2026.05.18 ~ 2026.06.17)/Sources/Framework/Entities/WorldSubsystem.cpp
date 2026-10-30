@@ -55,27 +55,27 @@ namespace TUK::Framework
 		return result;
 	}
 
-	void WorldSubsystem::PreRender(GPUCommandBuffer& renderer)
+	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
 	{
 		if (currentWorld)
 		{
-			currentWorld->PreRender(renderer);
+			currentWorld->PreRender(commandBuffer);
 		}
 	}
 
-	void WorldSubsystem::Render(GPUCommandBuffer& renderer)
+	void WorldSubsystem::Render(GPUCommandBuffer& commandBuffer)
 	{
 		if (currentWorld)
 		{
-			currentWorld->Render(renderer);
+			currentWorld->Render(commandBuffer);
 		}
 	}
 
-	void WorldSubsystem::PostRender(GPUCommandBuffer& renderer)
+	void WorldSubsystem::PostRender(GPUCommandBuffer& commandBuffer)
 	{
 		if (currentWorld)
 		{
-			currentWorld->PostRender(renderer);
+			currentWorld->PostRender(commandBuffer);
 		}
 	}
 
