@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "WorldSubsystem.hpp"
 
 #include "World.hpp"
@@ -55,6 +55,15 @@ namespace TUK::Framework
 		return result;
 	}
 
+	void WorldSubsystem::ExitWorld()
+	{
+		if (currentWorld)
+		{
+			currentWorld->Exit();
+			currentWorld = nullptr;
+		}
+	}
+
 	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
 	{
 		if (currentWorld)
@@ -91,34 +100,36 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnFixedUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::Failure;
+			currentWorld->FixedUpdate();
 		}
 
-		currentWorld->FixedUpdate();
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus WorldSubsystem::OnUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::Failure;
+			currentWorld->Update();
 		}
 
-		currentWorld->Update();
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus WorldSubsystem::OnLateUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::Failure;
+			currentWorld->LateUpdate();
 		}
 
-		currentWorld->LateUpdate();
+		if (!currentWorld)
+		{
+			return SystemStatus::Success;
+		}
+
 		return SystemStatus::Continue;
 	}
 }

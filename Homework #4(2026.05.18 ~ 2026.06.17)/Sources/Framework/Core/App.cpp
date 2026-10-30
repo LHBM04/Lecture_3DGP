@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "App.hpp"
 
 #include "../Platform/TimeSubsystem.hpp"
@@ -66,7 +66,7 @@ namespace TUK::Framework
 			}
 		}
 
-		return SystemStatus::Continue;
+		return next;
 	}
 
 	SystemStatus App::EarlyUpdate()
@@ -80,7 +80,7 @@ namespace TUK::Framework
 			}
 		}
 
-		return SystemStatus::Success;
+		return SystemStatus::Continue;
 	}
 
 	SystemStatus App::FixedUpdate()
@@ -94,7 +94,7 @@ namespace TUK::Framework
 			}
 		}
 
-		return SystemStatus::Success;
+		return SystemStatus::Continue;
 	}
 
 	SystemStatus App::Update()
@@ -108,7 +108,7 @@ namespace TUK::Framework
 			}
 		}
 
-		return SystemStatus::Success;
+		return SystemStatus::Continue;
 	}
 
 	SystemStatus App::LateUpdate()
@@ -122,7 +122,7 @@ namespace TUK::Framework
 			}
 		}
 
-		return SystemStatus::Success;
+		return SystemStatus::Continue;
 	}
 
 	App* App::GetInstance()
