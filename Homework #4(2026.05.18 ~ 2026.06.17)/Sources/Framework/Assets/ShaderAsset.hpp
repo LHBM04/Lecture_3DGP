@@ -2,8 +2,9 @@
 
 #include <utility>
 
-#include "Asset.hpp"
 #include "Framework/Graphics/D3DShader.hpp"
+
+#include "Asset.hpp"
 
 namespace TUK::Framework
 {

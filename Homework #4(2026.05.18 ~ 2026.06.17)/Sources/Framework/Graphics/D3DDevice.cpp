@@ -53,21 +53,15 @@ namespace TUK::Framework
 
 	std::expected<D3DShader, std::string> D3DDevice::CreateD3DShader(const std::filesystem::path& path, std::string_view target, const std::string& entryPoint, std::uint32_t compileFlags) const
 	{
-		if (path.empty() || entryPoint.empty() || target.empty() || target.find('\0') != std::string_view::npos)
-		{
-			return std::unexpected("D3DShader 파일 경로, 진입점과 유효한 대상 프로파일을 지정해야 합니다.");
-		}
-
-		std::string targetString(target);
-
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+
 		const HRESULT result = D3DCompileFromFile(
 			path.c_str(),
 			nullptr,
 			D3D_COMPILE_STANDARD_FILE_INCLUDE,
 			entryPoint.c_str(),
-			targetString.c_str(),
+			target.data(),
 			compileFlags,
 			0,
 			d3dBlob.GetAddressOf(),
@@ -77,7 +71,7 @@ namespace TUK::Framework
 		{
 			std::string message = std::format(
 				"D3DShader 컴파일에 실패했습니다. Entry: {}, Target: {}, HRESULT: 0x{:08X}",
-				entryPoint, targetString, static_cast<std::uint32_t>(result));
+				entryPoint, target.data(), static_cast<std::uint32_t>(result));
 
 			if (errorBlob && errorBlob->GetBufferSize() > 0)
 			{
@@ -95,7 +89,7 @@ namespace TUK::Framework
 			return std::unexpected(std::move(message));
 		}
 
-		return D3DShader(std::move(d3dBlob), std::move(targetString));
+		return D3DShader(std::move(d3dBlob));
 	}
 
 	std::expected<D3DRootSignature, std::string> D3DDevice::CreateD3DRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& description) const

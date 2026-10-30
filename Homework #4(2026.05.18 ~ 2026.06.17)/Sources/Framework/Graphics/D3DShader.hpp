@@ -29,13 +29,11 @@ namespace TUK::Framework
 
 		[[nodiscard]] ID3DBlob& GetD3DBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
-		[[nodiscard]] std::string_view GetStage() const noexcept;
 
 	private:
-		D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept;
+		D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
-		std::string stage;
 	};
 
 	inline ID3DBlob& D3DShader::GetD3DBlob() const noexcept
@@ -50,14 +48,8 @@ namespace TUK::Framework
 		return { d3dBlob->GetBufferPointer(), d3dBlob->GetBufferSize() };
 	}
 
-	inline std::string_view D3DShader::GetStage() const noexcept
-	{
-		return stage;
-	}
-
-	inline D3DShader::D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept
+	inline D3DShader::D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept
 		: d3dBlob(std::move(d3dBlob))
-		, stage(std::move(stage))
 	{
 	}
 }
