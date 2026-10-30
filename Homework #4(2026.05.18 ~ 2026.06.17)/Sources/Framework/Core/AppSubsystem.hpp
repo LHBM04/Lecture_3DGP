@@ -11,10 +11,11 @@ namespace TUK::Framework
 		friend class App;
 
 	public:
-		explicit AppSubsystem(std::uint16_t priority) noexcept;
 		~AppSubsystem() noexcept override;
 
 	protected:
+		explicit AppSubsystem(std::uint16_t priority) noexcept;
+
 		virtual SystemStatus OnEarlyUpdate();
 		virtual SystemStatus OnFixedUpdate();
 		virtual SystemStatus OnUpdate();

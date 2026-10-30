@@ -17,8 +17,9 @@ namespace TUK::Framework
 {
 	class EventSubsystem : public EngineSubsystem
 	{
+		friend class System;
+
 	public:
-		EventSubsystem() noexcept;
 		~EventSubsystem() noexcept override;
 
 		void PushEvent(Event event);
@@ -32,6 +33,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		EventSubsystem() noexcept;
+
 		using Listener = std::function<void(const Event&)>;
 
 		std::pmr::vector<Event> writeBuffer;

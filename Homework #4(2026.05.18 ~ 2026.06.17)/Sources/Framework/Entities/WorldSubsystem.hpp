@@ -12,8 +12,9 @@ namespace TUK::Framework
 
 	class WorldSubsystem : public AppSubsystem
 	{
+		friend class System;
+
 	public:
-		WorldSubsystem() noexcept;
 		~WorldSubsystem() noexcept override;
 		World& AddWorld(std::unique_ptr<World> world);
 
@@ -30,6 +31,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		WorldSubsystem() noexcept;
+
 		std::vector<std::unique_ptr<World>> worlds;
 		World* currentWorld = nullptr;
 	};

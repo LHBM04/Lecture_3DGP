@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <cstdint>
-#include <optional>
 
 #include <d3d12.h>
 
@@ -9,23 +8,7 @@
 
 namespace TUK::Framework
 {
-	enum class PrimitiveTopology : std::uint32_t
-	{
-		PointList = D3D_PRIMITIVE_TOPOLOGY_POINTLIST,
-		LineList = D3D_PRIMITIVE_TOPOLOGY_LINELIST,
-		LineStrip = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP,
-		TriangleList = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-		TriangleStrip = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
-	};
-
-	struct GPUMeshCreateInfo final
-	{
-		std::uint32_t vertexStride = 0;
-		DXGI_FORMAT indexFormat = DXGI_FORMAT_R32_UINT;
-		PrimitiveTopology topology = PrimitiveTopology::TriangleList;
-	};
-
-	// 정점 스트림 하나와 선택적인 인덱스 버퍼를 소유합니다.
+	// 정점 스트림 하나와 인덱스 버퍼를 소유합니다.
 	class GPUMesh
 	{
 		friend class GPUDevice;
@@ -43,22 +26,24 @@ namespace TUK::Framework
 		[[nodiscard]] std::uint32_t GetVertexCount() const noexcept;
 		[[nodiscard]] D3D12_VERTEX_BUFFER_VIEW GetD3DVertexBufferView() const noexcept;
 
-		[[nodiscard]] const GPUBuffer* GetIndexBuffer() const noexcept;
+		[[nodiscard]] const GPUBuffer& GetIndexBuffer() const noexcept;
 		[[nodiscard]] std::uint32_t GetIndexCount() const noexcept;
-		[[nodiscard]] std::optional<D3D12_INDEX_BUFFER_VIEW> GetD3DIndexBufferView() const noexcept;
+		[[nodiscard]] D3D12_INDEX_BUFFER_VIEW GetD3DIndexBufferView() const noexcept;
 		
-		[[nodiscard]] D3D_PRIMITIVE_TOPOLOGY GetD3DTopology() const noexcept;
+		[[nodiscard]] D3D12_PRIMITIVE_TOPOLOGY GetD3DTopology() const noexcept;
 
 	private:
 		explicit GPUMesh(
 			GPUBuffer vertexBuffer,
-			std::optional<GPUBuffer> indexBuffer,
-			const GPUMeshCreateInfo& info) noexcept;
+			GPUBuffer indexBuffer,
+			std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
 
 		GPUBuffer vertexBuffer;
-		std::uint32_t vertexStride;
-		std::optional<GPUBuffer> indexBuffer;
-		DXGI_FORMAT indexFormat;
-		PrimitiveTopology topology;
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+
+		GPUBuffer indexBuffer;
+		D3D12_INDEX_BUFFER_VIEW indexBufferView;
+
+		D3D12_PRIMITIVE_TOPOLOGY topology;
 	};
 }

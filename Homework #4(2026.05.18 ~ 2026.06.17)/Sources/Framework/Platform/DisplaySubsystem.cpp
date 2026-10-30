@@ -1,16 +1,18 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
+#include "Resource.h"
+
 namespace
 {
-	/** 윈도우 클래스 이름 */
-	constexpr const char* ClassName = "TUK.Framework.Window";
-
 	/** 인스턴스 핸들 */
 	const HINSTANCE Instance = GetModuleHandleA(nullptr);
 
+	/** 윈도우 클래스 이름 */
+	TCHAR wndClassName[256];
+
 	/** 윈도우 클래스 */
-	bool isWndClassRegistered = false;
+	ATOM wndClass = 0;
 }
 
 namespace TUK::Framework
@@ -24,20 +26,20 @@ namespace TUK::Framework
 	{
 		displays.clear();
 
-		if (isWndClassRegistered)
+		if (wndClass != 0)
 		{
-			UnregisterClassA(ClassName, Instance);
-			isWndClassRegistered = false;
+			UnregisterClassA(wndClassName, Instance);
+			wndClass = 0;
 		}
 	}
 
-	std::expected<std::reference_wrapper<Display>, std::string> DisplaySubsystem::CreateDisplay(const DisplayOptions& options)
+	std::expected<std::reference_wrapper<Display>, std::string> DisplaySubsystem::CreateDisplay(const DisplayCreateInfo& options)
 	{
 		std::unique_ptr<Display> newWindow = std::make_unique<Display>(nullptr);
 
 		HWND hWnd = CreateWindowExA(
 			0, 
-			ClassName, 
+			wndClassName,
 			options.caption.data(),
 			WS_OVERLAPPEDWINDOW,
 			options.position.GetX(),
@@ -60,28 +62,24 @@ namespace TUK::Framework
 		return reference;
 	}
 
-	const std::vector<std::unique_ptr<Display>>& DisplaySubsystem::GetDisplays() const noexcept
-	{
-		return displays;
-	}
-
 	SystemStatus DisplaySubsystem::OnStartup()
 	{
+		LoadStringA(Instance, IDS_WNDCLASS, wndClassName, sizeof(wndClassName) / sizeof(TCHAR));
+
 		WNDCLASSEXA description{};
 		description.cbSize = sizeof(description);
 		description.style = CS_HREDRAW | CS_VREDRAW;
 		description.lpfnWndProc = WindowProc;
 		description.hInstance = Instance;
-		description.hCursor = LoadCursorA(nullptr, IDC_ARROW);
-		description.lpszClassName = ClassName;
-		description.hIcon = LoadIconA(nullptr, IDI_APPLICATION);
+		description.hCursor = LoadCursorA(Instance, IDC_ARROW);
+		description.lpszClassName = wndClassName;
+		description.hIcon = LoadIconA(Instance, MAKEINTRESOURCE(IDI_HOMEWORK04));
 		
-		if (RegisterClassExA(&description) == 0)
+		wndClass = RegisterClassExA(&description);
+		if (wndClass == 0)
 		{
 			return SystemStatus::Failure;
 		}
-
-		isWndClassRegistered = true;
 
 		return SystemStatus::Continue;
 	}
@@ -97,10 +95,10 @@ namespace TUK::Framework
 
 	void DisplaySubsystem::OnShutdown()
 	{
-		if (isWndClassRegistered)
+		if (wndClass != 0)
 		{
-			UnregisterClassA(ClassName, Instance);
-			isWndClassRegistered = false;
+			UnregisterClassA(wndClassName, Instance);
+			wndClass = 0;
 		}
 	}
 }

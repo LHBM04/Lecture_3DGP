@@ -7,12 +7,12 @@
 #include "Framework/Entities/World.hpp"
 #include "Framework/Graphics/GPUBuffer.hpp"
 #include "Framework/Graphics/GPUGraphicsPipelineState.hpp"
-#include "Framework/Graphics/GPUMesh.hpp"
 #include "Framework/Graphics/GPURootSignature.hpp"
 
 namespace TUK::Framework
 {
 	class GPUDevice;
+	class ModelAsset;
 	class RenderSubsystem;
 }
 
@@ -37,7 +37,7 @@ namespace TUK::Game
 		RenderSubsystem* renderSubsystem = nullptr;
 		std::optional<GPURootSignature> rootSignature;
 		std::optional<GPUGraphicsPipelineState> pipelineState;
-		std::optional<GPUMesh> mesh;
+		ModelAsset* model = nullptr;
 		std::optional<GPUBuffer> cameraBuffer;
 	};
 }

@@ -10,14 +10,6 @@
 
 namespace TUK::Framework
 {
-	struct GPURootSignatureCreateInfo final
-	{
-		// Root Signature 1.0을 사용합니다. 내부 descriptor range 배열도 생성 호출까지 유효해야 합니다.
-		std::span<const D3D12_ROOT_PARAMETER> parameters;
-		std::span<const D3D12_STATIC_SAMPLER_DESC> staticSamplers;
-		D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	};
-
 	class GPURootSignature
 	{
 		friend class GPUDevice;

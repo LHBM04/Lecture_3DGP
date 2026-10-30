@@ -1,6 +1,11 @@
 ﻿#include "Precompiled.hpp"
 #include "TestWorld.hpp"
 
+#include "Framework/Assets/AssetSubsystem.hpp"
+#include "Framework/Assets/ModelAsset.hpp"
+#include "Framework/Assets/ShaderAsset.hpp"
+
+#include "Framework/Core/App.hpp"
 #include "Framework/Core/Engine.hpp"
 
 #include "Framework/Entities/Entity.hpp"
@@ -11,12 +16,6 @@
 
 namespace
 {
-	struct Vertex final
-	{
-		float position[3];
-		float color[4];
-	};
-
 	// HLSL의 row_major float4x4 두 개와 같은 저장 형식입니다.
 	struct CameraConstants final
 	{
@@ -70,7 +69,7 @@ namespace TUK::Game
 
 	void TestWorld::OnRender(GPUCommandBuffer& renderer)
 	{
-		if (!rootSignature || !pipelineState || !mesh || !cameraBuffer)
+		if (!rootSignature || !pipelineState || !model || !cameraBuffer)
 		{
 			return;
 		}
@@ -95,15 +94,16 @@ namespace TUK::Game
 		renderer.SetGPUGraphicsConstantBuffer(0, *cameraBuffer);
 		renderer.SetViewport(camera->GetViewport());
 		renderer.SetScissorRect(camera->GetScissorRect());
-		renderer.SetGPUMesh(*mesh);
-		renderer.Draw(mesh->GetVertexCount());
+		const GPUMesh& mesh = model->GetMesh();
+		renderer.SetGPUMesh(mesh);
+		renderer.DrawIndexed(mesh.GetIndexCount());
 	}
 
 	void TestWorld::OnExit()
 	{
 		if (renderSubsystem)
 		{
-			if (mesh || pipelineState || rootSignature || cameraBuffer)
+			if (model || pipelineState || rootSignature || cameraBuffer)
 			{
 				if (auto result = renderSubsystem->WaitForGPU(); !result)
 				{
@@ -112,7 +112,7 @@ namespace TUK::Game
 			}
 		}
 
-		mesh.reset();
+		model = nullptr;
 		cameraBuffer.reset();
 		pipelineState.reset();
 		rootSignature.reset();
@@ -121,36 +121,17 @@ namespace TUK::Game
 
 	std::expected<void, std::string> TestWorld::CreateTriangle(const GPUDevice& device, DXGI_FORMAT targetFormat)
 	{
-		// 실행 파일 옆 Resources/Shaders를 사용하므로 디버거의 작업 디렉터리에 의존하지 않습니다.
-		std::array<char, 32768> executablePath{};
-		const DWORD pathLength = GetModuleFileNameA(nullptr, executablePath.data(), static_cast<DWORD>(executablePath.size()));
-		if (pathLength == 0 || pathLength >= executablePath.size())
+		auto* assetSubsystem = App::GetInstance()->GetSubsystem<AssetSubsystem>();
+		if (!assetSubsystem)
 		{
-			return std::unexpected("실행 파일 경로를 가져오지 못했습니다.");
-		}
-		const std::filesystem::path shaderPath = std::filesystem::path(executablePath.data()).parent_path() / "Resources" / "Shaders" / "Triangle.hlsl";
-
-		GPUShaderCreateInfo shaderInfo
-		{
-			.path = shaderPath,
-			.entryPoint = "VSMain",
-			.target = "vs_5_1",
-		};
-#if defined(_DEBUG)
-		shaderInfo.compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-		auto vertexShader = device.CreateGPUShader(shaderInfo);
-		if (!vertexShader)
-		{
-			return std::unexpected(vertexShader.error());
+			return std::unexpected("AssetSubsystem이 없습니다.");
 		}
 
-		shaderInfo.entryPoint = "PSMain";
-		shaderInfo.target = "ps_5_1";
-		auto pixelShader = device.CreateGPUShader(shaderInfo);
-		if (!pixelShader)
+		auto* vertexShader = assetSubsystem->LoadAsset<ShaderAsset>("Resources\\Shaders\\Triangle.vert.hlsl");
+		auto* pixelShader = assetSubsystem->LoadAsset<ShaderAsset>("Resources\\Shaders\\Triangle.frag.hlsl");
+		if (!vertexShader || !pixelShader)
 		{
-			return std::unexpected(pixelShader.error());
+			return std::unexpected("삼각형 셰이더 에셋 로딩에 실패했습니다.");
 		}
 
 		D3D12_ROOT_PARAMETER cameraParameter{};
@@ -158,55 +139,39 @@ namespace TUK::Game
 		cameraParameter.Descriptor.ShaderRegister = 0;
 		cameraParameter.Descriptor.RegisterSpace = 0;
 		cameraParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-		const GPURootSignatureCreateInfo rootSignatureInfo
-		{
-			.parameters = std::span(&cameraParameter, 1),
-		};
+		D3D12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureInfo{};
+		rootSignatureInfo.Version = D3D_ROOT_SIGNATURE_VERSION_1_0;
+		rootSignatureInfo.Desc_1_0.NumParameters = 1;
+		rootSignatureInfo.Desc_1_0.pParameters = &cameraParameter;
+		rootSignatureInfo.Desc_1_0.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 		auto newRootSignature = device.CreateGPURootSignature(rootSignatureInfo);
 		if (!newRootSignature)
 		{
 			return std::unexpected(newRootSignature.error());
 		}
 
-		const GPUBufferDescription cameraBufferInfo
-		{
-			.sizeInBytes = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT,
-			.heapType = D3D12_HEAP_TYPE_UPLOAD,
-		};
-		auto newCameraBuffer = device.CreateGPUBuffer(cameraBufferInfo);
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+		heapProperties.CreationNodeMask = 1;
+		heapProperties.VisibleNodeMask = 1;
+		D3D12_RESOURCE_DESC bufferDescription{};
+		bufferDescription.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		bufferDescription.Width = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
+		bufferDescription.Height = 1;
+		bufferDescription.DepthOrArraySize = 1;
+		bufferDescription.MipLevels = 1;
+		bufferDescription.SampleDesc.Count = 1;
+		bufferDescription.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		auto newCameraBuffer = device.CreateGPUBuffer(heapProperties, bufferDescription, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!newCameraBuffer)
 		{
 			return std::unexpected(newCameraBuffer.error());
 		}
 
-		const std::array<Vertex, 3> vertices
+		ModelAsset* newModel = assetSubsystem->LoadAsset<ModelAsset>("Resources\\Models\\Airplane.obj");
+		if (!newModel)
 		{
-			Vertex{ { 0.0f, 0.6f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-			Vertex{ { 0.6f, -0.6f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-			Vertex{ { -0.6f, -0.6f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
-		};
-
-		// 정점 세 개를 한 번만 기록하는 예제이므로 UPLOAD 버퍼를 직접 사용합니다.
-		const GPUBufferDescription bufferInfo
-		{
-			.sizeInBytes = sizeof(vertices),
-			.heapType = D3D12_HEAP_TYPE_UPLOAD,
-		};
-		auto vertexBuffer = device.CreateGPUBuffer(bufferInfo);
-		if (!vertexBuffer)
-		{
-			return std::unexpected(vertexBuffer.error());
-		}
-		if (auto result = vertexBuffer->Write(std::as_bytes(std::span(vertices))); !result)
-		{
-			return std::unexpected(result.error());
-		}
-
-		const GPUMeshCreateInfo meshInfo{ .vertexStride = static_cast<std::uint32_t>(sizeof(Vertex)) };
-		auto newMesh = device.CreateGPUMesh(std::move(vertexBuffer.value()), meshInfo);
-		if (!newMesh)
-		{
-			return std::unexpected(newMesh.error());
+			return std::unexpected("삼각형 모델 에셋 로딩에 실패했습니다.");
 		}
 
 		const std::array<D3D12_INPUT_ELEMENT_DESC, 2> inputElements
@@ -217,30 +182,51 @@ namespace TUK::Game
 				.SemanticIndex = 0,
 				.Format = DXGI_FORMAT_R32G32B32_FLOAT,
 				.InputSlot = 0,
-				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(Vertex, position)),
+				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(ModelVertex, position)),
 				.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 				.InstanceDataStepRate = 0,
 			},
 			D3D12_INPUT_ELEMENT_DESC
 			{
 				.SemanticName = "COLOR",
-				.SemanticIndex = 0,
-				.Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-				.InputSlot = 0,
-				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(Vertex, color)),
+				.Format = DXGI_FORMAT_R32G32B32_FLOAT,
+				.AlignedByteOffset = static_cast<std::uint32_t>(offsetof(ModelVertex, color)),
 				.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-				.InstanceDataStepRate = 0,
 			},
 		};
-		const std::array<DXGI_FORMAT, 1> targetFormats{ targetFormat };
-		const GPUGraphicsPipelineStateCreateInfo pipelineInfo
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineInfo{};
+		pipelineInfo.pRootSignature = &newRootSignature->GetD3DRootSignature();
+		pipelineInfo.VS = vertexShader->GetShader().GetD3DBytecode();
+		pipelineInfo.PS = pixelShader->GetShader().GetD3DBytecode();
+		pipelineInfo.InputLayout = { inputElements.data(), static_cast<UINT>(inputElements.size()) };
+		pipelineInfo.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		pipelineInfo.NumRenderTargets = 1;
+		pipelineInfo.RTVFormats[0] = targetFormat;
+		pipelineInfo.SampleMask = UINT_MAX;
+		pipelineInfo.SampleDesc = { 1, 0 };
+		pipelineInfo.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		pipelineInfo.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+		pipelineInfo.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		pipelineInfo.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		pipelineInfo.RasterizerState.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		pipelineInfo.RasterizerState.DepthClipEnable = TRUE;
+		for (D3D12_RENDER_TARGET_BLEND_DESC& target : pipelineInfo.BlendState.RenderTarget)
 		{
-			.rootSignature = newRootSignature.value(),
-			.vertexShader = vertexShader.value(),
-			.pixelShader = &pixelShader.value(),
-			.inputElements = inputElements,
-			.renderTargetFormats = targetFormats,
-		};
+			target.SrcBlend = D3D12_BLEND_ONE;
+			target.DestBlend = D3D12_BLEND_ZERO;
+			target.BlendOp = D3D12_BLEND_OP_ADD;
+			target.SrcBlendAlpha = D3D12_BLEND_ONE;
+			target.DestBlendAlpha = D3D12_BLEND_ZERO;
+			target.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			target.LogicOp = D3D12_LOGIC_OP_NOOP;
+			target.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+		}
+		pipelineInfo.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		pipelineInfo.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		pipelineInfo.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+		pipelineInfo.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+		pipelineInfo.DepthStencilState.FrontFace = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+		pipelineInfo.DepthStencilState.BackFace = pipelineInfo.DepthStencilState.FrontFace;
 		auto newPipelineState = device.CreateGPUGraphicsPipelineState(pipelineInfo);
 		if (!newPipelineState)
 		{
@@ -249,7 +235,7 @@ namespace TUK::Game
 
 		rootSignature = std::move(newRootSignature.value());
 		pipelineState = std::move(newPipelineState.value());
-		mesh = std::move(newMesh.value());
+		model = newModel;
 		cameraBuffer = std::move(newCameraBuffer.value());
 		return {};
 	}

@@ -3,46 +3,18 @@
 
 namespace TUK::Framework
 {
-	std::expected<GPUBuffer, std::string> GPUDevice::CreateGPUBuffer(const GPUBufferDescription& info) const
+	std::expected<GPUBuffer, std::string> GPUDevice::CreateGPUBuffer(const D3D12_HEAP_PROPERTIES& heapProperties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initialState) const
 	{
 		if (!d3dDevice)
 		{
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
-		if (info.sizeInBytes == 0 || info.sizeInBytes > std::numeric_limits<std::size_t>::max())
+		if (description.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER || description.Width == 0
+			|| description.Width > std::numeric_limits<std::size_t>::max())
 		{
-			return std::unexpected("GPUBuffer 크기가 유효하지 않습니다.");
+			return std::unexpected("GPUBuffer 크기 또는 리소스 형식이 유효하지 않습니다.");
 		}
-
-		D3D12_RESOURCE_STATES initialState = info.initialState;
-		switch (info.heapType)
-		{
-		case D3D12_HEAP_TYPE_DEFAULT:
-			break;
-		case D3D12_HEAP_TYPE_UPLOAD:
-			initialState = D3D12_RESOURCE_STATE_GENERIC_READ;
-			break;
-		case D3D12_HEAP_TYPE_READBACK:
-			initialState = D3D12_RESOURCE_STATE_COPY_DEST;
-			break;
-		default:
-			return std::unexpected("지원하지 않는 GPUBuffer Heap Type입니다.");
-		}
-
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = info.heapType;
-		heapProperties.CreationNodeMask = 1;
-		heapProperties.VisibleNodeMask = 1;
-
-		D3D12_RESOURCE_DESC description{};
-		description.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		description.Width = info.sizeInBytes;
-		description.Height = 1;
-		description.DepthOrArraySize = 1;
-		description.MipLevels = 1;
-		description.SampleDesc.Count = 1;
-		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		if (FAILED(d3dDevice->CreateCommittedResource(
@@ -56,13 +28,13 @@ namespace TUK::Framework
 			return std::unexpected("GPUBuffer 리소스 생성에 실패했습니다.");
 		}
 
-		return GPUBuffer(std::move(resource), info.heapType);
+		return GPUBuffer(std::move(resource), heapProperties.Type);
 	}
 
 	std::expected<GPUMesh, std::string> GPUDevice::CreateGPUMesh(
 		GPUBuffer vertexBuffer,
-		const GPUMeshCreateInfo& info,
-		std::optional<GPUBuffer> indexBuffer) const
+		GPUBuffer indexBuffer,
+		std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) const
 	{
 		if (!vertexBuffer.d3dResource || vertexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
 		{
@@ -70,64 +42,63 @@ namespace TUK::Framework
 		}
 
 		const std::uint64_t vertexSize = vertexBuffer.GetSizeInBytes();
-		if (info.vertexStride == 0 || info.vertexStride > D3D12_REQ_MULTI_ELEMENT_STRUCTURE_SIZE_IN_BYTES
+		if (vertexStride == 0 || vertexStride > D3D12_REQ_MULTI_ELEMENT_STRUCTURE_SIZE_IN_BYTES
 			|| vertexSize > std::numeric_limits<std::uint32_t>::max()
-			|| vertexSize % info.vertexStride != 0)
+			|| vertexSize % vertexStride != 0)
 		{
 			return std::unexpected("정점 버퍼 크기 또는 stride가 유효하지 않습니다.");
 		}
 
-		switch (info.topology)
+		switch (topology)
 		{
-		case PrimitiveTopology::PointList:
-		case PrimitiveTopology::LineList:
-		case PrimitiveTopology::LineStrip:
-		case PrimitiveTopology::TriangleList:
-		case PrimitiveTopology::TriangleStrip:
+		case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
+		case D3D_PRIMITIVE_TOPOLOGY_LINELIST:
+		case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP:
+		case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST:
+		case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP:
 			break;
 		default:
 			return std::unexpected("지원하지 않는 메쉬 topology입니다.");
 		}
 
-		if (indexBuffer)
+		if (!indexBuffer.d3dResource || indexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
 		{
-			if (!indexBuffer->d3dResource || indexBuffer->GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
-			{
-				return std::unexpected("인덱스 버퍼가 유효하지 않습니다.");
-			}
-
-			if (info.indexFormat != DXGI_FORMAT_R16_UINT && info.indexFormat != DXGI_FORMAT_R32_UINT)
-			{
-				return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
-			}
-
-			const std::uint32_t indexSize = info.indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-			const std::uint64_t bufferSize = indexBuffer->GetSizeInBytes();
-			if (bufferSize > std::numeric_limits<std::uint32_t>::max() || bufferSize % indexSize != 0)
-			{
-				return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
-			}
+			return std::unexpected("인덱스 버퍼가 유효하지 않습니다.");
 		}
 
-		return GPUMesh(std::move(vertexBuffer), std::move(indexBuffer), info);
+		if (indexFormat != DXGI_FORMAT_R16_UINT && indexFormat != DXGI_FORMAT_R32_UINT)
+		{
+			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
+		}
+
+		const std::uint32_t indexSize = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
+		const std::uint64_t bufferSize = indexBuffer.GetSizeInBytes();
+		if (bufferSize > std::numeric_limits<std::uint32_t>::max() || bufferSize % indexSize != 0)
+		{
+			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
+		}
+
+		return GPUMesh(std::move(vertexBuffer), std::move(indexBuffer), vertexStride, indexFormat, topology);
 	}
 
-	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(const GPUShaderCreateInfo& info) const
+	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(const std::filesystem::path& path, std::string_view target, const std::string& entryPoint, std::uint32_t compileFlags) const
 	{
-		if (info.path.empty() || info.entryPoint.empty() || info.target.empty())
+		if (path.empty() || entryPoint.empty() || target.empty() || target.find('\0') != std::string_view::npos)
 		{
-			return std::unexpected("GPUShader 파일 경로, 진입점과 타깃을 지정해야 합니다.");
+			return std::unexpected("GPUShader 파일 경로, 진입점과 유효한 대상 프로파일을 지정해야 합니다.");
 		}
+
+		std::string targetString(target);
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
 		const HRESULT result = D3DCompileFromFile(
-			info.path.c_str(),
+			path.c_str(),
 			nullptr,
 			D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			info.entryPoint.c_str(),
-			info.target.c_str(),
-			info.compileFlags,
+			entryPoint.c_str(),
+			targetString.c_str(),
+			compileFlags,
 			0,
 			d3dBlob.GetAddressOf(),
 			errorBlob.GetAddressOf());
@@ -136,7 +107,7 @@ namespace TUK::Framework
 		{
 			std::string message = std::format(
 				"GPUShader 컴파일에 실패했습니다. Entry: {}, Target: {}, HRESULT: 0x{:08X}",
-				info.entryPoint, info.target, static_cast<std::uint32_t>(result));
+				entryPoint, targetString, static_cast<std::uint32_t>(result));
 
 			if (errorBlob && errorBlob->GetBufferSize() > 0)
 			{
@@ -154,29 +125,15 @@ namespace TUK::Framework
 			return std::unexpected(std::move(message));
 		}
 
-		return GPUShader(std::move(d3dBlob));
+		return GPUShader(std::move(d3dBlob), std::move(targetString));
 	}
 
-	std::expected<GPURootSignature, std::string> GPUDevice::CreateGPURootSignature(const GPURootSignatureCreateInfo& info) const
+	std::expected<GPURootSignature, std::string> GPUDevice::CreateGPURootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& description) const
 	{
 		if (!d3dDevice)
 		{
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
-
-		if (info.parameters.size() > std::numeric_limits<std::uint32_t>::max()
-			|| info.staticSamplers.size() > std::numeric_limits<std::uint32_t>::max())
-		{
-			return std::unexpected("GPURootSignature 파라미터 또는 정적 샘플러 개수가 유효하지 않습니다.");
-		}
-
-		D3D12_VERSIONED_ROOT_SIGNATURE_DESC description{};
-		description.Version = D3D_ROOT_SIGNATURE_VERSION_1_0;
-		description.Desc_1_0.NumParameters = static_cast<std::uint32_t>(info.parameters.size());
-		description.Desc_1_0.pParameters = info.parameters.data();
-		description.Desc_1_0.NumStaticSamplers = static_cast<std::uint32_t>(info.staticSamplers.size());
-		description.Desc_1_0.pStaticSamplers = info.staticSamplers.data();
-		description.Desc_1_0.Flags = info.flags;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> serializedBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
@@ -218,63 +175,12 @@ namespace TUK::Framework
 		return GPURootSignature(std::move(d3dRootSignature));
 	}
 
-	std::expected<GPUGraphicsPipelineState, std::string> GPUDevice::CreateGPUGraphicsPipelineState(const GPUGraphicsPipelineStateCreateInfo& info) const
+	std::expected<GPUGraphicsPipelineState, std::string> GPUDevice::CreateGPUGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description) const
 	{
 		if (!d3dDevice)
 		{
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
-
-		if (!info.rootSignature.d3dRootSignature || !info.vertexShader.d3dBlob
-			|| (info.pixelShader && !info.pixelShader->d3dBlob))
-		{
-			return std::unexpected("GPUGraphicsPipelineState의 루트 시그니처 또는 셰이더가 유효하지 않습니다.");
-		}
-
-		if (info.inputElements.size() > D3D12_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT
-			|| info.renderTargetFormats.size() > D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT
-			|| info.sampleDescription.Count == 0)
-		{
-			return std::unexpected("입력 요소 개수, 렌더 타겟 개수 또는 샘플 개수가 유효하지 않습니다.");
-		}
-
-		switch (info.topologyType)
-		{
-		case D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT:
-		case D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE:
-		case D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE:
-			break;
-		default:
-			return std::unexpected("현재 그래픽스 파이프라인은 POINT, LINE, TRIANGLE topology만 지원합니다.");
-		}
-
-		if ((info.depthStencilState.DepthEnable || info.depthStencilState.StencilEnable)
-			&& info.depthStencilFormat == DXGI_FORMAT_UNKNOWN)
-		{
-			return std::unexpected("깊이 또는 스텐실을 활성화하려면 depthStencilFormat을 지정해야 합니다.");
-		}
-
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
-		description.pRootSignature = &info.rootSignature.GetD3DRootSignature();
-		description.VS = info.vertexShader.GetD3DBytecode();
-		if (info.pixelShader)
-		{
-			description.PS = info.pixelShader->GetD3DBytecode();
-		}
-		description.BlendState = info.blendState;
-		description.SampleMask = info.sampleMask;
-		description.RasterizerState = info.rasterizerState;
-		description.DepthStencilState = info.depthStencilState;
-		description.InputLayout = { info.inputElements.data(), static_cast<std::uint32_t>(info.inputElements.size()) };
-		description.IBStripCutValue = info.stripCutValue;
-		description.PrimitiveTopologyType = info.topologyType;
-		description.NumRenderTargets = static_cast<std::uint32_t>(info.renderTargetFormats.size());
-		for (std::size_t index = 0; index < info.renderTargetFormats.size(); ++index)
-		{
-			description.RTVFormats[index] = info.renderTargetFormats[index];
-		}
-		description.DSVFormat = info.depthStencilFormat;
-		description.SampleDesc = info.sampleDescription;
 
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState;
 		const HRESULT result = d3dDevice->CreateGraphicsPipelineState(

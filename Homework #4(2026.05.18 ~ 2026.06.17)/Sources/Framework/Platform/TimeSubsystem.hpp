@@ -16,10 +16,10 @@ namespace TUK::Framework
 
 	class TimeSubsystem : public EngineSubsystem
 	{
+		friend class System;
 		friend class App;
 
 	public:
-		TimeSubsystem() noexcept;
 		~TimeSubsystem() noexcept override;
 
 		[[nodiscard]] float GetTotalTime() const noexcept;
@@ -43,6 +43,8 @@ namespace TUK::Framework
 		SystemStatus OnPreTick() noexcept override;
 
 	private:
+		TimeSubsystem() noexcept;
+
 		[[nodiscard]] bool ShouldFixedStep() noexcept;
 
 		LARGE_INTEGER startTime{};

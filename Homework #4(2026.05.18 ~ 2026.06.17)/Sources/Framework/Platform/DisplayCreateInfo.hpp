@@ -7,7 +7,7 @@
 
 namespace TUK::Framework
 {
-	struct DisplayOptions final
+	struct DisplayCreateInfo final
 	{
 		std::string caption;
 		Vector2D<std::int32_t> position;

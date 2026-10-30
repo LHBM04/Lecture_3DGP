@@ -18,14 +18,13 @@
 
 namespace TUK::Framework
 {
-	struct GPUSwapChainOptions;
-
 	class Display;
 
 	class RenderSubsystem : public EngineSubsystem
 	{
+		friend class System;
+
 	public:
-		RenderSubsystem() noexcept;
 		~RenderSubsystem() noexcept override;
 
 		void RegisterDisplay(const Display& display);
@@ -50,16 +49,19 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		RenderSubsystem() noexcept;
+
 		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
 
 		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
-		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const GPUSwapChainOptions& info) const;
+		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const;
 		
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
 		std::unordered_map<const Display*, GPUSwapChain> swapChains;
-		std::vector<RenderCallback> listeners;
 		std::optional<GPUFence> fence;
+
+		std::vector<RenderCallback> listeners;
 	};
 
 	template <class TInstance>
