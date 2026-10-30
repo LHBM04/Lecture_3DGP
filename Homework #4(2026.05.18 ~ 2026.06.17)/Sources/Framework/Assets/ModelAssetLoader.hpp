@@ -5,20 +5,20 @@
 
 namespace TUK::Framework
 {
-	class GPUDevice;
+	class D3DDevice;
 
 	class ModelAssetLoader final : public AssetLoader
 	{
 	public:
 		using AssetType = ModelAsset;
 
-		explicit ModelAssetLoader(const GPUDevice& device) noexcept;
+		explicit ModelAssetLoader(const D3DDevice& device) noexcept;
 		~ModelAssetLoader() noexcept override = default;
 
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
 	private:
-		const GPUDevice& device;
+		const D3DDevice& device;
 	};
 }

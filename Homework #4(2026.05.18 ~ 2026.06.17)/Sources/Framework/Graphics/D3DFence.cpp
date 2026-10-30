@@ -1,11 +1,11 @@
 ﻿#include "Precompiled.hpp"
-#include "GPUFence.hpp"
+#include "D3DFence.hpp"
 
-#include "GPUDevice.hpp"
+#include "D3DDevice.hpp"
 
 namespace TUK::Framework
 {
-	std::expected<void, std::string> GPUFence::Wait() const
+	std::expected<void, std::string> D3DFence::Wait() const
 	{
 		const std::uint64_t completedValue = d3dFence->GetCompletedValue();
 		if (completedValue == std::numeric_limits<std::uint64_t>::max())
@@ -30,7 +30,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUFence::Signal(const GPUDevice& device)
+	std::expected<void, std::string> D3DFence::Signal(const D3DDevice& device)
 	{
 		if (fenceValue >= std::numeric_limits<std::uint64_t>::max() - 1)
 		{
@@ -47,13 +47,13 @@ namespace TUK::Framework
 		return {};
 	}
 
-	bool GPUFence::IsCompleted() const noexcept
+	bool D3DFence::IsCompleted() const noexcept
 	{
 		const std::uint64_t completedValue = d3dFence->GetCompletedValue();
 		return completedValue != std::numeric_limits<std::uint64_t>::max() && completedValue >= fenceValue;
 	}
 
-	GPUFence::GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept
+	D3DFence::D3DFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept
 		: d3dFence(std::move(d3dFence))
 		, fenceValue(0)
 	{

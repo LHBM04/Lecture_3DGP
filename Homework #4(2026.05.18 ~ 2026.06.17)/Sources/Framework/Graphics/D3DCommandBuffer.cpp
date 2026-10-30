@@ -1,17 +1,17 @@
 ﻿#include "Precompiled.hpp"
-#include "GPUCommandBuffer.hpp"
+#include "D3DCommandBuffer.hpp"
 
-#include "GPUBuffer.hpp"
-#include "GPUGraphicsPipelineState.hpp"
-#include "GPUMesh.hpp"
-#include "GPURootSignature.hpp"
-#include "GPUTarget.hpp"
-#include "GPUTexture.hpp"
+#include "D3DBuffer.hpp"
+#include "D3DGraphicsPipelineState.hpp"
+#include "D3DMesh.hpp"
+#include "D3DRootSignature.hpp"
+#include "D3DTarget.hpp"
+#include "D3DTexture.hpp"
 
 namespace TUK::Framework
 {
-	void GPUCommandBuffer::TransitionTexture(
-		const GPUTexture& texture,
+	void D3DCommandBuffer::TransitionTexture(
+		const D3DTexture& texture,
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
 	{
@@ -29,8 +29,8 @@ namespace TUK::Framework
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
-	void GPUCommandBuffer::TransitionBuffer(
-		const GPUBuffer& buffer,
+	void D3DCommandBuffer::TransitionBuffer(
+		const D3DBuffer& buffer,
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
 	{
@@ -50,10 +50,10 @@ namespace TUK::Framework
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
-	void GPUCommandBuffer::CopyGPUBuffer(
-		const GPUBuffer& destination,
+	void D3DCommandBuffer::CopyD3DBuffer(
+		const D3DBuffer& destination,
 		std::uint64_t destinationOffset,
-		const GPUBuffer& source,
+		const D3DBuffer& source,
 		std::uint64_t sourceOffset,
 		std::uint64_t sizeInBytes)
 	{
@@ -75,17 +75,17 @@ namespace TUK::Framework
 			&source.GetD3DResource(), sourceOffset, sizeInBytes);
 	}
 
-	void GPUCommandBuffer::SetGPUGraphicsRootSignature(const GPURootSignature& rootSignature)
+	void D3DCommandBuffer::SetGPUGraphicsRootSignature(const D3DRootSignature& rootSignature)
 	{
 		d3dCommandList->SetGraphicsRootSignature(&rootSignature.GetD3DRootSignature());
 	}
 
-	void GPUCommandBuffer::SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState)
+	void D3DCommandBuffer::SetD3DGraphicsPipelineState(const D3DGraphicsPipelineState& pipelineState)
 	{
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
-	void GPUCommandBuffer::SetGPUGraphicsConstantBuffer(std::uint32_t rootParameterIndex, const GPUBuffer& buffer, std::uint64_t offset)
+	void D3DCommandBuffer::SetGPUGraphicsConstantBuffer(std::uint32_t rootParameterIndex, const D3DBuffer& buffer, std::uint64_t offset)
 	{
 		assert(buffer.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK);
 		assert(offset < buffer.GetSizeInBytes());
@@ -94,18 +94,18 @@ namespace TUK::Framework
 		d3dCommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, address);
 	}
 
-	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport)
+	void D3DCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport)
 	{
 		assert(viewport.Width > 0.0f && viewport.Height > 0.0f);
 		d3dCommandList->RSSetViewports(1, &viewport);
 	}
 
-	void GPUCommandBuffer::SetScissorRect(const D3D12_RECT& scissorRect)
+	void D3DCommandBuffer::SetScissorRect(const D3D12_RECT& scissorRect)
 	{
 		d3dCommandList->RSSetScissorRects(1, &scissorRect);
 	}
 
-	void GPUCommandBuffer::SetGPUMesh(const GPUMesh& mesh)
+	void D3DCommandBuffer::SetD3DMesh(const D3DMesh& mesh)
 	{
 		const D3D12_VERTEX_BUFFER_VIEW vertexView = mesh.GetD3DVertexBufferView();
 		const D3D12_INDEX_BUFFER_VIEW indexView = mesh.GetD3DIndexBufferView();
@@ -115,17 +115,17 @@ namespace TUK::Framework
 		d3dCommandList->IASetIndexBuffer(&indexView);
 	}
 
-	void GPUCommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t firstVertex)
+	void D3DCommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t firstVertex)
 	{
 		d3dCommandList->DrawInstanced(vertexCount, 1, firstVertex, 0);
 	}
 
-	void GPUCommandBuffer::DrawIndexed(std::uint32_t indexCount, std::uint32_t firstIndex, std::int32_t baseVertex)
+	void D3DCommandBuffer::DrawIndexed(std::uint32_t indexCount, std::uint32_t firstIndex, std::int32_t baseVertex)
 	{
 		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
 	}
 
-	void GPUCommandBuffer::ClearGPUTarget(const GPUTarget& target, const ColorRGBA<float>& clearColor)
+	void D3DCommandBuffer::ClearD3DTarget(const D3DTarget& target, const ColorRGBA<float>& clearColor)
 	{
 		const FLOAT color[] =
 		{
@@ -138,23 +138,23 @@ namespace TUK::Framework
 		d3dCommandList->ClearRenderTargetView(target.GetD3DRTVHandle(), color, 0, nullptr);
 	}
 
-	void GPUCommandBuffer::SetGPUTarget(const GPUTarget& target)
+	void D3DCommandBuffer::SetD3DTarget(const D3DTarget& target)
 	{
 		const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = target.GetD3DRTVHandle();
 		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	}
 
-	ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept
+	ID3D12GraphicsCommandList10& D3DCommandBuffer::GetD3DCommandList() const noexcept
 	{
 		return *(d3dCommandList.Get());
 	}
 
-	ID3D12CommandAllocator& GPUCommandBuffer::GetD3DCommandAllocator() const noexcept
+	ID3D12CommandAllocator& D3DCommandBuffer::GetD3DCommandAllocator() const noexcept
 	{
 		return *(d3dCommandAllocator.Get());
 	}
 
-	GPUCommandBuffer::GPUCommandBuffer(
+	D3DCommandBuffer::D3DCommandBuffer(
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
 		: d3dCommandList(std::move(d3dCommandList))

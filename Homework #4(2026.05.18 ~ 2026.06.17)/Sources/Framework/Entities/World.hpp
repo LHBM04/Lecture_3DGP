@@ -8,7 +8,7 @@ namespace TUK::Framework
 {
 	class Camera;
 	class Entity;
-	class GPUCommandBuffer;
+	class D3DCommandBuffer;
 
 	class World
 	{
@@ -28,9 +28,9 @@ namespace TUK::Framework
 		void FixedUpdate();
 		void Update();
 		void LateUpdate();
-		void PreRender(GPUCommandBuffer& renderer);
-		void Render(GPUCommandBuffer& renderer);
-		void PostRender(GPUCommandBuffer& renderer);
+		void PreRender(D3DCommandBuffer& renderer);
+		void Render(D3DCommandBuffer& renderer);
+		void PostRender(D3DCommandBuffer& renderer);
 		void Exit();
 
 		Entity& CreateEntity();
@@ -47,9 +47,9 @@ namespace TUK::Framework
 		virtual void OnFixedUpdate();
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
-		virtual void OnPreRender(GPUCommandBuffer& renderer);
-		virtual void OnRender(GPUCommandBuffer& renderer);
-		virtual void OnPostRender(GPUCommandBuffer& renderer);
+		virtual void OnPreRender(D3DCommandBuffer& renderer);
+		virtual void OnRender(D3DCommandBuffer& renderer);
+		virtual void OnPostRender(D3DCommandBuffer& renderer);
 		virtual void OnExit();
 
 	private:

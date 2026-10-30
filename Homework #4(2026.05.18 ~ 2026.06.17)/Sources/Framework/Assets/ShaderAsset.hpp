@@ -3,14 +3,14 @@
 #include <utility>
 
 #include "Asset.hpp"
-#include "Framework/Graphics/GPUShader.hpp"
+#include "Framework/Graphics/D3DShader.hpp"
 
 namespace TUK::Framework
 {
 	class ShaderAsset : public Asset
 	{
 	public:
-		ShaderAsset(GPUShader shader) noexcept;
+		ShaderAsset(D3DShader shader) noexcept;
 		~ShaderAsset() noexcept override = default;
 
 		ShaderAsset(const ShaderAsset&) = delete;
@@ -19,18 +19,18 @@ namespace TUK::Framework
 		ShaderAsset(ShaderAsset&&) noexcept = default;
 		ShaderAsset& operator=(ShaderAsset&&) noexcept = default;
 
-		[[nodiscard]] const GPUShader& GetShader() const noexcept;
+		[[nodiscard]] const D3DShader& GetShader() const noexcept;
 
 	private:
-		GPUShader shader;
+		D3DShader shader;
 	};
 
-	inline const GPUShader& ShaderAsset::GetShader() const noexcept
+	inline const D3DShader& ShaderAsset::GetShader() const noexcept
 	{
 		return shader;
 	}
 
-	inline ShaderAsset::ShaderAsset(GPUShader shader) noexcept
+	inline ShaderAsset::ShaderAsset(D3DShader shader) noexcept
 		: shader(std::move(shader))
 	{
 	}

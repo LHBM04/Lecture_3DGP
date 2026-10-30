@@ -5,13 +5,13 @@
 #include <string>
 
 #include "Framework/Entities/World.hpp"
-#include "Framework/Graphics/GPUBuffer.hpp"
-#include "Framework/Graphics/GPUGraphicsPipelineState.hpp"
-#include "Framework/Graphics/GPURootSignature.hpp"
+#include "Framework/Graphics/D3DBuffer.hpp"
+#include "Framework/Graphics/D3DGraphicsPipelineState.hpp"
+#include "Framework/Graphics/D3DRootSignature.hpp"
 
 namespace TUK::Framework
 {
-	class GPUDevice;
+	class D3DDevice;
 	class ModelAsset;
 	class RenderSubsystem;
 }
@@ -28,16 +28,16 @@ namespace TUK::Game
 
 	protected:
 		void OnEnter() override;
-		void OnRender(GPUCommandBuffer& renderer) override;
+		void OnRender(D3DCommandBuffer& renderer) override;
 		void OnExit() override;
 
 	private:
-		[[nodiscard]] std::expected<void, std::string> CreateTriangle(const GPUDevice& device, DXGI_FORMAT targetFormat);
+		[[nodiscard]] std::expected<void, std::string> CreateTriangle(const D3DDevice& device, DXGI_FORMAT targetFormat);
 
 		RenderSubsystem* renderSubsystem = nullptr;
-		std::optional<GPURootSignature> rootSignature;
-		std::optional<GPUGraphicsPipelineState> pipelineState;
+		std::optional<D3DRootSignature> rootSignature;
+		std::optional<D3DGraphicsPipelineState> pipelineState;
 		ModelAsset* model = nullptr;
-		std::optional<GPUBuffer> cameraBuffer;
+		std::optional<D3DBuffer> cameraBuffer;
 	};
 }

@@ -12,18 +12,18 @@
 
 namespace TUK::Framework
 {
-	class GPUBuffer
+	class D3DBuffer
 	{
-		friend class GPUDevice;
+		friend class D3DDevice;
 
 	public:
-		~GPUBuffer() noexcept = default;
+		~D3DBuffer() noexcept = default;
 
-		GPUBuffer(const GPUBuffer&) = delete;
-		GPUBuffer& operator=(const GPUBuffer&) = delete;
+		D3DBuffer(const D3DBuffer&) = delete;
+		D3DBuffer& operator=(const D3DBuffer&) = delete;
 
-		GPUBuffer(GPUBuffer&&) noexcept = default;
-		GPUBuffer& operator=(GPUBuffer&&) noexcept = default;
+		D3DBuffer(D3DBuffer&&) noexcept = default;
+		D3DBuffer& operator=(D3DBuffer&&) noexcept = default;
 
 		[[nodiscard]] std::expected<void, std::string> Write(std::span<const std::byte> data, std::uint64_t offset = 0);
 		[[nodiscard]] std::expected<void, std::string> Read(std::span<std::byte> data, std::uint64_t offset = 0) const;
@@ -34,7 +34,7 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12Resource& GetD3DResource() const noexcept;
 
 	private:
-		explicit GPUBuffer(
+		explicit D3DBuffer(
 			Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource,
 			D3D12_HEAP_TYPE heapType) noexcept;
 

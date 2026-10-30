@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "Asset.hpp"
-#include "Framework/Graphics/GPUMesh.hpp"
+#include "Framework/Graphics/D3DMesh.hpp"
 
 #include "Framework/Math/ColorRGB.hpp"
 #include "Framework/Math/Vector3D.hpp"
@@ -27,7 +27,7 @@ namespace TUK::Framework
 	class ModelAsset : public Asset
 	{
 	public:
-		explicit ModelAsset(GPUMesh mesh) noexcept;
+		explicit ModelAsset(D3DMesh mesh) noexcept;
 		~ModelAsset() noexcept override = default;
 
 		ModelAsset(const ModelAsset&) = delete;
@@ -36,18 +36,18 @@ namespace TUK::Framework
 		ModelAsset(ModelAsset&&) noexcept = default;
 		ModelAsset& operator=(ModelAsset&&) noexcept = default;
 
-		[[nodiscard]] const GPUMesh& GetMesh() const noexcept;
+		[[nodiscard]] const D3DMesh& GetMesh() const noexcept;
 
 	private:
-		GPUMesh mesh;
+		D3DMesh mesh;
 	};
 
-	inline ModelAsset::ModelAsset(GPUMesh mesh) noexcept
+	inline ModelAsset::ModelAsset(D3DMesh mesh) noexcept
 		: mesh(std::move(mesh))
 	{
 	}
 
-	inline const GPUMesh& ModelAsset::GetMesh() const noexcept
+	inline const D3DMesh& ModelAsset::GetMesh() const noexcept
 	{
 		return mesh;
 	}

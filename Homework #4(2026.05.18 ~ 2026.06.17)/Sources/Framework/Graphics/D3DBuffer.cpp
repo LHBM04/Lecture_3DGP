@@ -1,9 +1,9 @@
 ﻿#include "Precompiled.hpp"
-#include "GPUBuffer.hpp"
+#include "D3DBuffer.hpp"
 
 namespace TUK::Framework
 {
-	std::expected<void, std::string> GPUBuffer::Write(std::span<const std::byte> data, std::uint64_t offset)
+	std::expected<void, std::string> D3DBuffer::Write(std::span<const std::byte> data, std::uint64_t offset)
 	{
 		if (!d3dResource || heapType != D3D12_HEAP_TYPE_UPLOAD)
 		{
@@ -13,7 +13,7 @@ namespace TUK::Framework
 		const std::uint64_t size = GetSizeInBytes();
 		if (offset > size || data.size() > size - offset)
 		{
-			return std::unexpected("GPUBuffer Write 범위를 초과했습니다.");
+			return std::unexpected("D3DBuffer Write 범위를 초과했습니다.");
 		}
 
 		if (data.empty())
@@ -25,7 +25,7 @@ namespace TUK::Framework
 		const D3D12_RANGE readRange{ 0, 0 };
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
-			return std::unexpected("GPUBuffer Write Map에 실패했습니다.");
+			return std::unexpected("D3DBuffer Write Map에 실패했습니다.");
 		}
 
 		const auto begin = static_cast<std::size_t>(offset);
@@ -36,7 +36,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUBuffer::Read(std::span<std::byte> data, std::uint64_t offset) const
+	std::expected<void, std::string> D3DBuffer::Read(std::span<std::byte> data, std::uint64_t offset) const
 	{
 		if (!d3dResource || heapType != D3D12_HEAP_TYPE_READBACK)
 		{
@@ -46,7 +46,7 @@ namespace TUK::Framework
 		const std::uint64_t size = GetSizeInBytes();
 		if (offset > size || data.size() > size - offset)
 		{
-			return std::unexpected("GPUBuffer Read 범위를 초과했습니다.");
+			return std::unexpected("D3DBuffer Read 범위를 초과했습니다.");
 		}
 
 		if (data.empty())
@@ -59,7 +59,7 @@ namespace TUK::Framework
 		void* mappedData = nullptr;
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
-			return std::unexpected("GPUBuffer Read Map에 실패했습니다.");
+			return std::unexpected("D3DBuffer Read Map에 실패했습니다.");
 		}
 
 		std::memcpy(data.data(), static_cast<const std::byte*>(mappedData) + begin, data.size());
@@ -69,27 +69,27 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::uint64_t GPUBuffer::GetSizeInBytes() const noexcept
+	std::uint64_t D3DBuffer::GetSizeInBytes() const noexcept
 	{
 		return d3dResource->GetDesc().Width;
 	}
 
-	D3D12_HEAP_TYPE GPUBuffer::GetD3DHeapType() const noexcept
+	D3D12_HEAP_TYPE D3DBuffer::GetD3DHeapType() const noexcept
 	{
 		return heapType;
 	}
 
-	D3D12_GPU_VIRTUAL_ADDRESS GPUBuffer::GetGPUVirtualAddress() const noexcept
+	D3D12_GPU_VIRTUAL_ADDRESS D3DBuffer::GetGPUVirtualAddress() const noexcept
 	{
 		return d3dResource->GetGPUVirtualAddress();
 	}
 
-	ID3D12Resource& GPUBuffer::GetD3DResource() const noexcept
+	ID3D12Resource& D3DBuffer::GetD3DResource() const noexcept
 	{
 		return *d3dResource.Get();
 	}
 
-	GPUBuffer::GPUBuffer(
+	D3DBuffer::D3DBuffer(
 		Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource,
 		D3D12_HEAP_TYPE heapType) noexcept
 		: d3dResource(std::move(d3dResource))

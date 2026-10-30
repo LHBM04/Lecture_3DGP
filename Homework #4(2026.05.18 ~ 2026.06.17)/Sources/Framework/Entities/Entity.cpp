@@ -92,7 +92,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Entity::PreRender(GPUCommandBuffer& commandBuffer)
+	void Entity::PreRender(D3DCommandBuffer& commandBuffer)
 	{
 		const std::size_t count = components.size();
 		for (std::size_t index = 0; index < count; ++index)
@@ -105,7 +105,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Entity::Render(GPUCommandBuffer& commandBuffer)
+	void Entity::Render(D3DCommandBuffer& commandBuffer)
 	{
 		const std::size_t count = components.size();
 		for (std::size_t index = 0; index < count; ++index)
@@ -118,7 +118,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Entity::PostRender(GPUCommandBuffer& commandBuffer)
+	void Entity::PostRender(D3DCommandBuffer& commandBuffer)
 	{
 		const std::size_t count = components.size();
 		for (std::size_t index = 0; index < count; ++index)

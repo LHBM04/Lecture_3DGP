@@ -7,7 +7,7 @@
 
 namespace TUK::Framework
 {
-	class GPUCommandBuffer;
+	class D3DCommandBuffer;
 	class World;
 
 	class WorldSubsystem : public AppSubsystem
@@ -18,9 +18,9 @@ namespace TUK::Framework
 		~WorldSubsystem() noexcept override;
 		World& AddWorld(std::unique_ptr<World> world);
 
-		void PreRender(GPUCommandBuffer& renderer);
-		void Render(GPUCommandBuffer& renderer);
-		void PostRender(GPUCommandBuffer& renderer);
+		void PreRender(D3DCommandBuffer& renderer);
+		void Render(D3DCommandBuffer& renderer);
+		void PostRender(D3DCommandBuffer& renderer);
 
 	protected:
 		SystemStatus OnStartup() override;

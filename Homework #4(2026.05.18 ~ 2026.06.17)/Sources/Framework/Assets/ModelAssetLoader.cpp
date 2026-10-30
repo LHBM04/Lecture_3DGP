@@ -14,7 +14,7 @@
 #include "ModelAssetLoader.hpp"
 #include "ModelAsset.hpp"
 
-#include "Framework/Graphics/GPUDevice.hpp"
+#include "Framework/Graphics/D3DDevice.hpp"
 
 namespace
 {
@@ -39,7 +39,7 @@ namespace
 
 namespace TUK::Framework
 {
-	ModelAssetLoader::ModelAssetLoader(const GPUDevice& device) noexcept
+	ModelAssetLoader::ModelAssetLoader(const D3DDevice& device) noexcept
 		: device(device)
 	{
 	}
@@ -174,7 +174,7 @@ namespace TUK::Framework
 		description.MipLevels = 1;
 		description.SampleDesc.Count = 1;
 		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-		auto vertexBuffer = device.CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
+		auto vertexBuffer = device.CreateD3DBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!vertexBuffer)
 		{
 			return std::unexpected(vertexBuffer.error());
@@ -184,7 +184,7 @@ namespace TUK::Framework
 			return std::unexpected(result.error());
 		}
 		description.Width = indices.size() * sizeof(std::uint32_t);
-		auto indexBuffer = device.CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
+		auto indexBuffer = device.CreateD3DBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!indexBuffer)
 		{
 			return std::unexpected(indexBuffer.error());
@@ -193,7 +193,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected(result.error());
 		}
-		auto mesh = device.CreateGPUMesh(std::move(*vertexBuffer), std::move(*indexBuffer), sizeof(ModelVertex), DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		auto mesh = device.CreateD3DMesh(std::move(*vertexBuffer), std::move(*indexBuffer), sizeof(ModelVertex), DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		if (!mesh)
 		{
 			return std::unexpected(mesh.error());

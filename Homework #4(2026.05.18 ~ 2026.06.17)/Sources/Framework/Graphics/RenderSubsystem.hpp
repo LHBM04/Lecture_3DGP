@@ -11,10 +11,10 @@
 
 #include "../Core/EngineSubsystem.hpp"
 
-#include "GPUCommandBuffer.hpp"
-#include "GPUDevice.hpp"
-#include "GPUFence.hpp"
-#include "GPUSwapChain.hpp"
+#include "D3DCommandBuffer.hpp"
+#include "D3DDevice.hpp"
+#include "D3DFence.hpp"
+#include "D3DSwapChain.hpp"
 
 namespace TUK::Framework
 {
@@ -30,16 +30,16 @@ namespace TUK::Framework
 		void RegisterDisplay(const Display& display);
 		void UnregisterDisplay(const Display& display);
 
-		void Subscribe(std::function<void(GPUCommandBuffer&)> callback);
+		void Subscribe(std::function<void(D3DCommandBuffer&)> callback);
 
 		template <class TInstance>
-		void Subscribe(TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&));
+		void Subscribe(TInstance* instance, void (TInstance::*callback)(D3DCommandBuffer&));
 
 		template <class TInstance>
-		void Subscribe(const TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&) const);
+		void Subscribe(const TInstance* instance, void (TInstance::*callback)(D3DCommandBuffer&) const);
 
-		[[nodiscard]] const GPUDevice* GetGPUDevice() const noexcept;
-		[[nodiscard]] const GPUSwapChain* GetGPUSwapChain(const Display& display) const noexcept;
+		[[nodiscard]] const D3DDevice* GetD3DDevice() const noexcept;
+		[[nodiscard]] const D3DSwapChain* GetD3DSwapChain(const Display& display) const noexcept;
 		[[nodiscard]] std::expected<void, std::string> WaitForGPU();
 
 	protected:
@@ -51,36 +51,36 @@ namespace TUK::Framework
 	private:
 		RenderSubsystem() noexcept;
 
-		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
+		using RenderCallback = std::function<void(D3DCommandBuffer&)>;
 
-		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
-		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const;
+		std::expected<D3DDevice, std::string> CreateD3DDevice() const;
+		std::expected<D3DSwapChain, std::string> CreateD3DSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const;
 		
-		std::optional<GPUDevice> device;
-		std::optional<GPUCommandBuffer> commandBuffer;
-		std::unordered_map<const Display*, GPUSwapChain> swapChains;
-		std::optional<GPUFence> fence;
+		std::optional<D3DDevice> device;
+		std::optional<D3DCommandBuffer> commandBuffer;
+		std::unordered_map<const Display*, D3DSwapChain> swapChains;
+		std::optional<D3DFence> fence;
 
 		std::vector<RenderCallback> listeners;
 	};
 
 	template <class TInstance>
-	void RenderSubsystem::Subscribe(TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&))
+	void RenderSubsystem::Subscribe(TInstance* instance, void (TInstance::*callback)(D3DCommandBuffer&))
 	{
 		assert(instance && callback);
 		Subscribe(
-			[instance, callback](GPUCommandBuffer& renderer)
+			[instance, callback](D3DCommandBuffer& renderer)
 			{
 				(instance->*callback)(renderer);
 			});
 	}
 
 	template <class TInstance>
-	void RenderSubsystem::Subscribe(const TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&) const)
+	void RenderSubsystem::Subscribe(const TInstance* instance, void (TInstance::*callback)(D3DCommandBuffer&) const)
 	{
 		assert(instance && callback);
 		Subscribe(
-			[instance, callback](GPUCommandBuffer& renderer)
+			[instance, callback](D3DCommandBuffer& renderer)
 			{
 				(instance->*callback)(renderer);
 			});

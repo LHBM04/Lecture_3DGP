@@ -14,48 +14,48 @@
 
 namespace TUK::Framework
 {
-	class GPUShader
+	class D3DShader
 	{
-		friend class GPUDevice;
+		friend class D3DDevice;
 		
 	public:
-		~GPUShader() noexcept = default;
+		~D3DShader() noexcept = default;
 
-		GPUShader(const GPUShader&) = delete;
-		GPUShader& operator=(const GPUShader&) = delete;
+		D3DShader(const D3DShader&) = delete;
+		D3DShader& operator=(const D3DShader&) = delete;
 
-		GPUShader(GPUShader&&) noexcept = default;
-		GPUShader& operator=(GPUShader&&) noexcept = default;
+		D3DShader(D3DShader&&) noexcept = default;
+		D3DShader& operator=(D3DShader&&) noexcept = default;
 
 		[[nodiscard]] ID3DBlob& GetD3DBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
 		[[nodiscard]] std::string_view GetStage() const noexcept;
 
 	private:
-		GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept;
+		D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
 		std::string stage;
 	};
 
-	inline ID3DBlob& GPUShader::GetD3DBlob() const noexcept
+	inline ID3DBlob& D3DShader::GetD3DBlob() const noexcept
 	{
 		assert(d3dBlob);
 		return *d3dBlob.Get();
 	}
 
-	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
+	inline D3D12_SHADER_BYTECODE D3DShader::GetD3DBytecode() const noexcept
 	{
 		assert(d3dBlob);
 		return { d3dBlob->GetBufferPointer(), d3dBlob->GetBufferSize() };
 	}
 
-	inline std::string_view GPUShader::GetStage() const noexcept
+	inline std::string_view D3DShader::GetStage() const noexcept
 	{
 		return stage;
 	}
 
-	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept
+	inline D3DShader::D3DShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob, std::string stage) noexcept
 		: d3dBlob(std::move(d3dBlob))
 		, stage(std::move(stage))
 	{

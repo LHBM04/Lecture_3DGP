@@ -5,12 +5,12 @@
 #include "ShaderAssetLoader.hpp"
 #include "ShaderAsset.hpp"
 
-#include "../Graphics/GPUDevice.hpp"
-#include "../Graphics/GPUShader.hpp"
+#include "../Graphics/D3DDevice.hpp"
+#include "../Graphics/D3DShader.hpp"
 
 namespace TUK::Framework
 {
-	ShaderAssetLoader::ShaderAssetLoader(const GPUDevice& device) noexcept
+	ShaderAssetLoader::ShaderAssetLoader(const D3DDevice& device) noexcept
 		: device(device)
 	{
 	}
@@ -55,7 +55,7 @@ namespace TUK::Framework
 			return std::unexpected("Unsupported shader stage extension: " + stageExtension);
 		}
 
-		auto shader = device.CreateGPUShader(path, target, "main", D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS);
+		auto shader = device.CreateD3DShader(path, target, "main", D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS);
 		if (!shader)
 		{
 			return std::unexpected(shader.error());
