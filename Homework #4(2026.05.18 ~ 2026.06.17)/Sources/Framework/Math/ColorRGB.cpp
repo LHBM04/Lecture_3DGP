@@ -2,14 +2,7 @@
 #include "ColorRGB.hpp"
 
 #include "ColorRGBA.hpp"
-
-namespace
-{
-	float ScalarLerp(float a, float b, float t) noexcept
-	{
-		return a + t * (b - a);
-	}
-}
+#include "Mathf.hpp"
 
 namespace TUK::Framework
 {
@@ -510,9 +503,9 @@ namespace TUK::Framework
 		requires std::same_as<TValue, float>
 	{
 		return ColorRGB<TValue>(
-			ScalarLerp(a.value.x, b.value.x, t),
-			ScalarLerp(a.value.y, b.value.y, t),
-			ScalarLerp(a.value.z, b.value.z, t));
+			Mathf::Lerp(a.value.x, b.value.x, t),
+			Mathf::Lerp(a.value.y, b.value.y, t),
+			Mathf::Lerp(a.value.z, b.value.z, t));
 	}
 
 	template class ColorRGB<std::int32_t>;
