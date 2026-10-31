@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <concepts>
 #include <cstdint>
 
 namespace TUK::Framework
@@ -16,4 +17,7 @@ namespace TUK::Framework
 
 	using f32 = float;
 	using f64 = double;
+
+	template <class TValue>
+	concept ScalarType = std::same_as<TValue, i32> || std::same_as<TValue, f32>;
 }

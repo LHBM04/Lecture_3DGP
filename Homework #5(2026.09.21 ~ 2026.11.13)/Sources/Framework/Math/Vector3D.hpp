@@ -2,25 +2,26 @@
 
 #include <compare>
 #include <concepts>
-#include <cstdint>
 #include <cstddef>
 #include <limits>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class Vector2D;
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class Vector4D;
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class Vector3D
 	{
 	public:
@@ -34,7 +35,7 @@ namespace TUK::Framework
 		explicit Vector3D(const Vector2D<TValue>& vector, TValue z = TValue{}) noexcept;
 		explicit Vector3D(const Vector4D<TValue>& vector) noexcept;
 
-		explicit Vector3D(DirectX::XMVECTOR vector) noexcept requires std::same_as<TValue, float>;
+		explicit Vector3D(DirectX::XMVECTOR vector) noexcept requires std::same_as<TValue, f32>;
 
 		Vector3D& operator=(const Vector3D& other) noexcept;
 		Vector3D& operator=(Vector3D&& other) noexcept;
@@ -74,20 +75,20 @@ namespace TUK::Framework
 
 		void Set(TValue x, TValue y, TValue z) noexcept;
 
-		[[nodiscard]] float GetMagnitude() const noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] float GetSqrMagnitude() const noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] f32 GetMagnitude() const noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] f32 GetSqrMagnitude() const noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] float GetLength() const noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] float GetLengthSquared() const noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] f32 GetLength() const noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] f32 GetLengthSquared() const noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] Vector3D GetNormalized() const noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] Vector3D GetNormalized() const noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] bool IsZero(float epsilon = std::numeric_limits<float>::epsilon()) const noexcept;
+		[[nodiscard]] bool IsZero(f32 epsilon = std::numeric_limits<f32>::epsilon()) const noexcept;
 		[[nodiscard]] bool IsFinite() const noexcept;
 
-		void Normalize() noexcept requires std::same_as<TValue, float>;
+		void Normalize() noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] float Dot(const Vector3D& other) const noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] f32 Dot(const Vector3D& other) const noexcept requires std::same_as<TValue, f32>;
 
 		[[nodiscard]] static Vector3D GetZero() noexcept;
 		[[nodiscard]] static Vector3D GetOne() noexcept;
@@ -101,64 +102,64 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector3D GetForward() noexcept;
 		[[nodiscard]] static Vector3D GetBack() noexcept;
 
-		[[nodiscard]] static Vector3D GetPositiveInfinity() noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D GetNegativeInfinity() noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D GetPositiveInfinity() noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D GetNegativeInfinity() noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static DirectX::XMVECTOR Load(const Vector3D& vec) noexcept requires std::same_as<TValue, float>;
-		static void Store(Vector3D& d, DirectX::XMVECTOR s) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static DirectX::XMVECTOR Load(const Vector3D& vec) noexcept requires std::same_as<TValue, f32>;
+		static void Store(Vector3D& d, DirectX::XMVECTOR s) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static bool IsApproximately(const Vector3D& lhs, const Vector3D& rhs, float epsilon = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static bool IsApproximately(const Vector3D& lhs, const Vector3D& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Max(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D Min(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Max(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D Min(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Clamp(const Vector3D& value, const Vector3D& min, const Vector3D& max) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D ClampMagnitude(const Vector3D& vector, float maxLength) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Clamp(const Vector3D& value, const Vector3D& min, const Vector3D& max) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D ClampMagnitude(const Vector3D& vector, f32 maxLength) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Scale(const Vector3D& vector, const Vector3D& scale) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Scale(const Vector3D& vector, const Vector3D& scale) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Normalize(const Vector3D& value) noexcept requires std::same_as<TValue, float>;
-		static void OrthoNormalize(Vector3D& normal, Vector3D& tangent) noexcept requires std::same_as<TValue, float>;
-		static void OrthoNormalize(Vector3D& normal, Vector3D& tangent, Vector3D& binormal) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Normalize(const Vector3D& value) noexcept requires std::same_as<TValue, f32>;
+		static void OrthoNormalize(Vector3D& normal, Vector3D& tangent) noexcept requires std::same_as<TValue, f32>;
+		static void OrthoNormalize(Vector3D& normal, Vector3D& tangent, Vector3D& binormal) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static float Dot(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D Cross(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static f32 Dot(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D Cross(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static float Distance(const Vector3D& _v1, const Vector3D& _v2) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static f32 Distance(const Vector3D& _v1, const Vector3D& _v2) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static float Angle(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static float SignedAngle(const Vector3D& from, const Vector3D& to, const Vector3D& axis) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static f32 Angle(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static f32 SignedAngle(const Vector3D& from, const Vector3D& to, const Vector3D& axis) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Project(const Vector3D& vector, const Vector3D& onNormal) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D ProjectOnPlane(const Vector3D& vector, const Vector3D& planeNormal) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Project(const Vector3D& vector, const Vector3D& onNormal) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D ProjectOnPlane(const Vector3D& vector, const Vector3D& planeNormal) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Reflect(const Vector3D& _vector, const Vector3D& _normal) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D Refract(const Vector3D& _vector, const Vector3D& _normal, float _eta) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Reflect(const Vector3D& _vector, const Vector3D& _normal) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D Refract(const Vector3D& _vector, const Vector3D& _normal, f32 _eta) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Lerp(const Vector3D& a, const Vector3D& b, float t) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D LerpUnclamped(const Vector3D& a, const Vector3D& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Lerp(const Vector3D& a, const Vector3D& b, f32 t) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D LerpUnclamped(const Vector3D& a, const Vector3D& b, f32 t) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D Slerp(const Vector3D& a, const Vector3D& b, float t) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D SlerpUnclamped(const Vector3D& a, const Vector3D& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D Slerp(const Vector3D& a, const Vector3D& b, f32 t) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D SlerpUnclamped(const Vector3D& a, const Vector3D& b, f32 t) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static Vector3D MoveTowards(const Vector3D& current, const Vector3D& target, float maxDistanceDelta) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static Vector3D RotateTowards(const Vector3D& current, const Vector3D& target, float maxRadiansDelta, float maxMagnitudeDelta) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static Vector3D MoveTowards(const Vector3D& current, const Vector3D& target, f32 maxDistanceDelta) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static Vector3D RotateTowards(const Vector3D& current, const Vector3D& target, f32 maxRadiansDelta, f32 maxMagnitudeDelta) noexcept requires std::same_as<TValue, f32>;
 
 		[[nodiscard]] static Vector3D SmoothDamp(
 			const Vector3D& current,
 			const Vector3D& target,
 			Vector3D& currentVelocity,
-			float smoothTime,
-			float maxSpeed,
-			float deltaTime) noexcept requires std::same_as<TValue, float>;
+			f32 smoothTime,
+			f32 maxSpeed,
+			f32 deltaTime) noexcept requires std::same_as<TValue, f32>;
 
 	private:
-		std::conditional_t<std::same_as<TValue, std::int32_t>, DirectX::XMINT3, DirectX::XMFLOAT3> value;
+		std::conditional_t<std::same_as<TValue, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;
 	};
 
-	extern template class Vector3D<std::int32_t>;
-	extern template class Vector3D<float>;
+	extern template class Vector3D<i32>;
+	extern template class Vector3D<f32>;
 
-	[[nodiscard]] Vector3D<std::int32_t> operator*(std::int32_t scalar, const Vector3D<std::int32_t>& vector) noexcept;
-	[[nodiscard]] Vector3D<float> operator*(float scalar, const Vector3D<float>& vector) noexcept;
+	[[nodiscard]] Vector3D<i32> operator*(i32 scalar, const Vector3D<i32>& vector) noexcept;
+	[[nodiscard]] Vector3D<f32> operator*(f32 scalar, const Vector3D<f32>& vector) noexcept;
 }

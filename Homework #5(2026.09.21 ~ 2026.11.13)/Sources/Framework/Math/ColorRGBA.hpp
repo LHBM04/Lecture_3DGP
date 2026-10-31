@@ -1,7 +1,6 @@
 #pragma once
 
 #include <concepts>
-#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -10,27 +9,29 @@
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class ColorRGB;
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class ColorRGBA
 	{
 	public:
 		ColorRGBA() noexcept;
 		explicit ColorRGBA(TValue value) noexcept;
-		ColorRGBA(TValue r, TValue g, TValue b, TValue a = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) noexcept;
+		ColorRGBA(TValue r, TValue g, TValue b, TValue a = static_cast<TValue>(std::same_as<TValue, i32> ? 255 : 1)) noexcept;
 		explicit ColorRGBA(const TValue* values) noexcept;
 
 		ColorRGBA(const ColorRGBA& other) noexcept;
 		ColorRGBA(ColorRGBA&& other) noexcept;
 
-		ColorRGBA(const ColorRGB<TValue>& rgb, TValue a = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) noexcept;
-		explicit ColorRGBA(const Vector3D<TValue>& vector, TValue alpha = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) noexcept;
+		ColorRGBA(const ColorRGB<TValue>& rgb, TValue a = static_cast<TValue>(std::same_as<TValue, i32> ? 255 : 1)) noexcept;
+		explicit ColorRGBA(const Vector3D<TValue>& vector, TValue alpha = static_cast<TValue>(std::same_as<TValue, i32> ? 255 : 1)) noexcept;
 		ColorRGBA(const Vector4D<TValue>& vector) noexcept;
 
 		ColorRGBA& operator=(const ColorRGBA& other) noexcept;
@@ -70,8 +71,8 @@ namespace TUK::Framework
 
 		void Set(TValue r, TValue g, TValue b, TValue a) noexcept;
 
-		[[nodiscard]] bool IsTransparent(float epsilon = std::numeric_limits<float>::epsilon()) const noexcept;
-		[[nodiscard]] bool IsOpaque(float epsilon = std::numeric_limits<float>::epsilon()) const noexcept;
+		[[nodiscard]] bool IsTransparent(f32 epsilon = std::numeric_limits<f32>::epsilon()) const noexcept;
+		[[nodiscard]] bool IsOpaque(f32 epsilon = std::numeric_limits<f32>::epsilon()) const noexcept;
 
 		[[nodiscard]] Vector4D<TValue> ToVector4D() const noexcept;
 		[[nodiscard]] ColorRGB<TValue> ToColorRGB() const noexcept;
@@ -89,17 +90,17 @@ namespace TUK::Framework
 
 		[[nodiscard]] static ColorRGBA GetClear() noexcept;
 
-		static DirectX::XMVECTOR Load(const ColorRGBA& color) noexcept requires std::same_as<TValue, float>;
-		static void Store(ColorRGBA& destination, DirectX::XMVECTOR source) noexcept requires std::same_as<TValue, float>;
+		static DirectX::XMVECTOR Load(const ColorRGBA& color) noexcept requires std::same_as<TValue, f32>;
+		static void Store(ColorRGBA& destination, DirectX::XMVECTOR source) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static bool IsApproximately(const ColorRGBA& lhs, const ColorRGBA& rhs, float epsilon = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static bool IsApproximately(const ColorRGBA& lhs, const ColorRGBA& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static ColorRGBA Lerp(const ColorRGBA& start, const ColorRGBA& end, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static ColorRGBA Lerp(const ColorRGBA& start, const ColorRGBA& end, f32 t) noexcept requires std::same_as<TValue, f32>;
 
 	private:
-		std::conditional_t<std::same_as<TValue, std::int32_t>, DirectX::XMINT4, DirectX::XMFLOAT4> value;
+		std::conditional_t<std::same_as<TValue, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;
 	};
 
-	extern template class ColorRGBA<std::int32_t>;
-	extern template class ColorRGBA<float>;
+	extern template class ColorRGBA<i32>;
+	extern template class ColorRGBA<f32>;
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <concepts>
-#include <cstdint>
 #include <limits>
 #include <type_traits>
 
@@ -10,14 +9,16 @@
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class ColorRGBA;
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	class ColorRGB
 	{
 	public:
@@ -49,10 +50,10 @@ namespace TUK::Framework
 
 		void Set(TValue r, TValue g, TValue b) noexcept;
 
-		[[nodiscard]] ColorRGB GetGamma() const noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] ColorRGB GetLinear() const noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] ColorRGB GetGamma() const noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] ColorRGB GetLinear() const noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] float GetGrayscale() const noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] f32 GetGrayscale() const noexcept requires std::same_as<TValue, f32>;
 		[[nodiscard]] TValue GetMaxColorComponent() const noexcept;
 
 		[[nodiscard]] bool IsFinite() const noexcept;
@@ -60,7 +61,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] Vector3D<TValue> ToVector3D() const noexcept;
 		[[nodiscard]] Vector4D<TValue> ToVector4D(TValue alpha) const noexcept;
-		[[nodiscard]] ColorRGBA<TValue> ToColorRGBA(TValue alpha = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1)) const noexcept;
+		[[nodiscard]] ColorRGBA<TValue> ToColorRGBA(TValue alpha = static_cast<TValue>(std::same_as<TValue, i32> ? 255 : 1)) const noexcept;
 
 		[[nodiscard]] static ColorRGB GetBlack() noexcept;
 		[[nodiscard]] static ColorRGB GetWhite() noexcept;
@@ -76,25 +77,25 @@ namespace TUK::Framework
 		[[nodiscard]] static ColorRGB GetGray() noexcept;
 		[[nodiscard]] static ColorRGB GetGrey() noexcept;
 
-		[[nodiscard]] static DirectX::XMVECTOR Load(const ColorRGB& color) noexcept requires std::same_as<TValue, float>;
-		static void Store(ColorRGB& destination, DirectX::XMVECTOR source) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static DirectX::XMVECTOR Load(const ColorRGB& color) noexcept requires std::same_as<TValue, f32>;
+		static void Store(ColorRGB& destination, DirectX::XMVECTOR source) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static bool IsApproximately(const ColorRGB& lhs, const ColorRGB& rhs, float epsilon = std::numeric_limits<float>::epsilon()) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static bool IsApproximately(const ColorRGB& lhs, const ColorRGB& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static float LinearToGammaSpace(float value) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static float GammaToLinearSpace(float value) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static f32 LinearToGammaSpace(f32 value) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static f32 GammaToLinearSpace(f32 value) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static ColorRGB HSVToRGB(float h, float s, float v) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static ColorRGB HSVToRGB(float h, float s, float v, bool hdr) noexcept requires std::same_as<TValue, float>;
-		static void RGBToHSV(const ColorRGB& rgbColor, float& h, float& s, float& v) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static ColorRGB HSVToRGB(f32 h, f32 s, f32 v) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static ColorRGB HSVToRGB(f32 h, f32 s, f32 v, bool hdr) noexcept requires std::same_as<TValue, f32>;
+		static void RGBToHSV(const ColorRGB& rgbColor, f32& h, f32& s, f32& v) noexcept requires std::same_as<TValue, f32>;
 
-		[[nodiscard]] static ColorRGB Lerp(const ColorRGB& a, const ColorRGB& b, float t) noexcept requires std::same_as<TValue, float>;
-		[[nodiscard]] static ColorRGB LerpUnclamped(const ColorRGB& a, const ColorRGB& b, float t) noexcept requires std::same_as<TValue, float>;
+		[[nodiscard]] static ColorRGB Lerp(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TValue, f32>;
+		[[nodiscard]] static ColorRGB LerpUnclamped(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TValue, f32>;
 
 	private:
-		std::conditional_t<std::same_as<TValue, std::int32_t>, DirectX::XMINT3, DirectX::XMFLOAT3> value;
+		std::conditional_t<std::same_as<TValue, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;
 	};
 
-	extern template class ColorRGB<std::int32_t>;
-	extern template class ColorRGB<float>;
+	extern template class ColorRGB<i32>;
+	extern template class ColorRGB<f32>;
 }

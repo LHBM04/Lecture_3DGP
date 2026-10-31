@@ -8,42 +8,42 @@
 namespace TUK::Framework
 {
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D() noexcept
 		: value(TValue{}, TValue{})
 	{
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D(TValue scalar) noexcept
 		: value(scalar, scalar)
 	{
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D(TValue x, TValue y) noexcept
 		: value(x, y)
 	{
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D(const Vector2D& other) noexcept
 		: value(other.value)
 	{
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D(Vector2D&& other) noexcept
 		: value(std::move(other.value))
 	{
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D(const Vector3D<TValue>& vector) noexcept
 		: value(TValue{}, TValue{})
 	{
@@ -51,7 +51,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::Vector2D(const Vector4D<TValue>& vector) noexcept
 		: value(TValue{}, TValue{})
 	{
@@ -59,7 +59,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>& Vector2D<TValue>::operator=(const Vector2D& other) noexcept
 	{
 		value = other.value;
@@ -67,7 +67,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>& Vector2D<TValue>::operator=(Vector2D&& other) noexcept
 	{
 		value = std::move(other.value);
@@ -75,21 +75,21 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::operator Vector3D<TValue>() const noexcept
 	{
 		return Vector3D<TValue>(GetX(), GetY(), TValue{});
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>::operator Vector4D<TValue>() const noexcept
 	{
 		return Vector4D<TValue>(GetX(), GetY(), TValue{}, TValue{});
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	TValue Vector2D<TValue>::operator[](std::size_t index) const noexcept
 	{
 		assert(index < 2);
@@ -103,7 +103,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	TValue& Vector2D<TValue>::operator[](std::size_t index) noexcept
 	{
 		assert(index < 2);
@@ -117,14 +117,14 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator+() const noexcept
 	{
 		return *this;
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator+(const Vector2D& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, float>)
@@ -140,7 +140,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>& Vector2D<TValue>::operator+=(const Vector2D& other) noexcept
 	{
 		*this = *this + other;
@@ -148,14 +148,14 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator-() const noexcept
 	{
 		return Vector2D(-GetX(), -GetY());
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator-(const Vector2D& other) const noexcept
 	{
 		if constexpr (std::same_as<TValue, float>)
@@ -171,7 +171,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>& Vector2D<TValue>::operator-=(const Vector2D& other) noexcept
 	{
 		*this = *this - other;
@@ -179,7 +179,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator*(TValue scalar) const noexcept
 	{
 		if constexpr (std::same_as<TValue, float>)
@@ -195,7 +195,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>& Vector2D<TValue>::operator*=(TValue scalar) noexcept
 	{
 		*this = *this * scalar;
@@ -203,7 +203,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::operator/(TValue scalar) const noexcept
 	{
 		assert(scalar != TValue{});
@@ -220,7 +220,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue>& Vector2D<TValue>::operator/=(TValue scalar) noexcept
 	{
 		*this = *this / scalar;
@@ -228,21 +228,21 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	bool Vector2D<TValue>::operator==(const Vector2D& other) const noexcept
 	{
 		return GetX() == other.GetX() && GetY() == other.GetY();
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	bool Vector2D<TValue>::operator!=(const Vector2D& other) const noexcept
 	{
 		return !(*this == other);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	std::partial_ordering Vector2D<TValue>::operator<=>(const Vector2D& other) const noexcept
 	{
 		if (const auto order = GetX() <=> other.GetX(); order != 0)
@@ -253,35 +253,35 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	TValue Vector2D<TValue>::GetX() const noexcept
 	{
 		return value.x;
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	void Vector2D<TValue>::SetX(TValue x) noexcept
 	{
 		value.x = x;
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	TValue Vector2D<TValue>::GetY() const noexcept
 	{
 		return value.y;
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	void Vector2D<TValue>::SetY(TValue y) noexcept
 	{
 		value.y = y;
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	void Vector2D<TValue>::Set(TValue x, TValue y) noexcept
 	{
 		SetX(x);
@@ -289,47 +289,47 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::GetMagnitude() const noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector2Length(Load(*this)));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::GetSqrMagnitude() const noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Dot(*this, *this);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::GetLength() const noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return GetMagnitude();
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::GetLengthSquared() const noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return GetSqrMagnitude();
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetNormalized() const noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Normalize(*this);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	bool Vector2D<TValue>::IsZero(float epsilon) const noexcept
 	{
 		assert(epsilon >= 0.0f);
@@ -337,132 +337,132 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	bool Vector2D<TValue>::IsFinite() const noexcept
 	{
 		return std::isfinite(static_cast<double>(GetX())) && std::isfinite(static_cast<double>(GetY()));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	void Vector2D<TValue>::Normalize() noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		*this = GetNormalized();
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::Dot(const Vector2D& other) const noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Dot(*this, other);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetZero() noexcept
 	{
 		return Vector2D<TValue>(static_cast<TValue>(0), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetOne() noexcept
 	{
 		return Vector2D<TValue>(static_cast<TValue>(1), static_cast<TValue>(1));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetUp() noexcept
 	{
 		return Vector2D<TValue>(static_cast<TValue>(0), static_cast<TValue>(1));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetDown() noexcept
 	{
 		return Vector2D<TValue>(static_cast<TValue>(0), static_cast<TValue>(-1));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetLeft() noexcept
 	{
 		return Vector2D<TValue>(static_cast<TValue>(-1), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetRight() noexcept
 	{
 		return Vector2D<TValue>(static_cast<TValue>(1), static_cast<TValue>(0));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetPositiveInfinity() noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const float infinity = std::numeric_limits<float>::infinity();
 			return Vector2D<TValue>(infinity, infinity);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::GetNegativeInfinity() noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const float negativeInfinity = -std::numeric_limits<float>::infinity();
 			return Vector2D<TValue>(negativeInfinity, negativeInfinity);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	DirectX::XMVECTOR Vector2D<TValue>::Load(const Vector2D& vector) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return DirectX::XMLoadFloat2(&vector.value);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	void Vector2D<TValue>::Store(Vector2D& destination, DirectX::XMVECTOR source) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		DirectX::XMStoreFloat2(&destination.value, source);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	bool Vector2D<TValue>::IsApproximately(const Vector2D<TValue>& lhs, const Vector2D<TValue>& rhs, float epsilon) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return std::abs(lhs.GetX() - rhs.GetX()) <= epsilon && std::abs(lhs.GetY() - rhs.GetY()) <= epsilon;
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Max(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Vector2D<TValue>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Min(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Vector2D<TValue>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Clamp(const Vector2D<TValue>& value, const Vector2D<TValue>& min, const Vector2D<TValue>& max) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Vector2D<TValue>(
 				std::clamp(value.GetX(), min.GetX(), max.GetX()),
@@ -471,9 +471,9 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::ClampMagnitude(const Vector2D<TValue>& vector, float maxLength) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const float sqrMagnitude = vector.GetSqrMagnitude();
 			const float maxSqr = maxLength * maxLength;
@@ -486,17 +486,17 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Scale(const Vector2D<TValue>& vector, const Vector2D<TValue>& scale) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Vector2D<TValue>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY());
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Normalize(const Vector2D<TValue>& value) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		Vector2D<TValue> result{};
 			Store(result, DirectX::XMVector2Normalize(Load(value)));
@@ -504,42 +504,42 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::Dot(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector2Dot(Load(a), Load(b)));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Cross(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const float z = a.GetX() * b.GetY() - a.GetY() * b.GetX();
 			return Vector2D<TValue>(0.0f, z);
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Perpendicular(const Vector2D<TValue>& vector) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return Vector2D<TValue>(-vector.GetY(), vector.GetX());
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::Distance(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return (a - b).GetMagnitude();
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::Angle(const Vector2D<TValue>& a, const Vector2D<TValue>& b) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const Vector2D<TValue> from = Normalize(a);
 			const Vector2D<TValue> to = Normalize(b);
@@ -548,9 +548,9 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	float Vector2D<TValue>::SignedAngle(const Vector2D<TValue>& from, const Vector2D<TValue>& to) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const float angle = Angle(from, to);
 			const float det = from.GetX() * to.GetY() - from.GetY() * to.GetX();
@@ -558,9 +558,9 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Reflect(const Vector2D<TValue>& vector, const Vector2D<TValue>& normal) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		Vector2D<TValue> result{};
 			Store(result, DirectX::XMVector2Reflect(Load(vector), Load(normal)));
@@ -568,9 +568,9 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Lerp(const Vector2D<TValue>& a, const Vector2D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		Vector2D<TValue> result{};
 			Store(result, DirectX::XMVectorLerp(Load(a), Load(b), std::clamp(t, 0.0f, 1.0f)));
@@ -578,9 +578,9 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::LerpUnclamped(const Vector2D<TValue>& a, const Vector2D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		Vector2D<TValue> result{};
 			Store(result, DirectX::XMVectorLerp(Load(a), Load(b), t));
@@ -588,17 +588,17 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::Slerp(const Vector2D<TValue>& a, const Vector2D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		return SlerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::SlerpUnclamped(const Vector2D<TValue>& a, const Vector2D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const float aMag = a.GetMagnitude();
 			const float bMag = b.GetMagnitude();
@@ -629,9 +629,9 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::MoveTowards(const Vector2D<TValue>& current, const Vector2D<TValue>& target, float maxDistanceDelta) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		const Vector2D<TValue> delta = target - current;
 			const float distance = delta.GetMagnitude();
@@ -645,7 +645,7 @@ namespace TUK::Framework
 	}
 
 	template <class TValue>
-		requires (std::same_as<TValue, std::int32_t> || std::same_as<TValue, float>)
+		requires ScalarType<TValue>
 	Vector2D<TValue> Vector2D<TValue>::SmoothDamp(
 	const Vector2D<TValue>& current,
 	const Vector2D<TValue>& target,
@@ -653,7 +653,7 @@ namespace TUK::Framework
 	float smoothTime,
 	float maxSpeed,
 	float deltaTime) noexcept
-		requires std::same_as<TValue, float>
+		requires std::same_as<TValue, f32>
 	{
 		smoothTime = std::max(0.0001f, smoothTime);
 			const float omega = 2.0f / smoothTime;
