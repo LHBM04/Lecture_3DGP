@@ -13,11 +13,22 @@
     <Filter Include="Sources\Framework">
       <UniqueIdentifier>{e837df3f-3363-4211-9658-f3532933619a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\Core">
+      <UniqueIdentifier>{5EA6E942-B2E7-4D2A-898A-054D4397724A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resources\Icon">
       <UniqueIdentifier>{ce30deb5-0fa6-4819-8259-3de494e3b125}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core\App.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Common.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Engine.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\System.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -26,6 +37,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Core\App.cpp"><Filter>Sources\Framework\Core</Filter></ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Engine.cpp"><Filter>Sources\Framework\Core</Filter></ClCompile>
+    <ClCompile Include="Sources\Framework\Core\System.cpp"><Filter>Sources\Framework\Core</Filter></ClCompile>
     <ClCompile Include="Sources\Precompiled.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
