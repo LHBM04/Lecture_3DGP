@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="Sources\Resource.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">
@@ -34,12 +34,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Homework #5(2026.09.21 ~ 2026.11.13).rc">
+    <ResourceCompile Include="Resources\Homework #5(2026.09.21 ~ 2026.11.13).rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Homework #5%282026.09.21 ~ 2026.11.13%29.ico">
+    <Image Include="Resources\Icon\Homework #5%282026.09.21 ~ 2026.11.13%29.ico">
       <Filter>Resources\Icon</Filter>
     </Image>
   </ItemGroup>

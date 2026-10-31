@@ -2,7 +2,7 @@
 //
 #pragma code_page(65001)
 
-#include "Resource.h"
+#include "../Sources/Resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 
 1 TEXTINCLUDE 
 BEGIN
-    "Resource.h\0"
+    "../Sources/Resource.h\0"
 END
 
 2 TEXTINCLUDE 
@@ -53,7 +53,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_HOMEWORK05          ICON                    "Homework #5(2026.09.21 ~ 2026.11.13).ico"
+IDI_HOMEWORK05          ICON                    "Icon/Homework #5(2026.09.21 ~ 2026.11.13).ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
