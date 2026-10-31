@@ -5,44 +5,38 @@
 
 namespace TUK::Framework
 {
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>::Quaternion() noexcept
-		: value(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(1))
+	template <ScalarType TScalar>
+	Quaternion<TScalar>::Quaternion() noexcept
+		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(1))
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>::Quaternion(TValue value) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>::Quaternion(TScalar value) noexcept
 		: value(value, value, value, value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>::Quaternion(TValue x, TValue y, TValue z, TValue w) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>::Quaternion(TScalar x, TScalar y, TScalar z, TScalar w) noexcept
 		: value(x, y, z, w)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>::Quaternion(const Quaternion<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>::Quaternion(const Quaternion<TScalar>& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>::Quaternion(Quaternion<TValue>&& other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>::Quaternion(Quaternion<TScalar>&& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator=(const Quaternion<TValue>& _other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator=(const Quaternion<TScalar>& _other) noexcept
 	{
 		value.x = _other.GetX();
 		value.y = _other.GetY();
@@ -51,9 +45,8 @@ namespace TUK::Framework
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator=(Quaternion<TValue>&& _other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator=(Quaternion<TScalar>&& _other) noexcept
 	{
 		value.x = _other.GetX();
 		value.y = _other.GetY();
@@ -62,9 +55,8 @@ namespace TUK::Framework
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Quaternion<TValue>::operator[](size_t index) const noexcept
+	template <ScalarType TScalar>
+	TScalar Quaternion<TScalar>::operator[](size_t index) const noexcept
 	{
 		assert(index < 4);
 		switch (index)
@@ -80,9 +72,8 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue& Quaternion<TValue>::operator[](size_t index) noexcept
+	template <ScalarType TScalar>
+	TScalar& Quaternion<TScalar>::operator[](size_t index) noexcept
 	{
 		assert(index < 4);
 		switch (index)
@@ -98,77 +89,71 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::operator+(const Quaternion<TValue>& _other) const noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::operator+(const Quaternion<TScalar>& _other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return Quaternion<TValue>(value.x + _other.value.x, value.y + _other.value.y, value.z + _other.value.z, value.w + _other.value.w);
+			return Quaternion<TScalar>(value.x + _other.value.x, value.y + _other.value.y, value.z + _other.value.z, value.w + _other.value.w);
 		}
 		else
 		{
-			Quaternion<TValue> result{};
+			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMVectorAdd(Load(*this), Load(_other)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator+=(const Quaternion<TValue>& _other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator+=(const Quaternion<TScalar>& _other) noexcept
 	{
 		*this = *this + _other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::operator-(const Quaternion<TValue>& _other) const noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::operator-(const Quaternion<TScalar>& _other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return Quaternion<TValue>(value.x - _other.value.x, value.y - _other.value.y, value.z - _other.value.z, value.w - _other.value.w);
+			return Quaternion<TScalar>(value.x - _other.value.x, value.y - _other.value.y, value.z - _other.value.z, value.w - _other.value.w);
 		}
 		else
 		{
-			Quaternion<TValue> result{};
+			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(_other)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator-=(const Quaternion<TValue>& _other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator-=(const Quaternion<TScalar>& _other) noexcept
 	{
 		*this = *this - _other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::operator*(TValue _scalar) const noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::operator*(TScalar _scalar) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return Quaternion<TValue>(value.x * _scalar, value.y * _scalar, value.z * _scalar, value.w * _scalar);
+			return Quaternion<TScalar>(value.x * _scalar, value.y * _scalar, value.z * _scalar, value.w * _scalar);
 		}
 		else
 		{
-			Quaternion<TValue> result{};
+			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMVectorScale(Load(*this), _scalar));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::operator*(const Quaternion<TValue>& _other) const noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::operator*(const Quaternion<TScalar>& _other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return Quaternion<TValue>(
+			return Quaternion<TScalar>(
 				_other.value.w * value.x + _other.value.x * value.w + _other.value.y * value.z - _other.value.z * value.y,
 				_other.value.w * value.y - _other.value.x * value.z + _other.value.y * value.w + _other.value.z * value.x,
 				_other.value.w * value.z + _other.value.x * value.y - _other.value.y * value.x + _other.value.z * value.w,
@@ -176,81 +161,73 @@ namespace TUK::Framework
 		}
 		else
 		{
-			Quaternion<TValue> result{};
+			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMQuaternionMultiply(Load(*this), Load(_other)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Quaternion<TValue>::operator*(const Vector3D<float>& vector) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Quaternion<TScalar>::operator*(const Vector3D<float>& vector) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<float> result{};
 		Vector3D<float>::Store(result, DirectX::XMVector3Rotate(Vector3D<float>::Load(vector), Load(*this)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator*=(TValue _scalar) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator*=(TScalar _scalar) noexcept
 	{
 		*this = *this * _scalar;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator*=(const Quaternion<TValue>& _other) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator*=(const Quaternion<TScalar>& _other) noexcept
 	{
 		*this = *this * _other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::operator/(TValue _scalar) const noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::operator/(TScalar _scalar) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			assert(_scalar != TValue{});
-			return Quaternion<TValue>(value.x / _scalar, value.y / _scalar, value.z / _scalar, value.w / _scalar);
+			assert(_scalar != TScalar{});
+			return Quaternion<TScalar>(value.x / _scalar, value.y / _scalar, value.z / _scalar, value.w / _scalar);
 		}
 		else
 		{
 			assert(_scalar != 0.0f);
-			Quaternion<TValue> result{};
+			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMVectorDivide(Load(*this), DirectX::XMVectorReplicate(_scalar)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue>& Quaternion<TValue>::operator/=(TValue _scalar) noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar>& Quaternion<TScalar>::operator/=(TScalar _scalar) noexcept
 	{
 		*this = *this / _scalar;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Quaternion<TValue>::operator==(const Quaternion<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	bool Quaternion<TScalar>::operator==(const Quaternion<TScalar>& other) const noexcept
 	{
 		return (*this <=> other) == std::partial_ordering::equivalent;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Quaternion<TValue>::operator!=(const Quaternion<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	bool Quaternion<TScalar>::operator!=(const Quaternion<TScalar>& other) const noexcept
 	{
 		return !(*this == other);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	std::partial_ordering Quaternion<TValue>::operator<=>(const Quaternion<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	std::partial_ordering Quaternion<TScalar>::operator<=>(const Quaternion<TScalar>& other) const noexcept
 	{
 		if (const auto order = value.x <=> other.GetX(); order != 0)
 		{
@@ -268,65 +245,56 @@ namespace TUK::Framework
 		return value.w <=> other.GetW();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Quaternion<TValue>::GetX() const noexcept
+	template <ScalarType TScalar>
+	TScalar Quaternion<TScalar>::GetX() const noexcept
 	{
 		return value.x;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetX(TValue component) noexcept
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetX(TScalar component) noexcept
 	{
 		value.x = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Quaternion<TValue>::GetY() const noexcept
+	template <ScalarType TScalar>
+	TScalar Quaternion<TScalar>::GetY() const noexcept
 	{
 		return value.y;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetY(TValue component) noexcept
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetY(TScalar component) noexcept
 	{
 		value.y = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Quaternion<TValue>::GetZ() const noexcept
+	template <ScalarType TScalar>
+	TScalar Quaternion<TScalar>::GetZ() const noexcept
 	{
 		return value.z;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetZ(TValue component) noexcept
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetZ(TScalar component) noexcept
 	{
 		value.z = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Quaternion<TValue>::GetW() const noexcept
+	template <ScalarType TScalar>
+	TScalar Quaternion<TScalar>::GetW() const noexcept
 	{
 		return value.w;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetW(TValue component) noexcept
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetW(TScalar component) noexcept
 	{
 		value.w = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::Set(TValue x, TValue y, TValue z, TValue w) noexcept
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::Set(TScalar x, TScalar y, TScalar z, TScalar w) noexcept
 	{
 		value.x = x;
 		value.y = y;
@@ -334,10 +302,9 @@ namespace TUK::Framework
 		value.w = w;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Quaternion<TValue>::GetEulerAngles() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Quaternion<TScalar>::GetEulerAngles() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const auto rotation = Normalize(*this);
 		DirectX::XMFLOAT4X4 matrix;
@@ -358,42 +325,37 @@ namespace TUK::Framework
 		return Vector3D<float>(pitch, yaw, roll) * (180.0f / std::numbers::pi_v<float>);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetEulerAngles(const Vector3D<float>& eulerDegrees) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetEulerAngles(const Vector3D<float>& eulerDegrees) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		*this = Euler(eulerDegrees);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Quaternion<TValue>::GetMagnitude() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Quaternion<TScalar>::GetMagnitude() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector4Length(Load(*this)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Quaternion<TValue>::GetSqrMagnitude() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Quaternion<TScalar>::GetSqrMagnitude() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, *this);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::GetNormalized() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::GetNormalized() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Normalize(*this);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetFromToRotation(const Vector3D<float>& from, const Vector3D<float>& to) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetFromToRotation(const Vector3D<float>& from, const Vector3D<float>& to) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<float> normalizedFrom = Vector3D<float>::Normalize(from);
 		Vector3D<float> normalizedTo = Vector3D<float>::Normalize(to);
@@ -423,50 +385,44 @@ namespace TUK::Framework
 		*this = AngleAxis(angleDegrees, axis);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetLookRotation(const Vector3D<float>& view) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetLookRotation(const Vector3D<float>& view) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		*this = LookRotation(view, Vector3D<float>::GetUp());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::SetLookRotation(const Vector3D<float>& view, const Vector3D<float>& up) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::SetLookRotation(const Vector3D<float>& view, const Vector3D<float>& up) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		*this = LookRotation(view, up);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Quaternion<TValue>::IsFinite() const noexcept
+	template <ScalarType TScalar>
+	bool Quaternion<TScalar>::IsFinite() const noexcept
 	{
 		return std::isfinite(value.x) && std::isfinite(value.y) && std::isfinite(value.z) && std::isfinite(value.w);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Quaternion<TValue>::IsNormalized(float epsilon) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Quaternion<TScalar>::IsNormalized(float epsilon) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float lenSqr = GetSqrMagnitude();
 		return std::abs(lenSqr - 1.0f) <= epsilon;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::Normalize() noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::Normalize() noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		*this = GetNormalized();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::ToAngleAxis(float& angleDegrees, Vector3D<float>& axis) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::ToAngleAxis(float& angleDegrees, Vector3D<float>& axis) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMVECTOR axisVector;
 		float angleRadians;
@@ -476,154 +432,137 @@ namespace TUK::Framework
 		angleDegrees = angleRadians * (180.0f / std::numbers::pi_v<float>);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Normalize(const Quaternion<TValue>& rotation) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Normalize(const Quaternion<TScalar>& rotation) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionNormalize(Load(rotation)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::GetIdentity() noexcept
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::GetIdentity() noexcept
 	{
-		return Quaternion<TValue>(TValue{}, TValue{}, TValue{}, static_cast<TValue>(1));
+		return Quaternion<TScalar>(TScalar{}, TScalar{}, TScalar{}, static_cast<TScalar>(1));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	DirectX::XMVECTOR Quaternion<TValue>::Load(const Quaternion<TValue>& quat) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	DirectX::XMVECTOR Quaternion<TScalar>::Load(const Quaternion<TScalar>& quat) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMLoadFloat4(&quat.value);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Quaternion<TValue>::Store(Quaternion<TValue>& d, DirectX::XMVECTOR s) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Quaternion<TScalar>::Store(Quaternion<TScalar>& d, DirectX::XMVECTOR s) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMStoreFloat4(&d.value, s);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Quaternion<TValue>::IsApproximately(const Quaternion<TValue>& lhs, const Quaternion<TValue>& rhs, float epsilon) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Quaternion<TScalar>::IsApproximately(const Quaternion<TScalar>& lhs, const Quaternion<TScalar>& rhs, float epsilon) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return std::abs(Dot(lhs, rhs)) >= (1.0f - epsilon);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Quaternion<TValue>::Angle(const Quaternion<TValue>& a, const Quaternion<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Quaternion<TScalar>::Angle(const Quaternion<TScalar>& a, const Quaternion<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float d = std::clamp(std::abs(Dot(a, b)), 0.0f, 1.0f);
 		return (2.0f * std::acos(d)) * (180.0f / std::numbers::pi_v<float>);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::AngleAxis(float angleDegrees, Vector3D<float> axis) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::AngleAxis(float angleDegrees, Vector3D<float> axis) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<float> normalizedAxis = Vector3D<float>::Normalize(axis);
 
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionRotationAxis(Vector3D<float>::Load(normalizedAxis), angleDegrees * (std::numbers::pi_v<float> / 180.0f)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Euler(float xDegrees, float yDegrees, float zDegrees) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Euler(float xDegrees, float yDegrees, float zDegrees) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionRotationRollPitchYaw(xDegrees * (std::numbers::pi_v<float> / 180.0f), yDegrees * (std::numbers::pi_v<float> / 180.0f), zDegrees * (std::numbers::pi_v<float> / 180.0f)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Euler(const Vector3D<float>& eulerDegrees) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Euler(const Vector3D<float>& eulerDegrees) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Euler(eulerDegrees.GetX(), eulerDegrees.GetY(), eulerDegrees.GetZ());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Inverse(const Quaternion<TValue>& rotation) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Inverse(const Quaternion<TScalar>& rotation) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionInverse(Load(rotation)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Conjugate(const Quaternion<TValue>& rotation) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Conjugate(const Quaternion<TScalar>& rotation) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionConjugate(Load(rotation)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Quaternion<TValue>::Dot(const Quaternion<TValue>& a, const Quaternion<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Quaternion<TScalar>::Dot(const Quaternion<TScalar>& a, const Quaternion<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector4Dot(Load(a), Load(b)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Lerp(const Quaternion<TValue>& a, const Quaternion<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Lerp(const Quaternion<TScalar>& a, const Quaternion<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return LerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::LerpUnclamped(const Quaternion<TValue>& a, const Quaternion<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::LerpUnclamped(const Quaternion<TScalar>& a, const Quaternion<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionNormalize(DirectX::XMVectorLerp(Load(a), Load(b), t)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::Slerp(const Quaternion<TValue>& a, const Quaternion<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::Slerp(const Quaternion<TScalar>& a, const Quaternion<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return SlerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::SlerpUnclamped(const Quaternion<TValue>& a, const Quaternion<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::SlerpUnclamped(const Quaternion<TScalar>& a, const Quaternion<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionSlerp(Load(a), Load(b), t));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::FromToRotation(const Vector3D<float>& fromDirection, const Vector3D<float>& toDirection) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::FromToRotation(const Vector3D<float>& fromDirection, const Vector3D<float>& toDirection) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<float> from = Vector3D<float>::Normalize(fromDirection);
 		Vector3D<float> to = Vector3D<float>::Normalize(toDirection);
@@ -651,10 +590,9 @@ namespace TUK::Framework
 		return AngleAxis(angleDegrees, axis);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::LookRotation(const Vector3D<float>& forward, const Vector3D<float>& up) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::LookRotation(const Vector3D<float>& forward, const Vector3D<float>& up) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<float> normalizedForward = Vector3D<float>::Normalize(forward);
 		if (normalizedForward.GetSqrMagnitude() <= std::numeric_limits<float>::epsilon())
@@ -679,15 +617,14 @@ namespace TUK::Framework
 		basis.r[1] = Vector3D<float>::Load(orthogonalUp);
 		basis.r[2] = Vector3D<float>::Load(normalizedForward);
 
-		Quaternion<TValue> result{};
+		Quaternion<TScalar> result{};
 		Store(result, DirectX::XMQuaternionRotationMatrix(basis));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Quaternion<TValue>::RotateTowards(const Quaternion<TValue>& from, const Quaternion<TValue>& to, float maxDegreesDelta) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Quaternion<TScalar>::RotateTowards(const Quaternion<TScalar>& from, const Quaternion<TScalar>& to, float maxDegreesDelta) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float angleDegrees = Angle(from, to);
 		if (angleDegrees <= std::numeric_limits<float>::epsilon())

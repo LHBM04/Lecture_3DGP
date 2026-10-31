@@ -7,90 +7,78 @@
 
 namespace TUK::Framework
 {
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D() noexcept
-		: value(TValue{}, TValue{}, TValue{}, TValue{})
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D() noexcept
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D(TValue scalar) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D(TScalar scalar) noexcept
 		: value(scalar, scalar, scalar, scalar)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D(TValue x, TValue y, TValue z, TValue w) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D(TScalar x, TScalar y, TScalar z, TScalar w) noexcept
 		: value(x, y, z, w)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D(const Vector4D& other) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D(const Vector4D& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D(Vector4D&& other) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D(Vector4D&& other) noexcept
 		: value(std::move(other.value))
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D(const Vector2D<TValue>& vector, TValue z, TValue w) noexcept
-		: value(TValue{}, TValue{}, TValue{}, TValue{})
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D(const Vector2D<TScalar>& vector, TScalar z, TScalar w) noexcept
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
 	{
 		Set(vector.GetX(), vector.GetY(), z, w);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::Vector4D(const Vector3D<TValue>& vector, TValue w) noexcept
-		: value(TValue{}, TValue{}, TValue{}, TValue{})
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::Vector4D(const Vector3D<TScalar>& vector, TScalar w) noexcept
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
 	{
 		Set(vector.GetX(), vector.GetY(), vector.GetZ(), w);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>& Vector4D<TValue>::operator=(const Vector4D& other) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>& Vector4D<TScalar>::operator=(const Vector4D& other) noexcept
 	{
 		value = other.value;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>& Vector4D<TValue>::operator=(Vector4D&& other) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>& Vector4D<TScalar>::operator=(Vector4D&& other) noexcept
 	{
 		value = std::move(other.value);
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::operator Vector2D<TValue>() const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::operator Vector2D<TScalar>() const noexcept
 	{
-		return Vector2D<TValue>(GetX(), GetY());
+		return Vector2D<TScalar>(GetX(), GetY());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>::operator Vector3D<TValue>() const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>::operator Vector3D<TScalar>() const noexcept
 	{
-		return Vector3D<TValue>(GetX(), GetY(), GetZ());
+		return Vector3D<TScalar>(GetX(), GetY(), GetZ());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Vector4D<TValue>::operator[](std::size_t index) const noexcept
+	template <ScalarType TScalar>
+	TScalar Vector4D<TScalar>::operator[](std::size_t index) const noexcept
 	{
 		assert(index < 4);
 		switch (index)
@@ -106,9 +94,8 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue& Vector4D<TValue>::operator[](std::size_t index) noexcept
+	template <ScalarType TScalar>
+	TScalar& Vector4D<TScalar>::operator[](std::size_t index) noexcept
 	{
 		assert(index < 4);
 		switch (index)
@@ -124,18 +111,16 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::operator+() const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::operator+() const noexcept
 	{
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::operator+(const Vector4D& other) const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::operator+(const Vector4D& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
 			Vector4D result;
 			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
@@ -147,26 +132,23 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>& Vector4D<TValue>::operator+=(const Vector4D& other) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>& Vector4D<TScalar>::operator+=(const Vector4D& other) noexcept
 	{
 		*this = *this + other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::operator-() const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::operator-() const noexcept
 	{
 		return Vector4D(-GetX(), -GetY(), -GetZ(), -GetW());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::operator-(const Vector4D& other) const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::operator-(const Vector4D& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
 			Vector4D result;
 			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
@@ -178,19 +160,17 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>& Vector4D<TValue>::operator-=(const Vector4D& other) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>& Vector4D<TScalar>::operator-=(const Vector4D& other) noexcept
 	{
 		*this = *this - other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::operator*(TValue scalar) const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::operator*(TScalar scalar) const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
 			Vector4D result;
 			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
@@ -202,20 +182,18 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>& Vector4D<TValue>::operator*=(TValue scalar) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>& Vector4D<TScalar>::operator*=(TScalar scalar) noexcept
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::operator/(TValue scalar) const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::operator/(TScalar scalar) const noexcept
 	{
-		assert(scalar != TValue{});
-		if constexpr (std::same_as<TValue, float>)
+		assert(scalar != TScalar{});
+		if constexpr (std::same_as<TScalar, float>)
 		{
 			Vector4D result;
 			Store(result, DirectX::XMVectorDivide(Load(*this), DirectX::XMVectorReplicate(scalar)));
@@ -227,31 +205,27 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue>& Vector4D<TValue>::operator/=(TValue scalar) noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar>& Vector4D<TScalar>::operator/=(TScalar scalar) noexcept
 	{
 		*this = *this / scalar;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Vector4D<TValue>::operator==(const Vector4D& other) const noexcept
+	template <ScalarType TScalar>
+	bool Vector4D<TScalar>::operator==(const Vector4D& other) const noexcept
 	{
 		return GetX() == other.GetX() && GetY() == other.GetY() && GetZ() == other.GetZ() && GetW() == other.GetW();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Vector4D<TValue>::operator!=(const Vector4D& other) const noexcept
+	template <ScalarType TScalar>
+	bool Vector4D<TScalar>::operator!=(const Vector4D& other) const noexcept
 	{
 		return !(*this == other);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	std::partial_ordering Vector4D<TValue>::operator<=>(const Vector4D& other) const noexcept
+	template <ScalarType TScalar>
+	std::partial_ordering Vector4D<TScalar>::operator<=>(const Vector4D& other) const noexcept
 	{
 		if (const auto order = GetX() <=> other.GetX(); order != 0)
 		{
@@ -268,65 +242,56 @@ namespace TUK::Framework
 		return GetW() <=> other.GetW();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Vector4D<TValue>::GetX() const noexcept
+	template <ScalarType TScalar>
+	TScalar Vector4D<TScalar>::GetX() const noexcept
 	{
 		return value.x;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::SetX(TValue x) noexcept
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::SetX(TScalar x) noexcept
 	{
 		value.x = x;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Vector4D<TValue>::GetY() const noexcept
+	template <ScalarType TScalar>
+	TScalar Vector4D<TScalar>::GetY() const noexcept
 	{
 		return value.y;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::SetY(TValue y) noexcept
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::SetY(TScalar y) noexcept
 	{
 		value.y = y;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Vector4D<TValue>::GetZ() const noexcept
+	template <ScalarType TScalar>
+	TScalar Vector4D<TScalar>::GetZ() const noexcept
 	{
 		return value.z;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::SetZ(TValue z) noexcept
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::SetZ(TScalar z) noexcept
 	{
 		value.z = z;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Vector4D<TValue>::GetW() const noexcept
+	template <ScalarType TScalar>
+	TScalar Vector4D<TScalar>::GetW() const noexcept
 	{
 		return value.w;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::SetW(TValue w) noexcept
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::SetW(TScalar w) noexcept
 	{
 		value.w = w;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::Set(TValue x, TValue y, TValue z, TValue w) noexcept
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::Set(TScalar x, TScalar y, TScalar z, TScalar w) noexcept
 	{
 		SetX(x);
 		SetY(y);
@@ -334,129 +299,113 @@ namespace TUK::Framework
 		SetW(w);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::GetMagnitude() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::GetMagnitude() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector4Length(Load(*this)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::GetSqrMagnitude() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::GetSqrMagnitude() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, *this);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::GetLength() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::GetLength() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return GetMagnitude();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::GetLengthSquared() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::GetLengthSquared() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return GetSqrMagnitude();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::GetNormalized() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::GetNormalized() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Normalize(*this);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Vector4D<TValue>::IsZero(float epsilon) const noexcept
+	template <ScalarType TScalar>
+	bool Vector4D<TScalar>::IsZero(float epsilon) const noexcept
 	{
 		assert(epsilon >= 0.0f);
 		return std::abs(static_cast<double>(GetX())) <= epsilon && std::abs(static_cast<double>(GetY())) <= epsilon && std::abs(static_cast<double>(GetZ())) <= epsilon && std::abs(static_cast<double>(GetW())) <= epsilon;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Vector4D<TValue>::IsFinite() const noexcept
+	template <ScalarType TScalar>
+	bool Vector4D<TScalar>::IsFinite() const noexcept
 	{
 		return std::isfinite(static_cast<double>(GetX())) && std::isfinite(static_cast<double>(GetY())) && std::isfinite(static_cast<double>(GetZ())) && std::isfinite(static_cast<double>(GetW()));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::Normalize() noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::Normalize() noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		*this = GetNormalized();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::Dot(const Vector4D& other) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::Dot(const Vector4D& other) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, other);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::GetZero() noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::GetZero() noexcept
 	{
-		return Vector4D<TValue>(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0));
+		return Vector4D<TScalar>(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::GetOne() noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::GetOne() noexcept
 	{
-		return Vector4D<TValue>(static_cast<TValue>(1), static_cast<TValue>(1), static_cast<TValue>(1), static_cast<TValue>(1));
+		return Vector4D<TScalar>(static_cast<TScalar>(1), static_cast<TScalar>(1), static_cast<TScalar>(1), static_cast<TScalar>(1));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::GetPositiveInfinity() noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::GetPositiveInfinity() noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float infinity = std::numeric_limits<float>::infinity();
-		    return Vector4D<TValue>(infinity, infinity, infinity, infinity);
+		    return Vector4D<TScalar>(infinity, infinity, infinity, infinity);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::GetNegativeInfinity() noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::GetNegativeInfinity() noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float negativeInfinity = -std::numeric_limits<float>::infinity();
-		    return Vector4D<TValue>(negativeInfinity, negativeInfinity, negativeInfinity, negativeInfinity);
+		    return Vector4D<TScalar>(negativeInfinity, negativeInfinity, negativeInfinity, negativeInfinity);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	DirectX::XMVECTOR Vector4D<TValue>::Load(const Vector4D& vector) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	DirectX::XMVECTOR Vector4D<TScalar>::Load(const Vector4D& vector) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMLoadFloat4(&vector.value);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Vector4D<TValue>::Store(Vector4D& destination, DirectX::XMVECTOR source) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Vector4D<TScalar>::Store(Vector4D& destination, DirectX::XMVECTOR source) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMStoreFloat4(&destination.value, source);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Vector4D<TValue>::IsApproximately(const Vector4D<TValue>& lhs, const Vector4D<TValue>& rhs, float epsilon) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Vector4D<TScalar>::IsApproximately(const Vector4D<TScalar>& lhs, const Vector4D<TScalar>& rhs, float epsilon) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return std::abs(lhs.GetX() - rhs.GetX()) <= epsilon
 		        && std::abs(lhs.GetY() - rhs.GetY()) <= epsilon
@@ -464,28 +413,25 @@ namespace TUK::Framework
 		        && std::abs(lhs.GetW() - rhs.GetW()) <= epsilon;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Max(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Max(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Vector4D<TValue>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()), std::max(a.GetZ(), b.GetZ()), std::max(a.GetW(), b.GetW()));
+		return Vector4D<TScalar>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()), std::max(a.GetZ(), b.GetZ()), std::max(a.GetW(), b.GetW()));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Min(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Min(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Vector4D<TValue>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()), std::min(a.GetZ(), b.GetZ()), std::min(a.GetW(), b.GetW()));
+		return Vector4D<TScalar>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()), std::min(a.GetZ(), b.GetZ()), std::min(a.GetW(), b.GetW()));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Clamp(const Vector4D<TValue>& value, const Vector4D<TValue>& min, const Vector4D<TValue>& max) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Clamp(const Vector4D<TScalar>& value, const Vector4D<TScalar>& min, const Vector4D<TScalar>& max) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Vector4D<TValue>(
+		return Vector4D<TScalar>(
 		        std::clamp(value.GetX(), min.GetX(), max.GetX()),
 		        std::clamp(value.GetY(), min.GetY(), max.GetY()),
 		        std::clamp(value.GetZ(), min.GetZ(), max.GetZ()),
@@ -493,10 +439,9 @@ namespace TUK::Framework
 		    );
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::ClampMagnitude(const Vector4D<TValue>& vector, float maxLength) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::ClampMagnitude(const Vector4D<TScalar>& vector, float maxLength) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float sqrMagnitude = vector.GetSqrMagnitude();
 		    const float maxSqr = maxLength * maxLength;
@@ -508,55 +453,49 @@ namespace TUK::Framework
 		    return Normalize(vector) * maxLength;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Scale(const Vector4D<TValue>& vector, const Vector4D<TValue>& scale) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Scale(const Vector4D<TScalar>& vector, const Vector4D<TScalar>& scale) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Vector4D<TValue>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY(), vector.GetZ() * scale.GetZ(), vector.GetW() * scale.GetW());
+		return Vector4D<TScalar>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY(), vector.GetZ() * scale.GetZ(), vector.GetW() * scale.GetW());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Normalize(const Vector4D<TValue>& value) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Normalize(const Vector4D<TScalar>& value) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Vector4D<TValue> result{};
+		Vector4D<TScalar> result{};
 		    Store(result, DirectX::XMVector4Normalize(Load(value)));
 		    return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::Dot(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::Dot(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector4Dot(Load(a), Load(b)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::Distance(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::Distance(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return (a - b).GetMagnitude();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Vector4D<TValue>::Angle(const Vector4D<TValue>& a, const Vector4D<TValue>& b) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Vector4D<TScalar>::Angle(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		const Vector4D<TValue> from = Normalize(a);
-		    const Vector4D<TValue> to = Normalize(b);
+		const Vector4D<TScalar> from = Normalize(a);
+		    const Vector4D<TScalar> to = Normalize(b);
 		    const float dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
 		    return std::acos(dot);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Project(const Vector4D<TValue>& vector, const Vector4D<TValue>& onNormal) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Project(const Vector4D<TScalar>& vector, const Vector4D<TScalar>& onNormal) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float denominator = Dot(onNormal, onNormal);
 		    if (denominator <= std::numeric_limits<float>::epsilon())
@@ -568,46 +507,41 @@ namespace TUK::Framework
 		    return onNormal * scale;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Reflect(const Vector4D<TValue>& vector, const Vector4D<TValue>& normal) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Reflect(const Vector4D<TScalar>& vector, const Vector4D<TScalar>& normal) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return vector - normal * (2.0f * Dot(vector, normal));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Lerp(const Vector4D<TValue>& a, const Vector4D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Lerp(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Vector4D<TValue> result{};
+		Vector4D<TScalar> result{};
 		    Store(result, DirectX::XMVectorLerp(Load(a), Load(b), std::clamp(t, 0.0f, 1.0f)));
 		    return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::LerpUnclamped(const Vector4D<TValue>& a, const Vector4D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::LerpUnclamped(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		Vector4D<TValue> result{};
+		Vector4D<TScalar> result{};
 		    Store(result, DirectX::XMVectorLerp(Load(a), Load(b), t));
 		    return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::Slerp(const Vector4D<TValue>& a, const Vector4D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::Slerp(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return SlerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::SlerpUnclamped(const Vector4D<TValue>& a, const Vector4D<TValue>& b, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::SlerpUnclamped(const Vector4D<TScalar>& a, const Vector4D<TScalar>& b, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const float aMag = a.GetMagnitude();
 		    const float bMag = b.GetMagnitude();
@@ -617,13 +551,13 @@ namespace TUK::Framework
 		        return LerpUnclamped(a, b, t);
 		    }
 		
-		    const Vector4D<TValue> from = a / aMag;
-		    const Vector4D<TValue> to = b / bMag;
+		    const Vector4D<TScalar> from = a / aMag;
+		    const Vector4D<TScalar> to = b / bMag;
 		
 		    float dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
 		    const float theta = std::acos(dot) * t;
 		
-		    Vector4D<TValue> relative = to - from * dot;
+		    Vector4D<TScalar> relative = to - from * dot;
 		    const float relativeMag = relative.GetMagnitude();
 		    if (relativeMag <= std::numeric_limits<float>::epsilon())
 		    {
@@ -631,18 +565,17 @@ namespace TUK::Framework
 		    }
 		
 		    relative /= relativeMag;
-		    const Vector4D<TValue> direction = from * std::cos(theta) + relative * std::sin(theta);
+		    const Vector4D<TScalar> direction = from * std::cos(theta) + relative * std::sin(theta);
 		    const float magnitude = Mathf::Lerp(aMag, bMag, t);
 		
 		    return direction * magnitude;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Vector4D<TValue>::MoveTowards(const Vector4D<TValue>& current, const Vector4D<TValue>& target, float maxDistanceDelta) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Vector4D<TScalar>::MoveTowards(const Vector4D<TScalar>& current, const Vector4D<TScalar>& target, float maxDistanceDelta) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		const Vector4D<TValue> delta = target - current;
+		const Vector4D<TScalar> delta = target - current;
 		    const float distance = delta.GetMagnitude();
 		
 		    if (distance <= maxDistanceDelta || distance <= std::numeric_limits<float>::epsilon())

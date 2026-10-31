@@ -5,20 +5,18 @@
 
 namespace TUK::Framework
 {
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4() noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4() noexcept
 		: value{}
 	{
 		for (std::size_t diagonal = 0; diagonal < 4; ++diagonal)
 		{
-			(*this)[diagonal * 5] = static_cast<TValue>(1);
+			(*this)[diagonal * 5] = static_cast<TScalar>(1);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4(TValue value) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(TScalar value) noexcept
 		: value{}
 	{
 		for (std::size_t diagonal = 0; diagonal < 4; ++diagonal)
@@ -27,9 +25,8 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4(const TValue values[16]) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(const TScalar values[16]) noexcept
 		: value{}
 	{
 		assert(values);
@@ -39,16 +36,15 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4(
-		TValue m00, TValue m01, TValue m02, TValue m03,
-		TValue m10, TValue m11, TValue m12, TValue m13,
-		TValue m20, TValue m21, TValue m22, TValue m23,
-		TValue m30, TValue m31, TValue m32, TValue m33) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(
+		TScalar m00, TScalar m01, TScalar m02, TScalar m03,
+		TScalar m10, TScalar m11, TScalar m12, TScalar m13,
+		TScalar m20, TScalar m21, TScalar m22, TScalar m23,
+		TScalar m30, TScalar m31, TScalar m32, TScalar m33) noexcept
 		: value{}
 	{
-		const TValue components[16]{
+		const TScalar components[16]{
 			m00, m01, m02, m03,
 			m10, m11, m12, m13,
 			m20, m21, m22, m23,
@@ -60,51 +56,45 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4(const Matrix4x4<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(const Matrix4x4<TScalar>& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4(Matrix4x4<TValue>&& other) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(Matrix4x4<TScalar>&& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>::Matrix4x4(DirectX::XMMATRIX matrix) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(DirectX::XMMATRIX matrix) noexcept
+		requires std::same_as<TScalar, f32>
 		: value{}
 	{
 		Store(*this, matrix);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>& Matrix4x4<TValue>::operator=(const Matrix4x4<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>& Matrix4x4<TScalar>::operator=(const Matrix4x4<TScalar>& other) noexcept
 	{
 		value = other.value;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>& Matrix4x4<TValue>::operator=(Matrix4x4<TValue>&& other) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>& Matrix4x4<TScalar>::operator=(Matrix4x4<TScalar>&& other) noexcept
 	{
 		value = other.value;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue Matrix4x4<TValue>::operator[](size_t index) const noexcept
+	template <ScalarType TScalar>
+	TScalar Matrix4x4<TScalar>::operator[](size_t index) const noexcept
 	{
 		assert(index < 16);
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
 			return value[index];
 		}
@@ -114,12 +104,11 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue& Matrix4x4<TValue>::operator[](size_t index) noexcept
+	template <ScalarType TScalar>
+	TScalar& Matrix4x4<TScalar>::operator[](size_t index) noexcept
 	{
 		assert(index < 16);
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
 			return value[index];
 		}
@@ -129,17 +118,16 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::operator*(const Matrix4x4<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::operator*(const Matrix4x4<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
-			return Matrix4x4<TValue>(DirectX::XMMatrixMultiply(Load(*this), Load(other)));
+			return Matrix4x4<TScalar>(DirectX::XMMatrixMultiply(Load(*this), Load(other)));
 		}
 		else
 		{
-			Matrix4x4<TValue> result(TValue{});
+			Matrix4x4<TScalar> result(TScalar{});
 			for (std::size_t row = 0; row < 4; ++row)
 			{
 				for (std::size_t column = 0; column < 4; ++column)
@@ -154,31 +142,27 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue>& Matrix4x4<TValue>::operator*=(const Matrix4x4<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar>& Matrix4x4<TScalar>::operator*=(const Matrix4x4<TScalar>& other) noexcept
 	{
 		*this = *this * other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::operator==(const Matrix4x4<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::operator==(const Matrix4x4<TScalar>& other) const noexcept
 	{
 		return (*this <=> other) == std::partial_ordering::equivalent;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::operator!=(const Matrix4x4<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::operator!=(const Matrix4x4<TScalar>& other) const noexcept
 	{
 		return !(*this == other);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	std::partial_ordering Matrix4x4<TValue>::operator<=>(const Matrix4x4<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	std::partial_ordering Matrix4x4<TScalar>::operator<=>(const Matrix4x4<TScalar>& other) const noexcept
 	{
 		for (std::size_t index = 0; index < 16; ++index)
 		{
@@ -190,18 +174,16 @@ namespace TUK::Framework
 		return std::partial_ordering::equivalent;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Matrix4x4<TValue>::GetRow(std::size_t index) const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Matrix4x4<TScalar>::GetRow(std::size_t index) const noexcept
 	{
 		assert(index < 4);
 		const auto base = index * 4;
-		return Vector4D<TValue>((*this)[base], (*this)[base + 1], (*this)[base + 2], (*this)[base + 3]);
+		return Vector4D<TScalar>((*this)[base], (*this)[base + 1], (*this)[base + 2], (*this)[base + 3]);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Matrix4x4<TValue>::SetRow(std::size_t index, const Vector4D<TValue>& row) noexcept
+	template <ScalarType TScalar>
+	void Matrix4x4<TScalar>::SetRow(std::size_t index, const Vector4D<TScalar>& row) noexcept
 	{
 		assert(index < 4);
 		for (std::size_t column = 0; column < 4; ++column)
@@ -210,17 +192,15 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> Matrix4x4<TValue>::GetColumn(std::size_t index) const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> Matrix4x4<TScalar>::GetColumn(std::size_t index) const noexcept
 	{
 		assert(index < 4);
-		return Vector4D<TValue>((*this)[index], (*this)[index + 4], (*this)[index + 8], (*this)[index + 12]);
+		return Vector4D<TScalar>((*this)[index], (*this)[index + 4], (*this)[index + 8], (*this)[index + 12]);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Matrix4x4<TValue>::SetColumn(std::size_t index, const Vector4D<TValue>& column) noexcept
+	template <ScalarType TScalar>
+	void Matrix4x4<TScalar>::SetColumn(std::size_t index, const Vector4D<TScalar>& column) noexcept
 	{
 		assert(index < 4);
 		for (std::size_t row = 0; row < 4; ++row)
@@ -229,25 +209,23 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	float Matrix4x4<TValue>::GetDeterminant() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	float Matrix4x4<TScalar>::GetDeterminant() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMMatrixDeterminant(Load(*this)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::GetTranspose() const noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::GetTranspose() const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
-			return Matrix4x4<TValue>(DirectX::XMMatrixTranspose(Load(*this)));
+			return Matrix4x4<TScalar>(DirectX::XMMatrixTranspose(Load(*this)));
 		}
 		else
 		{
-			Matrix4x4<TValue> result(TValue{});
+			Matrix4x4<TScalar> result(TScalar{});
 			for (std::size_t row = 0; row < 4; ++row)
 			{
 				for (std::size_t column = 0; column < 4; ++column)
@@ -259,34 +237,31 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::GetInverse() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::GetInverse() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMVECTOR determinant;
 		const auto inverse = DirectX::XMMatrixInverse(&determinant, Load(*this));
 		const float scalar = DirectX::XMVectorGetX(determinant);
 		assert(std::isfinite(scalar) && scalar != 0.0f);
-		return Matrix4x4<TValue>(inverse);
+		return Matrix4x4<TScalar>(inverse);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<TValue> Matrix4x4<TValue>::GetWorldPosition() const noexcept
+	template <ScalarType TScalar>
+	Vector3D<TScalar> Matrix4x4<TScalar>::GetWorldPosition() const noexcept
 	{
-		return Vector3D<TValue>((*this)[12], (*this)[13], (*this)[14]);
+		return Vector3D<TScalar>((*this)[12], (*this)[13], (*this)[14]);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Quaternion<TValue> Matrix4x4<TValue>::GetRotation() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Quaternion<TScalar> Matrix4x4<TScalar>::GetRotation() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const Vector3D<float> scale = GetScale();
 		if (scale.GetX() <= std::numeric_limits<float>::epsilon() || scale.GetY() <= std::numeric_limits<float>::epsilon() || scale.GetZ() <= std::numeric_limits<float>::epsilon())
 		{
-			return Quaternion<TValue>::GetIdentity();
+			return Quaternion<TScalar>::GetIdentity();
 		}
 
 		DirectX::XMMATRIX rotation = Load(*this);
@@ -295,15 +270,14 @@ namespace TUK::Framework
 		rotation.r[2] = DirectX::XMVectorScale(rotation.r[2], 1.0f / scale.GetZ());
 		rotation.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 
-		Quaternion<TValue> result{};
-		Quaternion<TValue>::Store(result, DirectX::XMQuaternionRotationMatrix(rotation));
+		Quaternion<TScalar> result{};
+		Quaternion<TScalar>::Store(result, DirectX::XMQuaternionRotationMatrix(rotation));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Matrix4x4<TValue>::GetScale() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Matrix4x4<TScalar>::GetScale() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		const Vector3D<float> xAxis(value._11, value._12, value._13);
 		const Vector3D<float> yAxis(value._21, value._22, value._23);
@@ -311,98 +285,89 @@ namespace TUK::Framework
 		return Vector3D<float>(xAxis.GetMagnitude(), yAxis.GetMagnitude(), zAxis.GetMagnitude());
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Matrix4x4<TValue>::GetLossyScale() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Matrix4x4<TScalar>::GetLossyScale() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return GetScale();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Matrix4x4<TValue>::GetForward() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Matrix4x4<TScalar>::GetForward() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Vector3D<float>(value._31, value._32, value._33).GetNormalized();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Matrix4x4<TValue>::GetUp() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Matrix4x4<TScalar>::GetUp() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Vector3D<float>(value._21, value._22, value._23).GetNormalized();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Matrix4x4<TValue>::GetRight() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Matrix4x4<TScalar>::GetRight() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Vector3D<float>(value._11, value._12, value._13).GetNormalized();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Matrix4x4<TValue>::SetTRS(const Vector3D<float>& position, const Quaternion<TValue>& rotation, const Vector3D<float>& scale) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Matrix4x4<TScalar>::SetTRS(const Vector3D<float>& position, const Quaternion<TScalar>& rotation, const Vector3D<float>& scale) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		*this = TRS(position, rotation, scale);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<TValue> Matrix4x4<TValue>::MultiplyPoint3x4(const Vector3D<TValue>& point) const noexcept
+	template <ScalarType TScalar>
+	Vector3D<TScalar> Matrix4x4<TScalar>::MultiplyPoint3x4(const Vector3D<TScalar>& point) const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
-			Vector3D<TValue> result{};
-			Vector3D<TValue>::Store(result, DirectX::XMVector3Transform(Vector3D<TValue>::Load(point), Load(*this)));
+			Vector3D<TScalar> result{};
+			Vector3D<TScalar>::Store(result, DirectX::XMVector3Transform(Vector3D<TScalar>::Load(point), Load(*this)));
 			return result;
 		}
 		else
 		{
-			return Vector3D<TValue>(
+			return Vector3D<TScalar>(
 				point.GetX() * (*this)[0] + point.GetY() * (*this)[4] + point.GetZ() * (*this)[8] + (*this)[12],
 				point.GetX() * (*this)[1] + point.GetY() * (*this)[5] + point.GetZ() * (*this)[9] + (*this)[13],
 				point.GetX() * (*this)[2] + point.GetY() * (*this)[6] + point.GetZ() * (*this)[10] + (*this)[14]);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<float> Matrix4x4<TValue>::MultiplyPoint(const Vector3D<float>& point) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Vector3D<float> Matrix4x4<TScalar>::MultiplyPoint(const Vector3D<float>& point) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<float> result{};
 		Vector3D<float>::Store(result, DirectX::XMVector3TransformCoord(Vector3D<float>::Load(point), Load(*this)));
 		return result;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector3D<TValue> Matrix4x4<TValue>::MultiplyVector(const Vector3D<TValue>& vector) const noexcept
+	template <ScalarType TScalar>
+	Vector3D<TScalar> Matrix4x4<TScalar>::MultiplyVector(const Vector3D<TScalar>& vector) const noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
-			Vector3D<TValue> result{};
-			Vector3D<TValue>::Store(result, DirectX::XMVector3TransformNormal(Vector3D<TValue>::Load(vector), Load(*this)));
+			Vector3D<TScalar> result{};
+			Vector3D<TScalar>::Store(result, DirectX::XMVector3TransformNormal(Vector3D<TScalar>::Load(vector), Load(*this)));
 			return result;
 		}
 		else
 		{
-			return Vector3D<TValue>(
+			return Vector3D<TScalar>(
 				vector.GetX() * (*this)[0] + vector.GetY() * (*this)[4] + vector.GetZ() * (*this)[8],
 				vector.GetX() * (*this)[1] + vector.GetY() * (*this)[5] + vector.GetZ() * (*this)[9],
 				vector.GetX() * (*this)[2] + vector.GetY() * (*this)[6] + vector.GetZ() * (*this)[10]);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::TryGetInverse(Matrix4x4<TValue>& result) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::TryGetInverse(Matrix4x4<TScalar>& result) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMVECTOR determinant;
 		const auto inverse = DirectX::XMMatrixInverse(&determinant, Load(*this));
@@ -427,18 +392,16 @@ namespace TUK::Framework
 		return true;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::CanInverse() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::CanInverse() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return std::abs(GetDeterminant()) > std::numeric_limits<float>::epsilon();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::TryDecompose(Vector3D<float>& position, Quaternion<TValue>& rotation, Vector3D<float>& scale) const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::TryDecompose(Vector3D<float>& position, Quaternion<TScalar>& rotation, Vector3D<float>& scale) const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMVECTOR scaleVec;
 		DirectX::XMVECTOR rotVec;
@@ -448,15 +411,14 @@ namespace TUK::Framework
 			return false;
 		}
 		Vector3D<float>::Store(position, transVec);
-		Quaternion<TValue>::Store(rotation, rotVec);
+		Quaternion<TScalar>::Store(rotation, rotVec);
 		Vector3D<float>::Store(scale, scaleVec);
 		return true;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::IsValidTRS() const noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::IsValidTRS() const noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		if (std::abs(value._14) > std::numeric_limits<float>::epsilon()
 			|| std::abs(value._24) > std::numeric_limits<float>::epsilon()
@@ -478,46 +440,40 @@ namespace TUK::Framework
 		return DirectX::XMMatrixDecompose(&scale, &rotation, &translation, Load(*this));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::IsIdentity(float epsilon) const noexcept
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::IsIdentity(float epsilon) const noexcept
 	{
 		return IsApproximately(*this, GetIdentity(), epsilon);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::GetIdentity() noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::GetIdentity() noexcept
 	{
-		return Matrix4x4<TValue>();
+		return Matrix4x4<TScalar>();
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::GetZero() noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::GetZero() noexcept
 	{
-		return Matrix4x4<TValue>(TValue{});
+		return Matrix4x4<TScalar>(TScalar{});
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	DirectX::XMMATRIX Matrix4x4<TValue>::Load(const Matrix4x4<TValue>& matrix) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	DirectX::XMMATRIX Matrix4x4<TScalar>::Load(const Matrix4x4<TScalar>& matrix) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMLoadFloat4x4(&matrix.value);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void Matrix4x4<TValue>::Store(Matrix4x4<TValue>& destination, DirectX::XMMATRIX source) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void Matrix4x4<TScalar>::Store(Matrix4x4<TScalar>& destination, DirectX::XMMATRIX source) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMStoreFloat4x4(&destination.value, source);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::IsApproximately(const Matrix4x4<TValue>& lhs, const Matrix4x4<TValue>& rhs, float epsilon) noexcept
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::IsApproximately(const Matrix4x4<TScalar>& lhs, const Matrix4x4<TScalar>& rhs, float epsilon) noexcept
 	{
 		assert(epsilon >= 0.0f);
 		for (std::size_t index = 0; index < 16; ++index)
@@ -530,17 +486,16 @@ namespace TUK::Framework
 		return true;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Translate(const Vector3D<TValue>& translation) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Translate(const Vector3D<TScalar>& translation) noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
-			return Matrix4x4<TValue>(DirectX::XMMatrixTranslation(translation.GetX(), translation.GetY(), translation.GetZ()));
+			return Matrix4x4<TScalar>(DirectX::XMMatrixTranslation(translation.GetX(), translation.GetY(), translation.GetZ()));
 		}
 		else
 		{
-			Matrix4x4<TValue> result{};
+			Matrix4x4<TScalar> result{};
 			result[12] = translation.GetX();
 			result[13] = translation.GetY();
 			result[14] = translation.GetZ();
@@ -548,25 +503,23 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Rotate(const Quaternion<TValue>& rotation) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Rotate(const Quaternion<TScalar>& rotation) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Matrix4x4<TValue>(DirectX::XMMatrixRotationQuaternion(Quaternion<TValue>::Load(rotation)));
+		return Matrix4x4<TScalar>(DirectX::XMMatrixRotationQuaternion(Quaternion<TScalar>::Load(rotation)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Scale(const Vector3D<TValue>& scale) noexcept
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Scale(const Vector3D<TScalar>& scale) noexcept
 	{
-		if constexpr (std::same_as<TValue, float>)
+		if constexpr (std::same_as<TScalar, float>)
 		{
-			return Matrix4x4<TValue>(DirectX::XMMatrixScaling(scale.GetX(), scale.GetY(), scale.GetZ()));
+			return Matrix4x4<TScalar>(DirectX::XMMatrixScaling(scale.GetX(), scale.GetY(), scale.GetZ()));
 		}
 		else
 		{
-			Matrix4x4<TValue> result{};
+			Matrix4x4<TScalar> result{};
 			result[0] = scale.GetX();
 			result[5] = scale.GetY();
 			result[10] = scale.GetZ();
@@ -574,58 +527,51 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::TRS(const Vector3D<float>& translation, const Quaternion<TValue>& rotation, const Vector3D<float>& scale) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::TRS(const Vector3D<float>& translation, const Quaternion<TScalar>& rotation, const Vector3D<float>& scale) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return Scale(scale) * Rotate(rotation) * Translate(translation);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::LookAt(const Vector3D<float>& from, const Vector3D<float>& to, const Vector3D<float>& up) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::LookAt(const Vector3D<float>& from, const Vector3D<float>& to, const Vector3D<float>& up) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Matrix4x4<TValue>(DirectX::XMMatrixLookAtLH(Vector3D<float>::Load(from), Vector3D<float>::Load(to), Vector3D<float>::Load(up)));
+		return Matrix4x4<TScalar>(DirectX::XMMatrixLookAtLH(Vector3D<float>::Load(from), Vector3D<float>::Load(to), Vector3D<float>::Load(up)));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Perspective(float fovYDegrees, float aspect, float nearZ, float farZ) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Perspective(float fovYDegrees, float aspect, float nearZ, float farZ) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Matrix4x4<TValue>(DirectX::XMMatrixPerspectiveFovLH(fovYDegrees * (std::numbers::pi_v<float> / 180.0f), aspect, nearZ, farZ));
+		return Matrix4x4<TScalar>(DirectX::XMMatrixPerspectiveFovLH(fovYDegrees * (std::numbers::pi_v<float> / 180.0f), aspect, nearZ, farZ));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Frustum(float left, float right, float bottom, float top, float nearZ, float farZ) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Frustum(float left, float right, float bottom, float top, float nearZ, float farZ) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Matrix4x4<TValue>(DirectX::XMMatrixPerspectiveOffCenterLH(left, right, bottom, top, nearZ, farZ));
+		return Matrix4x4<TScalar>(DirectX::XMMatrixPerspectiveOffCenterLH(left, right, bottom, top, nearZ, farZ));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Ortho(float left, float right, float bottom, float top, float nearZ, float farZ) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Ortho(float left, float right, float bottom, float top, float nearZ, float farZ) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Matrix4x4<TValue>(DirectX::XMMatrixOrthographicOffCenterLH(left, right, bottom, top, nearZ, farZ));
+		return Matrix4x4<TScalar>(DirectX::XMMatrixOrthographicOffCenterLH(left, right, bottom, top, nearZ, farZ));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Matrix4x4<TValue> Matrix4x4<TValue>::Ortho(float width, float height, float nearZ, float farZ) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	Matrix4x4<TScalar> Matrix4x4<TScalar>::Ortho(float width, float height, float nearZ, float farZ) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		return Matrix4x4<TValue>(DirectX::XMMatrixOrthographicLH(width, height, nearZ, farZ));
+		return Matrix4x4<TScalar>(DirectX::XMMatrixOrthographicLH(width, height, nearZ, farZ));
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool Matrix4x4<TValue>::TryInverse3DAffine(const Matrix4x4<TValue>& input, Matrix4x4<TValue>& result) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool Matrix4x4<TScalar>::TryInverse3DAffine(const Matrix4x4<TScalar>& input, Matrix4x4<TScalar>& result) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		if (input.value._14 != 0.0f || input.value._24 != 0.0f
 			|| input.value._34 != 0.0f || input.value._44 != 1.0f)

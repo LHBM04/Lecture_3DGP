@@ -5,74 +5,64 @@
 
 namespace TUK::Framework
 {
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA() noexcept
-		: value(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1))
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA() noexcept
+		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(TValue value) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(TScalar value) noexcept
 		: value(value, value, value, value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(TValue r, TValue g, TValue b, TValue a) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(TScalar r, TScalar g, TScalar b, TScalar a) noexcept
 		: value(r, g, b, a)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(const TValue* values) noexcept
-		: value(static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(0), static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1))
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const TScalar* values) noexcept
+		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
 	{
 		assert(values);
 		value = decltype(value)(values);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(const ColorRGBA<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const ColorRGBA<TScalar>& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(ColorRGBA<TValue>&& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(ColorRGBA<TScalar>&& other) noexcept
 		: value(std::move(other.value))
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(const ColorRGB<TValue>& rgb, TValue a) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const ColorRGB<TScalar>& rgb, TScalar a) noexcept
 		: value(rgb.GetR(), rgb.GetG(), rgb.GetB(), a)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(const Vector3D<TValue>& vector, TValue alpha) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const Vector3D<TScalar>& vector, TScalar alpha) noexcept
 		: value(vector.GetX(), vector.GetY(), vector.GetZ(), alpha)
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::ColorRGBA(const Vector4D<TValue>& vector) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const Vector4D<TScalar>& vector) noexcept
 		: value(vector.GetX(), vector.GetY(), vector.GetZ(), vector.GetW())
 	{
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(const ColorRGBA<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(const ColorRGBA<TScalar>& other) noexcept
 	{
 		value.x = other.value.x;
 		value.y = other.value.y;
@@ -81,9 +71,8 @@ namespace TUK::Framework
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(ColorRGBA<TValue>&& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(ColorRGBA<TScalar>&& other) noexcept
 	{
 		value.x = other.value.x;
 		value.y = other.value.y;
@@ -92,9 +81,8 @@ namespace TUK::Framework
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator=(const Vector4D<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(const Vector4D<TScalar>& other) noexcept
 	{
 		value.x = other.GetX();
 		value.y = other.GetY();
@@ -103,140 +91,128 @@ namespace TUK::Framework
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>::operator Vector4D<TValue>() const noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
-		return Vector4D<TValue>(value.x, value.y, value.z, value.w);
+		return Vector4D<TScalar>(value.x, value.y, value.z, value.w);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator+(const ColorRGBA<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator+(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(value.x + other.value.x, value.y + other.value.y, value.z + other.value.z, value.w + other.value.w);
+			return ColorRGBA<TScalar>(value.x + other.value.x, value.y + other.value.y, value.z + other.value.z, value.w + other.value.w);
 		}
 		else
 		{
-			ColorRGBA<TValue> result{};
+			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator+=(const ColorRGBA<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator+=(const ColorRGBA<TScalar>& other) noexcept
 	{
 		*this = *this + other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator-(const ColorRGBA<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator-(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(value.x - other.value.x, value.y - other.value.y, value.z - other.value.z, value.w - other.value.w);
+			return ColorRGBA<TScalar>(value.x - other.value.x, value.y - other.value.y, value.z - other.value.z, value.w - other.value.w);
 		}
 		else
 		{
-			ColorRGBA<TValue> result{};
+			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator-=(const ColorRGBA<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator-=(const ColorRGBA<TScalar>& other) noexcept
 	{
 		*this = *this - other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(const ColorRGBA<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator*(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(value.x * other.value.x, value.y * other.value.y, value.z * other.value.z, value.w * other.value.w);
+			return ColorRGBA<TScalar>(value.x * other.value.x, value.y * other.value.y, value.z * other.value.z, value.w * other.value.w);
 		}
 		else
 		{
-			ColorRGBA<TValue> result{};
+			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorMultiply(Load(*this), Load(other)));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator*(TValue scalar) const noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator*(TScalar scalar) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(value.x * scalar, value.y * scalar, value.z * scalar, value.w * scalar);
+			return ColorRGBA<TScalar>(value.x * scalar, value.y * scalar, value.z * scalar, value.w * scalar);
 		}
 		else
 		{
-			ColorRGBA<TValue> result{};
+			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator*=(const ColorRGBA<TValue>& other) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator*=(const ColorRGBA<TScalar>& other) noexcept
 	{
 		*this = *this * other;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator*=(TValue scalar) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator*=(TScalar scalar) noexcept
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::operator/(TValue scalar) const noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator/(TScalar scalar) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			assert(scalar != TValue{});
-			return ColorRGBA<TValue>(value.x / scalar, value.y / scalar, value.z / scalar, value.w / scalar);
+			assert(scalar != TScalar{});
+			return ColorRGBA<TScalar>(value.x / scalar, value.y / scalar, value.z / scalar, value.w / scalar);
 		}
 		else
 		{
 			assert(scalar != 0.0f);
-			ColorRGBA<TValue> result{};
+			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
 			return result;
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue>& ColorRGBA<TValue>::operator/=(TValue scalar) noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator/=(TScalar scalar) noexcept
 	{
 		*this = *this / scalar;
 		return *this;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool ColorRGBA<TValue>::operator==(const ColorRGBA<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	bool ColorRGBA<TScalar>::operator==(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
 			return value.x == other.value.x && value.y == other.value.y && value.z == other.value.z && value.w == other.value.w;
 		}
@@ -249,72 +225,62 @@ namespace TUK::Framework
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool ColorRGBA<TValue>::operator!=(const ColorRGBA<TValue>& other) const noexcept
+	template <ScalarType TScalar>
+	bool ColorRGBA<TScalar>::operator!=(const ColorRGBA<TScalar>& other) const noexcept
 	{
 		return !(*this == other);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue ColorRGBA<TValue>::GetR() const noexcept
+	template <ScalarType TScalar>
+	TScalar ColorRGBA<TScalar>::GetR() const noexcept
 	{
 		return value.x;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void ColorRGBA<TValue>::SetR(TValue component) noexcept
+	template <ScalarType TScalar>
+	void ColorRGBA<TScalar>::SetR(TScalar component) noexcept
 	{
 		value.x = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue ColorRGBA<TValue>::GetG() const noexcept
+	template <ScalarType TScalar>
+	TScalar ColorRGBA<TScalar>::GetG() const noexcept
 	{
 		return value.y;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void ColorRGBA<TValue>::SetG(TValue component) noexcept
+	template <ScalarType TScalar>
+	void ColorRGBA<TScalar>::SetG(TScalar component) noexcept
 	{
 		value.y = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue ColorRGBA<TValue>::GetB() const noexcept
+	template <ScalarType TScalar>
+	TScalar ColorRGBA<TScalar>::GetB() const noexcept
 	{
 		return value.z;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void ColorRGBA<TValue>::SetB(TValue component) noexcept
+	template <ScalarType TScalar>
+	void ColorRGBA<TScalar>::SetB(TScalar component) noexcept
 	{
 		value.z = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	TValue ColorRGBA<TValue>::GetA() const noexcept
+	template <ScalarType TScalar>
+	TScalar ColorRGBA<TScalar>::GetA() const noexcept
 	{
 		return value.w;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void ColorRGBA<TValue>::SetA(TValue component) noexcept
+	template <ScalarType TScalar>
+	void ColorRGBA<TScalar>::SetA(TScalar component) noexcept
 	{
 		value.w = component;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void ColorRGBA<TValue>::Set(TValue r, TValue g, TValue b, TValue a) noexcept
+	template <ScalarType TScalar>
+	void ColorRGBA<TScalar>::Set(TScalar r, TScalar g, TScalar b, TScalar a) noexcept
 	{
 		value.x = r;
 		value.y = g;
@@ -322,181 +288,165 @@ namespace TUK::Framework
 		value.w = a;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool ColorRGBA<TValue>::IsTransparent(float epsilon) const noexcept
+	template <ScalarType TScalar>
+	bool ColorRGBA<TScalar>::IsTransparent(float epsilon) const noexcept
 	{
 		return value.w <= epsilon;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool ColorRGBA<TValue>::IsOpaque(float epsilon) const noexcept
+	template <ScalarType TScalar>
+	bool ColorRGBA<TScalar>::IsOpaque(float epsilon) const noexcept
 	{
-		constexpr TValue maximum = static_cast<TValue>(std::same_as<TValue, std::int32_t> ? 255 : 1);
+		constexpr TScalar maximum = static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1);
 		return value.w >= maximum - epsilon;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	Vector4D<TValue> ColorRGBA<TValue>::ToVector4D() const noexcept
+	template <ScalarType TScalar>
+	Vector4D<TScalar> ColorRGBA<TScalar>::ToVector4D() const noexcept
 	{
-		return Vector4D<TValue>(value.x, value.y, value.z, value.w);
+		return Vector4D<TScalar>(value.x, value.y, value.z, value.w);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGB<TValue> ColorRGBA<TValue>::ToColorRGB() const noexcept
+	template <ScalarType TScalar>
+	ColorRGB<TScalar> ColorRGBA<TScalar>::ToColorRGB() const noexcept
 	{
-		return ColorRGB<TValue>(value.x, value.y, value.z);
+		return ColorRGB<TScalar>(value.x, value.y, value.z);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetBlack() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetBlack() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(0, 0, 0, 255);
+			return ColorRGBA<TScalar>(0, 0, 0, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(0.0f, 0.0f, 0.0f, 1.0f);
+			return ColorRGBA<TScalar>(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetWhite() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetWhite() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(255, 255, 255, 255);
+			return ColorRGBA<TScalar>(255, 255, 255, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(1.0f, 1.0f, 1.0f, 1.0f);
+			return ColorRGBA<TScalar>(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetRed() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetRed() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(255, 0, 0, 255);
+			return ColorRGBA<TScalar>(255, 0, 0, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(1.0f, 0.0f, 0.0f, 1.0f);
+			return ColorRGBA<TScalar>(1.0f, 0.0f, 0.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetGreen() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetGreen() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(0, 255, 0, 255);
+			return ColorRGBA<TScalar>(0, 255, 0, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(0.0f, 1.0f, 0.0f, 1.0f);
+			return ColorRGBA<TScalar>(0.0f, 1.0f, 0.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetBlue() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetBlue() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(0, 0, 255, 255);
+			return ColorRGBA<TScalar>(0, 0, 255, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(0.0f, 0.0f, 1.0f, 1.0f);
+			return ColorRGBA<TScalar>(0.0f, 0.0f, 1.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetYellow() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetYellow() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(255, 235, 4, 255);
+			return ColorRGBA<TScalar>(255, 235, 4, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(1.0f, 0.92f, 0.016f, 1.0f);
+			return ColorRGBA<TScalar>(1.0f, 0.92f, 0.016f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetCyan() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetCyan() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(0, 255, 255, 255);
+			return ColorRGBA<TScalar>(0, 255, 255, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(0.0f, 1.0f, 1.0f, 1.0f);
+			return ColorRGBA<TScalar>(0.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetMagenta() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetMagenta() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(255, 0, 255, 255);
+			return ColorRGBA<TScalar>(255, 0, 255, 255);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(1.0f, 0.0f, 1.0f, 1.0f);
+			return ColorRGBA<TScalar>(1.0f, 0.0f, 1.0f, 1.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::GetClear() noexcept
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetClear() noexcept
 	{
-		if constexpr (std::same_as<TValue, std::int32_t>)
+		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			return ColorRGBA<TValue>(0, 0, 0, 0);
+			return ColorRGBA<TScalar>(0, 0, 0, 0);
 		}
 		else
 		{
-			return ColorRGBA<TValue>(0.0f, 0.0f, 0.0f, 0.0f);
+			return ColorRGBA<TScalar>(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	DirectX::XMVECTOR ColorRGBA<TValue>::Load(const ColorRGBA<TValue>& color) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	DirectX::XMVECTOR ColorRGBA<TScalar>::Load(const ColorRGBA<TScalar>& color) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMLoadFloat4(&color.value);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	void ColorRGBA<TValue>::Store(ColorRGBA<TValue>& destination, DirectX::XMVECTOR source) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	void ColorRGBA<TScalar>::Store(ColorRGBA<TScalar>& destination, DirectX::XMVECTOR source) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMStoreFloat4(&destination.value, source);
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	bool ColorRGBA<TValue>::IsApproximately(const ColorRGBA<TValue>& lhs, const ColorRGBA<TValue>& rhs, float epsilon) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	bool ColorRGBA<TScalar>::IsApproximately(const ColorRGBA<TScalar>& lhs, const ColorRGBA<TScalar>& rhs, float epsilon) noexcept
+		requires std::same_as<TScalar, f32>
 	{
 		return std::abs(lhs.value.x - rhs.value.x) <= epsilon &&
 		std::abs(lhs.value.y - rhs.value.y) <= epsilon &&
@@ -504,12 +454,11 @@ namespace TUK::Framework
 		std::abs(lhs.value.w - rhs.value.w) <= epsilon;
 	}
 
-	template <class TValue>
-		requires ScalarType<TValue>
-	ColorRGBA<TValue> ColorRGBA<TValue>::Lerp(const ColorRGBA<TValue>& start, const ColorRGBA<TValue>& end, float t) noexcept
-		requires std::same_as<TValue, f32>
+	template <ScalarType TScalar>
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::Lerp(const ColorRGBA<TScalar>& start, const ColorRGBA<TScalar>& end, float t) noexcept
+		requires std::same_as<TScalar, f32>
 	{
-		ColorRGBA<TValue> result{};
+		ColorRGBA<TScalar> result{};
 		Store(result, DirectX::XMVectorLerp(Load(start), Load(end), t));
 		return result;
 	}
