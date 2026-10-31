@@ -1,8 +1,7 @@
 ﻿#include "Precompiled.hpp"
 #include "MyGame.hpp"
 
-#include "../Framework/Platform/DisplaySubsystem.hpp"
-#include "../Framework/Platform/DisplayOptions.hpp"
+#include "../Framework/Platform.hpp"
 
 #include "MyEngine.hpp"
 #include "Resource.h"

@@ -186,6 +186,7 @@
     <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\App.hpp" />
     <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\Common.hpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Sources\Framework\Math\Vector2D.hpp" />
     <ClInclude Include="Sources\Framework\Math\Vector3D.hpp" />
     <ClInclude Include="Sources\Framework\Math\Vector4D.hpp" />
+    <ClInclude Include="Sources\Framework\Platform.hpp" />
     <ClInclude Include="Sources\Framework\Platform\Display.hpp" />
     <ClInclude Include="Sources\Framework\Platform\DisplayEvents.hpp" />
     <ClInclude Include="Sources\Framework\Platform\DisplayOptions.hpp" />

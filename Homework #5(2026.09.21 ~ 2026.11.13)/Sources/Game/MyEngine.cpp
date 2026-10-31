@@ -1,8 +1,7 @@
 ﻿#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
-#include "../Framework/Platform/DisplaySubsystem.hpp"
-#include "../Framework/Platform/EventSubsystem.hpp"
+#include "../Framework/Platform.hpp"
 
 namespace TUK::Game
 {

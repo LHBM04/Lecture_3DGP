@@ -108,6 +108,12 @@
     <ClInclude Include="Sources\Game\MyEngine.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Core.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
