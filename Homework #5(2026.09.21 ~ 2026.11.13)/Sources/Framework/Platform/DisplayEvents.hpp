@@ -14,6 +14,8 @@ namespace TUK::Framework
 	{
 		explicit DisplayEvent(const Display& display) noexcept;
 
+		[[nodiscard]] operator const Display&() const noexcept;
+
 		const Display& display;
 	};
 
@@ -56,6 +58,11 @@ namespace TUK::Framework
 	inline DisplayEvent::DisplayEvent(const Display& display) noexcept
 		: display(display)
 	{
+	}
+
+	inline DisplayEvent::operator const Display&() const noexcept
+	{
+		return display;
 	}
 
 	inline DisplayCreateEvent::DisplayCreateEvent(const Display& display) noexcept

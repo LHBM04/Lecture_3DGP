@@ -179,7 +179,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)External\Libraries\$(ExternalTriplet)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="CopyDirectXTK12Binary" AfterTargets="Build" Condition="'$(ExternalLinkage)'=='Dynamic'">
@@ -195,6 +195,24 @@
     <ClInclude Include="Sources\Framework\Core\Subsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\System.hpp" />
     <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\Camera.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\Component.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\Entity.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\Transform.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\World.hpp" />
+    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
@@ -212,6 +230,15 @@
     <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\Asset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\AssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\AssetSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\MaterialAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\MaterialAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ModelAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp" />
     <ClInclude Include="Sources\Resource.h" />
     <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
@@ -219,6 +246,18 @@
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\System.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\Camera.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp" />
+    <ClCompile Include="Sources\Framework\Entities\Entity.cpp" />
+    <ClCompile Include="Sources\Framework\Entities\Transform.cpp" />
+    <ClCompile Include="Sources\Framework\Entities\World.cpp" />
+    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp" />
@@ -229,6 +268,11 @@
     <ClCompile Include="Sources\Framework\Platform\Display.cpp" />
     <ClCompile Include="Sources\Framework\Platform\DisplaySubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\AssetSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\MaterialAsset.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Game\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\MyGame.cpp" />

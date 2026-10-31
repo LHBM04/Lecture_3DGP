@@ -1,7 +1,12 @@
 ﻿#pragma once
 
 #include <concepts>
+#include <cstddef>
 #include <cstdint>
+
+#include <wrl/client.h>
+
+using namespace Microsoft::WRL;
 
 namespace TUK::Framework
 {
