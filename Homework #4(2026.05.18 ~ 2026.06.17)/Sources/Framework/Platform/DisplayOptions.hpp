@@ -1,7 +1,12 @@
 ﻿#pragma once
 
 #include <cstdint>
-#include <string>
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
 
 #include "../Math/Vector2D.hpp"
 
@@ -9,7 +14,7 @@ namespace TUK::Framework
 {
 	struct DisplayOptions final
 	{
-		std::string caption;
+		LPCTSTR caption;
 		Vector2D<std::int32_t> position;
 		Vector2D<std::int32_t> size;
 	};

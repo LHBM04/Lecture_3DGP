@@ -8,6 +8,11 @@
 
 namespace TUK::Framework
 {
+	namespace
+	{
+		std::array<TCHAR, 256> caption;
+	}
+
 	Display::Display(HWND hWnd) noexcept
 		: hWnd(hWnd)
 		, shouldClose(false)
@@ -23,20 +28,17 @@ namespace TUK::Framework
 		}
 	}
 
-	const std::string& Display::GetCaption() const noexcept
+	LPCTSTR Display::GetCaption() const noexcept
 	{
 		assert(hWnd);
-		static std::string caption;
-		caption.resize(GetWindowTextLengthA(hWnd) + 1);
-		const int length = GetWindowTextA(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
-		caption.resize(length);
-		return caption;
+		GetWindowText(hWnd, caption.data(), caption.size());
+		return caption.data();
 	}
 
-	void Display::SetCaption(std::string_view value) noexcept
+	void Display::SetCaption(LPCTSTR value) noexcept
 	{
 		assert(hWnd);
-		SetWindowTextA(hWnd, std::string(value).c_str());
+		SetWindowText(hWnd, value);
 	}
 
 	Vector2D<std::int32_t> Display::GetPosition() const noexcept
@@ -127,7 +129,7 @@ namespace TUK::Framework
 	{
 		if (message == WM_NCCREATE)
 		{
-			const CREATESTRUCTA* creation = reinterpret_cast<const CREATESTRUCTA*>(lParam);
+			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
 
 			Display* display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)
@@ -138,13 +140,13 @@ namespace TUK::Framework
 			display->hWnd = hWnd;
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(display));
 
-			return DefWindowProcA(hWnd, message, wParam, lParam);
+			return DefWindowProcW(hWnd, message, wParam, lParam);
 		}
 
 		Display* display = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 		if (!display)
 		{
-			return DefWindowProcA(hWnd, message, wParam, lParam);
+			return DefWindowProcW(hWnd, message, wParam, lParam);
 		}
 
 		EventSubsystem* eventSubsystem = Engine::GetInstance()->GetSubsystem<EventSubsystem>();
@@ -199,7 +201,7 @@ namespace TUK::Framework
 				{
 					eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
 				}
-				return DefWindowProcA(hWnd, message, wParam, lParam);
+				return DefWindowProcW(hWnd, message, wParam, lParam);
 			}
 			case WM_DESTROY:
 			{
@@ -233,7 +235,7 @@ namespace TUK::Framework
 			}
 			default:
 			{
-				return DefWindowProcA(hWnd, message, wParam, lParam);
+				return DefWindowProcW(hWnd, message, wParam, lParam);
 			}
 		}
 

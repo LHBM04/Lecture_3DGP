@@ -5,8 +5,8 @@
 #endif
 
 #include <cstdint>
-#include <string>
-#include <string_view>
+#include <array>
+
 #include <windows.h>
 
 #include "DisplayOptions.hpp"
@@ -32,8 +32,9 @@ namespace TUK::Framework
 		Display(Display&&) = default;
 		Display& operator=(Display&&) = default;
 
-		[[nodiscard]] const std::string& GetCaption() const noexcept;
-		void SetCaption(std::string_view value) noexcept;
+		/** 반환 포인터는 다음 GetCaption 호출 또는 객체 이동 및 소멸 전까지 유효하다. */
+		[[nodiscard]] LPCTSTR GetCaption() const noexcept;
+		void SetCaption(LPCTSTR value) noexcept;
 
 		[[nodiscard]] Vector2D<std::int32_t> GetPosition() const noexcept;
 		void SetPosition(const Vector2D<std::int32_t>& position) noexcept;

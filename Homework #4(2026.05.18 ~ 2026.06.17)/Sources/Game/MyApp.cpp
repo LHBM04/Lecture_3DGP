@@ -31,7 +31,7 @@ namespace TUK::Game
 	SystemStatus MyApp::Startup()
 	{
 		Framework::DisplayOptions options{};
-		options.caption = "Homework #4(2026.05.18 ~ 2026.06.17)";
+		options.caption = TEXT("Homework #4(2026.05.18 ~ 2026.06.17)");
 		options.position = Framework::Vector2D(100, 100);
 		options.size = Framework::Vector2D(1280, 960);
 

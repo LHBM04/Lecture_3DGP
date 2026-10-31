@@ -6,7 +6,7 @@
 namespace
 {
 	/** 인스턴스 핸들 */
-	const HINSTANCE Instance = GetModuleHandleA(nullptr);
+	const HINSTANCE Instance = GetModuleHandleW(nullptr);
 
 	/** 윈도우 클래스 이름 */
 	TCHAR wndClassName[256];
@@ -28,7 +28,7 @@ namespace TUK::Framework
 
 		if (wndClass != 0)
 		{
-			UnregisterClassA(wndClassName, Instance);
+			UnregisterClassW(wndClassName, Instance);
 			wndClass = 0;
 		}
 	}
@@ -37,10 +37,10 @@ namespace TUK::Framework
 	{
 		std::unique_ptr<Display> newWindow = std::make_unique<Display>(nullptr);
 
-		HWND hWnd = CreateWindowExA(
+		HWND hWnd = CreateWindowExW(
 			0, 
 			wndClassName,
-			options.caption.data(),
+			options.caption,
 			WS_OVERLAPPEDWINDOW,
 			options.position.GetX(),
 			options.position.GetY(),
@@ -64,18 +64,18 @@ namespace TUK::Framework
 
 	SystemStatus DisplaySubsystem::OnStartup()
 	{
-		LoadStringA(Instance, IDS_WNDCLASS, wndClassName, sizeof(wndClassName) / sizeof(TCHAR));
+		LoadStringW(Instance, IDS_WNDCLASS, wndClassName, sizeof(wndClassName) / sizeof(TCHAR));
 
-		WNDCLASSEXA description{};
+		WNDCLASSEXW description{};
 		description.cbSize = sizeof(description);
 		description.style = CS_HREDRAW | CS_VREDRAW;
 		description.lpfnWndProc = WindowProc;
 		description.hInstance = Instance;
-		description.hCursor = LoadCursorA(Instance, IDC_ARROW);
+		description.hCursor = LoadCursorW(Instance, IDC_ARROW);
 		description.lpszClassName = wndClassName;
-		description.hIcon = LoadIconA(Instance, MAKEINTRESOURCE(IDI_HOMEWORK04));
+		description.hIcon = LoadIconW(Instance, MAKEINTRESOURCE(IDI_HOMEWORK04));
 		
-		wndClass = RegisterClassExA(&description);
+		wndClass = RegisterClassExW(&description);
 		if (wndClass == 0)
 		{
 			return SystemStatus::Failure;
@@ -97,7 +97,7 @@ namespace TUK::Framework
 	{
 		if (wndClass != 0)
 		{
-			UnregisterClassA(wndClassName, Instance);
+			UnregisterClassW(wndClassName, Instance);
 			wndClass = 0;
 		}
 	}

@@ -153,9 +153,6 @@
     <ClInclude Include="Sources\Framework\Platform\Display.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Platform\DisplayCreateInfo.hpp">
-      <Filter>Sources\Framework\Platform</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Platform\DisplaySubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
@@ -233,6 +230,27 @@
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ModelAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\DisplayOptions.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Input.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputEventData.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputState.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Time.hpp">
+      <Filter>Sources\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -361,6 +379,18 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp">
       <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Input.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\InputProvider.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Time.cpp">
+      <Filter>Sources\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
