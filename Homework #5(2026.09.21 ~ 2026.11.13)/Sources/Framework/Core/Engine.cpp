@@ -90,7 +90,7 @@ namespace TUK::Framework
 	{
 		for (EngineSubsystem& subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnPostTick(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem.OnTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}

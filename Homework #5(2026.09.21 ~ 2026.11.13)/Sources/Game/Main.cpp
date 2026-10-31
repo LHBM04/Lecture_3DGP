@@ -1,9 +1,12 @@
 ﻿#include "Precompiled.hpp"
 
-#include "../Framework/Core/App.hpp"
-#include "../Framework/Core/Engine.hpp"
+#include "MyEngine.hpp"
+#include "MyGame.hpp"
 
-using namespace TUK::Framework;
+using namespace TUK::Game;
+
+static MyGame app;
+static MyEngine engine(app);
 
 INT APIENTRY _tWinMain(
 	_In_ HINSTANCE hInstance,
@@ -13,9 +16,6 @@ INT APIENTRY _tWinMain(
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	App app;
-	Engine engine(app);
 
 	return engine.Run();
 }

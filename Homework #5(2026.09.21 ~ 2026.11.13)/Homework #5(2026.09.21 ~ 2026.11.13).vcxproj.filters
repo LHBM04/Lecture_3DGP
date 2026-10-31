@@ -19,19 +19,38 @@
     <Filter Include="Sources\Framework\Math">
       <UniqueIdentifier>{8F2EC3C7-E445-449A-BC12-6FE36E8D0A85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\Platform">
+      <UniqueIdentifier>{A3A8B3C7-A5E7-4C30-8ED3-2C45E3F08021}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resources\Icon">
       <UniqueIdentifier>{ce30deb5-0fa6-4819-8259-3de494e3b125}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Framework\Core\App.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\Common.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\Engine.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\System.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
-    <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp"><Filter>Sources\Framework\Core</Filter></ClInclude>
+    <ClInclude Include="Sources\Framework\Core\App.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Common.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Engine.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\System.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Math.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
@@ -59,17 +78,47 @@
     <ClInclude Include="Sources\Framework\Math\Vector4D.hpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\Display.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Resource.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\DisplaySubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\DisplayOptions.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\Event.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\DisplayEvents.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\MyGame.hpp">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\MyEngine.hpp">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Framework\Core\App.cpp"><Filter>Sources\Framework\Core</Filter></ClCompile>
-    <ClCompile Include="Sources\Framework\Core\Engine.cpp"><Filter>Sources\Framework\Core</Filter></ClCompile>
-    <ClCompile Include="Sources\Framework\Core\System.cpp"><Filter>Sources\Framework\Core</Filter></ClCompile>
+    <ClCompile Include="Sources\Framework\Core\App.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Engine.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\System.cpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClCompile>
@@ -91,10 +140,25 @@
     <ClCompile Include="Sources\Framework\Math\Vector4D.cpp">
       <Filter>Sources\Framework\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\Display.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Precompiled.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Main.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\DisplaySubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\MyGame.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\MyEngine.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
   </ItemGroup>
