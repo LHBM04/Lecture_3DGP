@@ -20,16 +20,16 @@ namespace TUK::Game
 
 	bool Input::IsKeyPressed(int key)
 	{
-		return provider->IsKeyPressed(key);
+		return provider && provider->IsKeyPressed(key);
 	}
 
 	bool Input::IsKeyHeld(int key)
 	{
-		return provider->IsKeyHeld(key);
+		return provider && provider->IsKeyHeld(key);
 	}
 
 	bool Input::IsKeyReleased(int key)
 	{
-		return provider->IsKeyReleased(key);
+		return provider && provider->IsKeyReleased(key);
 	}
 }
