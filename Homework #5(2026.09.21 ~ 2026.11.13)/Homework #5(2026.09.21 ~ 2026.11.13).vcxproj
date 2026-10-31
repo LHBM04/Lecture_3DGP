@@ -194,6 +194,15 @@
     <ClInclude Include="Sources\Framework\Core\Subsystem.hpp" />
     <ClInclude Include="Sources\Framework\Core\System.hpp" />
     <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp" />
+    <ClInclude Include="Sources\Framework\Math.hpp" />
+    <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
+    <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Mathf.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Matrix4x4.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Quaternion.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Vector2D.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Vector3D.hpp" />
+    <ClInclude Include="Sources\Framework\Math\Vector4D.hpp" />
     <ClInclude Include="Sources\Resource.h" />
     <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
@@ -201,6 +210,13 @@
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\System.cpp" />
+    <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
+    <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />
+    <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp" />
+    <ClCompile Include="Sources\Framework\Math\Quaternion.cpp" />
+    <ClCompile Include="Sources\Framework\Math\Vector2D.cpp" />
+    <ClCompile Include="Sources\Framework\Math\Vector3D.cpp" />
+    <ClCompile Include="Sources\Framework\Math\Vector4D.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
