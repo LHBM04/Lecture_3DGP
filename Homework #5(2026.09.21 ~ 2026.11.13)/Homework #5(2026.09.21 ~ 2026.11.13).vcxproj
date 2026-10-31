@@ -186,10 +186,21 @@
     <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core\App.hpp" />
+    <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Core\Common.hpp" />
+    <ClInclude Include="Sources\Framework\Core\Engine.hpp" />
+    <ClInclude Include="Sources\Framework\Core\EngineSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Core\Subsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Core\System.hpp" />
+    <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp" />
     <ClInclude Include="Sources\Resource.h" />
     <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Core\App.cpp" />
+    <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
+    <ClCompile Include="Sources\Framework\Core\System.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
