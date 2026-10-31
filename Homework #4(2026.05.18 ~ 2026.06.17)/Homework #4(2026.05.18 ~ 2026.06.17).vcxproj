@@ -70,6 +70,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <ExternalLinkage Condition="'$(ExternalLinkage)'==''">Dynamic</ExternalLinkage>
+    <ExternalArchitecture Condition="'$(Platform)'=='Win32'">x86</ExternalArchitecture>
+    <ExternalArchitecture Condition="'$(Platform)'=='x64'">x64</ExternalArchitecture>
+    <ExternalTriplet>$(ExternalArchitecture)-windows</ExternalTriplet>
+    <ExternalTriplet Condition="'$(ExternalLinkage)'=='Static'">$(ExternalArchitecture)-windows-static</ExternalTriplet>
+    <ExternalInclude>$(ProjectDir)External\Includes</ExternalInclude>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)Out\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
@@ -162,6 +170,21 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ExternalInclude);$(ExternalInclude)\directxmath;$(ExternalInclude)\directx;$(ExternalInclude)\directxtk12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(ExternalLinkage)'=='Dynamic'">DIRECTX_TOOLKIT_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary Condition="'$(ExternalLinkage)'=='Static' and '$(Configuration)'=='Debug'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(ExternalLinkage)'=='Static' and '$(Configuration)'=='Release'">MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(ProjectDir)External\Libraries\$(ExternalTriplet)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Target Name="CopyDirectXTK12Binary" AfterTargets="Build" Condition="'$(ExternalLinkage)'=='Dynamic'">
+    <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\InputEventData.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
