@@ -311,6 +311,12 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>

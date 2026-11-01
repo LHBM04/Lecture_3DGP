@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -68,7 +68,7 @@
 #include <directx/d3d12sdklayers.h>
 #include <directx/d3dx12.h>
 
-#include <d3dcompiler.h>
+#include <dxcapi.h>
 
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
@@ -86,12 +86,9 @@
 #include <directxtk12/DirectXHelpers.h>
 #include <directxtk12/EffectPipelineStateDescription.h>
 #include <directxtk12/Effects.h>
-#include <directxtk12/GamePad.h>
 #include <directxtk12/GeometricPrimitive.h>
 #include <directxtk12/GraphicsMemory.h>
-#include <directxtk12/Keyboard.h>
 #include <directxtk12/Model.h>
-#include <directxtk12/Mouse.h>
 #include <directxtk12/PostProcess.h>
 #include <directxtk12/PrimitiveBatch.h>
 #include <directxtk12/RenderTargetState.h>

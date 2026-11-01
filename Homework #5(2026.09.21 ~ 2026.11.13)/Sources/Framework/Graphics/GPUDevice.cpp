@@ -69,46 +69,69 @@ namespace TUK::Framework
 		return GPUMesh(GPUMeshProperties{ std::move(vertexBuffer), vertexBufferView, std::move(indexBuffer), indexBufferView, topology });
 	}
 
-	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(const std::filesystem::path& path, std::string_view target, const std::string& entryPoint, u32 compileFlags) const
+	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(
+		const std::filesystem::path& path, std::wstring_view target, std::wstring_view entryPoint) const
 	{
-		const std::string targetName(target);
-		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
-		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+		ComPtr<IDxcUtils> utils;
+		ComPtr<IDxcCompiler3> compiler;
+		ComPtr<IDxcIncludeHandler> includeHandler;
+		if (FAILED(DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(utils.GetAddressOf())))
+			|| FAILED(DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(compiler.GetAddressOf())))
+			|| FAILED(utils->CreateDefaultIncludeHandler(includeHandler.GetAddressOf())))
+		{
+			return std::unexpected("DXC 초기화에 실패했습니다.");
+		}
 
-		const HRESULT result = D3DCompileFromFile(
-			path.c_str(),
-			nullptr,
-			D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			entryPoint.c_str(),
-			targetName.c_str(),
-			compileFlags,
-			0,
-			d3dBlob.GetAddressOf(),
-			errorBlob.GetAddressOf());
-
+		ComPtr<IDxcBlobEncoding> source;
+		HRESULT result = utils->LoadFile(path.c_str(), nullptr, source.GetAddressOf());
 		if (FAILED(result))
 		{
-			std::string message = std::format(
-				"GPUShader 컴파일에 실패했습니다. Entry: {}, Target: {}, HRESULT: 0x{:08X}",
-				entryPoint, targetName.c_str(), static_cast<u32>(result));
+			return std::unexpected(std::format("셰이더 파일 읽기 실패: {}, HRESULT: 0x{:08X}", path.string(), static_cast<u32>(result)));
+		}
 
-			if (errorBlob && errorBlob->GetBufferSize() > 0)
+		const std::wstring TARGET(target);
+		const std::wstring ENTRY_POINT(entryPoint);
+		const std::wstring INCLUDE_DIRECTORY = path.has_parent_path() ? path.parent_path().wstring() : L".";
+		const wchar_t* arguments[] =
+		{
+			path.c_str(), L"-E", ENTRY_POINT.c_str(), L"-T", TARGET.c_str(),
+			L"-I", INCLUDE_DIRECTORY.c_str(), L"-Ges", L"-WX", L"-HV", L"2018"
+		};
+		BOOL knownEncoding = FALSE;
+		UINT32 codePage = DXC_CP_UTF8;
+		source->GetEncoding(&knownEncoding, &codePage);
+		const DxcBuffer SOURCE_BUFFER{ source->GetBufferPointer(), source->GetBufferSize(), knownEncoding ? codePage : DXC_CP_UTF8 };
+		ComPtr<IDxcResult> compilation;
+		result = compiler->Compile(&SOURCE_BUFFER, arguments, static_cast<UINT32>(std::size(arguments)),
+			includeHandler.Get(), IID_PPV_ARGS(compilation.GetAddressOf()));
+		if (FAILED(result))
+		{
+			return std::unexpected(std::format("DXC 호출 실패: 0x{:08X}", static_cast<u32>(result)));
+		}
+
+		HRESULT status = E_FAIL;
+		result = compilation->GetStatus(&status);
+		if (FAILED(result) || FAILED(status))
+		{
+			std::string message = std::format("GPUShader 컴파일 실패: {}, HRESULT: 0x{:08X}",
+				path.string(), static_cast<u32>(FAILED(result) ? result : status));
+			ComPtr<IDxcBlobUtf8> errors;
+			if (SUCCEEDED(compilation->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errors.GetAddressOf()), nullptr))
+				&& errors && errors->GetStringLength() > 0)
 			{
-				const char* text = static_cast<const char*>(errorBlob->GetBufferPointer());
-				usize length = errorBlob->GetBufferSize();
-				if (text[length - 1] == '\0')
-				{
-					--length;
-				}
-
 				message += '\n';
-				message.append(text, length);
+				message.append(errors->GetStringPointer(), errors->GetStringLength());
 			}
-
 			return std::unexpected(std::move(message));
 		}
 
-		return GPUShader(std::move(d3dBlob));
+		ComPtr<IDxcBlob> object;
+		result = compilation->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(object.GetAddressOf()), nullptr);
+		if (FAILED(result) || !object || object->GetBufferSize() == 0)
+		{
+			return std::unexpected("DXC 셰이더 바이트코드를 가져오지 못했습니다.");
+		}
+		return GPUShader(std::move(object));
 	}
 	std::expected<GPUCommandBuffer, std::string> GPUDevice::CreateGPUCommandBuffer() const
 	{

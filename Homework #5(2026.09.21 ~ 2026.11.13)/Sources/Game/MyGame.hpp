@@ -9,17 +9,9 @@ namespace TUK::Game
 	class MyGame : public App
 	{
 	public:
-		MyGame() noexcept;
-		~MyGame() noexcept override;
+		MyGame() noexcept = default;
+		~MyGame() noexcept override = default;
 
 		SystemStatus Startup() override;
 	};
-
-	inline MyGame::MyGame() noexcept
-	{
-	}
-
-	inline MyGame::~MyGame() noexcept
-	{
-	}
 }

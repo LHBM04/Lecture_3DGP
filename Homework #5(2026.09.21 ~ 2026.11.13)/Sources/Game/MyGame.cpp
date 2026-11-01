@@ -49,7 +49,8 @@ namespace TUK::Game
 		options.styleEx = WS_EX_APPWINDOW;
 		options.show = SW_SHOW;
 
-		if (auto result = displaySubsystem->CreateDisplay(options); !result)
+		auto result = displaySubsystem->CreateDisplay(options);
+		if (!result)
 		{
 			return SystemStatus::FAILURE;
 		}

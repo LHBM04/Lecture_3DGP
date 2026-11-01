@@ -6,20 +6,10 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Math/ColorRGB.hpp"
-#include "../Math/Vector3D.hpp"
-
 #include "GPUBuffer.hpp"
 
 namespace TUK::Framework
 {
-	struct Vertex final
-	{
-		Vector3D<f32> position{ 0.0f, 0.0f, 0.0f };
-		Vector3D<f32> normal{ 0.0f, 0.0f, 1.0f };
-		ColorRGB<f32> color{ 1.0f, 1.0f, 1.0f };
-	};
-
 	struct GPUMeshProperties final
 	{
 		GPUBuffer vertexBuffer;

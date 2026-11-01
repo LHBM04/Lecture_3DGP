@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "ModelAssetLoader.hpp"
 
 #include <cstddef>
@@ -19,6 +19,7 @@
 #include "Framework/Graphics/GPUDevice.hpp"
 
 #include "Framework/Math/Quaternion.hpp"
+#include "Framework/Math/Vector3D.hpp"
 
 namespace TUK::Framework
 {
@@ -58,6 +59,11 @@ namespace TUK::Framework
 			return ReadValue(stream, value[0]) && ReadValue(stream, value[1]) && ReadValue(stream, value[2]);
 		}
 
+		[[nodiscard]] bool ReadVector3(std::istream& stream, DirectX::XMFLOAT3& value)
+		{
+			return ReadValue(stream, value.x) && ReadValue(stream, value.y) && ReadValue(stream, value.z);
+		}
+
 		[[nodiscard]] std::filesystem::path BuildResourcePath(
 			const std::filesystem::path& modelPath, std::string_view directory, const std::string& name)
 		{
@@ -74,7 +80,7 @@ namespace TUK::Framework
 		}
 
 		[[nodiscard]] std::expected<void, std::string> ReadMesh(
-			const std::filesystem::path& path, std::vector<Vertex>& vertices, std::vector<u32>& indices)
+			const std::filesystem::path& path, std::vector<DirectX::VertexPositionNormalColor>& vertices, std::vector<u32>& indices)
 		{
 			std::ifstream file(path, std::ios::binary);
 			u32 sourceVertexCount = 0;
@@ -113,12 +119,15 @@ namespace TUK::Framework
 				if (tag == "<Positions>:")
 				{
 					if (count == 0 || count != sourceVertexCount
-						|| count > std::numeric_limits<u32>::max() / sizeof(Vertex))
+						|| count > std::numeric_limits<u32>::max() / sizeof(DirectX::VertexPositionNormalColor))
 					{
 						return std::unexpected("메쉬 정점 수가 유효하지 않습니다.");
 					}
-					vertices.resize(count);
-					for (Vertex& vertex : vertices)
+					vertices.assign(count, DirectX::VertexPositionNormalColor{
+						DirectX::XMFLOAT3{ 0.0f, 0.0f, 0.0f },
+						DirectX::XMFLOAT3{ 0.0f, 0.0f, 1.0f },
+						DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f } });
+					for (DirectX::VertexPositionNormalColor& vertex : vertices)
 					{
 						if (!ReadVector3(file, vertex.position))
 						{
@@ -141,7 +150,7 @@ namespace TUK::Framework
 						}
 						if (tag == "<Normals>:")
 						{
-							vertices[index].normal = value;
+							vertices[index].normal = DirectX::XMFLOAT3{ value[0], value[1], value[2] };
 						}
 						else
 						{
@@ -150,7 +159,7 @@ namespace TUK::Framework
 							{
 								return std::unexpected("메쉬 색상의 알파를 읽지 못했습니다.");
 							}
-							vertices[index].color = ColorRGB<f32>(value[0], value[1], value[2]);
+							vertices[index].color = DirectX::XMFLOAT4{ value[0], value[1], value[2], alpha };
 						}
 					}
 				}
@@ -249,7 +258,7 @@ namespace TUK::Framework
 				{
 					return std::unexpected("모델의 메쉬 또는 머터리얼 참조를 읽지 못했습니다.");
 				}
-				std::vector<Vertex> vertices;
+				std::vector<DirectX::VertexPositionNormalColor> vertices;
 				std::vector<u32> indices;
 				if (auto result = ReadMesh(BuildResourcePath(path, "Meshes", meshName), vertices, indices); !result)
 				{
@@ -294,7 +303,7 @@ namespace TUK::Framework
 	}
 
 	std::expected<GPUMesh, std::string> ModelAssetLoader::CreateMesh(
-		std::span<const Vertex> vertices,
+		std::span<const DirectX::VertexPositionNormalColor> vertices,
 		std::span<const u32> indices) const
 	{
 		auto vertexBuffer = CreateUploadBuffer(std::as_bytes(vertices));
@@ -309,7 +318,7 @@ namespace TUK::Framework
 		}
 		return device.CreateGPUMesh(
 			std::move(*vertexBuffer), 
-			sizeof(Vertex),
+			sizeof(DirectX::VertexPositionNormalColor),
 			std::move(*indexBuffer), 
 			DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <expected>
 #include <filesystem>
@@ -48,8 +48,8 @@ namespace TUK::Framework
 			GPUBuffer vertexBuffer, u32 vertexStride, GPUBuffer indexBuffer,
 			DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) const;
 		[[nodiscard]] std::expected<GPUShader, std::string> CreateGPUShader(
-			const std::filesystem::path& path, std::string_view target,
-			const std::string& entryPoint, u32 compileFlags) const;
+			const std::filesystem::path& path, std::wstring_view target,
+			std::wstring_view entryPoint) const;
 		[[nodiscard]] std::expected<GPUFence, std::string> CreateGPUFence() const;
 
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;

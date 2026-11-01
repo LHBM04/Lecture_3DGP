@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <cassert>
 #include <cstdint>
@@ -11,6 +11,8 @@
 #include <directx/d3dx12.h>
 
 #include <wrl/client.h>
+
+#include <dxcapi.h>
 
 #include "../Core/Common.hpp"
 
@@ -29,29 +31,29 @@ namespace TUK::Framework
 		GPUShader(GPUShader&&) noexcept = default;
 		GPUShader& operator=(GPUShader&&) noexcept = default;
 
-		[[nodiscard]] ID3DBlob& GetD3DBlob() const noexcept;
+		[[nodiscard]] IDxcBlob& GetDXCBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
 
 	private:
-		GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept;
+		GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept;
 
-		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
+		Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob;
 	};
 
-	inline ID3DBlob& GPUShader::GetD3DBlob() const noexcept
+	inline IDxcBlob& GPUShader::GetDXCBlob() const noexcept
 	{
-		assert(d3dBlob);
-		return *d3dBlob.Get();
+		assert(dxcBlob);
+		return *dxcBlob.Get();
 	}
 
 	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
 	{
-		assert(d3dBlob);
-		return CD3DX12_SHADER_BYTECODE(d3dBlob.Get());
+		assert(dxcBlob);
+		return CD3DX12_SHADER_BYTECODE(dxcBlob->GetBufferPointer(), dxcBlob->GetBufferSize());
 	}
 
-	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept
-		: d3dBlob(std::move(d3dBlob))
+	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept
+		: dxcBlob(std::move(dxcBlob))
 	{
 	}
 }

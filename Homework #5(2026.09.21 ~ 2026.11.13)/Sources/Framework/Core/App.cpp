@@ -5,7 +5,7 @@ namespace TUK::Framework
 {
 	SystemStatus App::Startup()
 	{
-		instance = nullptr;
+		instance = this;
 		return System::Startup();
 	}
 
