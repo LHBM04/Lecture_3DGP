@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
 #include "Resource.h"
@@ -7,9 +7,65 @@
 
 #include "DisplayEvents.hpp"
 #include "EventSubsystem.hpp"
+#include "InputEvents.hpp"
 
 namespace TUK::Framework
 {
+	namespace
+	{
+		[[nodiscard]] KeyCode ResolveKey(WPARAM wParam, LPARAM lParam) noexcept
+		{
+			if (wParam == VK_SHIFT)
+			{
+				const UINT SCANCODE = (static_cast<UINT>(lParam) >> 16) & 0xFFu;
+				return static_cast<KeyCode>(MapVirtualKey(SCANCODE, MAPVK_VSC_TO_VK_EX));
+			}
+
+			if (wParam == VK_CONTROL)
+			{
+				return (lParam & 0x01000000) != 0 ? KeyCode::RIGHT_CONTROL : KeyCode::LEFT_CONTROL;
+			}
+
+			if (wParam == VK_MENU)
+			{
+				return (lParam & 0x01000000) != 0 ? KeyCode::RIGHT_ALT : KeyCode::LEFT_ALT;
+			}
+
+			return static_cast<KeyCode>(wParam);
+		}
+
+		[[nodiscard]] ButtonCode ResolveButton(UINT message, WPARAM wParam) noexcept
+		{
+			switch (message)
+			{
+				case WM_LBUTTONDOWN: [[fallthrough]];
+				case WM_LBUTTONUP:
+				{
+					return ButtonCode::LEFT;
+				}
+				case WM_RBUTTONDOWN: [[fallthrough]];
+				case WM_RBUTTONUP:
+				{
+					return ButtonCode::RIGHT;
+				}
+				case WM_MBUTTONDOWN: [[fallthrough]];
+				case WM_MBUTTONUP:
+				{
+					return ButtonCode::MIDDLE;
+				}
+				case WM_XBUTTONDOWN: [[fallthrough]];
+				case WM_XBUTTONUP:
+				{
+					return GET_XBUTTON_WPARAM(wParam) == XBUTTON1 ? ButtonCode::X1 : ButtonCode::X2;
+				}
+				default:
+				{
+					return ButtonCode::NONE;
+				}
+			}
+		}
+	}
+
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (message == WM_NCCREATE)
@@ -38,11 +94,114 @@ namespace TUK::Framework
 
 		switch (message)
 		{
+			case WM_KEYDOWN: [[fallthrough]];
+			case WM_SYSKEYDOWN:
+			{
+				if (eventSubsystem && (lParam & (1LL << 30)) == 0)
+				{
+					eventSubsystem->PushEvent(KeyInterectEvent{ { *display }, ResolveKey(wParam, lParam), InputAction::PRESSED });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_KEYUP: [[fallthrough]];
+			case WM_SYSKEYUP:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(KeyInterectEvent{ { *display }, ResolveKey(wParam, lParam), InputAction::RELEASED });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_LBUTTONDOWN: [[fallthrough]];
+			case WM_MBUTTONDOWN: [[fallthrough]];
+			case WM_RBUTTONDOWN: [[fallthrough]];
+			case WM_XBUTTONDOWN:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(ButtonInterectEvent{ { *display }, ResolveButton(message, wParam), InputAction::PRESSED });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_LBUTTONUP: [[fallthrough]];
+			case WM_MBUTTONUP: [[fallthrough]];
+			case WM_RBUTTONUP: [[fallthrough]];
+			case WM_XBUTTONUP:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(ButtonInterectEvent{ { *display }, ResolveButton(message, wParam), InputAction::RELEASED });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_MOUSEMOVE:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(MouseMoveEvent{ { *display }, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) } });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_MOUSEWHEEL:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(MouseWheelEvent{ { *display }, { 0, GET_WHEEL_DELTA_WPARAM(wParam) } });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_MOUSEHWHEEL:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(MouseWheelEvent{ { *display }, { GET_WHEEL_DELTA_WPARAM(wParam), 0 } });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_MOUSEHOVER:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(MouseHoverEvent{ { *display } });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_ACTIVATEAPP:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(InputActivationEvent{ { *display }, static_cast<bool>(wParam) });
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			case WM_INPUT:
+			{
+				if (eventSubsystem)
+				{
+					RAWINPUT input{};
+					UINT size = sizeof(input);
+					if (GetRawInputData(
+						reinterpret_cast<HRAWINPUT>(lParam),
+						RID_INPUT,
+						&input,
+						&size,
+						sizeof(RAWINPUTHEADER)) != static_cast<UINT>(-1)
+						&& input.header.dwType == RIM_TYPEMOUSE)
+					{
+						const RAWMOUSE& mouse = input.data.mouse;
+						if ((mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == 0)
+						{
+							eventSubsystem->DispatchEvent(MouseRawInputEvent{ { *display }, { static_cast<i32>(mouse.lLastX), static_cast<i32>(mouse.lLastY) } });
+						}
+					}
+				}
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
 			case WM_CREATE:
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent<DisplayCreateEvent>(*display);
+					eventSubsystem->PushEvent(DisplayCreateEvent{ { *display } });
 				}
 				return 0;
 			}
@@ -50,9 +209,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent<DisplayResizeEvent>(
-						*display,
-						Vector2D<std::int32_t>{ LOWORD(lParam), HIWORD(lParam) });
+					eventSubsystem->PushEvent(DisplayResizeEvent{ { *display }, Vector2D<std::int32_t>{ LOWORD(lParam), HIWORD(lParam) } });
 				}
 				return 0;
 			}
@@ -60,7 +217,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent<DisplayMoveEvent>(*display, Vector2D{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+					eventSubsystem->PushEvent(DisplayMoveEvent{ { *display }, Vector2D<std::int32_t>{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) } });
 				}
 				return 0;
 			}
@@ -69,7 +226,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent<DisplayFocusEvent>(*display, message == WM_SETFOCUS);
+					eventSubsystem->PushEvent(DisplayFocusEvent{ { *display }, message == WM_SETFOCUS });
 				}
 				return 0;
 			}
@@ -78,7 +235,7 @@ namespace TUK::Framework
 				display->SetShouldClose(true);
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent<DisplayCloseEvent>(*display);
+					eventSubsystem->PushEvent(DisplayCloseEvent{ { *display } });
 				}
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
@@ -86,7 +243,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent<DisplayDestroyEvent>(*display);
+					eventSubsystem->PushEvent(DisplayDestroyEvent{ { *display } });
 				}
 				return 0;
 			}

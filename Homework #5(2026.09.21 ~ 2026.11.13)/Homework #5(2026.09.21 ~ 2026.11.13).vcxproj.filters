@@ -168,6 +168,15 @@
     <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputEvents.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Game\MyGame.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
@@ -285,6 +294,9 @@
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\MyGame.cpp">

@@ -2,6 +2,7 @@
 #include "RenderSubsystem.hpp"
 
 #include "../Platform/Display.hpp"
+#include "../Platform/DisplayEvents.hpp"
 
 #include "GPUTexture.hpp"
 
@@ -94,8 +95,10 @@ namespace TUK::Framework
 	{
 	}
 
-	void RenderSubsystem::AddDisplay(const Display& display)
+	void RenderSubsystem::OnDisplayCreated(const DisplayCreateEvent& event)
 	{
+		const Display& display = event.display;
+
 		DXGI_SWAP_CHAIN_DESC1 description{};
 		description.Width = display.GetClientSize().GetX();
 		description.Height = display.GetClientSize().GetY();
@@ -115,8 +118,10 @@ namespace TUK::Framework
 		swapChains.emplace(display.GetID(), std::move(result.value()));
 	}
 
-	void RenderSubsystem::RemoveDisplay(const Display& display)
+	void RenderSubsystem::OnDisplayClosed(const DisplayCloseEvent& event)
 	{
+		const Display& display = event.display;
+
 		auto result = swapChains.find(display.GetID());
 		if (result != swapChains.end())
 		{

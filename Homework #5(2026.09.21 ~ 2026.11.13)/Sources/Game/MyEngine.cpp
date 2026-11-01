@@ -13,8 +13,8 @@ namespace TUK::Game
 		EventSubsystem* eventSubsystem = AddSubsystem<EventSubsystem>();
 		
 		RenderSubsystem* renderSubsystem = AddSubsystem<RenderSubsystem>();
-		eventSubsystem->AddListener<DisplayCreateEvent>(renderSubsystem, &RenderSubsystem::AddDisplay);
-		eventSubsystem->AddListener<DisplayCloseEvent>(renderSubsystem, &RenderSubsystem::RemoveDisplay);
+		eventSubsystem->AddListener<DisplayCreateEvent>(renderSubsystem, &RenderSubsystem::OnDisplayCreated);
+		eventSubsystem->AddListener<DisplayCloseEvent>(renderSubsystem, &RenderSubsystem::OnDisplayClosed);
 
 		return Engine::Startup();
 	}

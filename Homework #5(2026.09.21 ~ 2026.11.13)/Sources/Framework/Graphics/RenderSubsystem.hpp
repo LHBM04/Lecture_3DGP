@@ -16,6 +16,9 @@
 
 namespace TUK::Framework
 {
+	struct DisplayCreateEvent;
+	struct DisplayCloseEvent;
+
 	class Display;
 
 	class RenderSubsystem : public EngineSubsystem
@@ -38,8 +41,8 @@ namespace TUK::Framework
 		template <class TListener>
 		void AddListener(const TListener* listener, void (TListener::* callback)(GPUCommandBuffer&) const);
 
-		void AddDisplay(const Display& display);
-		void RemoveDisplay(const Display& display);
+		void OnDisplayCreated(const DisplayCreateEvent& event);
+		void OnDisplayClosed(const DisplayCloseEvent& event);
 
 		[[nodiscard]] GPUDevice& GetDevice();
 		[[nodiscard]] const GPUDevice& GetDevice() const;

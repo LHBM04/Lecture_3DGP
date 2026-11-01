@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../Core/Common.hpp"
 
@@ -8,93 +8,30 @@
 
 namespace TUK::Framework
 {
-	class Display;
-
-	struct DisplayEvent : Event
+	struct DisplayCreateEvent : Event
 	{
-		explicit DisplayEvent(const Display& display) noexcept;
-
-		[[nodiscard]] operator const Display&() const noexcept;
-
-		const Display& display;
 	};
 
-	struct DisplayCreateEvent : DisplayEvent
+	struct DisplayCloseEvent : Event
 	{
-		explicit DisplayCreateEvent(const Display& display) noexcept;
 	};
 
-	struct DisplayCloseEvent : DisplayEvent
+	struct DisplayDestroyEvent : Event
 	{
-		explicit DisplayCloseEvent(const Display& display) noexcept;
 	};
 
-	struct DisplayDestroyEvent : DisplayEvent
+	struct DisplayFocusEvent : Event
 	{
-		explicit DisplayDestroyEvent(const Display& display) noexcept;
+		bool isFocused = false;
 	};
 
-	struct DisplayFocusEvent : DisplayEvent
+	struct DisplayMoveEvent : Event
 	{
-		DisplayFocusEvent(const Display& display, bool isFocused) noexcept;
-
-		const bool isFocused;
+		Vector2D<i32> position{ 0, 0};
 	};
 
-	struct DisplayMoveEvent : DisplayEvent
+	struct DisplayResizeEvent : Event
 	{
-		DisplayMoveEvent(const Display& display, const Vector2D<i32>& position) noexcept;
-
-		const Vector2D<i32> position;
+		Vector2D<i32> size{ 0 , 0 };
 	};
-
-	struct DisplayResizeEvent : DisplayEvent
-	{
-		DisplayResizeEvent(const Display& display, const Vector2D<i32>& size) noexcept;
-
-		const Vector2D<i32> size;
-	};
-
-	inline DisplayEvent::DisplayEvent(const Display& display) noexcept
-		: display(display)
-	{
-	}
-
-	inline DisplayEvent::operator const Display&() const noexcept
-	{
-		return display;
-	}
-
-	inline DisplayCreateEvent::DisplayCreateEvent(const Display& display) noexcept
-		: DisplayEvent(display)
-	{
-	}
-
-	inline DisplayCloseEvent::DisplayCloseEvent(const Display& display) noexcept
-		: DisplayEvent(display)
-	{
-	}
-
-	inline DisplayDestroyEvent::DisplayDestroyEvent(const Display& display) noexcept
-		: DisplayEvent(display)
-	{
-	}
-
-	inline DisplayFocusEvent::DisplayFocusEvent(const Display& display, bool isFocused) noexcept
-		: DisplayEvent(display)
-		, isFocused(isFocused)
-	{
-	}
-
-	inline DisplayMoveEvent::DisplayMoveEvent(const Display& display, const Vector2D<i32>& position) noexcept
-		: DisplayEvent(display)
-		, position(position)
-	{
-	}
-
-	inline DisplayResizeEvent::DisplayResizeEvent(const Display& display, const Vector2D<i32>& size) noexcept
-		: DisplayEvent(display)
-		, size(size)
-	{
-	}
 }

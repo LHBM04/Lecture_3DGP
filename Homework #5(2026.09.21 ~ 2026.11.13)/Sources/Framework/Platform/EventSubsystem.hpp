@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <cassert>
 #include <concepts>
@@ -6,6 +6,7 @@
 #include <memory>
 #include <memory_resource>
 #include <typeindex>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -30,18 +31,27 @@ namespace TUK::Framework
 		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
 
+		template <std::derived_from<Event> TEvent>
+		void PushEvent(TEvent&& event);
+
 		template <std::derived_from<Event> TEvent, class... TArgs>
 		void PushEvent(TArgs&&... args);
+
+		template <std::derived_from<Event> TEvent>
+		void DispatchEvent(TEvent&& event);
+
+		template <std::derived_from<Event> TEvent, class... TArgs>
+		void DispatchEvent(TArgs&&... args);
 
 		template <std::derived_from<Event> TEvent>
 		void AddListener(std::function<void(const TEvent&)> callback);
 
 		template <std::derived_from<Event> TEvent, class TInstance, class TArg>
-			requires std::convertible_to<const TEvent&, TArg>
+			requires std::invocable<void (TInstance::*)(TArg), TInstance*, const TEvent&>
 		void AddListener(TInstance* instance, void (TInstance::* callback)(TArg));
 
 		template <std::derived_from<Event> TEvent, class TInstance, class TArg>
-			requires std::convertible_to<const TEvent&, TArg>
+			requires std::invocable<void (TInstance::*)(TArg) const, const TInstance*, const TEvent&>
 		void AddListener(const TInstance* instance, void (TInstance::* callback)(TArg) const);
 
 	private:
@@ -55,10 +65,51 @@ namespace TUK::Framework
 	{
 	}
 
+	template <std::derived_from<Event> TEvent>
+	void EventSubsystem::PushEvent(TEvent&& event)
+	{
+		using EventType = std::remove_cvref_t<TEvent>;
+		writeBuffer.push_back(std::make_unique<const EventType>(std::forward<TEvent>(event)));
+	}
+
 	template <std::derived_from<Event> TEvent, class... TArgs>
 	void EventSubsystem::PushEvent(TArgs&&... args)
 	{
 		writeBuffer.push_back(std::make_unique<const TEvent>(std::forward<TArgs>(args)...));
+	}
+
+	template <std::derived_from<Event> TEvent>
+	void EventSubsystem::DispatchEvent(TEvent&& event)
+	{
+		using EventType = std::remove_cvref_t<TEvent>;
+		const auto result = listeners.find(std::type_index(typeid(EventType)));
+		if (result == listeners.end())
+		{
+			return;
+		}
+
+		const auto callbacks = result->second;
+		for (const EventCallback& callback : callbacks)
+		{
+			callback(event);
+		}
+	}
+
+	template <std::derived_from<Event> TEvent, class... TArgs>
+	void EventSubsystem::DispatchEvent(TArgs&&... args)
+	{
+		const auto result = listeners.find(std::type_index(typeid(TEvent)));
+		if (result == listeners.end())
+		{
+			return;
+		}
+
+		const TEvent event(std::forward<TArgs>(args)...);
+		const auto callbacks = result->second;
+		for (const EventCallback& callback : callbacks)
+		{
+			callback(event);
+		}
 	}
 
 	template <std::derived_from<Event> TEvent>
@@ -73,7 +124,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Event> TEvent, class TInstance, class TArg>
-		requires std::convertible_to<const TEvent&, TArg>
+		requires std::invocable<void (TInstance::*)(TArg), TInstance*, const TEvent&>
 	void EventSubsystem::AddListener(TInstance* instance, void (TInstance::* callback)(TArg))
 	{
 		assert(instance && callback);
@@ -85,7 +136,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Event> TEvent, class TInstance, class TArg>
-		requires std::convertible_to<const TEvent&, TArg>
+		requires std::invocable<void (TInstance::*)(TArg) const, const TInstance*, const TEvent&>
 	void EventSubsystem::AddListener(const TInstance* instance, void (TInstance::* callback)(TArg) const)
 	{
 		assert(instance && callback);

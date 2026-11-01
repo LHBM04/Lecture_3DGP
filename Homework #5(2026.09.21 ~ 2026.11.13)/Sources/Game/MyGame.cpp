@@ -10,6 +10,28 @@ namespace TUK::Game
 {
 	SystemStatus MyGame::Startup()
 	{
+		EventSubsystem* eventSubsystem = MyEngine::GetInstance().GetSubsystem<EventSubsystem>();
+		if (!eventSubsystem)
+		{
+			return SystemStatus::FAILURE;
+		}
+
+		InputSubsystem* inputSubsystem = AddSubsystem<InputSubsystem>();
+		if (const SystemStatus status = App::Startup(); status != SystemStatus::CONTINUE)
+		{
+			return status;
+		}
+
+		eventSubsystem->AddListener<KeyInterectEvent>(inputSubsystem, &InputSubsystem::OnKey);
+		eventSubsystem->AddListener<ButtonInterectEvent>(inputSubsystem, &InputSubsystem::OnButton);
+		eventSubsystem->AddListener<MouseMoveEvent>(inputSubsystem, &InputSubsystem::OnMouseMove);
+		eventSubsystem->AddListener<MouseWheelEvent>(inputSubsystem, &InputSubsystem::OnMouseWheel);
+		eventSubsystem->AddListener<MouseRawInputEvent>(inputSubsystem, &InputSubsystem::OnMouseRawInput);
+		eventSubsystem->AddListener<InputActivationEvent>(inputSubsystem, &InputSubsystem::OnActivation);
+		eventSubsystem->AddListener<DisplayCreateEvent>(inputSubsystem, &InputSubsystem::OnCreate);
+		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnClose);
+		eventSubsystem->AddListener<DisplayFocusEvent>(inputSubsystem, &InputSubsystem::OnFocus);
+
 		DisplaySubsystem* displaySubsystem = MyEngine::GetInstance().GetSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{
