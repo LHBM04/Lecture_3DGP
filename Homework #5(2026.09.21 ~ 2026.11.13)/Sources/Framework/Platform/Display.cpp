@@ -6,8 +6,9 @@ namespace TUK::Framework
 	Display::Display(HWND hWnd) noexcept
 		: hWnd(hWnd)
 		, shouldClose(false)
-		, id(++nextId)
+		, id(static_cast<ID>(static_cast<u32>(nextId) + 1))
 	{
+		nextId = id;
 	}
 
 	Display::~Display() noexcept
@@ -24,7 +25,7 @@ namespace TUK::Framework
 		return hWnd;
 	}
 
-	u32 Display::GetID() const noexcept
+	Display::ID Display::GetID() const noexcept
 	{
 		return id;
 	}

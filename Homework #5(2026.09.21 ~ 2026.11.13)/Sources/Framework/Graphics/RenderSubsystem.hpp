@@ -9,6 +9,8 @@
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
 
+#include "../Platform/Display.hpp"
+
 #include "GPUCommandBuffer.hpp"
 #include "GPUDevice.hpp"
 #include "GPUFence.hpp"
@@ -18,8 +20,6 @@ namespace TUK::Framework
 {
 	struct DisplayCreateEvent;
 	struct DisplayCloseEvent;
-
-	class Display;
 
 	class RenderSubsystem : public EngineSubsystem
 	{
@@ -57,7 +57,7 @@ namespace TUK::Framework
 
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
-		std::pmr::unordered_map<u32, GPUSwapChain> swapChains;
+		std::pmr::unordered_map<Display::ID, GPUSwapChain> swapChains;
 		std::optional<GPUFence> fence;
 
 		std::vector<RenderCallback> listeners;

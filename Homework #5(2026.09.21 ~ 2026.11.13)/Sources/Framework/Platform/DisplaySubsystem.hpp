@@ -43,12 +43,12 @@ namespace TUK::Framework
 		[[nodiscard]] Display* FindDisplayByHWND(HWND hWnd) noexcept;
 		[[nodiscard]] const Display* FindDisplayByHWND(HWND hWnd) const noexcept;
 		
-		[[nodiscard]] Display* FindDisplayByID(u32 id) noexcept;
-		[[nodiscard]] const Display* FindDisplayByID(u32 id) const noexcept;
+		[[nodiscard]] Display* FindDisplayByID(Display::ID id) noexcept;
+		[[nodiscard]] const Display* FindDisplayByID(Display::ID id) const noexcept;
 		
 		[[nodiscard]] bool IsDisplayValid(const Display& display) const noexcept;
 		[[nodiscard]] bool IsDisplayValid(HWND hWnd) const noexcept;
-		[[nodiscard]] bool IsDisplayValid(u32 id) const noexcept;
+		[[nodiscard]] bool IsDisplayValid(Display::ID id) const noexcept;
 
 	private:
 		static constexpr usize WNDCLASS_NAME_LENGTH = 256;

@@ -17,6 +17,8 @@ namespace TUK::Framework
 		friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	public:
+		enum class ID : u32{};
+
 		explicit Display(HWND hWnd) noexcept;
 		~Display() noexcept;
 
@@ -27,7 +29,7 @@ namespace TUK::Framework
 		Display& operator=(Display&&) = default;
 
 		[[nodiscard]] HWND GetHWND() const noexcept;
-		[[nodiscard]] u32 GetID() const noexcept;
+		[[nodiscard]] ID GetID() const noexcept;
 
 		[[nodiscard]] LPCTSTR GetCaption() const noexcept;
 		void SetCaption(LPCTSTR value) noexcept;
@@ -51,10 +53,10 @@ namespace TUK::Framework
 		void SetStyleEx(DWORD value) noexcept;
 
 	private:
-		inline static u32 nextId = 0;
+		inline static ID nextId = static_cast<ID>(0);
 
 		HWND hWnd;
 		bool shouldClose;
-		u32 id;
+		ID id;
 	};
 }

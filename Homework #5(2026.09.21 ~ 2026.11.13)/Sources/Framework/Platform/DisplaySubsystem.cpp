@@ -240,7 +240,7 @@ namespace TUK::Framework
 		return result != displays.end() ? result->get() : nullptr;
 	}
 
-	Display* DisplaySubsystem::FindDisplayByID(u32 id) noexcept
+	Display* DisplaySubsystem::FindDisplayByID(Display::ID id) noexcept
 	{
 		const auto result = std::ranges::find_if(displays, [id](const auto& display)
 			{
@@ -249,7 +249,7 @@ namespace TUK::Framework
 		return result != displays.end() ? result->get() : nullptr;
 	}
 
-	const Display* DisplaySubsystem::FindDisplayByID(u32 id) const noexcept
+	const Display* DisplaySubsystem::FindDisplayByID(Display::ID id) const noexcept
 	{
 		const auto result = std::ranges::find_if(displays, [id](const auto& display)
 			{
@@ -271,7 +271,7 @@ namespace TUK::Framework
 		return FindDisplayByHWND(hWnd) != nullptr;
 	}
 
-	bool DisplaySubsystem::IsDisplayValid(u32 id) const noexcept
+	bool DisplaySubsystem::IsDisplayValid(Display::ID id) const noexcept
 	{
 		return FindDisplayByID(id) != nullptr;
 	}
