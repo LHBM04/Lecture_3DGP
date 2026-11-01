@@ -6,27 +6,27 @@ namespace TUK::Framework
 {
 	SystemStatus AssetSubsystem::OnStartup()
 	{
-		return SystemStatus::Success;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus AssetSubsystem::OnEarlyUpdate()
 	{
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus AssetSubsystem::OnFixedUpdate()
 	{
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus AssetSubsystem::OnUpdate()
 	{
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus AssetSubsystem::OnLateUpdate()
 	{
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	void AssetSubsystem::OnShutdown()

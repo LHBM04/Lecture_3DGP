@@ -4,6 +4,8 @@
 #include <string_view>
 #include <vector>
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	class Camera;

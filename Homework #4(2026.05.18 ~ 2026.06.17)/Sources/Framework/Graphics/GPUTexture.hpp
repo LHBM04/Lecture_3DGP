@@ -1,18 +1,17 @@
 ﻿#pragma once
 
-#include <utility>
+#include <wrl.h>
 
 #include <d3d12.h>
 
-#include <wrl/client.h>
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
 	class GPUTexture
 	{
-		friend class RenderSubsystem;
-
 	public:
+		explicit GPUTexture(ComPtr<ID3D12Resource> d3dResource) noexcept;
 		~GPUTexture() noexcept = default;
 
 		GPUTexture(const GPUTexture&) = delete;
@@ -24,18 +23,16 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12Resource& GetD3DResource() const noexcept;
 
 	private:
-		explicit GPUTexture(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource) noexcept;
-
-		Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource;
+		ComPtr<ID3D12Resource> d3dResource;
 	};
+
+	inline GPUTexture::GPUTexture(ComPtr<ID3D12Resource> d3dResource) noexcept
+		: d3dResource(std::move(d3dResource))
+	{
+	}
 
 	inline ID3D12Resource& GPUTexture::GetD3DResource() const noexcept
 	{
 		return *d3dResource.Get();
-	}
-
-	inline GPUTexture::GPUTexture(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource) noexcept
-		: d3dResource(std::move(d3dResource))
-	{
 	}
 }

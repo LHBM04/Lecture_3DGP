@@ -1,22 +1,14 @@
 ﻿#include "Precompiled.hpp"
 #include "Display.hpp"
 
-#include "../Core/Engine.hpp"
-
-#include "DisplayEventData.hpp"
-#include "EventSubsystem.hpp"
-
 namespace TUK::Framework
 {
-	namespace
-	{
-		std::array<TCHAR, 256> caption;
-	}
-
 	Display::Display(HWND hWnd) noexcept
 		: hWnd(hWnd)
 		, shouldClose(false)
+		, id(static_cast<ID>(static_cast<u32>(nextId) + 1))
 	{
+		nextId = id;
 	}
 
 	Display::~Display() noexcept
@@ -28,85 +20,93 @@ namespace TUK::Framework
 		}
 	}
 
+	HWND Display::GetHWND() const noexcept
+	{
+		return hWnd;
+	}
+
+	Display::ID Display::GetID() const noexcept
+	{
+		return id;
+	}
+
 	LPCTSTR Display::GetCaption() const noexcept
 	{
-		assert(hWnd);
-		GetWindowText(hWnd, caption.data(), caption.size());
+		static std::array<TCHAR, 256> caption;
+		std::ranges::fill(caption, TCHAR{});
+
+		GetWindowText(hWnd, caption.data(), static_cast<int>(caption.size()));
 		return caption.data();
 	}
 
 	void Display::SetCaption(LPCTSTR value) noexcept
 	{
-		assert(hWnd);
 		SetWindowText(hWnd, value);
 	}
 
-	Vector2D<std::int32_t> Display::GetPosition() const noexcept
+	Vector2D<i32> Display::GetPosition() const noexcept
 	{
-		assert(hWnd);
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
 		return { rect.left, rect.top };
 	}
 
-	void Display::SetPosition(const Vector2D<std::int32_t>& position) noexcept
+	void Display::SetPosition(const Vector2D<i32>& position) noexcept
 	{
-		assert(hWnd);
 		SetWindowPos(
-			hWnd, 
-			nullptr, 
-			position.GetX(), 
-			position.GetY(), 
-			0, 
-			0, 
+			hWnd,
+			nullptr,
+			position.GetX(),
+			position.GetY(),
+			0,
+			0,
 			SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
 	}
 
-	Vector2D<std::int32_t> Display::GetSize() const noexcept
+	Vector2D<i32> Display::GetSize() const noexcept
 	{
-		assert(hWnd);
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
-	void Display::SetSize(const Vector2D<std::int32_t>& size) noexcept
+	void Display::SetSize(const Vector2D<i32>& size) noexcept
 	{
-		assert(hWnd);
 		SetWindowPos(
-			hWnd, 
-			nullptr, 
-			0, 
-			0, 
-			size.GetX(), 
-			size.GetY(), 
+			hWnd,
+			nullptr,
+			0,
+			0,
+			size.GetX(),
+			size.GetY(),
 			SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
 	}
 
-	Vector2D<std::int32_t> Display::GetClientSize() const noexcept
+	Vector2D<i32> Display::GetClientSize() const noexcept
 	{
-		assert(hWnd);
 		RECT rect;
 		GetClientRect(hWnd, &rect);
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
-	void Display::SetClientSize(const Vector2D<std::int32_t>& size) noexcept
+	void Display::SetClientSize(const Vector2D<i32>& size) noexcept
 	{
-		assert(hWnd);
+		RECT rect{};
+		rect.right = size.GetX();
+		rect.bottom = size.GetY();
 
-		RECT rect{ 0, 0, size.GetX(), size.GetY() };
 		const DWORD style = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
 		const DWORD exStyle = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_EXSTYLE));
+
 		AdjustWindowRectEx(&rect, style, FALSE, exStyle);
 
 		SetWindowPos(
-			hWnd, 
-			nullptr, 
-			0, 
-			0, 
-			rect.right - rect.left, 
-			rect.bottom - rect.top, 
+			hWnd,
+			nullptr,
+			0,
+			0,
+			rect.right - rect.left,
+			rect.bottom - rect.top,
 			SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
 	}
 
@@ -120,125 +120,23 @@ namespace TUK::Framework
 		shouldClose = value;
 	}
 
-	HWND Display::GetHWND() const noexcept
+	DWORD Display::GetStyle() const noexcept
 	{
-		return hWnd;
+		return static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
 	}
 
-	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	void Display::SetStyle(DWORD value) noexcept
 	{
-		if (message == WM_NCCREATE)
-		{
-			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
+		SetWindowLongPtr(hWnd, GWL_STYLE, value);
+	}
 
-			Display* display = static_cast<Display*>(creation->lpCreateParams);
-			if (!display)
-			{
-				return FALSE;
-			}
+	DWORD Display::GetStyleEx() const noexcept
+	{
+		return static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_EXSTYLE));
+	}
 
-			display->hWnd = hWnd;
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(display));
-
-			return DefWindowProcW(hWnd, message, wParam, lParam);
-		}
-
-		Display* display = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-		if (!display)
-		{
-			return DefWindowProcW(hWnd, message, wParam, lParam);
-		}
-
-		EventSubsystem* eventSubsystem = Engine::GetInstance()->GetSubsystem<EventSubsystem>();
-
-		switch (message)
-		{
-			case WM_CREATE:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent({ *display, DisplayCreateData{} });
-				}
-				return 0;
-			}
-			case WM_SIZE:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent(
-					{
-						*display,
-						DisplayResizeData{ LOWORD(lParam), HIWORD(lParam) }
-					});
-				}
-				return 0;
-			}
-			case WM_MOVE:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent(
-					{
-						*display,
-						DisplayMoveData{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }
-					});
-				}
-				return 0;
-			}
-			case WM_SETFOCUS: [[fallthrough]];
-			case WM_KILLFOCUS:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent({ *display, DisplayFocusData{ message == WM_SETFOCUS } });
-				}
-				return 0;
-			}
-			case WM_CLOSE:
-			{
-				display->SetShouldClose(true);
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
-				}
-				return DefWindowProcW(hWnd, message, wParam, lParam);
-			}
-			case WM_DESTROY:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent({ *display, DisplayDestroyData{} });
-				}
-				return 0;
-			}
-			case WM_NCDESTROY:
-			{
-				SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
-				display->hWnd = nullptr;
-				return 0;
-			}
-			case WM_KEYDOWN:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent({ *display, KeyInteractData{ static_cast<int>(wParam), WM_KEYDOWN } });
-				}
-				return 0;
-			}
-			case WM_KEYUP:
-			{
-				if (eventSubsystem)
-				{
-					eventSubsystem->PushEvent({ *display, KeyInteractData{ static_cast<int>(wParam), WM_KEYUP } });
-				}
-				return 0;
-			}
-			default:
-			{
-				return DefWindowProcW(hWnd, message, wParam, lParam);
-			}
-		}
-
-		std::unreachable();
+	void Display::SetStyleEx(DWORD value) noexcept
+	{
+		SetWindowLongPtr(hWnd, GWL_EXSTYLE, value);
 	}
 }

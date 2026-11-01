@@ -13,15 +13,15 @@ namespace TUK::Framework
 		return indexBuffer;
 	}
 
-	std::uint32_t GPUMesh::GetVertexCount() const noexcept
+	u32 GPUMesh::GetVertexCount() const noexcept
 	{
-		return static_cast<std::uint32_t>(vertexBufferView.SizeInBytes / vertexBufferView.StrideInBytes);
+		return static_cast<u32>(vertexBufferView.SizeInBytes / vertexBufferView.StrideInBytes);
 	}
 
-	std::uint32_t GPUMesh::GetIndexCount() const noexcept
+	u32 GPUMesh::GetIndexCount() const noexcept
 	{
-		const std::uint32_t indexSize = indexBufferView.Format == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		return static_cast<std::uint32_t>(indexBufferView.SizeInBytes / indexSize);
+		const u32 indexSize = indexBufferView.Format == DXGI_FORMAT_R16_UINT ? 2 : 4;
+		return static_cast<u32>(indexBufferView.SizeInBytes / indexSize);
 	}
 
 	D3D12_PRIMITIVE_TOPOLOGY GPUMesh::GetD3DTopology() const noexcept
@@ -39,17 +39,4 @@ namespace TUK::Framework
 		return indexBufferView;
 	}
 
-	GPUMesh::GPUMesh(
-		GPUBuffer vertexBuffer,
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView,
-		GPUBuffer indexBuffer,
-		D3D12_INDEX_BUFFER_VIEW indexBufferView,
-		D3D12_PRIMITIVE_TOPOLOGY topology) noexcept
-		: vertexBuffer(std::move(vertexBuffer))
-		, vertexBufferView(vertexBufferView)
-		, indexBuffer(std::move(indexBuffer))
-		, indexBufferView(indexBufferView)
-		, topology(topology)
-	{
-	}
 }

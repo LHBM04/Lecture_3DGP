@@ -1,49 +1,24 @@
 ﻿#pragma once
 
-#include <cstdint>
-
+#include "Common.hpp"
 #include "Subsystem.hpp"
 
 namespace TUK::Framework
 {
 	class AppSubsystem : public Subsystem
 	{
-		friend class App;
-
 	public:
-		~AppSubsystem() noexcept override;
+		explicit AppSubsystem(u8 priority) noexcept;
+		~AppSubsystem() noexcept override = default;
 
-	protected:
-		explicit AppSubsystem(std::uint16_t priority) noexcept;
-
-		virtual SystemStatus OnEarlyUpdate();
-		virtual SystemStatus OnFixedUpdate();
-		virtual SystemStatus OnUpdate();
-		virtual SystemStatus OnLateUpdate();
+		virtual SystemStatus OnEarlyUpdate() = 0;
+		virtual SystemStatus OnFixedUpdate() = 0;
+		virtual SystemStatus OnUpdate() = 0;
+		virtual SystemStatus OnLateUpdate() = 0;
 	};
 
-	inline AppSubsystem::AppSubsystem(std::uint16_t priority) noexcept
+	inline AppSubsystem::AppSubsystem(u8 priority) noexcept
 		: Subsystem(priority)
 	{
-	}
-
-	inline SystemStatus AppSubsystem::OnEarlyUpdate()
-	{
-		return SystemStatus::Continue;
-	}
-
-	inline SystemStatus AppSubsystem::OnFixedUpdate()
-	{
-		return SystemStatus::Continue;
-	}
-
-	inline SystemStatus AppSubsystem::OnUpdate()
-	{
-		return SystemStatus::Continue;
-	}
-
-	inline SystemStatus AppSubsystem::OnLateUpdate()
-	{
-		return SystemStatus::Continue;
 	}
 }

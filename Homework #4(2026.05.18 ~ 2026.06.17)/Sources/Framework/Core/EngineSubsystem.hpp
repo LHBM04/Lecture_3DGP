@@ -1,43 +1,23 @@
 ﻿#pragma once
 
-#include <cstdint>
-
+#include "Common.hpp"
 #include "Subsystem.hpp"
 
 namespace TUK::Framework
 {
 	class EngineSubsystem : public Subsystem
 	{
-		friend class Engine;
-
 	public:
-		~EngineSubsystem() noexcept override;
+		explicit EngineSubsystem(u8 priority) noexcept;
+		~EngineSubsystem() noexcept override = default;
 
-	protected:
-		explicit EngineSubsystem(std::uint16_t priority) noexcept;
-
-		virtual SystemStatus OnPreTick();
-		virtual SystemStatus OnTick();
-		virtual SystemStatus OnPostTick();
+		virtual SystemStatus OnPreTick() = 0;
+		virtual SystemStatus OnTick() = 0;
+		virtual SystemStatus OnPostTick() = 0;
 	};
 
-	inline EngineSubsystem::EngineSubsystem(std::uint16_t priority) noexcept
+	inline EngineSubsystem::EngineSubsystem(u8 priority) noexcept
 		: Subsystem(priority)
 	{
-	}
-
-	inline SystemStatus EngineSubsystem::OnPreTick()
-	{
-		return SystemStatus::Continue;
-	}
-
-	inline SystemStatus EngineSubsystem::OnTick()
-	{
-		return SystemStatus::Continue;
-	}
-
-	inline SystemStatus EngineSubsystem::OnPostTick()
-	{
-		return SystemStatus::Continue;
 	}
 }

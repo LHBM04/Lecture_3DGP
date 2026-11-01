@@ -1,135 +1,106 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "App.hpp"
-
-#include "../Platform/TimeSubsystem.hpp"
-
-#include "Engine.hpp"
 
 namespace TUK::Framework
 {
-	App::App() noexcept
+	SystemStatus App::Startup()
 	{
-		assert(!instance);
 		instance = this;
-	}
-
-	App::~App() noexcept
-	{
-		instance = nullptr;
+		return System::Startup();
 	}
 
 	SystemStatus App::Routine()
 	{
-		SystemStatus next = SystemStatus::Continue;
-
-		if (SystemStatus current = EarlyUpdate(); current != SystemStatus::Continue)
+		if (SystemStatus status = EarlyUpdate(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		if (SystemStatus current = FixedUpdate(); current != SystemStatus::Continue)
+		if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		if (SystemStatus current = Update(); current != SystemStatus::Continue)
+		if (SystemStatus status = Update(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
-			}
-		}
-		
-		if (SystemStatus current = LateUpdate(); current != SystemStatus::Continue)
-		{
-			if (current != SystemStatus::Continue)
-			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		return next;
+		if (SystemStatus status = LateUpdate(); status != SystemStatus::CONTINUE)
+		{
+			if (status != SystemStatus::CONTINUE)
+			{
+				return status;
+			}
+		}
+
+		return SystemStatus::CONTINUE;
+	}
+
+	void App::Shutdown()
+	{
+		System::Shutdown();
+		instance = nullptr;
 	}
 
 	SystemStatus App::EarlyUpdate()
 	{
 		for (AppSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnEarlyUpdate();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnEarlyUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus App::FixedUpdate()
 	{
 		for (AppSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnFixedUpdate();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnFixedUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus App::Update()
 	{
 		for (AppSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnUpdate();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus App::LateUpdate()
 	{
 		for (AppSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnLateUpdate();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnLateUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
-
-	App* App::GetInstance()
-	{
-		assert(instance);
-		return instance;
-	}
-
-	App* App::instance = nullptr;
 }

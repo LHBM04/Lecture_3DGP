@@ -1,66 +1,62 @@
 ﻿#include "Precompiled.hpp"
 #include "EventSubsystem.hpp"
 
-#include "../Core/Memory.hpp"
-
 namespace TUK::Framework
 {
-	EventSubsystem::EventSubsystem() noexcept
-		: EngineSubsystem(10)
-		, writeBuffer(Memory::GetPersistentResource())
-		, readBuffer(Memory::GetPersistentResource())
+	SystemStatus EventSubsystem::OnStartup()
 	{
-	}
-
-	EventSubsystem::~EventSubsystem() noexcept
-	{
-	}
-
-	void EventSubsystem::PushEvent(Event event)
-	{
-		writeBuffer.push_back(std::move(event));
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus EventSubsystem::OnPreTick()
 	{
 		MSG message{};
-		while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
+		while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (message.message == WM_QUIT)
 			{
-				return SystemStatus::Success;
+				return SystemStatus::SUCCESS;
 			}
 
 			TranslateMessage(&message);
-			DispatchMessageW(&message);
+			DispatchMessage(&message);
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus EventSubsystem::OnTick()
 	{
-		readBuffer.clear();
-		std::swap(writeBuffer, readBuffer);
+		readBuffer.swap(writeBuffer);
 
-		for (const Event& event : readBuffer)
+		for (const QueuedEvent& queuedEvent : readBuffer)
 		{
-			for (const Listener& listener : listeners[event.data.index()])
+			const auto result = listeners.find(queuedEvent.type);
+			if (result == listeners.end())
 			{
-				listener(event);
+				continue;
+			}
+
+			const auto callbacks = result->second;
+			for (const EventCallback& callback : callbacks)
+			{
+				callback(*queuedEvent.event);
 			}
 		}
 
-		return SystemStatus::Continue;
+		readBuffer.clear();
+		return SystemStatus::CONTINUE;
+	}
+
+	SystemStatus EventSubsystem::OnPostTick()
+	{
+		return SystemStatus::CONTINUE;
 	}
 
 	void EventSubsystem::OnShutdown()
 	{
-		for (std::vector<Listener>& eventListeners : listeners)
-		{
-			eventListeners.clear();
-		}
-		readBuffer.clear();
 		writeBuffer.clear();
+		readBuffer.clear();
+		listeners.clear();
 	}
 }

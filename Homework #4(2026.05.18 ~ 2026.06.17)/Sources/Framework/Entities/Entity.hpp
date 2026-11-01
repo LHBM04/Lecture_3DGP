@@ -10,6 +10,8 @@
 
 #include "Component.hpp"
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	class World;
@@ -23,19 +25,17 @@ namespace TUK::Framework
 		explicit Entity(std::string_view name, std::string_view tag, World& world) noexcept;
 		virtual ~Entity() noexcept = default;
 		
-		/** 복사 금지 */
 		Entity(const Entity&) = delete;
 		Entity& operator=(const Entity&) = delete;
 
-		/** 이동 금지 */
-		Entity(Entity&&) = default;
-		Entity& operator=(Entity&&) = default;
+		Entity(Entity&&) noexcept = default;
+		Entity& operator=(Entity&&) noexcept = default;
 
 		[[nodiscard]] const std::string& GetName() const noexcept;
-		void SetName(std::string_view value);
+		void SetName(std::string_view value) noexcept;
 
 		[[nodiscard]] const std::string& GetTag() const noexcept;
-		void SetTag(std::string_view value);
+		void SetTag(std::string_view value) noexcept;
 
 		[[nodiscard]] const World& GetWorld() const noexcept;
 		[[nodiscard]] World& GetWorld() noexcept;
@@ -44,10 +44,10 @@ namespace TUK::Framework
 		TComponent* AddComponent();
 
 		template <std::derived_from<Component> TComponent>
-		[[nodiscard]] TComponent* GetComponent();
+		[[nodiscard]] TComponent* GetComponent() noexcept;
 
 		template <std::derived_from<Component> TComponent>
-		[[nodiscard]] const TComponent* GetComponent() const;
+		[[nodiscard]] const TComponent* GetComponent() const noexcept;
 
 	protected:
 		void FixedUpdate();
@@ -82,7 +82,7 @@ namespace TUK::Framework
 		return name;
 	}
 
-	inline void Entity::SetName(std::string_view value)
+	inline void Entity::SetName(std::string_view value) noexcept
 	{
 		name = value;
 	}
@@ -92,7 +92,7 @@ namespace TUK::Framework
 		return tag;
 	}
 
-	inline void Entity::SetTag(std::string_view value)
+	inline void Entity::SetTag(std::string_view value) noexcept
 	{
 		tag = value;
 	}
@@ -127,7 +127,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Component> TComponent>
-	TComponent* Entity::GetComponent()
+	TComponent* Entity::GetComponent() noexcept
 	{
 		auto result = componentsByType.find(typeid(TComponent));
 		if (result != componentsByType.end() && !result->second->isDestroyed)
@@ -139,7 +139,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Component> TComponent>
-	const TComponent* Entity::GetComponent() const
+	const TComponent* Entity::GetComponent() const noexcept
 	{
 		auto result = componentsByType.find(typeid(TComponent));
 		if (result != componentsByType.end() && !result->second->isDestroyed)

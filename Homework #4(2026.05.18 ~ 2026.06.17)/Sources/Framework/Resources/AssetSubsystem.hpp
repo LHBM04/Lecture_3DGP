@@ -16,6 +16,8 @@
 #include "Asset.hpp"
 #include "AssetLoader.hpp"
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	class AssetSubsystem : public AppSubsystem

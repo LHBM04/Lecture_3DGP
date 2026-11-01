@@ -1,15 +1,15 @@
 ﻿#pragma once
 
-#include <cassert>
-#include <expected>
-#include <functional>
 #include <optional>
-#include <string>
-#include <unordered_map>
-#include <utility>
-#include <vector>
 
+#include <wrl.h>
+
+#include <dxgi1_6.h>
+
+#include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
+
+#include "../Platform/Display.hpp"
 
 #include "GPUCommandBuffer.hpp"
 #include "GPUDevice.hpp"
@@ -18,71 +18,83 @@
 
 namespace TUK::Framework
 {
-	class Display;
+	struct DisplayCreateEvent;
+	struct DisplayCloseEvent;
 
 	class RenderSubsystem : public EngineSubsystem
 	{
-		friend class System;
-
 	public:
-		~RenderSubsystem() noexcept override;
-
-		void RegisterDisplay(const Display& display);
-		void UnregisterDisplay(const Display& display);
-
-		void Subscribe(std::function<void(GPUCommandBuffer&)> callback);
-
-		template <class TInstance>
-		void Subscribe(TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&));
-
-		template <class TInstance>
-		void Subscribe(const TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&) const);
-
-		[[nodiscard]] const GPUDevice* GetGPUDevice() const noexcept;
-		[[nodiscard]] const GPUSwapChain* GetGPUSwapChain(const Display& display) const noexcept;
-		[[nodiscard]] std::expected<void, std::string> WaitForGPU();
-
-	protected:
-		SystemStatus OnStartup() override;
-		SystemStatus OnPreTick() override;
-		SystemStatus OnPostTick() override;
-		void OnShutdown() override;
-
-	private:
 		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
 
 		RenderSubsystem() noexcept;
+		~RenderSubsystem() noexcept override = default;
 
-		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
-		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const;
-		
+		SystemStatus OnStartup() override;
+		SystemStatus OnPreTick() override;
+		SystemStatus OnTick() override;
+		SystemStatus OnPostTick() override;
+		void OnShutdown() override;
+
+		template <class TListener>
+		void AddListener(TListener* listener, void (TListener::* callback)(GPUCommandBuffer&));
+
+		template <class TListener>
+		void AddListener(const TListener* listener, void (TListener::* callback)(GPUCommandBuffer&) const);
+
+		void OnDisplayCreated(const DisplayCreateEvent& event);
+		void OnDisplayClosed(const DisplayCloseEvent& event);
+
+		[[nodiscard]] GPUDevice& GetDevice();
+		[[nodiscard]] const GPUDevice& GetDevice() const;
+
+	private:
+		void AddListener(RenderCallback callback);
+
+		std::expected<GPUDevice, std::string> CreateGPUDevice();
+		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const Display& display, const DXGI_SWAP_CHAIN_DESC1& description);
+
+		ComPtr<IDXGIFactory6> dxgiFactory;
+
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
-		std::unordered_map<const Display*, GPUSwapChain> swapChains;
+		std::pmr::unordered_map<Display::ID, GPUSwapChain> swapChains;
 		std::optional<GPUFence> fence;
 
 		std::vector<RenderCallback> listeners;
 	};
 
-	template <class TInstance>
-	void RenderSubsystem::Subscribe(TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&))
+	inline RenderSubsystem::RenderSubsystem() noexcept
+		: EngineSubsystem(20)
 	{
-		assert(instance && callback);
-		Subscribe(
-			[instance, callback](GPUCommandBuffer& commandBuffer)
+	}
+
+	inline GPUDevice& RenderSubsystem::GetDevice()
+	{
+		return device.value();
+	}
+
+	inline const GPUDevice& RenderSubsystem::GetDevice() const
+	{
+		return device.value();
+	}
+
+	template <class TInstance>
+	void RenderSubsystem::AddListener(TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&))
+	{
+		AddListener(
+			[listener, callback](GPUCommandBuffer& commandBuffer)
 			{
-				(instance->*callback)(commandBuffer);
+				(listener->*callback)(commandBuffer);
 			});
 	}
 
 	template <class TInstance>
-	void RenderSubsystem::Subscribe(const TInstance* instance, void (TInstance::*callback)(GPUCommandBuffer&) const)
+	void RenderSubsystem::AddListener(const TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&) const)
 	{
-		assert(instance && callback);
-		Subscribe(
-			[instance, callback](GPUCommandBuffer& commandBuffer)
+		AddListener(
+			[listener, callback](GPUCommandBuffer& commandBuffer)
 			{
-				(instance->*callback)(commandBuffer);
+				(listener->*callback)(commandBuffer);
 			});
 	}
 }

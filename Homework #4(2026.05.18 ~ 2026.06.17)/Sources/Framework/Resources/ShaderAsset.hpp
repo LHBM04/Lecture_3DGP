@@ -1,10 +1,12 @@
-#pragma once
+﻿#pragma once
 
 #include <utility>
 
 #include "Framework/Graphics/GPUShader.hpp"
 
 #include "Asset.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

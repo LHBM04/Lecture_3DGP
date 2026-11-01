@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include <cstdint>
+#include "Common.hpp"
 
 namespace TUK::Framework
 {
-	enum class SystemStatus : std::uint8_t
+	enum class SystemStatus : u8
 	{
-		Success = 0,
-		Failure = 1,
-		Continue = 2,
+		SUCCESS,
+		FAILURE,
+		CONTINUE,
 	};
 }

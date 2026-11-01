@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
 
 #include "Display.hpp"
@@ -14,37 +15,63 @@
 
 namespace TUK::Framework
 {
+	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 	class DisplaySubsystem : public EngineSubsystem
 	{
-		friend class System;
-
 	public:
-		using DisplayPtr = std::unique_ptr<Display>;
-		using DisplayRef = std::reference_wrapper<Display>;
-		using DisplayList = std::vector<DisplayPtr>;
-		using DisplayCreateResult = std::expected<DisplayRef, std::string>;
+		DisplaySubsystem() noexcept;
+		~DisplaySubsystem() noexcept override = default;
 
-		~DisplaySubsystem() noexcept override;
+		SystemStatus OnStartup() override;
+		SystemStatus OnPreTick() override;
+		SystemStatus OnTick() override;
+		SystemStatus OnPostTick() override;
+		void OnShutdown() override;
 
-		DisplayCreateResult CreateDisplay(const DisplayOptions& options);
+		std::expected<std::reference_wrapper<Display>, std::string> CreateDisplay(const DisplayOptions& options) noexcept;
+		void DestroyDisplay(Display& display) noexcept;
 
 		[[nodiscard]] auto GetDisplays() noexcept;
 		[[nodiscard]] const auto GetDisplays() const noexcept;
 
-	protected:
-		SystemStatus OnStartup() override;
-		SystemStatus OnPostTick() override;
-		void OnShutdown() override;
+		[[nodiscard]] usize GetDisplayCount() const noexcept;
+
+		[[nodiscard]] Display& GetDisplay(usize index) noexcept;
+		[[nodiscard]] const Display& GetDisplay(usize index) const noexcept;
+		
+		[[nodiscard]] Display* FindDisplayByHWND(HWND hWnd) noexcept;
+		[[nodiscard]] const Display* FindDisplayByHWND(HWND hWnd) const noexcept;
+		
+		[[nodiscard]] Display* FindDisplayByID(Display::ID id) noexcept;
+		[[nodiscard]] const Display* FindDisplayByID(Display::ID id) const noexcept;
+		
+		[[nodiscard]] bool IsDisplayValid(const Display& display) const noexcept;
+		[[nodiscard]] bool IsDisplayValid(HWND hWnd) const noexcept;
+		[[nodiscard]] bool IsDisplayValid(Display::ID id) const noexcept;
 
 	private:
-		DisplaySubsystem() noexcept;
+		static constexpr usize WNDCLASS_NAME_LENGTH = 256;
 
-		DisplayList displays;
+		HINSTANCE instance;
+
+		TCHAR wndClassName[WNDCLASS_NAME_LENGTH];
+		ATOM wndClass;
+
+		std::pmr::vector<std::unique_ptr<Display>> displays;
 	};
+
+	inline DisplaySubsystem::DisplaySubsystem() noexcept
+		: EngineSubsystem(10)
+		, instance(GetModuleHandle(nullptr))
+		, wndClassName{}
+		, wndClass{}
+	{
+	}
 
 	inline auto DisplaySubsystem::GetDisplays() noexcept
 	{
-		return displays | std::views::transform([](const DisplayPtr& displayPtr) -> DisplayRef
+		return displays | std::views::transform([](const std::unique_ptr<Display>& displayPtr) -> std::reference_wrapper<Display>
 			{
 				return *displayPtr;
 			});
@@ -52,10 +79,9 @@ namespace TUK::Framework
 
 	inline const auto DisplaySubsystem::GetDisplays() const noexcept
 	{
-		return displays | std::views::transform([](const DisplayPtr& displayPtr) -> DisplayRef
+		return displays | std::views::transform([](const std::unique_ptr<Display>& displayPtr) -> std::reference_wrapper<const Display>
 			{
-				return *displayPtr;
+				return std::cref(*displayPtr);
 			});
 	}
 }
-

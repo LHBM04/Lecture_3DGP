@@ -1,7 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "AssetLoader.hpp"
 #include "ShaderAsset.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

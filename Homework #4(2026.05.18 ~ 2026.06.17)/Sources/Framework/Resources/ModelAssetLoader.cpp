@@ -19,6 +19,7 @@
 #include "Framework/Graphics/GPUDevice.hpp"
 
 #include "Framework/Math/Quaternion.hpp"
+#include "Framework/Math/Vector3D.hpp"
 
 namespace TUK::Framework
 {
@@ -47,15 +48,20 @@ namespace TUK::Framework
 			return ReadString(stream, tag) && tag == expected;
 		}
 
-		[[nodiscard]] bool ReadCount(std::istream& stream, std::uint32_t& count)
+		[[nodiscard]] bool ReadCount(std::istream& stream, u32& count)
 		{
-			constexpr std::uint32_t MAX_ELEMENT_COUNT = 16 * 1024 * 1024;
+			constexpr u32 MAX_ELEMENT_COUNT = 16 * 1024 * 1024;
 			return ReadValue(stream, count) && count <= MAX_ELEMENT_COUNT;
 		}
 
-		[[nodiscard]] bool ReadVector3(std::istream& stream, Vector3D<float>& value)
+		[[nodiscard]] bool ReadVector3(std::istream& stream, Vector3D<f32>& value)
 		{
 			return ReadValue(stream, value[0]) && ReadValue(stream, value[1]) && ReadValue(stream, value[2]);
+		}
+
+		[[nodiscard]] bool ReadVector3(std::istream& stream, DirectX::XMFLOAT3& value)
+		{
+			return ReadValue(stream, value.x) && ReadValue(stream, value.y) && ReadValue(stream, value.z);
 		}
 
 		[[nodiscard]] std::filesystem::path BuildResourcePath(
@@ -74,10 +80,10 @@ namespace TUK::Framework
 		}
 
 		[[nodiscard]] std::expected<void, std::string> ReadMesh(
-			const std::filesystem::path& path, std::vector<Vertex>& vertices, std::vector<std::uint32_t>& indices)
+			const std::filesystem::path& path, std::vector<DirectX::VertexPositionNormalColor>& vertices, std::vector<u32>& indices)
 		{
 			std::ifstream file(path, std::ios::binary);
-			std::uint32_t sourceVertexCount = 0;
+			u32 sourceVertexCount = 0;
 			std::string meshName;
 			if (!file || !ReadTag(file, "<Mesh>:") || !ReadCount(file, sourceVertexCount)
 				|| !ReadString(file, meshName))
@@ -96,8 +102,8 @@ namespace TUK::Framework
 				}
 				if (tag == "<Bounds>:" || tag == "<BoundingBox>:")
 				{
-					Vector3D<float> first;
-					Vector3D<float> second;
+					Vector3D<f32> first;
+					Vector3D<f32> second;
 					if (!ReadVector3(file, first) || !ReadVector3(file, second))
 					{
 						return std::unexpected("메쉬 경계 정보를 읽지 못했습니다.");
@@ -105,7 +111,7 @@ namespace TUK::Framework
 					continue;
 				}
 
-				std::uint32_t count = 0;
+				u32 count = 0;
 				if (!ReadCount(file, count))
 				{
 					return std::unexpected("메쉬 배열 크기가 유효하지 않습니다.");
@@ -113,12 +119,15 @@ namespace TUK::Framework
 				if (tag == "<Positions>:")
 				{
 					if (count == 0 || count != sourceVertexCount
-						|| count > std::numeric_limits<std::uint32_t>::max() / sizeof(Vertex))
+						|| count > std::numeric_limits<u32>::max() / sizeof(DirectX::VertexPositionNormalColor))
 					{
 						return std::unexpected("메쉬 정점 수가 유효하지 않습니다.");
 					}
-					vertices.resize(count);
-					for (Vertex& vertex : vertices)
+					vertices.assign(count, DirectX::VertexPositionNormalColor{
+						DirectX::XMFLOAT3{ 0.0f, 0.0f, 0.0f },
+						DirectX::XMFLOAT3{ 0.0f, 0.0f, 1.0f },
+						DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f } });
+					for (DirectX::VertexPositionNormalColor& vertex : vertices)
 					{
 						if (!ReadVector3(file, vertex.position))
 						{
@@ -132,31 +141,31 @@ namespace TUK::Framework
 					{
 						return std::unexpected("메쉬 법선 또는 색상 수가 정점 수와 다릅니다.");
 					}
-					for (std::uint32_t index = 0; index < count; ++index)
+					for (u32 index = 0; index < count; ++index)
 					{
-						Vector3D<float> value;
+						Vector3D<f32> value;
 						if (!ReadVector3(file, value))
 						{
 							return std::unexpected("메쉬 법선 또는 색상 데이터를 읽지 못했습니다.");
 						}
 						if (tag == "<Normals>:")
 						{
-							vertices[index].normal = value;
+							vertices[index].normal = DirectX::XMFLOAT3{ value[0], value[1], value[2] };
 						}
 						else
 						{
-							float alpha = 0.0f;
+							f32 alpha = 0.0f;
 							if (!ReadValue(file, alpha))
 							{
 								return std::unexpected("메쉬 색상의 알파를 읽지 못했습니다.");
 							}
-							vertices[index].color = ColorRGB<float>(value[0], value[1], value[2]);
+							vertices[index].color = DirectX::XMFLOAT4{ value[0], value[1], value[2], alpha };
 						}
 					}
 				}
 				else if (tag == "<TextureCoords>:")
 				{
-					file.ignore(static_cast<std::streamsize>(count) * sizeof(float) * 2);
+					file.ignore(static_cast<std::streamsize>(count) * sizeof(f32) * 2);
 					if (!file)
 					{
 						return std::unexpected("메쉬 UV 데이터를 읽지 못했습니다.");
@@ -169,7 +178,7 @@ namespace TUK::Framework
 						return std::unexpected("메쉬의 삼각형 인덱스 수가 유효하지 않습니다.");
 					}
 					indices.resize(count);
-					for (std::uint32_t& index : indices)
+					for (u32& index : indices)
 					{
 						if (!ReadValue(file, index) || index >= vertices.size())
 						{
@@ -204,27 +213,27 @@ namespace TUK::Framework
 		}
 		std::ifstream file(path, std::ios::binary);
 		std::string modelName;
-		std::uint32_t nodeCount = 0;
+		u32 nodeCount = 0;
 		if (!file || !ReadTag(file, "<Model>:") || !ReadString(file, modelName)
 			|| !ReadTag(file, "<Nodes>:") || !ReadCount(file, nodeCount) || nodeCount == 0)
 		{
 			return std::unexpected("모델 바이너리 헤더를 읽지 못했습니다.");
 		}
 
-		std::vector<Matrix4x4<float>> nodeMatrices;
+		std::vector<Matrix4x4<f32>> nodeMatrices;
 		std::vector<ModelPart> parts;
 		nodeMatrices.reserve(nodeCount);
-		for (std::uint32_t index = 0; index < nodeCount; ++index)
+		for (u32 index = 0; index < nodeCount; ++index)
 		{
-			std::int32_t nodeIndex = -1;
-			std::int32_t parentIndex = -1;
+			i32 nodeIndex = -1;
+			i32 parentIndex = -1;
 			std::string nodeName;
-			Vector3D<float> position;
-			Quaternion<float> rotation;
-			Vector3D<float> scale;
-			std::uint32_t partCount = 0;
+			Vector3D<f32> position;
+			Quaternion<f32> rotation;
+			Vector3D<f32> scale;
+			u32 partCount = 0;
 			if (!ReadTag(file, "<Node>:") || !ReadValue(file, nodeIndex) || !ReadValue(file, parentIndex)
-				|| nodeIndex != static_cast<std::int32_t>(index) || parentIndex < -1 || parentIndex >= nodeIndex
+				|| nodeIndex != static_cast<i32>(index) || parentIndex < -1 || parentIndex >= nodeIndex
 				|| !ReadString(file, nodeName) || !ReadTag(file, "<LocalPosition>:") || !ReadVector3(file, position)
 				|| !ReadTag(file, "<LocalRotation>:") || !ReadValue(file, rotation[0]) || !ReadValue(file, rotation[1])
 				|| !ReadValue(file, rotation[2]) || !ReadValue(file, rotation[3])
@@ -233,14 +242,14 @@ namespace TUK::Framework
 			{
 				return std::unexpected("모델 노드의 계층 또는 변환 정보를 읽지 못했습니다.");
 			}
-			Matrix4x4<float> modelMatrix = Matrix4x4<float>::TRS(position, rotation, scale);
+			Matrix4x4<f32> modelMatrix = Matrix4x4<f32>::TRS(position, rotation, scale);
 			if (parentIndex >= 0)
 			{
-				modelMatrix *= nodeMatrices[static_cast<std::size_t>(parentIndex)];
+				modelMatrix *= nodeMatrices[static_cast<usize>(parentIndex)];
 			}
 			nodeMatrices.emplace_back(modelMatrix);
 
-			for (std::uint32_t partIndex = 0; partIndex < partCount; ++partIndex)
+			for (u32 partIndex = 0; partIndex < partCount; ++partIndex)
 			{
 				std::string meshName;
 				std::string materialName;
@@ -249,8 +258,8 @@ namespace TUK::Framework
 				{
 					return std::unexpected("모델의 메쉬 또는 머터리얼 참조를 읽지 못했습니다.");
 				}
-				std::vector<Vertex> vertices;
-				std::vector<std::uint32_t> indices;
+				std::vector<DirectX::VertexPositionNormalColor> vertices;
+				std::vector<u32> indices;
 				if (auto result = ReadMesh(BuildResourcePath(path, "Meshes", meshName), vertices, indices); !result)
 				{
 					return std::unexpected(result.error());
@@ -278,26 +287,15 @@ namespace TUK::Framework
 	std::expected<GPUBuffer, std::string> ModelAssetLoader::CreateUploadBuffer(
 		std::span<const std::byte> bytes) const
 	{
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-		heapProperties.CreationNodeMask = 1;
-		heapProperties.VisibleNodeMask = 1;
-
-		D3D12_RESOURCE_DESC description{};
-		description.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		description.Width = bytes.size();
-		description.Height = 1;
-		description.DepthOrArraySize = 1;
-		description.MipLevels = 1;
-		description.SampleDesc.Count = 1;
-		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
+		const auto description = CD3DX12_RESOURCE_DESC::Buffer(bytes.size());
 
 		auto buffer = device.CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!buffer)
 		{
 			return std::unexpected(buffer.error());
 		}
-		if (auto result = buffer->Write(bytes); !result)
+		if (auto result = buffer->Write(std::span<const u8>(reinterpret_cast<const u8*>(bytes.data()), bytes.size())); !result)
 		{
 			return std::unexpected(result.error());
 		}
@@ -305,8 +303,8 @@ namespace TUK::Framework
 	}
 
 	std::expected<GPUMesh, std::string> ModelAssetLoader::CreateMesh(
-		std::span<const Vertex> vertices,
-		std::span<const std::uint32_t> indices) const
+		std::span<const DirectX::VertexPositionNormalColor> vertices,
+		std::span<const u32> indices) const
 	{
 		auto vertexBuffer = CreateUploadBuffer(std::as_bytes(vertices));
 		if (!vertexBuffer)
@@ -320,7 +318,7 @@ namespace TUK::Framework
 		}
 		return device.CreateGPUMesh(
 			std::move(*vertexBuffer), 
-			sizeof(Vertex),
+			sizeof(DirectX::VertexPositionNormalColor),
 			std::move(*indexBuffer), 
 			DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}

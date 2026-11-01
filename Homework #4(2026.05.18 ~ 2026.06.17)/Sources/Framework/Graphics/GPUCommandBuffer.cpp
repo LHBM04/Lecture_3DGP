@@ -9,12 +9,15 @@
 
 #include "../Resources/MaterialAsset.hpp"
 
+#include "../Entities/Entity.hpp"
+#include "../Entities/Transform.hpp"
+
 #include "Camera.hpp"
 #include "GPUBuffer.hpp"
 #include "GPUDevice.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 #include "GPUMesh.hpp"
-#include "GPURenderTarget.hpp"
+#include "GPUTarget.hpp"
 #include "GPUTexture.hpp"
 
 namespace TUK::Framework
@@ -67,6 +70,23 @@ namespace TUK::Framework
 		cameraPrepared = false;
 		d3dCommandList->SetGraphicsRootSignature(&device->GetD3DRootSignature());
 		return {};
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::Submit()
+	{
+		if (FAILED(d3dCommandList->Close()))
+		{
+			return std::unexpected("D3D12 Command List Close failed.");
+		}
+		ID3D12CommandList* commandLists[] = { d3dCommandList.Get() };
+		device->GetD3DCommandQueue().ExecuteCommandLists(1, commandLists);
+		return {};
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity& entity) noexcept
+	{
+		const Transform* transform = entity.GetComponent<Transform>();
+		return SetObjectTransform(transform ? transform->GetWorldMatrix() : Matrix4x4<float>::GetIdentity());
 	}
 
 	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera& camera) noexcept
@@ -148,12 +168,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		D3D12_RESOURCE_BARRIER barrier{};
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Transition.pResource = &texture.GetD3DResource();
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		barrier.Transition.StateBefore = stateBefore;
-		barrier.Transition.StateAfter = stateAfter;
+		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(&texture.GetD3DResource(), stateBefore, stateAfter);
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
@@ -169,12 +184,7 @@ namespace TUK::Framework
 
 		assert(buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT);
 
-		D3D12_RESOURCE_BARRIER barrier{};
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Transition.pResource = &buffer.GetD3DResource();
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		barrier.Transition.StateBefore = stateBefore;
-		barrier.Transition.StateAfter = stateAfter;
+		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(&buffer.GetD3DResource(), stateBefore, stateAfter);
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
@@ -203,40 +213,40 @@ namespace TUK::Framework
 			&source.GetD3DResource(), sourceOffset, sizeInBytes);
 	}
 
-	void GPUCommandBuffer::SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState)
+	void GPUCommandBuffer::SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept
 	{
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
-	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset)
+	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset) noexcept
 	{
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::CAMERA), address);
 	}
 
-	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset)
+	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset) noexcept
 	{
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::OBJECT), address);
 	}
 
-	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset)
+	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset) noexcept
 	{
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::MATERIAL), address);
 	}
 
-	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport)
+	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport) noexcept
 	{
 		d3dCommandList->RSSetViewports(1, &viewport);
 	}
 
-	void GPUCommandBuffer::SetScissorRect(const D3D12_RECT& scissorRect)
+	void GPUCommandBuffer::SetScissorRect(const D3D12_RECT& scissorRect) noexcept
 	{
 		d3dCommandList->RSSetScissorRects(1, &scissorRect);
 	}
 
-	void GPUCommandBuffer::SetGPUMesh(const GPUMesh& mesh)
+	void GPUCommandBuffer::SetGPUMesh(const GPUMesh& mesh) noexcept
 	{
 		const D3D12_VERTEX_BUFFER_VIEW vertexView = mesh.GetD3DVertexBufferView();
 		const D3D12_INDEX_BUFFER_VIEW indexView = mesh.GetD3DIndexBufferView();
@@ -256,7 +266,7 @@ namespace TUK::Framework
 		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
 	}
 
-	void GPUCommandBuffer::ClearGPURenderTarget(const GPURenderTarget& target, const ColorRGBA<float>& clearColor)
+	void GPUCommandBuffer::ClearGPUTarget(const GPUTarget& target, const ColorRGBA<float>& clearColor)
 	{
 		const FLOAT color[] =
 		{
@@ -269,7 +279,7 @@ namespace TUK::Framework
 		d3dCommandList->ClearRenderTargetView(target.GetD3DRTVHandle(), color, 0, nullptr);
 	}
 
-	void GPUCommandBuffer::SetGPURenderTarget(const GPURenderTarget& target)
+	void GPUCommandBuffer::SetGPUTarget(const GPUTarget& target) noexcept
 	{
 		activeTargetFormat = target.GetTexture().GetD3DResource().GetDesc().Format;
 		cameraPrepared = false;
@@ -287,13 +297,10 @@ namespace TUK::Framework
 		return *(d3dCommandAllocator.Get());
 	}
 
-	GPUCommandBuffer::GPUCommandBuffer(
-		const GPUDevice& device,
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
+	GPUCommandBuffer::GPUCommandBuffer(const GPUDevice& device, const GPUCommandBufferProperties& properties) noexcept
 		: device(&device)
-		, d3dCommandList(std::move(d3dCommandList))
-		, d3dCommandAllocator(std::move(d3dCommandAllocator))
+		, d3dCommandList(properties.d3dCommandList)
+		, d3dCommandAllocator(properties.d3dCommandAllocator)
 	{
 	}
 	std::expected<std::pair<const GPUBuffer*, std::uint64_t>, std::string> GPUCommandBuffer::UploadConstants(
@@ -314,18 +321,8 @@ namespace TUK::Framework
 
 		if (constantBufferPageIndex == constantBufferPages.size())
 		{
-			D3D12_HEAP_PROPERTIES heapProperties{};
-			heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-			heapProperties.CreationNodeMask = 1;
-			heapProperties.VisibleNodeMask = 1;
-			D3D12_RESOURCE_DESC description{};
-			description.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-			description.Width = CONSTANT_BUFFER_PAGE_SIZE;
-			description.Height = 1;
-			description.DepthOrArraySize = 1;
-			description.MipLevels = 1;
-			description.SampleDesc.Count = 1;
-			description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+			const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
+			const auto description = CD3DX12_RESOURCE_DESC::Buffer(CONSTANT_BUFFER_PAGE_SIZE);
 			auto page = device->CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
 			if (!page)
 			{
@@ -336,7 +333,7 @@ namespace TUK::Framework
 
 		const std::uint64_t offset = constantBufferOffset;
 		GPUBuffer& page = constantBufferPages[constantBufferPageIndex];
-		if (auto result = page.Write(bytes, offset); !result)
+		if (auto result = page.Write(std::span<const u8>(reinterpret_cast<const u8*>(bytes.data()), bytes.size()), offset); !result)
 		{
 			return std::unexpected(result.error());
 		}

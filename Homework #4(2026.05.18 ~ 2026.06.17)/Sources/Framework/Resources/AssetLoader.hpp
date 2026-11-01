@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <expected>
 #include <filesystem>
@@ -6,6 +6,8 @@
 #include <string>
 
 #include "Asset.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

@@ -47,7 +47,7 @@ namespace TUK::Framework
 
 	void World::AddCamera(Camera& camera)
 	{
-		assert(&camera.GetOwner().GetWorld() == this);
+		// Camera는 5차 과제에서 독립 객체로 관리합니다.
 		if (std::ranges::find(cameras, &camera) == cameras.end())
 		{
 			cameras.emplace_back(&camera);
@@ -121,8 +121,8 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		const std::size_t count = entities.size();
-		for (std::size_t index = 0; index < count; ++index)
+		const usize count = entities.size();
+		for (usize index = 0; index < count; ++index)
 		{
 			if (!isEntered)
 			{
@@ -146,7 +146,7 @@ namespace TUK::Framework
 		}
 		if (auto result = commandBuffer.SetCamera(*camera); !result)
 		{
-			std::cerr << "World 카메라 준비 실패: " << result.error() << std::endl;
+			std::cerr << result.error() << std::endl;
 			return;
 		}
 
@@ -155,8 +155,8 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		const std::size_t count = entities.size();
-		for (std::size_t index = 0; index < count; ++index)
+		const usize count = entities.size();
+		for (usize index = 0; index < count; ++index)
 		{
 			if (!isEntered)
 			{
@@ -178,8 +178,8 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		const std::size_t count = entities.size();
-		for (std::size_t index = 0; index < count; ++index)
+		const usize count = entities.size();
+		for (usize index = 0; index < count; ++index)
 		{
 			if (!isEntered)
 			{

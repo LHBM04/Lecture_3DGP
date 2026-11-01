@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "WorldSubsystem.hpp"
 
 #include "World.hpp"
@@ -20,35 +20,35 @@ namespace TUK::Framework
 	{
 		if (worlds.empty())
 		{
-			return SystemStatus::Failure;
+			return SystemStatus::FAILURE;
 		}
 
 		currentWorld = worlds.front().get();
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus WorldSubsystem::OnEarlyUpdate()
 	{
 		if (!currentWorld)
 		{
-			return SystemStatus::Failure;
+			return SystemStatus::FAILURE;
 		}
 
 		// 첫 엔진 Tick에서 창 생성 이벤트와 스왑 체인 생성이 처리된 뒤 진입합니다.
 		// World::Enter는 이미 진입한 월드에는 아무 작업도 하지 않습니다.
 		currentWorld->Enter();
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	World& WorldSubsystem::AddWorld(std::unique_ptr<World> world)
 	{
 		if (!world)
 		{
-			throw std::invalid_argument("World must not be null.");
+			std::abort();
 		}
 		if (currentWorld)
 		{
-			throw std::logic_error("Register worlds before startup.");
+			std::abort();
 		}
 		World& result = *world;
 		worlds.push_back(std::move(world));
@@ -105,7 +105,7 @@ namespace TUK::Framework
 			currentWorld->FixedUpdate();
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus WorldSubsystem::OnUpdate()
@@ -115,7 +115,7 @@ namespace TUK::Framework
 			currentWorld->Update();
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus WorldSubsystem::OnLateUpdate()
@@ -127,9 +127,9 @@ namespace TUK::Framework
 
 		if (!currentWorld)
 		{
-			return SystemStatus::Success;
+			return SystemStatus::SUCCESS;
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 }

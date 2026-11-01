@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 
 #include <utility>
 
@@ -23,39 +23,39 @@ namespace TUK::Framework
 			return std::unexpected("ShaderAssetLoader requires an .hlsl file.");
 		}
 
-		std::string_view target;
+		LPCTSTR target = nullptr;
 
 		const std::string stageExtension = path.stem().extension().string();
 		if (stageExtension == ".vert")
 		{
-			target = "vs_5_1";
+			target = TEXT("vs_6_0");
 		}
 		else if (stageExtension == ".tesc")
 		{
-			target = "hs_5_1";
+			target = TEXT("hs_6_0");
 		}
 		else if (stageExtension == ".tese")
 		{
-			target = "ds_5_1";
+			target = TEXT("ds_6_0");
 		}
 		else if (stageExtension == ".geom")
 		{
-			target = "gs_5_1";
+			target = TEXT("gs_6_0");
 		}
 		else if (stageExtension == ".frag")
 		{
-			target = "ps_5_1";
+			target = TEXT("ps_6_0");
 		}
 		else if (stageExtension == ".comp")
 		{
-			target = "cs_5_1";
+			target = TEXT("cs_6_0");
 		}
 		else
 		{
 			return std::unexpected("Unsupported shader stage extension: " + stageExtension);
 		}
 
-		auto shader = device.CreateGPUShader(path, target, "main", D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS);
+		auto shader = device.CreateGPUShader(path, target, TEXT("main"));
 		if (!shader)
 		{
 			return std::unexpected(shader.error());

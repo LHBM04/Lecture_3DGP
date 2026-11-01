@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	class Asset

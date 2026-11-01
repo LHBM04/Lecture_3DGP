@@ -1,55 +1,38 @@
 ﻿#pragma once
 
-#include <cstdint>
-
+#include "Common.hpp"
 #include "SystemStatus.hpp"
 
 namespace TUK::Framework
 {
 	class Subsystem
 	{
-		friend class System;
-
 	public:
+		explicit Subsystem(u8 priority) noexcept;
 		virtual ~Subsystem() noexcept = default;
-		
-		/** 복사 금지 */
+
 		Subsystem(const Subsystem&) = delete;
 		Subsystem& operator=(const Subsystem&) = delete;
 
-		/** 이동 금지 */
 		Subsystem(Subsystem&&) = delete;
 		Subsystem& operator=(Subsystem&&) = delete;
 
-		/** 우선도 */
-		[[nodiscard]] std::uint16_t GetPriority() const noexcept;
+		virtual SystemStatus OnStartup() = 0;
+		virtual void OnShutdown() = 0;
 
-	protected:
-		explicit Subsystem(std::uint16_t priority) noexcept;
-
-		virtual SystemStatus OnStartup();
-		virtual void OnShutdown();
+		[[nodiscard]] u8 GetPriority() const noexcept;
 
 	private:
-		std::uint16_t priority;
+		u8 priority;
 	};
 
-	inline std::uint16_t Subsystem::GetPriority() const noexcept
-	{
-		return priority;
-	}
-
-	inline Subsystem::Subsystem(std::uint16_t priority) noexcept
+	inline Subsystem::Subsystem(u8 priority) noexcept
 		: priority(priority)
 	{
 	}
 
-	inline SystemStatus Subsystem::OnStartup()
+	inline u8 Subsystem::GetPriority() const noexcept
 	{
-		return SystemStatus::Continue;
-	}
-
-	inline void Subsystem::OnShutdown()
-	{
+		return priority;
 	}
 }

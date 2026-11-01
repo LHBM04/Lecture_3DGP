@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	class Entity;
@@ -19,11 +21,11 @@ namespace TUK::Framework
 		Component& operator=(const Component&) = delete;
 
 		/** 이동 금지 */
-		Component(Component&&) = default;
-		Component& operator=(Component&&) = default;
+		Component(Component&&) noexcept = default;
+		Component& operator=(Component&&) noexcept = default;
 
-		[[nodiscard]] const Entity& GetOwner() const;
-		[[nodiscard]] Entity& GetOwner();
+		[[nodiscard]] const Entity& GetOwner() const noexcept;
+		[[nodiscard]] Entity& GetOwner() noexcept;
 
 	protected:
 		virtual void OnAwake();
@@ -58,12 +60,12 @@ namespace TUK::Framework
 	{
 	}
 
-	inline const Entity& Component::GetOwner() const
+	inline const Entity& Component::GetOwner() const noexcept
 	{
 		return owner;
 	}
 
-	inline Entity& Component::GetOwner()
+	inline Entity& Component::GetOwner() noexcept
 	{
 		return owner;
 	}

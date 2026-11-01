@@ -8,30 +8,19 @@ namespace TUK::Framework
 		dxgiSwapChain->Present(1, 0);
 	}
 
-	GPURenderTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
+	GPUTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
 	{
 		const std::uint32_t index = dxgiSwapChain->GetCurrentBackBufferIndex();
-		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
-		rtv.ptr += static_cast<SIZE_T>(index) * rtvDescriptorSize;
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(rtvHeap->GetCPUDescriptorHandleForHeapStart());
+		rtv.Offset(static_cast<INT>(index), rtvDescriptorSize);
 
 		const GPUTexture& texture = backBuffers[index];
-		return GPURenderTarget(texture, rtv, texture.GetD3DResource().GetDesc().Format);
-	}
 
-	IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
-	{
-		return *dxgiSwapChain.Get();
-	}
-
-	GPUSwapChain::GPUSwapChain(
-		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		std::vector<GPUTexture> backBuffers,
-		std::uint32_t rtvDescriptorSize) noexcept
-		: dxgiSwapChain(std::move(dxgiSwapChain))
-		, rtvHeap(std::move(rtvHeap))
-		, backBuffers(std::move(backBuffers))
-		, rtvDescriptorSize(rtvDescriptorSize)
-	{
+		GPUTargetProperties properties{};
+		properties.texture = &texture;
+		properties.rtvHandle = rtv;
+		properties.format = texture.GetD3DResource().GetDesc().Format;
+		return GPUTarget(properties);
 	}
 }

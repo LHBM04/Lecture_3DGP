@@ -1,9 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include <vector>
 
 #include "../Core/AppSubsystem.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

@@ -8,10 +8,14 @@
 #include <span>
 #include <string>
 
+#include <directxtk12/VertexTypes.h>
+
 #include "AssetLoader.hpp"
 #include "ModelAsset.hpp"
 
 #include "Framework/Graphics/GPUMesh.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -32,8 +36,8 @@ namespace TUK::Framework
 	private:
 		[[nodiscard]] std::expected<GPUBuffer, std::string> CreateUploadBuffer(std::span<const std::byte> bytes) const;
 		[[nodiscard]] std::expected<GPUMesh, std::string> CreateMesh(
-			std::span<const Vertex> vertices,
-			std::span<const std::uint32_t> indices) const;
+			std::span<const DirectX::VertexPositionNormalColor> vertices,
+			std::span<const u32> indices) const;
 
 		const GPUDevice& device;
 		AssetSubsystem& assets;

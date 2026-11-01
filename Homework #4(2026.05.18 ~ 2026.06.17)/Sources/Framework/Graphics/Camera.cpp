@@ -10,12 +10,6 @@
 
 namespace TUK::Framework
 {
-	Camera::~Camera() noexcept
-	{
-		// Entity가 직접 해제되는 경우에도 비소유 목록에 주소가 남지 않게 합니다.
-		GetOwner().GetWorld().RemoveCamera(*this);
-	}
-
 	void Camera::OnEnable()
 	{
 		GetOwner().GetWorld().AddCamera(*this);
@@ -55,7 +49,7 @@ namespace TUK::Framework
 			{
 				const float halfHeight = orthoSize * 0.5f;
 				const float halfWidth = halfHeight * aspectRatio;
-				
+
 				return Matrix4x4<float>::Ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
 			}
 			case CameraProjectionType::Perspective:
@@ -67,10 +61,5 @@ namespace TUK::Framework
 				return Matrix4x4<float>::GetIdentity();
 			}
 		}
-	}
-
-	Matrix4x4<float> Camera::GetViewProjectionMatrix() const noexcept
-	{
-		return GetViewMatrix() * GetProjectionMatrix();
 	}
 }

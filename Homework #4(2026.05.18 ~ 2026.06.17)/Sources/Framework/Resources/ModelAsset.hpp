@@ -12,6 +12,8 @@
 
 #include "Asset.hpp"
 
+#include "../Core/Common.hpp"
+
 namespace TUK::Framework
 {
 	class MaterialAsset;
@@ -20,7 +22,7 @@ namespace TUK::Framework
 	{
 		GPUMesh mesh;
 		const MaterialAsset* material;
-		Matrix4x4<float> localToModel;
+		Matrix4x4<f32> localToModel;
 	};
 
 	class ModelAsset : public Asset

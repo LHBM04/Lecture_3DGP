@@ -1,9 +1,10 @@
 ﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++에서 생성한 포함 파일입니다.
-// Homework #4(2026.05.18 ~ 2026.06.17).rc에서 사용되고 있습니다.
+// Homework #5(2026.09.21 ~ 2026.11.13).rc에서 사용되고 있습니다.
 //
-#define IDI_HOMEWORK04             101
-#define IDS_WNDCLASS             102
+#define IDI_HOMEWORK05                  101
+#define IDS_WNDCLASS                    102
+#define IDS_WNDCAPTION                  103
 
 // Next default values for new objects
 // 

@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "MaterialAssetLoader.hpp"
 
 #include <algorithm>
@@ -40,17 +40,17 @@ namespace TUK::Framework
 			return value;
 		}
 
-		[[nodiscard]] bool ReadColor(std::istream& stream, ColorRGBA<float>& color)
+		[[nodiscard]] bool ReadColor(std::istream& stream, ColorRGBA<f32>& color)
 		{
-			float red = 0.0f;
-			float green = 0.0f;
-			float blue = 0.0f;
-			float alpha = 0.0f;
+			f32 red = 0.0f;
+			f32 green = 0.0f;
+			f32 blue = 0.0f;
+			f32 alpha = 0.0f;
 			if (!ReadValue(stream, red) || !ReadValue(stream, green) || !ReadValue(stream, blue) || !ReadValue(stream, alpha))
 			{
 				return false;
 			}
-			color = ColorRGBA<float>(red, green, blue, alpha);
+			color = ColorRGBA<f32>(red, green, blue, alpha);
 			return true;
 		}
 
@@ -92,15 +92,15 @@ namespace TUK::Framework
 		std::string vertexShaderName;
 		std::string pixelShaderName;
 		std::string legacyShaderName;
-		ColorRGBA<float> baseColor(1.0f, 1.0f, 1.0f, 1.0f);
-		ColorRGBA<float> emissiveColor(0.0f, 0.0f, 0.0f, 1.0f);
+		ColorRGBA<f32> baseColor(1.0f, 1.0f, 1.0f, 1.0f);
+		ColorRGBA<f32> emissiveColor(0.0f, 0.0f, 0.0f, 1.0f);
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
 		D3D12_FILL_MODE fillMode = D3D12_FILL_MODE_SOLID;
-		float metallic = 0.0f;
-		float roughness = 0.5f;
+		f32 metallic = 0.0f;
+		f32 roughness = 0.5f;
 		bool hasRoughness = false;
-		std::optional<float> smoothness;
-		std::optional<float> glossiness;
+		std::optional<f32> smoothness;
+		std::optional<f32> glossiness;
 		bool hasEndTag = false;
 		while (file.peek() != std::char_traits<char>::eof())
 		{
@@ -165,7 +165,7 @@ namespace TUK::Framework
 			}
 			else if (*tag == "<SpecularColor>:")
 			{
-				ColorRGBA<float> unused;
+				ColorRGBA<f32> unused;
 				if (!ReadColor(file, unused))
 				{
 					return std::unexpected("머터리얼 반사 색상을 읽지 못했습니다.");
@@ -173,7 +173,7 @@ namespace TUK::Framework
 			}
 			else if (*tag == "<CullMode>:" || *tag == "<FillMode>:")
 			{
-				std::uint32_t value = 0;
+				u32 value = 0;
 				if (!ReadValue(file, value))
 				{
 					return std::unexpected("머터리얼 렌더 설정을 읽지 못했습니다.");
@@ -198,7 +198,7 @@ namespace TUK::Framework
 			else if (*tag == "<Metallic>:" || *tag == "<Roughness>:" || *tag == "<Smoothness>:"
 				|| *tag == "<Glossiness>:" || *tag == "<SpecularHighlight>:" || *tag == "<GlossyReflection>:")
 			{
-				float value = 0.0f;
+				f32 value = 0.0f;
 				if (!ReadValue(file, value))
 				{
 					return std::unexpected("머터리얼 표면 속성을 읽지 못했습니다.");

@@ -1,9 +1,11 @@
-#pragma once
+﻿#pragma once
 
-#include <d3d12.h>
+#include <directx/d3d12.h>
 
 #include "AssetLoader.hpp"
 #include "MaterialAsset.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

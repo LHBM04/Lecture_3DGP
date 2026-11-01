@@ -2,33 +2,21 @@
 
 #include <concepts>
 
-#include "../Platform/DisplayOptions.hpp"
-
 #include "AppSubsystem.hpp"
 #include "System.hpp"
-
-#define DECLARE_APP_INSTANCE() \
-	friend ::TUK::Framework::App* ::TUK::Framework::CreateAppInstance()
-
-#define DEFINE_APP_INSTANCE(AppType) \
-	namespace TUK::Framework \
-	{ \
-		App* CreateAppInstance() \
-		{ \
-			static_assert(std::derived_from<AppType, App>); \
-			return new AppType(); \
-		} \
-	}
+#include "SystemStatus.hpp"
 
 namespace TUK::Framework
 {
 	class App : public System
 	{
-		friend class Engine;
-
 	public:
-		~App() noexcept override;
+		~App() noexcept override = default;
 
+		SystemStatus Startup() override;
+		SystemStatus Routine() override;
+		void Shutdown() override;
+		
 		template <std::derived_from<AppSubsystem> TSubsystem>
 		TSubsystem* AddSubsystem();
 
@@ -41,26 +29,16 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetSubsystems();
 		[[nodiscard]] const auto GetSubsystems() const;
 
-		SystemStatus Routine() override;
+		[[nodiscard]] static App& GetInstance();
 
-		/** Overloaded for App */
-		[[nodiscard]] static App* GetInstance();
-
-	protected:
-		App() noexcept;
-
-		/** 앱 라이프 사이클 */
+	private:
 		SystemStatus EarlyUpdate();
 		SystemStatus FixedUpdate();
 		SystemStatus Update();
 		SystemStatus LateUpdate();
 
-	private:
-		static App* instance;
+		inline static App* instance = nullptr;
 	};
-
-	/** 앱 인스턴스 팩토리 */
-	extern App* CreateAppInstance();
 
 	template <std::derived_from<AppSubsystem> TSubsystem>
 	TSubsystem* App::AddSubsystem()
@@ -88,5 +66,10 @@ namespace TUK::Framework
 	inline const auto App::GetSubsystems() const
 	{
 		return System::GetSubsystems<AppSubsystem>();
+	}
+
+	inline App& App::GetInstance()
+	{
+		return *instance;
 	}
 }

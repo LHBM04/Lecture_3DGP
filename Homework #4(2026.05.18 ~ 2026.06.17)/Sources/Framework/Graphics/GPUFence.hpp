@@ -4,9 +4,11 @@
 #include <expected>
 #include <string>
 
-#include <d3d12.h>
+#include <directx/d3d12.h>
 
 #include <wrl/client.h>
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -14,9 +16,8 @@ namespace TUK::Framework
 
 	class GPUFence
 	{
-		friend class GPUDevice;
-
 	public:
+		explicit GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept;
 		~GPUFence() noexcept = default;
 
 		GPUFence(const GPUFence&) = delete;
@@ -25,15 +26,19 @@ namespace TUK::Framework
 		GPUFence(GPUFence&&) noexcept = default;
 		GPUFence& operator=(GPUFence&&) noexcept = default;
 
-		[[nodiscard]] std::expected<void, std::string> Wait() const;
-		[[nodiscard]] std::expected<void, std::string> Signal(const GPUDevice& device);
+		void Wait() const;
+		void Signal(const GPUDevice& device);
 
 		[[nodiscard]] bool IsCompleted() const noexcept;
 
 	private:
-		explicit GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept;
-
-		Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence;
-		std::uint64_t fenceValue;
+		ComPtr<ID3D12Fence> d3dFence;
+		u64 fenceValue;
 	};
+
+	inline GPUFence::GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept
+		: d3dFence(std::move(d3dFence))
+		, fenceValue(0)
+	{
+	}
 }

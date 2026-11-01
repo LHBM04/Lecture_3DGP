@@ -5,13 +5,15 @@
 #include <string>
 #include <utility>
 
-#include <d3d12.h>
+#include <directx/d3d12.h>
 
 #include "../Graphics/GPUGraphicsPipelineState.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 
 #include "Asset.hpp"
+
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -41,14 +43,14 @@ namespace TUK::Framework
 		[[nodiscard]] const GPUGraphicsPipelineState& GetGraphicsPipelineState() const noexcept;
 		[[nodiscard]] DXGI_FORMAT GetTargetFormat() const noexcept;
 
-		[[nodiscard]] const ColorRGBA<float>& GetBaseColor() const noexcept;
-		void SetBaseColor(const ColorRGBA<float>& value) noexcept;
-		[[nodiscard]] const ColorRGBA<float>& GetEmissiveColor() const noexcept;
-		void SetEmissiveColor(const ColorRGBA<float>& value) noexcept;
-		[[nodiscard]] float GetMetallic() const noexcept;
-		void SetMetallic(float value) noexcept;
-		[[nodiscard]] float GetRoughness() const noexcept;
-		void SetRoughness(float value) noexcept;
+		[[nodiscard]] const ColorRGBA<f32>& GetBaseColor() const noexcept;
+		void SetBaseColor(const ColorRGBA<f32>& value) noexcept;
+		[[nodiscard]] const ColorRGBA<f32>& GetEmissiveColor() const noexcept;
+		void SetEmissiveColor(const ColorRGBA<f32>& value) noexcept;
+		[[nodiscard]] f32 GetMetallic() const noexcept;
+		void SetMetallic(f32 value) noexcept;
+		[[nodiscard]] f32 GetRoughness() const noexcept;
+		void SetRoughness(f32 value) noexcept;
 
 	private:
 		explicit MaterialAsset(
@@ -61,10 +63,10 @@ namespace TUK::Framework
 		D3D12_FILL_MODE fillMode;
 		GPUGraphicsPipelineState graphicsPipelineState;
 		DXGI_FORMAT targetFormat;
-		ColorRGBA<float> baseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		ColorRGBA<float> emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
-		float metallic = 0.0f;
-		float roughness = 0.5f;
+		ColorRGBA<f32> baseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		ColorRGBA<f32> emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
+		f32 metallic = 0.0f;
+		f32 roughness = 0.5f;
 	};
 
 	inline D3D12_CULL_MODE MaterialAsset::GetCullMode() const noexcept
@@ -87,42 +89,42 @@ namespace TUK::Framework
 		return targetFormat;
 	}
 
-	inline const ColorRGBA<float>& MaterialAsset::GetBaseColor() const noexcept
+	inline const ColorRGBA<f32>& MaterialAsset::GetBaseColor() const noexcept
 	{
 		return baseColor;
 	}
 
-	inline void MaterialAsset::SetBaseColor(const ColorRGBA<float>& value) noexcept
+	inline void MaterialAsset::SetBaseColor(const ColorRGBA<f32>& value) noexcept
 	{
 		baseColor = value;
 	}
 
-	inline const ColorRGBA<float>& MaterialAsset::GetEmissiveColor() const noexcept
+	inline const ColorRGBA<f32>& MaterialAsset::GetEmissiveColor() const noexcept
 	{
 		return emissiveColor;
 	}
 
-	inline void MaterialAsset::SetEmissiveColor(const ColorRGBA<float>& value) noexcept
+	inline void MaterialAsset::SetEmissiveColor(const ColorRGBA<f32>& value) noexcept
 	{
 		emissiveColor = value;
 	}
 
-	inline float MaterialAsset::GetMetallic() const noexcept
+	inline f32 MaterialAsset::GetMetallic() const noexcept
 	{
 		return metallic;
 	}
 
-	inline void MaterialAsset::SetMetallic(float value) noexcept
+	inline void MaterialAsset::SetMetallic(f32 value) noexcept
 	{
 		metallic = std::clamp(value, 0.0f, 1.0f);
 	}
 
-	inline float MaterialAsset::GetRoughness() const noexcept
+	inline f32 MaterialAsset::GetRoughness() const noexcept
 	{
 		return roughness;
 	}
 
-	inline void MaterialAsset::SetRoughness(float value) noexcept
+	inline void MaterialAsset::SetRoughness(f32 value) noexcept
 	{
 		roughness = std::clamp(value, 0.0f, 1.0f);
 	}

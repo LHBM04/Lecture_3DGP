@@ -1,22 +1,10 @@
 ﻿#pragma once
 
-#include <cstdint>
+#include <concepts>
+#include <functional>
 
-#include "EngineSubsystem.hpp"
 #include "System.hpp"
-
-#define DECLARE_ENGINE_INSTANCE() \
-	friend ::TUK::Framework::Engine* ::TUK::Framework::CreateEngineInstance()
-
-#define DEFINE_ENGINE_INSTANCE(Type) \
-	namespace TUK::Framework \
-	{ \
-		Engine* CreateEngineInstance() \
-		{ \
-			static_assert(std::derived_from<Type, Engine>); \
-			return new Type(); \
-		} \
-	}
+#include "EngineSubsystem.hpp"
 
 namespace TUK::Framework
 {
@@ -25,7 +13,14 @@ namespace TUK::Framework
 	class Engine : public System
 	{
 	public:
-		~Engine() noexcept override;
+		explicit Engine(App& app) noexcept;
+		~Engine() noexcept override = default;
+
+		[[nodiscard]] i32 Run();
+
+		SystemStatus Startup() override;
+		SystemStatus Routine() override;
+		void Shutdown() override;
 
 		template <std::derived_from<EngineSubsystem> TSubsystem>
 		TSubsystem* AddSubsystem();
@@ -39,29 +34,22 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetSubsystems();
 		[[nodiscard]] const auto GetSubsystems() const;
 
-		/** Overloaded for Engine */
-		[[nodiscard]] static Engine* GetInstance();
+		[[nodiscard]] static Engine& GetInstance();
 
-		std::int32_t Run(App& app);
-
-		SystemStatus Routine() override;
-
-		/** 엔진 라이프 사이클 */
+	private:
 		SystemStatus PreTick();
 		SystemStatus Tick();
 		SystemStatus PostTick();
 
-	protected:
-		Engine() noexcept;
+		inline static Engine* instance = nullptr;
 
-	private:
-		static Engine* instance;
-
-		App* app;
+		std::reference_wrapper<App> app;
 	};
 
-	/** 엔진 인스턴스 팩토리 */
-	extern Engine* CreateEngineInstance();
+	inline Engine::Engine(App& app) noexcept
+		: app(app)
+	{
+	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
 	TSubsystem* Engine::AddSubsystem()
@@ -89,5 +77,10 @@ namespace TUK::Framework
 	inline const auto Engine::GetSubsystems() const
 	{
 		return System::GetSubsystems<EngineSubsystem>();
+	}
+	
+	inline Engine& Engine::GetInstance()
+	{
+		return *instance;
 	}
 }

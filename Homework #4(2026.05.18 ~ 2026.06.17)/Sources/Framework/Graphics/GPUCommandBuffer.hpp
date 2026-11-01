@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-#include <d3d12.h>
+#include <directx/d3d12.h>
 
 #include <wrl/client.h>
 
@@ -20,18 +20,26 @@
 
 namespace TUK::Framework
 {
+	class Entity;
 	class Camera;
 	class GPUDevice;
 	class MaterialAsset;
 	class GPUMesh;
-	class GPURenderTarget;
+	class GPUTarget;
 	class GPUTexture;
+
+	struct GPUCommandBufferProperties final
+	{
+		const ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		const ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+	};
 
 	class GPUCommandBuffer
 	{
 		friend class GPUDevice;
 
 	public:
+		explicit GPUCommandBuffer(const GPUDevice& device, const GPUCommandBufferProperties& properties) noexcept;
 		~GPUCommandBuffer() noexcept = default;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
@@ -42,6 +50,8 @@ namespace TUK::Framework
 
 		// 이전 제출의 GPU 작업이 끝난 뒤 호출합니다.
 		[[nodiscard]] std::expected<void, std::string> Reset();
+		[[nodiscard]] std::expected<void, std::string> Submit();
+		[[nodiscard]] std::expected<void, std::string> SetEntity(const Entity& entity) noexcept;
 		[[nodiscard]] std::expected<void, std::string> SetCamera(const Camera& camera) noexcept;
 		[[nodiscard]] std::expected<void, std::string> SetMaterial(const MaterialAsset& material) noexcept;
 		[[nodiscard]] std::expected<void, std::string> SetObjectTransform(const Matrix4x4<float>& worldMatrix) noexcept;
@@ -63,31 +73,26 @@ namespace TUK::Framework
 			std::uint64_t sourceOffset,
 			std::uint64_t sizeInBytes);
 
-		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState);
+		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
 
-		void SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0);
-		void SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0);
-		void SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0);
-		void SetViewport(const D3D12_VIEWPORT& viewport);
-		void SetScissorRect(const D3D12_RECT& scissorRect);
+		void SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0) noexcept;
+		void SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0) noexcept;
+		void SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset = 0) noexcept;
+		void SetViewport(const D3D12_VIEWPORT& viewport) noexcept;
+		void SetScissorRect(const D3D12_RECT& scissorRect) noexcept;
 
-		void SetGPUMesh(const GPUMesh& mesh);
+		void SetGPUMesh(const GPUMesh& mesh) noexcept;
 
 		void Draw(std::uint32_t vertexCount, std::uint32_t firstVertex = 0);
 		void DrawIndexed(std::uint32_t indexCount, std::uint32_t firstIndex = 0, std::int32_t baseVertex = 0);
 
-		void ClearGPURenderTarget(const GPURenderTarget& target, const ColorRGBA<float>& clearColor);
-		void SetGPURenderTarget(const GPURenderTarget& target);
+		void ClearGPUTarget(const GPUTarget& target, const ColorRGBA<float>& clearColor);
+		void SetGPUTarget(const GPUTarget& target) noexcept;
 
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
 	private:
-		explicit GPUCommandBuffer(
-			const GPUDevice& device,
-			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-			Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
-
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, std::uint64_t>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 

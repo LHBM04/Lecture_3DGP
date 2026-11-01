@@ -2,139 +2,113 @@
 #include "Engine.hpp"
 
 #include "App.hpp"
-#include "Memory.hpp"
 
 namespace TUK::Framework
 {
-	Engine::Engine() noexcept
-		: app(nullptr)
+	i32 Engine::Run()
 	{
-		assert(!instance);
-		instance = this;
-	}
-
-	Engine::~Engine() noexcept
-	{
-		instance = nullptr;
-	}
-
-	std::int32_t Engine::Run(App& app)
-	{
-		this->app = &app;
-
 		Startup();
-		this->app->Startup();
+		app.get().Startup();
 
 		while (true)
 		{
-			if (SystemStatus status = Routine(); status != SystemStatus::Continue)
+			if (SystemStatus status = Routine(); status != SystemStatus::CONTINUE)
 			{
-				this->app->Shutdown();
+				app.get().Shutdown();
 				Shutdown();
 
-				return static_cast<std::int32_t>(status);
+				return std::to_underlying(status);
 			}
 		}
+
+		std::unreachable();
+	}
+
+	SystemStatus Engine::Startup()
+	{
+		instance = this;
+		return System::Startup();
 	}
 
 	SystemStatus Engine::Routine()
 	{
-		SystemStatus next = SystemStatus::Continue;
-
-		if (SystemStatus current = PreTick(); current != SystemStatus::Continue)
+		if (SystemStatus status = PreTick(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		if (SystemStatus current = Tick(); current != SystemStatus::Continue)
+		if (SystemStatus status = Tick(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		if (SystemStatus current = app->Routine(); current != SystemStatus::Continue)
+		if (SystemStatus status = app.get().Routine(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		if (SystemStatus current = PostTick(); current != SystemStatus::Continue)
+		if (SystemStatus status = PostTick(); status != SystemStatus::CONTINUE)
 		{
-			if (current != SystemStatus::Continue)
+			if (status != SystemStatus::CONTINUE)
 			{
-				if (next == SystemStatus::Continue)
-				{
-					next = current;
-				}
+				return status;
 			}
 		}
 
-		return next;
+		return SystemStatus::CONTINUE;
+	}
+
+	void Engine::Shutdown()
+	{
+		System::Shutdown();
+		instance = nullptr;
 	}
 
 	SystemStatus Engine::PreTick()
 	{
 		for (EngineSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnPreTick();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnPreTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus Engine::Tick()
 	{
 		for (EngineSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnTick();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus Engine::PostTick()
 	{
 		for (EngineSubsystem& subsystem : GetSubsystems())
 		{
-			const SystemStatus status = subsystem.OnPostTick();
-			if (status != SystemStatus::Continue)
+			if (const SystemStatus status = subsystem.OnPostTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
 		}
 
-		return SystemStatus::Continue;
+		return SystemStatus::CONTINUE;
 	}
-
-	Engine* Engine::GetInstance()
-	{
-		assert(instance);
-		return instance;
-	}
-
-	Engine* Engine::instance = nullptr;
 }
