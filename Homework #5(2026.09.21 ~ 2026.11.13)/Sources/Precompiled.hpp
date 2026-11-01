@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #if defined(_M_IX86)
-    #error "?대떦 ?꾨줈?앺듃??x64 ?뚮옯?쇱뿉?쒕쭔 鍮뚮뱶 諛??ㅽ뻾 媛?ν빀?덈떎!"
+    #error "This project is designed for x64 architecture. Please build for x64 instead of x86!"
 #endif
 
 #ifndef _CRT_SECURE_NO_WARNINGS

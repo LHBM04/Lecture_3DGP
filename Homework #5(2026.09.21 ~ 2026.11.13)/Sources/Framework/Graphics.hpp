@@ -12,3 +12,5 @@
 #include "Graphics/GPUTarget.hpp"
 #include "Graphics/GPUTexture.hpp"
 #include "Graphics/RenderSubsystem.hpp"
+
+#include "Graphics/MeshRenderer.hpp"

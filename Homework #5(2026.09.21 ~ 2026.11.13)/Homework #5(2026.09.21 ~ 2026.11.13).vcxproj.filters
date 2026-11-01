@@ -10,6 +10,9 @@
     <Filter Include="Sources\Game">
       <UniqueIdentifier>{b4a5aea1-254d-4503-bc15-32b43ddd36ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game\Worlds">
+      <UniqueIdentifier>{9A98B935-C06F-48B3-A38A-CB795E409464}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Sources\Framework">
       <UniqueIdentifier>{e837df3f-3363-4211-9658-f3532933619a}</UniqueIdentifier>
     </Filter>
@@ -180,6 +183,9 @@
     <ClInclude Include="Sources\Game\MyGame.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp">
+      <Filter>Sources\Game\Worlds</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Game\MyEngine.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
@@ -208,6 +214,9 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\MeshRenderer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
@@ -315,6 +324,9 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUSwapChain.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">

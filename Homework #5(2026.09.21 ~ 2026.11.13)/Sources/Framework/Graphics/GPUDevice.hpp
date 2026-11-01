@@ -1,9 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include <expected>
 #include <filesystem>
 #include <string>
-#include <string_view>
 
 #include <wrl.h>
 
@@ -48,10 +47,11 @@ namespace TUK::Framework
 			GPUBuffer vertexBuffer, u32 vertexStride, GPUBuffer indexBuffer,
 			DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) const;
 		[[nodiscard]] std::expected<GPUShader, std::string> CreateGPUShader(
-			const std::filesystem::path& path, std::wstring_view target,
-			std::wstring_view entryPoint) const;
+			const std::filesystem::path& path, LPCTSTR target,
+			LPCTSTR entryPoint) const;
 		[[nodiscard]] std::expected<GPUFence, std::string> CreateGPUFence() const;
 
+		[[nodiscard]] ID3D12RootSignature& GetD3DRootSignature() const noexcept;
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;
 		[[nodiscard]] ID3D12CommandQueue& GetD3DCommandQueue() const noexcept;
 
@@ -66,6 +66,11 @@ namespace TUK::Framework
 		, d3dCommandQueue(properties.d3dCommandQueue)
 		, d3dRootSignature(properties.d3dRootSignature)
 	{
+	}
+
+	inline ID3D12RootSignature& GPUDevice::GetD3DRootSignature() const noexcept
+	{
+		return *d3dRootSignature.Get();
 	}
 
 	inline ID3D12Device& GPUDevice::GetD3DDevice() const noexcept

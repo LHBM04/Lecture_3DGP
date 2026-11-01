@@ -70,7 +70,7 @@ namespace TUK::Framework
 	}
 
 	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(
-		const std::filesystem::path& path, std::wstring_view target, std::wstring_view entryPoint) const
+		const std::filesystem::path& path, LPCTSTR target, LPCTSTR entryPoint) const
 	{
 		ComPtr<IDxcUtils> utils;
 		ComPtr<IDxcCompiler3> compiler;
@@ -89,13 +89,11 @@ namespace TUK::Framework
 			return std::unexpected(std::format("셰이더 파일 읽기 실패: {}, HRESULT: 0x{:08X}", path.string(), static_cast<u32>(result)));
 		}
 
-		const std::wstring TARGET(target);
-		const std::wstring ENTRY_POINT(entryPoint);
-		const std::wstring INCLUDE_DIRECTORY = path.has_parent_path() ? path.parent_path().wstring() : L".";
-		const wchar_t* arguments[] =
+		const std::filesystem::path includeDirectory = path.has_parent_path() ? path.parent_path() : TEXT(".");
+		LPCTSTR arguments[] =
 		{
-			path.c_str(), L"-E", ENTRY_POINT.c_str(), L"-T", TARGET.c_str(),
-			L"-I", INCLUDE_DIRECTORY.c_str(), L"-Ges", L"-WX", L"-HV", L"2018"
+			path.c_str(), TEXT("-E"), entryPoint, TEXT("-T"), target,
+			TEXT("-I"), includeDirectory.c_str(), TEXT("-Ges"), TEXT("-WX"), TEXT("-HV"), TEXT("2018")
 		};
 		BOOL knownEncoding = FALSE;
 		UINT32 codePage = DXC_CP_UTF8;

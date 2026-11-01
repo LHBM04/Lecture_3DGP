@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "World.hpp"
 
 #include <iostream>
@@ -144,7 +144,11 @@ namespace TUK::Framework
 		{
 			return;
 		}
-		commandBuffer.SetCamera(*camera);
+		if (auto result = commandBuffer.SetCamera(*camera); !result)
+		{
+			std::cerr << result.error() << std::endl;
+			return;
+		}
 
 		OnRender(commandBuffer);
 		if (!isEntered)

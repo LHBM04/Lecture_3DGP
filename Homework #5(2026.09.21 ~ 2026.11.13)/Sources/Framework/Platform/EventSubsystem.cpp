@@ -29,9 +29,9 @@ namespace TUK::Framework
 	{
 		readBuffer.swap(writeBuffer);
 
-		for (const auto& event : readBuffer)
+		for (const QueuedEvent& queuedEvent : readBuffer)
 		{
-			const auto result = listeners.find(std::type_index(typeid(*event)));
+			const auto result = listeners.find(queuedEvent.type);
 			if (result == listeners.end())
 			{
 				continue;
@@ -40,7 +40,7 @@ namespace TUK::Framework
 			const auto callbacks = result->second;
 			for (const EventCallback& callback : callbacks)
 			{
-				callback(*event);
+				callback(*queuedEvent.event);
 			}
 		}
 

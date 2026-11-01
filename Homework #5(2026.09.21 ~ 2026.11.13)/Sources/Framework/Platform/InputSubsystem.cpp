@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "InputSubsystem.hpp"
 
 #include "Display.hpp"
@@ -9,11 +9,6 @@ namespace TUK::Framework
 
 	SystemStatus InputSubsystem::OnStartup()
 	{
-		providers.clear();
-		activeDisplay = nullptr;
-		mouseWindow = nullptr;
-		hasMouseHistory = false;
-
 		if (FAILED(GameInputCreate(&gameInput)))
 		{
 			return SystemStatus::FAILURE;

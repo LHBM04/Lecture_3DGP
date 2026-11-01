@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cassert>
 #include <concepts>
@@ -55,8 +55,16 @@ namespace TUK::Framework
 		void AddListener(const TInstance* instance, void (TInstance::* callback)(TArg) const);
 
 	private:
-		std::pmr::vector<std::unique_ptr<const Event>> writeBuffer;
-		std::pmr::vector<std::unique_ptr<const Event>> readBuffer;
+		using EventDeleter = void (*)(const Event*) noexcept;
+
+		struct QueuedEvent
+		{
+			std::type_index type;
+			std::unique_ptr<const Event, EventDeleter> event;
+		};
+
+		std::pmr::vector<QueuedEvent> writeBuffer;
+		std::pmr::vector<QueuedEvent> readBuffer;
 		std::pmr::unordered_map<std::type_index, std::vector<EventCallback>> listeners;
 	};
 
@@ -69,13 +77,25 @@ namespace TUK::Framework
 	void EventSubsystem::PushEvent(TEvent&& event)
 	{
 		using EventType = std::remove_cvref_t<TEvent>;
-		writeBuffer.push_back(std::make_unique<const EventType>(std::forward<TEvent>(event)));
+		std::unique_ptr<const Event, EventDeleter> storedEvent(
+			new const EventType(std::forward<TEvent>(event)),
+			[](const Event* value) noexcept
+			{
+				delete static_cast<const EventType*>(value);
+			});
+		writeBuffer.push_back(QueuedEvent{ std::type_index(typeid(EventType)), std::move(storedEvent) });
 	}
 
 	template <std::derived_from<Event> TEvent, class... TArgs>
 	void EventSubsystem::PushEvent(TArgs&&... args)
 	{
-		writeBuffer.push_back(std::make_unique<const TEvent>(std::forward<TArgs>(args)...));
+		std::unique_ptr<const Event, EventDeleter> storedEvent(
+			new const TEvent(std::forward<TArgs>(args)...),
+			[](const Event* value) noexcept
+			{
+				delete static_cast<const TEvent*>(value);
+			});
+		writeBuffer.push_back(QueuedEvent{ std::type_index(typeid(TEvent)), std::move(storedEvent) });
 	}
 
 	template <std::derived_from<Event> TEvent>

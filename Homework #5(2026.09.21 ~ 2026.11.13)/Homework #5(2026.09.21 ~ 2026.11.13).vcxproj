@@ -213,6 +213,7 @@
     <ClInclude Include="Sources\Framework\Core\System.hpp" />
     <ClInclude Include="Sources\Framework\Core\SystemStatus.hpp" />
     <ClInclude Include="Sources\Framework\Graphics.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\MeshRenderer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUCommandBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
+    <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp" />
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AssetSubsystem.hpp" />
@@ -267,6 +269,7 @@
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\System.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUDevice.cpp" />
@@ -298,6 +301,7 @@
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Game\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\MyGame.cpp" />
+    <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

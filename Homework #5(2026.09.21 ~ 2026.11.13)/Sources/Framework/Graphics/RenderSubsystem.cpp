@@ -61,13 +61,20 @@ namespace TUK::Framework
 
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
-		commandBuffer->Reset();
+		if (auto result = commandBuffer->Reset(); !result)
+		{
+			std::cerr << result.error() << std::endl;
+			return SystemStatus::FAILURE;
+		}
 
 		// 각 스왑 체인을 돌면서 명령을 기록.
 		for (auto& [display, swapChain] : swapChains)
 		{
 			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
 			const GPUTexture& backBuffer = target.GetTexture();
+			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			commandBuffer->ClearGPUTarget(target, ColorRGBA<float>::GetBlack());
+			commandBuffer->SetGPUTarget(target);
 
 			for (const RenderCallback& listener : listeners)
 			{
@@ -77,7 +84,11 @@ namespace TUK::Framework
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		}
 
-		commandBuffer->Submit();
+		if (auto result = commandBuffer->Submit(); !result)
+		{
+			std::cerr << result.error() << std::endl;
+			return SystemStatus::FAILURE;
+		}
 
 		// 모든 스왑 체인을 Present.
 		for (auto& swapChain : swapChains | std::views::values)
@@ -93,6 +104,12 @@ namespace TUK::Framework
 
 	void RenderSubsystem::OnShutdown()
 	{
+		listeners.clear();
+		swapChains.clear();
+		commandBuffer.reset();
+		fence.reset();
+		device.reset();
+		dxgiFactory.Reset();
 	}
 
 	void RenderSubsystem::OnDisplayCreated(const DisplayCreateEvent& event)

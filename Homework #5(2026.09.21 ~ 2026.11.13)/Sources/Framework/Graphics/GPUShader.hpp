@@ -1,10 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include <cassert>
 #include <cstdint>
 #include <filesystem>
-#include <string>
-#include <string_view>
 #include <utility>
 
 #include <directx/d3d12.h>

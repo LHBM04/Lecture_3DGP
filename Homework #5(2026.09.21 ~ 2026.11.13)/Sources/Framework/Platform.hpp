@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Platform/Display.hpp"
 #include "Platform/DisplayEvents.hpp"
