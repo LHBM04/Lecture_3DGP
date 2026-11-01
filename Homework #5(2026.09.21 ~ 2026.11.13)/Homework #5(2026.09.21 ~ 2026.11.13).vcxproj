@@ -179,11 +179,25 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)External\Libraries\$(ExternalTriplet)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gameinput.lib;dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ExternalInclude)\directx-dxc;$(ExternalInclude)\gameinput;$(ExternalInclude)\xaudio2redist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>gameinput.lib;xaudio2_9redist.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(ExternalLinkage)'=='Dynamic'">xapobaseredist_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(ExternalLinkage)'=='Static'">xapobaseredist.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Target Name="CopyXAudio2RedistBinary" AfterTargets="Build" Condition="'$(Platform)'=='x64'">
+    <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\xaudio2_9redist.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
   <Target Name="CopyDXCBinaries" AfterTargets="Build">
-    <Copy SourceFiles="$(WindowsSdkDir)bin\$(TargetPlatformVersion)\$(ExternalArchitecture)\dxcompiler.dll;$(WindowsSdkDir)bin\$(TargetPlatformVersion)\$(ExternalArchitecture)\dxil.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy Condition="'$(Platform)'=='x64'" SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\dxcompiler.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\dxil.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy Condition="'$(Platform)'=='Win32'" SourceFiles="$(WindowsSdkDir)bin\$(TargetPlatformVersion)\$(ExternalArchitecture)\dxcompiler.dll;$(WindowsSdkDir)bin\$(TargetPlatformVersion)\$(ExternalArchitecture)\dxil.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <Target Name="CopyDirectXTK12Binary" AfterTargets="Build" Condition="'$(ExternalLinkage)'=='Dynamic'">
     <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />

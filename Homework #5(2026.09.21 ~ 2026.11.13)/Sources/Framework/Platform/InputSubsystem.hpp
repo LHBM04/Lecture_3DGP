@@ -9,7 +9,7 @@
 #include <windows.h>
 #include <wrl.h>
 
-#include <GameInput.h>
+#include <gameinput/gameinput.h>
 
 #include "../Core/AppSubsystem.hpp"
 #include "../Core/Common.hpp"
@@ -20,6 +20,8 @@
 
 namespace TUK::Framework
 {
+	using namespace GameInput::v3;
+
 	class Display;
 
 	class InputSubsystem : public AppSubsystem

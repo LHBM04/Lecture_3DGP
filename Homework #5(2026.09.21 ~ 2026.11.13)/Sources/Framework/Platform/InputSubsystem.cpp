@@ -5,6 +5,8 @@
 
 namespace TUK::Framework
 {
+	using namespace GameInput::v3;
+
 	SystemStatus InputSubsystem::OnStartup()
 	{
 		providers.clear();
@@ -17,7 +19,7 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		gameInput->SetFocusPolicy(GameInputDisableBackgroundInput);
+		gameInput->SetFocusPolicy(GameInputDefaultFocusPolicy);
 		return SystemStatus::CONTINUE;
 	}
 

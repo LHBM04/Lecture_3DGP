@@ -63,8 +63,6 @@
 
 #include <wrl.h>
 
-#include <GameInput.h>
-
 #ifndef _CRTDBG_MAP_ALLOC
 	#define _CRTDBG_MAP_ALLOC
 #endif
@@ -75,10 +73,10 @@
 #include <directx/d3d12sdklayers.h>
 #include <directx/d3dx12.h>
 
-#include <dxcapi.h>
-
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
+
+#include <directx-dxc/dxcapi.h>
 
 #include <directxmath/DirectXCollision.h>
 #include <directxmath/DirectXColors.h>
@@ -106,3 +104,11 @@
 #include <directxtk12/SpriteFont.h>
 #include <directxtk12/VertexTypes.h>
 #include <directxtk12/WICTextureLoader.h>
+
+#include <gameinput/gameinput.h>
+
+#include <xaudio2redist/xaudio2Redist.h>
+#include <xaudio2redist/xaudio2fxRedist.h>
+#include <xaudio2redist/x3daudioRedist.h>
+#include <xaudio2redist/xapobaseRedist.h>
+#include <xaudio2redist/xapofxRedist.h>

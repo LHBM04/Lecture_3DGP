@@ -6,12 +6,14 @@
 
 #include <windows.h>
 
-#include <GameInput.h>
+#include <gameinput/gameinput.h>
 
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
+	using namespace GameInput::v3;
+
 	enum class KeyCode : u8
 	{
 		NONE = 0x00,
