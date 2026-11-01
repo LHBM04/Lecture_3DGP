@@ -28,6 +28,7 @@ namespace TUK::Framework
 
 		void SetKey(KeyCode key, bool isDown) noexcept;
 		void SetMouseButton(ButtonCode button, bool isDown) noexcept;
+		void SetMouseButtons(u32 buttons) noexcept;
 		void SetMousePosition(const Vector2D<i32>& position) noexcept;
 		void AddMousePositionDelta(const Vector2D<i32>& positionDelta) noexcept;
 		void AddMouseWheelDelta(const Vector2D<i32>& wheelDelta) noexcept;
@@ -58,14 +59,6 @@ namespace TUK::Framework
 		Vector2D<i32> mouseWheelDelta{};
 	};
 
-	inline void InputProvider::Update() noexcept
-	{
-		previousKeys = currentkeys;
-		previousButtons = currentButtons;
-		mousePositionDelta = {};
-		mouseWheelDelta = {};
-	}
-
 	inline void InputProvider::Reset() noexcept
 	{
 		currentkeys.reset();
@@ -75,6 +68,18 @@ namespace TUK::Framework
 		previousButtons = 0;
 
 		mousePosition = {};
+		mousePositionDelta = {};
+		mouseWheelDelta = {};
+	}
+
+	inline void InputProvider::Update() noexcept
+	{
+		previousKeys = currentkeys;
+		previousButtons = currentButtons;
+
+		currentkeys.reset();
+		currentButtons = 0;
+
 		mousePositionDelta = {};
 		mouseWheelDelta = {};
 	}
@@ -99,6 +104,11 @@ namespace TUK::Framework
 		{
 			currentButtons &= ~MASK;
 		}
+	}
+
+	inline void InputProvider::SetMouseButtons(u32 buttons) noexcept
+	{
+		currentButtons = buttons;
 	}
 
 	inline void InputProvider::SetMousePosition(const Vector2D<i32>& position) noexcept

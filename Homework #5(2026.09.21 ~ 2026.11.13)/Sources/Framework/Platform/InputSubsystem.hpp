@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <unordered_map>
 
@@ -7,8 +7,12 @@
 #endif
 
 #include <windows.h>
+#include <wrl.h>
+
+#include <GameInput.h>
 
 #include "../Core/AppSubsystem.hpp"
+#include "../Core/Common.hpp"
 
 #include "DisplayEvents.hpp"
 #include "InputEvents.hpp"
@@ -37,24 +41,40 @@ namespace TUK::Framework
 		void OnCreate(const DisplayCreateEvent& event);
 		void OnClose(const DisplayCloseEvent& event);
 		void OnFocus(const DisplayFocusEvent& event);
-		void OnKey(const KeyInterectEvent& event);
-		void OnButton(const ButtonInterectEvent& event);
-		void OnMouseMove(const MouseMoveEvent& event);
-		void OnMouseWheel(const MouseWheelEvent& event);
-		void OnMouseRawInput(const MouseRawInputEvent& event);
 		void OnActivation(const InputActivationEvent& event);
 
+		[[nodiscard]] const InputProvider* GetProvider() const noexcept;
 		[[nodiscard]] const InputProvider* GetProvider(const Display& display) const noexcept;
 
 	private:
-		HWND mouseWindow = nullptr;
-		const Display* activeDisplay = nullptr;
+		void PollKeyboard(InputProvider& provider) noexcept;
+		void PollMouse(InputProvider& provider) noexcept;
+
+		ComPtr<IGameInput> gameInput;
+
+		const Display* activeDisplay;
+		
 		std::unordered_map<const Display*, InputProvider> providers;
+
+		bool hasMouseHistory;
+		Vector2D<i32> lastMousePosition;
+		Vector2D<i32> lastMouseWheel;
 	};
 
 	inline InputSubsystem::InputSubsystem() noexcept
 		: AppSubsystem(0)
+		, gameInput(nullptr)
+		, activeDisplay(nullptr)
+		, providers()
+		, hasMouseHistory(false)
+		, lastMousePosition()
+		, lastMouseWheel()
 	{
+	}
+
+	inline const InputProvider* InputSubsystem::GetProvider() const noexcept
+	{
+		return activeDisplay ? GetProvider(*activeDisplay) : nullptr;
 	}
 
 	inline const InputProvider* InputSubsystem::GetProvider(const Display& display) const noexcept

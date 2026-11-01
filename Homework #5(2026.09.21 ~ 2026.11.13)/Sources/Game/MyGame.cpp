@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "MyGame.hpp"
 
 #include "../Framework/Platform.hpp"
@@ -22,11 +22,6 @@ namespace TUK::Game
 			return status;
 		}
 
-		eventSubsystem->AddListener<KeyInterectEvent>(inputSubsystem, &InputSubsystem::OnKey);
-		eventSubsystem->AddListener<ButtonInterectEvent>(inputSubsystem, &InputSubsystem::OnButton);
-		eventSubsystem->AddListener<MouseMoveEvent>(inputSubsystem, &InputSubsystem::OnMouseMove);
-		eventSubsystem->AddListener<MouseWheelEvent>(inputSubsystem, &InputSubsystem::OnMouseWheel);
-		eventSubsystem->AddListener<MouseRawInputEvent>(inputSubsystem, &InputSubsystem::OnMouseRawInput);
 		eventSubsystem->AddListener<InputActivationEvent>(inputSubsystem, &InputSubsystem::OnActivation);
 		eventSubsystem->AddListener<DisplayCreateEvent>(inputSubsystem, &InputSubsystem::OnCreate);
 		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnClose);

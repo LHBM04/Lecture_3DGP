@@ -1,10 +1,7 @@
 #include "Precompiled.hpp"
 #include "InputSubsystem.hpp"
 
-#include "../Core/Engine.hpp"
-
 #include "Display.hpp"
-#include "EventSubsystem.hpp"
 
 namespace TUK::Framework
 {
@@ -13,13 +10,14 @@ namespace TUK::Framework
 		providers.clear();
 		activeDisplay = nullptr;
 		mouseWindow = nullptr;
+		hasMouseHistory = false;
 
-		const RAWINPUTDEVICE MOUSE{ 0x01, 0x02, 0, nullptr };
-		if (!RegisterRawInputDevices(&MOUSE, 1, sizeof(MOUSE)))
+		if (FAILED(GameInputCreate(&gameInput)))
 		{
 			return SystemStatus::FAILURE;
 		}
 
+		gameInput->SetFocusPolicy(GameInputDisableBackgroundInput);
 		return SystemStatus::CONTINUE;
 	}
 
@@ -32,23 +30,16 @@ namespace TUK::Framework
 		}
 
 		InputProvider& provider = it->second;
-		if (!mouseWindow || !IsWindow(mouseWindow) || GetForegroundWindow() != mouseWindow)
+		if (GetForegroundWindow() != activeDisplay->GetHWND())
 		{
 			provider.Reset();
+			hasMouseHistory = false;
 			return SystemStatus::CONTINUE;
 		}
 
-		if (EventSubsystem* events = Engine::GetInstance().GetSubsystem<EventSubsystem>())
-		{
-			for (u32 code = 0; code <= 0xFEu; ++code)
-			{
-				const KeyCode KEY = static_cast<KeyCode>(code);
-				if (provider.IsKeyHeld(KEY))
-				{
-					events->DispatchEvent(KeyInterectEvent{ { *activeDisplay }, KEY, InputAction::HELD });
-				}
-			}
-		}
+		provider.Update();
+		PollKeyboard(provider);
+		PollMouse(provider);
 
 		return SystemStatus::CONTINUE;
 	}
@@ -65,22 +56,15 @@ namespace TUK::Framework
 
 	SystemStatus InputSubsystem::OnLateUpdate()
 	{
-		for (InputProvider& provider : providers | std::views::values)
-		{
-			provider.Update();
-		}
-
 		return SystemStatus::CONTINUE;
 	}
 
 	void InputSubsystem::OnShutdown()
 	{
-		const RAWINPUTDEVICE MOUSE{ 0x01, 0x02, RIDEV_REMOVE, nullptr };
-		RegisterRawInputDevices(&MOUSE, 1, sizeof(MOUSE));
-
-		mouseWindow = nullptr;
+		gameInput.Reset();
 		activeDisplay = nullptr;
 		providers.clear();
+		hasMouseHistory = false;
 	}
 
 	void InputSubsystem::AddProvider(const Display& display)
@@ -89,7 +73,7 @@ namespace TUK::Framework
 		if (display.GetHWND() == GetFocus())
 		{
 			activeDisplay = &display;
-			mouseWindow = display.GetHWND();
+			hasMouseHistory = false;
 		}
 	}
 
@@ -98,7 +82,7 @@ namespace TUK::Framework
 		if (activeDisplay == &display)
 		{
 			activeDisplay = nullptr;
-			mouseWindow = nullptr;
+			hasMouseHistory = false;
 		}
 		providers.erase(&display);
 	}
@@ -122,12 +106,13 @@ namespace TUK::Framework
 		}
 
 		it->second.Reset();
+		hasMouseHistory = false;
+
 		if (!event.isFocused)
 		{
 			if (activeDisplay == &event.display)
 			{
 				activeDisplay = nullptr;
-				mouseWindow = nullptr;
 			}
 			return;
 		}
@@ -138,77 +123,6 @@ namespace TUK::Framework
 		}
 
 		activeDisplay = &event.display;
-		mouseWindow = event.display.GetHWND();
-	}
-
-	void InputSubsystem::OnKey(const KeyInterectEvent& event)
-	{
-		const auto it = providers.find(&event.display);
-		if (it == providers.end())
-		{
-			return;
-		}
-
-		InputProvider& provider = it->second;
-		const bool IS_DOWN = event.action != InputAction::RELEASED;
-		provider.SetKey(event.key, IS_DOWN);
-
-		if (event.key == KeyCode::LEFT_SHIFT || event.key == KeyCode::RIGHT_SHIFT)
-		{
-			provider.SetKey(KeyCode::SHIFT, provider.IsKeyHeld(KeyCode::LEFT_SHIFT) || provider.IsKeyHeld(KeyCode::RIGHT_SHIFT));
-		}
-		else if (event.key == KeyCode::LEFT_CONTROL || event.key == KeyCode::RIGHT_CONTROL)
-		{
-			provider.SetKey(KeyCode::CONTROL, provider.IsKeyHeld(KeyCode::LEFT_CONTROL) || provider.IsKeyHeld(KeyCode::RIGHT_CONTROL));
-		}
-		else if (event.key == KeyCode::LEFT_ALT || event.key == KeyCode::RIGHT_ALT)
-		{
-			provider.SetKey(KeyCode::ALT, provider.IsKeyHeld(KeyCode::LEFT_ALT) || provider.IsKeyHeld(KeyCode::RIGHT_ALT));
-		}
-	}
-
-	void InputSubsystem::OnButton(const ButtonInterectEvent& event)
-	{
-		const auto it = providers.find(&event.display);
-		if (it == providers.end())
-		{
-			return;
-		}
-
-		it->second.SetMouseButton(event.button, event.action == InputAction::PRESSED);
-	}
-
-	void InputSubsystem::OnMouseMove(const MouseMoveEvent& event)
-	{
-		const auto it = providers.find(&event.display);
-		if (it == providers.end())
-		{
-			return;
-		}
-
-		it->second.SetMousePosition(event.position);
-	}
-
-	void InputSubsystem::OnMouseWheel(const MouseWheelEvent& event)
-	{
-		const auto it = providers.find(&event.display);
-		if (it == providers.end())
-		{
-			return;
-		}
-
-		it->second.AddMouseWheelDelta(event.wheelDelta);
-	}
-
-	void InputSubsystem::OnMouseRawInput(const MouseRawInputEvent& event)
-	{
-		const auto it = providers.find(&event.display);
-		if (it == providers.end())
-		{
-			return;
-		}
-
-		it->second.AddMousePositionDelta(event.delta);
 	}
 
 	void InputSubsystem::OnActivation(const InputActivationEvent& event)
@@ -219,6 +133,89 @@ namespace TUK::Framework
 			{
 				provider.Reset();
 			}
+			hasMouseHistory = false;
 		}
+	}
+
+	void InputSubsystem::PollKeyboard(InputProvider& provider) noexcept
+	{
+		ComPtr<IGameInputReading> reading;
+		if (FAILED(gameInput->GetCurrentReading(GameInputKindKeyboard, nullptr, &reading)))
+		{
+			return;
+		}
+
+		const u32 KEY_COUNT = reading->GetKeyCount();
+		if (KEY_COUNT == 0)
+		{
+			return;
+		}
+
+		std::array<GameInputKeyState, 32> keyStates{};
+		const u32 READ_COUNT = reading->GetKeyState(
+			std::min(KEY_COUNT, static_cast<u32>(keyStates.size())),
+			keyStates.data());
+
+		for (u32 i = 0; i < READ_COUNT; ++i)
+		{
+			const KeyCode KEY = static_cast<KeyCode>(keyStates[i].virtualKey);
+			provider.SetKey(KEY, true);
+		}
+
+		provider.SetKey(
+			KeyCode::SHIFT,
+			provider.IsKeyHeld(KeyCode::LEFT_SHIFT) || provider.IsKeyHeld(KeyCode::RIGHT_SHIFT));
+		provider.SetKey(
+			KeyCode::CONTROL,
+			provider.IsKeyHeld(KeyCode::LEFT_CONTROL) || provider.IsKeyHeld(KeyCode::RIGHT_CONTROL));
+		provider.SetKey(
+			KeyCode::ALT,
+			provider.IsKeyHeld(KeyCode::LEFT_ALT) || provider.IsKeyHeld(KeyCode::RIGHT_ALT));
+	}
+
+	void InputSubsystem::PollMouse(InputProvider& provider) noexcept
+	{
+		POINT cursorPos{};
+		if (GetCursorPos(&cursorPos) && ScreenToClient(activeDisplay->GetHWND(), &cursorPos))
+		{
+			provider.SetMousePosition({ cursorPos.x, cursorPos.y });
+		}
+
+		ComPtr<IGameInputReading> reading;
+		if (FAILED(gameInput->GetCurrentReading(GameInputKindMouse, nullptr, &reading)))
+		{
+			hasMouseHistory = false;
+			return;
+		}
+
+		GameInputMouseState mouseState{};
+		if (!reading->GetMouseState(&mouseState))
+		{
+			return;
+		}
+
+		provider.SetMouseButtons(static_cast<u32>(mouseState.buttons));
+
+		const Vector2D<i32> CURRENT_POS{
+			static_cast<i32>(mouseState.positionX),
+			static_cast<i32>(mouseState.positionY)
+		};
+		const Vector2D<i32> CURRENT_WHEEL{
+			static_cast<i32>(mouseState.wheelX),
+			static_cast<i32>(mouseState.wheelY)
+		};
+
+		if (hasMouseHistory)
+		{
+			const Vector2D<i32> POS_DELTA = CURRENT_POS - lastMousePosition;
+			const Vector2D<i32> WHEEL_OFFSET = CURRENT_WHEEL - lastMouseWheel;
+
+			provider.AddMousePositionDelta(POS_DELTA);
+			provider.AddMouseWheelDelta(WHEEL_OFFSET);
+		}
+
+		lastMousePosition = CURRENT_POS;
+		lastMouseWheel = CURRENT_WHEEL;
+		hasMouseHistory = true;
 	}
 }

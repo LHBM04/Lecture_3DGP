@@ -179,7 +179,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)External\Libraries\$(ExternalTriplet)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gameinput.lib;dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="CopyDXCBinaries" AfterTargets="Build">

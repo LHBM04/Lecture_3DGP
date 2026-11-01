@@ -1,7 +1,11 @@
-#pragma once
+﻿#pragma once
+
+#if defined(_M_IX86)
+    #error "?대떦 ?꾨줈?앺듃??x64 ?뚮옯?쇱뿉?쒕쭔 鍮뚮뱶 諛??ㅽ뻾 媛?ν빀?덈떎!"
+#endif
 
 #ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
+	#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include <algorithm>
@@ -45,10 +49,11 @@
 #include <vector>
 
 #ifndef NOMINMAX
-#define NOMINMAX
+	#define NOMINMAX
 #endif
+
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN
 #endif
 
 #include <windows.h>
@@ -58,8 +63,10 @@
 
 #include <wrl.h>
 
+#include <GameInput.h>
+
 #ifndef _CRTDBG_MAP_ALLOC
-#define _CRTDBG_MAP_ALLOC
+	#define _CRTDBG_MAP_ALLOC
 #endif
 
 #include <crtdbg.h>
