@@ -1,13 +1,14 @@
 ﻿#pragma once
 
+#include <expected>
 #include <memory_resource>
+#include <string>
 #include <utility>
 #include <vector>
 
-#include <wrl.h>
+#include <wrl/client.h>
 
 #include <directx/d3d12.h>
-
 #include <dxgi1_6.h>
 
 #include "../Core/Common.hpp"
@@ -17,18 +18,17 @@
 
 namespace TUK::Framework
 {
-	struct GPUSwapChainProperties final
-	{
-		ComPtr<IDXGISwapChain4> dxgiSwapChain;
-		ComPtr<ID3D12DescriptorHeap> d3dDescriptorHeap;
-		std::pmr::vector<GPUTexture> backBuffers;
-		u32 rtvDescriptorSize;
-	};
+	class Display;
+	class GPUDevice;
 
 	class GPUSwapChain
 	{
 	public:
-		explicit GPUSwapChain(GPUSwapChainProperties&& properties) noexcept;
+		[[nodiscard]] static std::expected<GPUSwapChain, std::string> Create(
+			const GPUDevice& device,
+			const Display& display,
+			const DXGI_SWAP_CHAIN_DESC1& description);
+
 		~GPUSwapChain() noexcept = default;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
@@ -43,24 +43,32 @@ namespace TUK::Framework
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
 
 	private:
+		GPUSwapChain(
+			ComPtr<IDXGISwapChain4> dxgiSwapChain,
+			ComPtr<ID3D12DescriptorHeap> rtvHeap,
+			std::pmr::vector<GPUTexture>&& backBuffers,
+			u32 rtvDescriptorSize) noexcept;
+
 		ComPtr<IDXGISwapChain4> dxgiSwapChain;
-
-		std::pmr::vector<GPUTexture> backBuffers;
-
 		ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		std::pmr::vector<GPUTexture> backBuffers;
 		u32 rtvDescriptorSize;
 	};
-
-	inline GPUSwapChain::GPUSwapChain(GPUSwapChainProperties&& properties) noexcept
-		: dxgiSwapChain(std::move(properties.dxgiSwapChain))
-		, backBuffers(std::move(properties.backBuffers))
-		, rtvHeap(std::move(properties.d3dDescriptorHeap))
-		, rtvDescriptorSize(properties.rtvDescriptorSize)
-	{
-	}
 
 	inline IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
 	{
 		return *dxgiSwapChain.Get();
+	}
+
+	inline GPUSwapChain::GPUSwapChain(
+		ComPtr<IDXGISwapChain4> dxgiSwapChain,
+		ComPtr<ID3D12DescriptorHeap> rtvHeap,
+		std::pmr::vector<GPUTexture>&& backBuffers,
+		u32 rtvDescriptorSize) noexcept
+		: dxgiSwapChain(std::move(dxgiSwapChain))
+		, rtvHeap(std::move(rtvHeap))
+		, backBuffers(std::move(backBuffers))
+		, rtvDescriptorSize(rtvDescriptorSize)
+	{
 	}
 }

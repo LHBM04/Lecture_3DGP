@@ -1,10 +1,11 @@
 ﻿#pragma once
 
+#include <functional>
+#include <memory_resource>
 #include <optional>
-
-#include <wrl.h>
-
-#include <dxgi1_6.h>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
@@ -44,16 +45,11 @@ namespace TUK::Framework
 		void OnDisplayCreated(const DisplayCreateEvent& event);
 		void OnDisplayClosed(const DisplayCloseEvent& event);
 
-		[[nodiscard]] GPUDevice& GetDevice();
-		[[nodiscard]] const GPUDevice& GetDevice() const;
+		[[nodiscard]] GPUDevice& GetDevice() noexcept;
+		[[nodiscard]] const GPUDevice& GetDevice() const noexcept;
 
 	private:
 		void AddListener(RenderCallback callback);
-
-		std::expected<GPUDevice, std::string> CreateGPUDevice();
-		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(const Display& display, const DXGI_SWAP_CHAIN_DESC1& description);
-
-		ComPtr<IDXGIFactory6> dxgiFactory;
 
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
@@ -66,16 +62,6 @@ namespace TUK::Framework
 	inline RenderSubsystem::RenderSubsystem() noexcept
 		: EngineSubsystem(20)
 	{
-	}
-
-	inline GPUDevice& RenderSubsystem::GetDevice()
-	{
-		return device.value();
-	}
-
-	inline const GPUDevice& RenderSubsystem::GetDevice() const
-	{
-		return device.value();
 	}
 
 	template <class TInstance>
@@ -96,5 +82,15 @@ namespace TUK::Framework
 			{
 				(listener->*callback)(commandBuffer);
 			});
+	}
+
+	inline GPUDevice& RenderSubsystem::GetDevice() noexcept
+	{
+		return *device;
+	}
+
+	inline const GPUDevice& RenderSubsystem::GetDevice() const noexcept
+	{
+		return *device;
 	}
 }

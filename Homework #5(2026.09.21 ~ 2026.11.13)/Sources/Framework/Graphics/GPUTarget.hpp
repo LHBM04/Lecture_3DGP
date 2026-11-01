@@ -1,22 +1,15 @@
 ﻿#pragma once
 
-#include <d3d12.h>
+#include <directx/d3d12.h>
 
 namespace TUK::Framework
 {
 	class GPUTexture;
 
-	struct GPUTargetProperties final
-	{
-		const GPUTexture* texture;
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
-		DXGI_FORMAT format;
-	};
-
 	class GPUTarget
 	{
 	public:
-		explicit GPUTarget(const GPUTargetProperties& properties) noexcept;
+		GPUTarget(const GPUTexture& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept;
 		~GPUTarget() noexcept = default;
 
 		GPUTarget(const GPUTarget&) = delete;
@@ -35,10 +28,10 @@ namespace TUK::Framework
 		DXGI_FORMAT format;
 	};
 
-	inline GPUTarget::GPUTarget(const GPUTargetProperties& properties) noexcept
-		: texture(properties.texture)
-		, rtvHandle(properties.rtvHandle)
-		, format(properties.format)
+	inline GPUTarget::GPUTarget(const GPUTexture& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept
+		: texture(&texture)
+		, rtvHandle(rtvHandle)
+		, format(format)
 	{
 	}
 

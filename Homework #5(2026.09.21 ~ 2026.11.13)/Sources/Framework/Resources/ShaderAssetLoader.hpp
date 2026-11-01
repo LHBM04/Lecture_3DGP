@@ -1,9 +1,9 @@
 ﻿#pragma once
 
+#include "../Core/Common.hpp"
+
 #include "AssetLoader.hpp"
 #include "ShaderAsset.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -14,13 +14,15 @@ namespace TUK::Framework
 	public:
 		using AssetType = ShaderAsset;
 
-		explicit ShaderAssetLoader(const GPUDevice& device) noexcept;
+		ShaderAssetLoader() noexcept = default;
+		explicit ShaderAssetLoader([[maybe_unused]] const GPUDevice& device) noexcept;
 		~ShaderAssetLoader() noexcept override = default;
 
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
 			const std::filesystem::path& path) const override;
-
-	private:
-		const GPUDevice& device;
 	};
+
+	inline ShaderAssetLoader::ShaderAssetLoader([[maybe_unused]] const GPUDevice& device) noexcept
+	{
+	}
 }

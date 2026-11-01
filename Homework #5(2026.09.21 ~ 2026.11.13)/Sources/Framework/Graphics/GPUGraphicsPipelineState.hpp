@@ -1,19 +1,26 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
 #include <utility>
 
-#include <directx/d3d12.h>
-
 #include <wrl/client.h>
+
+#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
+	class GPUDevice;
+
 	class GPUGraphicsPipelineState
 	{
 	public:
-		explicit GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;
+		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> Create(
+			const GPUDevice& device,
+			const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description);
+
 		~GPUGraphicsPipelineState() noexcept = default;
 
 		GPUGraphicsPipelineState(const GPUGraphicsPipelineState&) = delete;
@@ -25,16 +32,18 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12PipelineState& GetD3DPipelineState() const noexcept;
 
 	private:
+		explicit GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;
+
 		ComPtr<ID3D12PipelineState> d3dPipelineState;
 	};
-
-	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
-		: d3dPipelineState(std::move(d3dPipelineState))
-	{
-	}
 
 	inline ID3D12PipelineState& GPUGraphicsPipelineState::GetD3DPipelineState() const noexcept
 	{
 		return *d3dPipelineState.Get();
+	}
+
+	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
+		: d3dPipelineState(std::move(d3dPipelineState))
+	{
 	}
 }

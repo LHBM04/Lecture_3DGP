@@ -1,16 +1,16 @@
 ﻿#pragma once
 
 #include <cassert>
-#include <cstdint>
+#include <expected>
 #include <filesystem>
+#include <string>
 #include <utility>
-
-#include <directx/d3d12.h>
-#include <directx/d3dx12.h>
 
 #include <wrl/client.h>
 
-#include <dxcapi.h>
+#include <directx/d3d12.h>
+#include <directx/d3dx12.h>
+#include <directx-dxc/dxcapi.h>
 
 #include "../Core/Common.hpp"
 
@@ -18,9 +18,12 @@ namespace TUK::Framework
 {
 	class GPUShader
 	{
-		friend class GPUDevice;
-		
 	public:
+		[[nodiscard]] static std::expected<GPUShader, std::string> Create(
+			const std::filesystem::path& path,
+			LPCTSTR target,
+			LPCTSTR entryPoint);
+
 		~GPUShader() noexcept = default;
 
 		GPUShader(const GPUShader&) = delete;
@@ -33,9 +36,9 @@ namespace TUK::Framework
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
 
 	private:
-		GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept;
+		explicit GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept;
 
-		Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob;
+		ComPtr<IDxcBlob> dxcBlob;
 	};
 
 	inline IDxcBlob& GPUShader::GetDXCBlob() const noexcept
@@ -50,7 +53,7 @@ namespace TUK::Framework
 		return CD3DX12_SHADER_BYTECODE(dxcBlob->GetBufferPointer(), dxcBlob->GetBufferSize());
 	}
 
-	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept
+	inline GPUShader::GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept
 		: dxcBlob(std::move(dxcBlob))
 	{
 	}

@@ -17,11 +17,11 @@ namespace TUK::Game
 	void World_Stage::OnEnter()
 	{
 		Entity& cameraEntity = CreateEntity("Camera", "Main Camera");
-		cameraEntity.AddComponent<Transform>()->SetLocalPosition(Vector3D<float>(0.0f, 0.0f, -2.0f));
+		cameraEntity.AddComponent<Transform>()->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -2.0f));
 
 		Camera* camera = cameraEntity.AddComponent<Camera>();
-		camera->SetViewport(D3D12_VIEWPORT{ 0.0f, 0.0f, 1280.0f, 960.0f, 0.0f, 1.0f });
-		camera->SetScissorRect(D3D12_RECT{ 0, 0, 1280, 960 });
+		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
+		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 	}
 
 	void World_Stage::OnUpdate()

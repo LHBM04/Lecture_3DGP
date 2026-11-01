@@ -1,13 +1,13 @@
 ﻿#include "Precompiled.hpp"
 #include "MaterialAsset.hpp"
 
-#include <cstdint>
 #include <limits>
 #include <utility>
 
 #include <directxtk12/VertexTypes.h>
 
 #include "../Graphics/GPUDevice.hpp"
+#include "../Graphics/GPUGraphicsPipelineState.hpp"
 
 #include "ShaderAsset.hpp"
 
@@ -15,8 +15,11 @@ namespace TUK::Framework
 {
 	std::expected<MaterialAsset, std::string> MaterialAsset::Create(
 		const GPUDevice& device,
-		const ShaderAsset& vertexShader, const ShaderAsset& pixelShader,
-		DXGI_FORMAT targetFormat, D3D12_CULL_MODE cullMode, D3D12_FILL_MODE fillMode)
+		const ShaderAsset& vertexShader,
+		const ShaderAsset& pixelShader,
+		DXGI_FORMAT targetFormat,
+		D3D12_CULL_MODE cullMode,
+		D3D12_FILL_MODE fillMode)
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineInfo{};
 		pipelineInfo.VS = vertexShader.GetShader().GetD3DBytecode();
@@ -33,11 +36,13 @@ namespace TUK::Framework
 		pipelineInfo.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		pipelineInfo.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		pipelineInfo.DepthStencilState.DepthEnable = FALSE;
-		auto pipeline = device.CreateGPUGraphicsPipelineState(pipelineInfo);
+
+		auto pipeline = GPUGraphicsPipelineState::Create(device, pipelineInfo);
 		if (!pipeline)
 		{
 			return std::unexpected(pipeline.error());
 		}
+
 		return MaterialAsset(std::move(*pipeline), targetFormat, cullMode, fillMode);
 	}
 }

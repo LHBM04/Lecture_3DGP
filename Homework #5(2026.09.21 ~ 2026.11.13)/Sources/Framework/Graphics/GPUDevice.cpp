@@ -1,209 +1,129 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUDevice.hpp"
 
+#include <array>
+#include <format>
+
 namespace TUK::Framework
 {
-	std::expected<GPUBuffer, std::string> GPUDevice::CreateGPUBuffer(const D3D12_HEAP_PROPERTIES& heapProperties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initialState) const
+	std::expected<GPUDevice, std::string> GPUDevice::Create()
 	{
-		if (!d3dDevice)
+		UINT factoryFlags = 0;
+
+#ifdef _DEBUG
+		ComPtr<ID3D12Debug> debugController;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
 		{
-			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
+			debugController->EnableDebugLayer();
+			factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+		}
+#endif
+
+		ComPtr<IDXGIFactory6> dxgiFactory;
+		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf()))))
+		{
+			return std::unexpected("DXGI Factory 생성 실패!");
 		}
 
-		if (description.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER || description.Width == 0
-			|| description.Width > std::numeric_limits<usize>::max())
+		for (UINT adapterIndex = 0; ; ++adapterIndex)
 		{
-			return std::unexpected("GPUBuffer 크기 또는 리소스 형식이 유효하지 않습니다.");
-		}
-
-		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		if (FAILED(d3dDevice->CreateCommittedResource(
-			&heapProperties,
-			D3D12_HEAP_FLAG_NONE,
-			&description,
-			initialState,
-			nullptr,
-			IID_PPV_ARGS(resource.GetAddressOf()))))
-		{
-			return std::unexpected("GPUBuffer 리소스 생성에 실패했습니다.");
-		}
-
-		return GPUBuffer(GPUBufferProperties{ std::move(resource), heapProperties.Type });
-	}
-
-	std::expected<GPUMesh, std::string> GPUDevice::CreateGPUMesh(
-		GPUBuffer vertexBuffer,
-		u32 vertexStride,
-		GPUBuffer indexBuffer,
-		DXGI_FORMAT indexFormat,
-		D3D12_PRIMITIVE_TOPOLOGY topology) const
-	{
-		if (vertexStride == 0 || vertexBuffer.GetSizeInBytes() == 0
-			|| vertexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
-			|| vertexBuffer.GetSizeInBytes() % vertexStride != 0)
-		{
-			return std::unexpected("정점 버퍼 크기 또는 스트라이드가 유효하지 않습니다.");
-		}
-		if (indexFormat != DXGI_FORMAT_R16_UINT && indexFormat != DXGI_FORMAT_R32_UINT)
-		{
-			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
-		}
-		const u32 INDEX_SIZE = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		if (indexBuffer.GetSizeInBytes() == 0
-			|| indexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
-			|| indexBuffer.GetSizeInBytes() % INDEX_SIZE != 0)
-		{
-			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
-		}
-
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-		vertexBufferView.BufferLocation = vertexBuffer.GetGPUVirtualAddress();
-		vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBuffer.GetSizeInBytes());
-		vertexBufferView.StrideInBytes = vertexStride;
-
-		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-		indexBufferView.BufferLocation = indexBuffer.GetGPUVirtualAddress();
-		indexBufferView.SizeInBytes = static_cast<UINT>(indexBuffer.GetSizeInBytes());
-		indexBufferView.Format = indexFormat;
-
-		return GPUMesh(GPUMeshProperties{ std::move(vertexBuffer), vertexBufferView, std::move(indexBuffer), indexBufferView, topology });
-	}
-
-	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(
-		const std::filesystem::path& path, LPCTSTR target, LPCTSTR entryPoint) const
-	{
-		ComPtr<IDxcUtils> utils;
-		ComPtr<IDxcCompiler3> compiler;
-		ComPtr<IDxcIncludeHandler> includeHandler;
-		if (FAILED(DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(utils.GetAddressOf())))
-			|| FAILED(DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(compiler.GetAddressOf())))
-			|| FAILED(utils->CreateDefaultIncludeHandler(includeHandler.GetAddressOf())))
-		{
-			return std::unexpected("DXC 초기화에 실패했습니다.");
-		}
-
-		ComPtr<IDxcBlobEncoding> source;
-		HRESULT result = utils->LoadFile(path.c_str(), nullptr, source.GetAddressOf());
-		if (FAILED(result))
-		{
-			return std::unexpected(std::format("셰이더 파일 읽기 실패: {}, HRESULT: 0x{:08X}", path.string(), static_cast<u32>(result)));
-		}
-
-		const std::filesystem::path includeDirectory = path.has_parent_path() ? path.parent_path() : TEXT(".");
-		LPCTSTR arguments[] =
-		{
-			path.c_str(), TEXT("-E"), entryPoint, TEXT("-T"), target,
-			TEXT("-I"), includeDirectory.c_str(), TEXT("-Ges"), TEXT("-WX"), TEXT("-HV"), TEXT("2018")
-		};
-		BOOL knownEncoding = FALSE;
-		UINT32 codePage = DXC_CP_UTF8;
-		source->GetEncoding(&knownEncoding, &codePage);
-		const DxcBuffer SOURCE_BUFFER{ source->GetBufferPointer(), source->GetBufferSize(), knownEncoding ? codePage : DXC_CP_UTF8 };
-		ComPtr<IDxcResult> compilation;
-		result = compiler->Compile(&SOURCE_BUFFER, arguments, static_cast<UINT32>(std::size(arguments)),
-			includeHandler.Get(), IID_PPV_ARGS(compilation.GetAddressOf()));
-		if (FAILED(result))
-		{
-			return std::unexpected(std::format("DXC 호출 실패: 0x{:08X}", static_cast<u32>(result)));
-		}
-
-		HRESULT status = E_FAIL;
-		result = compilation->GetStatus(&status);
-		if (FAILED(result) || FAILED(status))
-		{
-			std::string message = std::format("GPUShader 컴파일 실패: {}, HRESULT: 0x{:08X}",
-				path.string(), static_cast<u32>(FAILED(result) ? result : status));
-			ComPtr<IDxcBlobUtf8> errors;
-			if (SUCCEEDED(compilation->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errors.GetAddressOf()), nullptr))
-				&& errors && errors->GetStringLength() > 0)
+			ComPtr<IDXGIAdapter1> adapter;
+			if (FAILED(dxgiFactory->EnumAdapters1(adapterIndex, adapter.GetAddressOf())))
 			{
-				message += '\n';
-				message.append(errors->GetStringPointer(), errors->GetStringLength());
+				break;
 			}
-			return std::unexpected(std::move(message));
+
+			DXGI_ADAPTER_DESC1 adapterDescription{};
+			adapter->GetDesc1(&adapterDescription);
+			if (adapterDescription.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+			{
+				continue;
+			}
+
+			ComPtr<ID3D12Device> d3dDevice;
+			if (FAILED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(d3dDevice.GetAddressOf()))))
+			{
+				continue;
+			}
+
+			D3D12_COMMAND_QUEUE_DESC queueDescription{};
+			queueDescription.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+			queueDescription.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+			queueDescription.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+			queueDescription.NodeMask = 0;
+
+			ComPtr<ID3D12CommandQueue> d3dCommandQueue;
+			if (FAILED(d3dDevice->CreateCommandQueue(&queueDescription, IID_PPV_ARGS(d3dCommandQueue.GetAddressOf()))))
+			{
+				return std::unexpected("D3D12 Command Queue 생성 실패!");
+			}
+
+			constexpr u32 CONSTANT_BUFFER_SLOT_COUNT = 3;
+			std::array<CD3DX12_ROOT_PARAMETER1, CONSTANT_BUFFER_SLOT_COUNT> parameters{};
+			for (u32 index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
+			{
+				parameters[index].InitAsConstantBufferView(
+					index,
+					0,
+					D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE);
+			}
+
+			CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription{};
+			rootSignatureDescription.Init_1_1(
+				CONSTANT_BUFFER_SLOT_COUNT,
+				parameters.data(),
+				0,
+				nullptr,
+				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+			ComPtr<ID3DBlob> serializedBlob;
+			ComPtr<ID3DBlob> errorBlob;
+			const HRESULT serializeResult = D3DX12SerializeVersionedRootSignature(
+				&rootSignatureDescription,
+				D3D_ROOT_SIGNATURE_VERSION_1_1,
+				serializedBlob.GetAddressOf(),
+				errorBlob.GetAddressOf());
+			if (FAILED(serializeResult))
+			{
+				std::string message = std::format(
+					"공통 루트 시그니처 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
+					static_cast<u32>(serializeResult));
+				if (errorBlob && errorBlob->GetBufferSize() > 0)
+				{
+					const char* text = static_cast<const char*>(errorBlob->GetBufferPointer());
+					usize length = errorBlob->GetBufferSize();
+					if (text[length - 1] == '\0')
+					{
+						--length;
+					}
+
+					message += '\n';
+					message.append(text, length);
+				}
+
+				return std::unexpected(std::move(message));
+			}
+
+			ComPtr<ID3D12RootSignature> d3dRootSignature;
+			const HRESULT createResult = d3dDevice->CreateRootSignature(
+				0,
+				serializedBlob->GetBufferPointer(),
+				serializedBlob->GetBufferSize(),
+				IID_PPV_ARGS(d3dRootSignature.GetAddressOf()));
+			if (FAILED(createResult))
+			{
+				return std::unexpected(std::format(
+					"공통 루트 시그니처 생성에 실패했습니다. HRESULT: 0x{:08X}",
+					static_cast<u32>(createResult)));
+			}
+
+			return GPUDevice(
+				std::move(dxgiFactory),
+				std::move(d3dDevice),
+				std::move(d3dCommandQueue),
+				std::move(d3dRootSignature));
 		}
 
-		ComPtr<IDxcBlob> object;
-		result = compilation->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(object.GetAddressOf()), nullptr);
-		if (FAILED(result) || !object || object->GetBufferSize() == 0)
-		{
-			return std::unexpected("DXC 셰이더 바이트코드를 가져오지 못했습니다.");
-		}
-		return GPUShader(std::move(object));
-	}
-	std::expected<GPUCommandBuffer, std::string> GPUDevice::CreateGPUCommandBuffer() const
-	{
-		if (!d3dDevice)
-		{
-			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
-		}
-
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
-		if (FAILED(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(d3dCommandAllocator.GetAddressOf()))))
-		{
-			return std::unexpected("D3D12 Command Allocator 생성에 실패했습니다.");
-		}
-
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
-		if (FAILED(d3dDevice->CreateCommandList(
-			0,
-			D3D12_COMMAND_LIST_TYPE_DIRECT,
-			d3dCommandAllocator.Get(),
-			nullptr,
-			IID_PPV_ARGS(d3dCommandList.GetAddressOf()))))
-		{
-			return std::unexpected("D3D12 Command List 생성에 실패했습니다.");
-		}
-
-		if (FAILED(d3dCommandList->Close()))
-		{
-			return std::unexpected("D3D12 Command List 초기 Close에 실패했습니다.");
-		}
-
-		return GPUCommandBuffer(*this, GPUCommandBufferProperties{ std::move(d3dCommandList), std::move(d3dCommandAllocator) });
-	}
-
-	std::expected<GPUGraphicsPipelineState, std::string> GPUDevice::CreateGPUGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description) const
-	{
-		if (!d3dDevice)
-		{
-			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
-		}
-
-		if (!d3dRootSignature)
-		{
-			return std::unexpected("공통 루트 시그니처가 초기화되지 않았습니다.");
-		}
-
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDescription = description;
-		pipelineDescription.pRootSignature = d3dRootSignature.Get();
-
-		ComPtr<ID3D12PipelineState> d3dPipelineState;
-		const HRESULT result = d3dDevice->CreateGraphicsPipelineState(
-			&pipelineDescription, IID_PPV_ARGS(d3dPipelineState.GetAddressOf()));
-		if (FAILED(result))
-		{
-			return std::unexpected(std::format(
-				"GPUGraphicsPipelineState 생성에 실패했습니다. HRESULT: 0x{:08X}",
-				static_cast<std::uint32_t>(result)));
-		}
-
-		return GPUGraphicsPipelineState(std::move(d3dPipelineState));
-	}
-
-	std::expected<GPUFence, std::string> GPUDevice::CreateGPUFence() const
-	{
-		if (!d3dDevice)
-		{
-			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
-		}
-
-		ComPtr<ID3D12Fence> d3dFence;
-		if (FAILED(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(d3dFence.GetAddressOf()))))
-		{
-			return std::unexpected("D3D12 Fence 생성에 실패했습니다.");
-		}
-
-		return GPUFence(std::move(d3dFence));
+		return std::unexpected("GPU 장치 생성 실패!");
 	}
 }

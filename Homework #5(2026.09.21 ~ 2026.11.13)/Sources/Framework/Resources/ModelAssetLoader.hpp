@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <cstddef>
-#include <cstdint>
 #include <expected>
 #include <filesystem>
 #include <memory>
@@ -10,12 +8,12 @@
 
 #include <directxtk12/VertexTypes.h>
 
+#include "../Core/Common.hpp"
+
+#include "../Graphics/GPUMesh.hpp"
+
 #include "AssetLoader.hpp"
 #include "ModelAsset.hpp"
-
-#include "Framework/Graphics/GPUMesh.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -34,7 +32,6 @@ namespace TUK::Framework
 			const std::filesystem::path& path) const override;
 
 	private:
-		[[nodiscard]] std::expected<GPUBuffer, std::string> CreateUploadBuffer(std::span<const std::byte> bytes) const;
 		[[nodiscard]] std::expected<GPUMesh, std::string> CreateMesh(
 			std::span<const DirectX::VertexPositionNormalColor> vertices,
 			std::span<const u32> indices) const;

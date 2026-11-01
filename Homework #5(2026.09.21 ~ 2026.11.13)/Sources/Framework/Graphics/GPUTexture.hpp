@@ -1,8 +1,10 @@
 ﻿#pragma once
 
-#include <wrl.h>
+#include <utility>
 
-#include <d3d12.h>
+#include <wrl/client.h>
+
+#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 

@@ -3,14 +3,13 @@
 
 #include <cassert>
 #include <cstddef>
-#include <cstdint>
 #include <span>
 #include <utility>
 
-#include "../Resources/MaterialAsset.hpp"
-
 #include "../Entities/Entity.hpp"
 #include "../Entities/Transform.hpp"
+
+#include "../Resources/MaterialAsset.hpp"
 
 #include "Camera.hpp"
 #include "GPUBuffer.hpp"
@@ -39,12 +38,12 @@ namespace TUK::Framework
 		{
 			DirectX::XMFLOAT4 baseColor;
 			DirectX::XMFLOAT4 emissiveColor;
-			float metallic;
-			float roughness;
-			float padding[2]{};
+			f32 metallic;
+			f32 roughness;
+			f32 padding[2]{};
 		};
 
-		enum class GPUConstantBufferSlot : std::uint32_t
+		enum class GPUConstantBufferSlot : u32
 		{
 			CAMERA = 0,
 			OBJECT = 1,
@@ -53,15 +52,46 @@ namespace TUK::Framework
 		};
 	}
 
+	std::expected<GPUCommandBuffer, std::string> GPUCommandBuffer::Create(const GPUDevice& device)
+	{
+		ID3D12Device& d3dDevice = device.GetD3DDevice();
+
+		ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+		if (FAILED(d3dDevice.CreateCommandAllocator(
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			IID_PPV_ARGS(d3dCommandAllocator.GetAddressOf()))))
+		{
+			return std::unexpected("D3D12 Command Allocator ?앹꽦???ㅽ뙣?덉뒿?덈떎.");
+		}
+
+		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		if (FAILED(d3dDevice.CreateCommandList(
+			0,
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			d3dCommandAllocator.Get(),
+			nullptr,
+			IID_PPV_ARGS(d3dCommandList.GetAddressOf()))))
+		{
+			return std::unexpected("D3D12 Command List ?앹꽦???ㅽ뙣?덉뒿?덈떎.");
+		}
+
+		if (FAILED(d3dCommandList->Close()))
+		{
+			return std::unexpected("D3D12 Command List 珥덇린 Close???ㅽ뙣?덉뒿?덈떎.");
+		}
+
+		return GPUCommandBuffer(device, std::move(d3dCommandList), std::move(d3dCommandAllocator));
+	}
+
 	std::expected<void, std::string> GPUCommandBuffer::Reset()
 	{
 		if (FAILED(d3dCommandAllocator->Reset()))
 		{
-			return std::unexpected("D3D12 Command Allocator Reset에 실패했습니다.");
+			return std::unexpected("D3D12 Command Allocator Reset???ㅽ뙣?덉뒿?덈떎.");
 		}
 		if (FAILED(d3dCommandList->Reset(d3dCommandAllocator.Get(), nullptr)))
 		{
-			return std::unexpected("D3D12 Command List Reset에 실패했습니다.");
+			return std::unexpected("D3D12 Command List Reset???ㅽ뙣?덉뒿?덈떎.");
 		}
 
 		constantBufferPageIndex = 0;
@@ -86,7 +116,7 @@ namespace TUK::Framework
 	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity& entity) noexcept
 	{
 		const Transform* transform = entity.GetComponent<Transform>();
-		return SetObjectTransform(transform ? transform->GetWorldMatrix() : Matrix4x4<float>::GetIdentity());
+		return SetObjectTransform(transform ? transform->GetWorldMatrix() : Matrix4x4<f32>::GetIdentity());
 	}
 
 	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera& camera) noexcept
@@ -94,12 +124,12 @@ namespace TUK::Framework
 		cameraPrepared = false;
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("카메라 적용 전에 렌더 타깃을 지정해야 합니다.");
+			return std::unexpected("移대찓???곸슜 ?꾩뿉 ?뚮뜑 ?源껋쓣 吏?뺥빐???⑸땲??");
 		}
 
 		CameraConstants constants{};
-		DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<float>::Load(camera.GetViewMatrix()));
-		DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<float>::Load(camera.GetProjectionMatrix()));
+		DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(camera.GetViewMatrix()));
+		DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(camera.GetProjectionMatrix()));
 		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
 		if (!allocation)
 		{
@@ -116,15 +146,15 @@ namespace TUK::Framework
 	{
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("머터리얼 적용 전에 렌더 타깃을 지정해야 합니다.");
+			return std::unexpected("癒명꽣由ъ뼹 ?곸슜 ?꾩뿉 ?뚮뜑 ?源껋쓣 吏?뺥빐???⑸땲??");
 		}
 
 		if (material.GetTargetFormat() != activeTargetFormat)
 		{
-			return std::unexpected("머터리얼의 PSO와 렌더 타깃 포맷이 일치하지 않습니다.");
+			return std::unexpected("癒명꽣由ъ뼹??PSO? ?뚮뜑 ?源??щ㎎???쇱튂?섏? ?딆뒿?덈떎.");
 		}
-		const ColorRGBA<float>& baseColor = material.GetBaseColor();
-		const ColorRGBA<float>& emissiveColor = material.GetEmissiveColor();
+		const ColorRGBA<f32>& baseColor = material.GetBaseColor();
+		const ColorRGBA<f32>& emissiveColor = material.GetEmissiveColor();
 		MaterialConstants constants{};
 		constants.baseColor = { baseColor.GetR(), baseColor.GetG(), baseColor.GetB(), baseColor.GetA() };
 		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
@@ -140,15 +170,15 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetObjectTransform(const Matrix4x4<float>& worldMatrix) noexcept
+	std::expected<void, std::string> GPUCommandBuffer::SetObjectTransform(const Matrix4x4<f32>& worldMatrix) noexcept
 	{
 		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("오브젝트 변환 적용 전에 카메라를 지정해야 합니다.");
+			return std::unexpected("?ㅻ툕?앺듃 蹂???곸슜 ?꾩뿉 移대찓?쇰? 吏?뺥빐???⑸땲??");
 		}
 
 		ObjectConstants constants{};
-		DirectX::XMStoreFloat4x4(&constants.world, Matrix4x4<float>::Load(worldMatrix));
+		DirectX::XMStoreFloat4x4(&constants.world, Matrix4x4<f32>::Load(worldMatrix));
 		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
 		if (!allocation)
 		{
@@ -190,10 +220,10 @@ namespace TUK::Framework
 
 	void GPUCommandBuffer::CopyGPUBuffer(
 		const GPUBuffer& destination,
-		std::uint64_t destinationOffset,
+		u64 destinationOffset,
 		const GPUBuffer& source,
-		std::uint64_t sourceOffset,
-		std::uint64_t sizeInBytes)
+		u64 sourceOffset,
+		u64 sizeInBytes)
 	{
 		assert(&destination.GetD3DResource() != &source.GetD3DResource());
 		assert(destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD);
@@ -218,19 +248,19 @@ namespace TUK::Framework
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
-	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset) noexcept
+	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
 	{
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::CAMERA), address);
 	}
 
-	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset) noexcept
+	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
 	{
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::OBJECT), address);
 	}
 
-	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, std::uint64_t offset) noexcept
+	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
 	{
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::MATERIAL), address);
@@ -256,17 +286,17 @@ namespace TUK::Framework
 		d3dCommandList->IASetIndexBuffer(&indexView);
 	}
 
-	void GPUCommandBuffer::Draw(std::uint32_t vertexCount, std::uint32_t firstVertex)
+	void GPUCommandBuffer::Draw(u32 vertexCount, u32 firstVertex)
 	{
 		d3dCommandList->DrawInstanced(vertexCount, 1, firstVertex, 0);
 	}
 
-	void GPUCommandBuffer::DrawIndexed(std::uint32_t indexCount, std::uint32_t firstIndex, std::int32_t baseVertex)
+	void GPUCommandBuffer::DrawIndexed(u32 indexCount, u32 firstIndex, i32 baseVertex)
 	{
 		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
 	}
 
-	void GPUCommandBuffer::ClearGPUTarget(const GPUTarget& target, const ColorRGBA<float>& clearColor)
+	void GPUCommandBuffer::ClearGPUTarget(const GPUTarget& target, const ColorRGBA<f32>& clearColor)
 	{
 		const FLOAT color[] =
 		{
@@ -287,32 +317,17 @@ namespace TUK::Framework
 		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	}
 
-	ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept
-	{
-		return *(d3dCommandList.Get());
-	}
-
-	ID3D12CommandAllocator& GPUCommandBuffer::GetD3DCommandAllocator() const noexcept
-	{
-		return *(d3dCommandAllocator.Get());
-	}
-
-	GPUCommandBuffer::GPUCommandBuffer(const GPUDevice& device, const GPUCommandBufferProperties& properties) noexcept
-		: device(&device)
-		, d3dCommandList(properties.d3dCommandList)
-		, d3dCommandAllocator(properties.d3dCommandAllocator)
-	{
-	}
-	std::expected<std::pair<const GPUBuffer*, std::uint64_t>, std::string> GPUCommandBuffer::UploadConstants(
+	std::expected<std::pair<const GPUBuffer*, u64>, std::string> GPUCommandBuffer::UploadConstants(
 		std::span<const std::byte> bytes)
 	{
-		constexpr std::uint64_t CONSTANT_BUFFER_PAGE_SIZE = 64 * 1024;
-		constexpr std::uint64_t ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
+		constexpr u64 CONSTANT_BUFFER_PAGE_SIZE = 64 * 1024;
+		constexpr u64 ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
 		if (!device || bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
 		{
-			return std::unexpected("상수 버퍼 데이터 또는 GPUDevice가 유효하지 않습니다.");
+			return std::unexpected("?곸닔 踰꾪띁 ?곗씠???먮뒗 GPUDevice媛 ?좏슚?섏? ?딆뒿?덈떎.");
 		}
-		const std::uint64_t alignedSize = (bytes.size() + ALIGNMENT - 1) / ALIGNMENT * ALIGNMENT;
+
+		const u64 alignedSize = (bytes.size() + ALIGNMENT - 1) / ALIGNMENT * ALIGNMENT;
 		if (constantBufferOffset + alignedSize > CONSTANT_BUFFER_PAGE_SIZE)
 		{
 			++constantBufferPageIndex;
@@ -321,9 +336,11 @@ namespace TUK::Framework
 
 		if (constantBufferPageIndex == constantBufferPages.size())
 		{
-			const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
-			const auto description = CD3DX12_RESOURCE_DESC::Buffer(CONSTANT_BUFFER_PAGE_SIZE);
-			auto page = device->CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
+			auto page = GPUBuffer::Create(
+				*device,
+				D3D12_HEAP_TYPE_UPLOAD,
+				CONSTANT_BUFFER_PAGE_SIZE,
+				D3D12_RESOURCE_STATE_GENERIC_READ);
 			if (!page)
 			{
 				return std::unexpected(page.error());
@@ -331,15 +348,14 @@ namespace TUK::Framework
 			constantBufferPages.emplace_back(std::move(*page));
 		}
 
-		const std::uint64_t offset = constantBufferOffset;
+		const u64 offset = constantBufferOffset;
 		GPUBuffer& page = constantBufferPages[constantBufferPageIndex];
 		if (auto result = page.Write(std::span<const u8>(reinterpret_cast<const u8*>(bytes.data()), bytes.size()), offset); !result)
 		{
 			return std::unexpected(result.error());
 		}
+
 		constantBufferOffset += alignedSize;
-		return std::pair<const GPUBuffer*, std::uint64_t>{ &page, offset };
+		return std::pair<const GPUBuffer*, u64>{ &page, offset };
 	}
-
-
 }

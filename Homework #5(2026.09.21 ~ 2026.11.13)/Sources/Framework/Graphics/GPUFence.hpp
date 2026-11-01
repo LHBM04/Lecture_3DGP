@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include <cstdint>
 #include <expected>
 #include <string>
-
-#include <directx/d3d12.h>
+#include <utility>
 
 #include <wrl/client.h>
+
+#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 
@@ -17,7 +17,8 @@ namespace TUK::Framework
 	class GPUFence
 	{
 	public:
-		explicit GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept;
+		[[nodiscard]] static std::expected<GPUFence, std::string> Create(const GPUDevice& device);
+
 		~GPUFence() noexcept = default;
 
 		GPUFence(const GPUFence&) = delete;
@@ -32,6 +33,8 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsCompleted() const noexcept;
 
 	private:
+		explicit GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept;
+
 		ComPtr<ID3D12Fence> d3dFence;
 		u64 fenceValue;
 	};

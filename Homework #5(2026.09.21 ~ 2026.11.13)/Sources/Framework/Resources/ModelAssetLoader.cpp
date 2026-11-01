@@ -13,13 +13,14 @@
 #include <utility>
 #include <vector>
 
+#include "../Graphics/GPUBuffer.hpp"
+#include "../Graphics/GPUDevice.hpp"
+
+#include "../Math/Quaternion.hpp"
+#include "../Math/Vector3D.hpp"
+
 #include "AssetSubsystem.hpp"
 #include "MaterialAsset.hpp"
-
-#include "Framework/Graphics/GPUDevice.hpp"
-
-#include "Framework/Math/Quaternion.hpp"
-#include "Framework/Math/Vector3D.hpp"
 
 namespace TUK::Framework
 {
@@ -284,42 +285,27 @@ namespace TUK::Framework
 		return std::make_unique<ModelAsset>(std::move(modelName), std::move(parts));
 	}
 
-	std::expected<GPUBuffer, std::string> ModelAssetLoader::CreateUploadBuffer(
-		std::span<const std::byte> bytes) const
-	{
-		const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
-		const auto description = CD3DX12_RESOURCE_DESC::Buffer(bytes.size());
-
-		auto buffer = device.CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
-		if (!buffer)
-		{
-			return std::unexpected(buffer.error());
-		}
-		if (auto result = buffer->Write(std::span<const u8>(reinterpret_cast<const u8*>(bytes.data()), bytes.size())); !result)
-		{
-			return std::unexpected(result.error());
-		}
-		return buffer;
-	}
-
 	std::expected<GPUMesh, std::string> ModelAssetLoader::CreateMesh(
 		std::span<const DirectX::VertexPositionNormalColor> vertices,
 		std::span<const u32> indices) const
 	{
-		auto vertexBuffer = CreateUploadBuffer(std::as_bytes(vertices));
+		auto vertexBuffer = GPUBuffer::CreateUpload(device, std::as_bytes(vertices));
 		if (!vertexBuffer)
 		{
 			return std::unexpected(vertexBuffer.error());
 		}
-		auto indexBuffer = CreateUploadBuffer(std::as_bytes(indices));
+
+		auto indexBuffer = GPUBuffer::CreateUpload(device, std::as_bytes(indices));
 		if (!indexBuffer)
 		{
 			return std::unexpected(indexBuffer.error());
 		}
-		return device.CreateGPUMesh(
-			std::move(*vertexBuffer), 
+
+		return GPUMesh::Create(
+			std::move(*vertexBuffer),
 			sizeof(DirectX::VertexPositionNormalColor),
-			std::move(*indexBuffer), 
-			DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			std::move(*indexBuffer),
+			DXGI_FORMAT_R32_UINT,
+			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 }

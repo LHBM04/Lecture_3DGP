@@ -1,27 +1,34 @@
 ﻿#pragma once
 
+#include <cstddef>
 #include <expected>
 #include <span>
 #include <string>
-
-#include <directx/d3d12.h>
+#include <utility>
 
 #include <wrl/client.h>
+
+#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
-	struct GPUBufferProperties final
-	{
-		ComPtr<ID3D12Resource> d3dResource;
-		D3D12_HEAP_TYPE heapType;
-	};
+	class GPUDevice;
 
 	class GPUBuffer
 	{
 	public:
-		explicit GPUBuffer(const GPUBufferProperties& properties) noexcept;
+		[[nodiscard]] static std::expected<GPUBuffer, std::string> Create(
+			const GPUDevice& device,
+			D3D12_HEAP_TYPE heapType,
+			u64 sizeInBytes,
+			D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
+			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		[[nodiscard]] static std::expected<GPUBuffer, std::string> CreateUpload(
+			const GPUDevice& device,
+			std::span<const std::byte> data);
+
 		~GPUBuffer() noexcept = default;
 
 		GPUBuffer(const GPUBuffer&) = delete;
@@ -39,15 +46,11 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12Resource& GetD3DResource() const noexcept;
 
 	private:
+		GPUBuffer(ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept;
+
 		ComPtr<ID3D12Resource> d3dResource;
 		D3D12_HEAP_TYPE heapType;
 	};
-
-	inline GPUBuffer::GPUBuffer(const GPUBufferProperties& properties) noexcept
-		: d3dResource(properties.d3dResource)
-		, heapType(properties.heapType)
-	{
-	}
 
 	inline u64 GPUBuffer::GetSizeInBytes() const noexcept
 	{
@@ -67,5 +70,11 @@ namespace TUK::Framework
 	inline ID3D12Resource& GPUBuffer::GetD3DResource() const noexcept
 	{
 		return *d3dResource.Get();
+	}
+
+	inline GPUBuffer::GPUBuffer(ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept
+		: d3dResource(std::move(d3dResource))
+		, heapType(heapType)
+	{
 	}
 }
