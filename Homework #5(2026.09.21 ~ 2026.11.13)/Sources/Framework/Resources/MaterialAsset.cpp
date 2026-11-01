@@ -55,29 +55,12 @@ namespace TUK::Framework
 		pipelineInfo.RTVFormats[0] = targetFormat;
 		pipelineInfo.SampleMask = UINT_MAX;
 		pipelineInfo.SampleDesc = { 1, 0 };
+		pipelineInfo.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		pipelineInfo.RasterizerState.FillMode = fillMode;
 		pipelineInfo.RasterizerState.CullMode = cullMode;
-		pipelineInfo.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-		pipelineInfo.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-		pipelineInfo.RasterizerState.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-		pipelineInfo.RasterizerState.DepthClipEnable = TRUE;
-		for (D3D12_RENDER_TARGET_BLEND_DESC& target : pipelineInfo.BlendState.RenderTarget)
-		{
-			target.SrcBlend = D3D12_BLEND_ONE;
-			target.DestBlend = D3D12_BLEND_ZERO;
-			target.BlendOp = D3D12_BLEND_OP_ADD;
-			target.SrcBlendAlpha = D3D12_BLEND_ONE;
-			target.DestBlendAlpha = D3D12_BLEND_ZERO;
-			target.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-			target.LogicOp = D3D12_LOGIC_OP_NOOP;
-			target.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-		}
-		pipelineInfo.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		pipelineInfo.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-		pipelineInfo.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-		pipelineInfo.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-		pipelineInfo.DepthStencilState.FrontFace = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
-		pipelineInfo.DepthStencilState.BackFace = pipelineInfo.DepthStencilState.FrontFace;
+		pipelineInfo.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		pipelineInfo.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		pipelineInfo.DepthStencilState.DepthEnable = FALSE;
 		auto pipeline = device.CreateGPUGraphicsPipelineState(pipelineInfo);
 		if (!pipeline)
 		{

@@ -185,17 +185,12 @@ namespace TUK::Framework
 				std::array<D3D12_ROOT_PARAMETER, CONSTANT_BUFFER_SLOT_COUNT> parameters{};
 				for (std::uint32_t index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
 				{
-					parameters[index].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-					parameters[index].Descriptor.ShaderRegister = index;
-					parameters[index].Descriptor.RegisterSpace = 0;
-					parameters[index].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+					CD3DX12_ROOT_PARAMETER::InitAsConstantBufferView(parameters[index], index);
 				}
 
-				D3D12_VERSIONED_ROOT_SIGNATURE_DESC description{};
-				description.Version = D3D_ROOT_SIGNATURE_VERSION_1_0;
-				description.Desc_1_0.NumParameters = CONSTANT_BUFFER_SLOT_COUNT;
-				description.Desc_1_0.pParameters = parameters.data();
-				description.Desc_1_0.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+				const CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC description(
+					CONSTANT_BUFFER_SLOT_COUNT, parameters.data(), 0, nullptr,
+					D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 				ComPtr<ID3DBlob> serializedBlob;
 				ComPtr<ID3DBlob> errorBlob;
@@ -294,7 +289,7 @@ namespace TUK::Framework
 		}
 
 		const UINT descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
 		std::pmr::vector<GPUTexture> backBuffers;
 		backBuffers.reserve(description.BufferCount);
@@ -313,7 +308,7 @@ namespace TUK::Framework
 		for (const GPUTexture& backBuffer : backBuffers)
 		{
 			d3dDevice.CreateRenderTargetView(&backBuffer.GetD3DResource(), nullptr, rtv);
-			rtv.ptr += descriptorSize;
+			rtv.Offset(1, descriptorSize);
 		}
 
 		GPUSwapChainProperties properties{};

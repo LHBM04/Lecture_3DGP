@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <d3d12.h>
+#include <directx/d3dx12.h>
 
 #include "../Core/Common.hpp"
 
@@ -39,8 +39,8 @@ namespace TUK::Framework
 		float nearPlane;
 		float farPlane;
 
-		D3D12_VIEWPORT viewport;
-		D3D12_RECT scissorRect;
+		CD3DX12_VIEWPORT viewport;
+		CD3DX12_RECT scissorRect;
 
 		float orthoSize;
 	};
@@ -52,7 +52,7 @@ namespace TUK::Framework
 
 	inline void Camera::SetViewport(const D3D12_VIEWPORT& value) noexcept
 	{
-		viewport = value;
+		viewport = CD3DX12_VIEWPORT(value);
 	}
 
 	inline const D3D12_RECT& Camera::GetScissorRect() const noexcept
@@ -62,6 +62,6 @@ namespace TUK::Framework
 
 	inline void Camera::SetScissorRect(const D3D12_RECT& value) noexcept
 	{
-		scissorRect = value;
+		scissorRect = CD3DX12_RECT(value);
 	}
 }

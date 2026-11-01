@@ -278,19 +278,8 @@ namespace TUK::Framework
 	std::expected<GPUBuffer, std::string> ModelAssetLoader::CreateUploadBuffer(
 		std::span<const std::byte> bytes) const
 	{
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-		heapProperties.CreationNodeMask = 1;
-		heapProperties.VisibleNodeMask = 1;
-
-		D3D12_RESOURCE_DESC description{};
-		description.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		description.Width = bytes.size();
-		description.Height = 1;
-		description.DepthOrArraySize = 1;
-		description.MipLevels = 1;
-		description.SampleDesc.Count = 1;
-		description.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_UPLOAD);
+		const auto description = CD3DX12_RESOURCE_DESC::Buffer(bytes.size());
 
 		auto buffer = device.CreateGPUBuffer(heapProperties, description, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!buffer)

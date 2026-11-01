@@ -12,8 +12,8 @@ namespace TUK::Framework
 	{
 		const std::uint32_t index = dxgiSwapChain->GetCurrentBackBufferIndex();
 
-		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
-		rtv.ptr += static_cast<SIZE_T>(index) * rtvDescriptorSize;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(rtvHeap->GetCPUDescriptorHandleForHeapStart());
+		rtv.Offset(static_cast<INT>(index), rtvDescriptorSize);
 
 		const GPUTexture& texture = backBuffers[index];
 

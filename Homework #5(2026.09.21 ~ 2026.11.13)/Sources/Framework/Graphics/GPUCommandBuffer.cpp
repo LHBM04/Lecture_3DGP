@@ -65,12 +65,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		D3D12_RESOURCE_BARRIER barrier{};
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Transition.pResource = &texture.GetD3DResource();
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		barrier.Transition.StateBefore = before;
-		barrier.Transition.StateAfter = after;
+		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(&texture.GetD3DResource(), before, after);
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
@@ -86,12 +81,7 @@ namespace TUK::Framework
 
 		assert(buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT);
 
-		D3D12_RESOURCE_BARRIER barrier{};
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Transition.pResource = &buffer.GetD3DResource();
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		barrier.Transition.StateBefore = before;
-		barrier.Transition.StateAfter = after;
+		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(&buffer.GetD3DResource(), before, after);
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cassert>
 #include <cstdint>
@@ -8,7 +8,7 @@
 #include <utility>
 
 #include <directx/d3d12.h>
-#include <d3dcompiler.h>
+#include <directx/d3dx12.h>
 
 #include <wrl/client.h>
 
@@ -47,7 +47,7 @@ namespace TUK::Framework
 	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
 	{
 		assert(d3dBlob);
-		return { d3dBlob->GetBufferPointer(), d3dBlob->GetBufferSize() };
+		return CD3DX12_SHADER_BYTECODE(d3dBlob.Get());
 	}
 
 	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob) noexcept

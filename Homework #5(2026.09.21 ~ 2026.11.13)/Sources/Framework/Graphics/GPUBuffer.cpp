@@ -22,7 +22,7 @@ namespace TUK::Framework
 		}
 
 		void* mappedData = nullptr;
-		const D3D12_RANGE readRange{ 0, 0 };
+		const CD3DX12_RANGE readRange{ 0, 0 };
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
 			return std::unexpected("GPUBuffer Write Map에 실패했습니다.");
@@ -31,7 +31,7 @@ namespace TUK::Framework
 		const auto begin = static_cast<usize>(offset);
 		std::memcpy(static_cast<u8*>(mappedData) + begin, data.data(), data.size());
 
-		const D3D12_RANGE writtenRange{ begin, begin + data.size() };
+		const CD3DX12_RANGE writtenRange{ begin, begin + data.size() };
 		d3dResource->Unmap(0, &writtenRange);
 		return {};
 	}
@@ -55,7 +55,7 @@ namespace TUK::Framework
 		}
 
 		const auto begin = static_cast<usize>(offset);
-		const D3D12_RANGE readRange{ begin, begin + data.size() };
+		const CD3DX12_RANGE readRange{ begin, begin + data.size() };
 		void* mappedData = nullptr;
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
@@ -64,7 +64,7 @@ namespace TUK::Framework
 
 		std::memcpy(data.data(), static_cast<const u8*>(mappedData) + begin, data.size());
 
-		const D3D12_RANGE writtenRange{ 0, 0 };
+		const CD3DX12_RANGE writtenRange{ 0, 0 };
 		d3dResource->Unmap(0, &writtenRange);
 		return {};
 	}
