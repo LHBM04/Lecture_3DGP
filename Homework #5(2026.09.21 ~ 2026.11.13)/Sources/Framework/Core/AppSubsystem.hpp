@@ -8,7 +8,7 @@ namespace TUK::Framework
 	class AppSubsystem : public Subsystem
 	{
 	public:
-		explicit AppSubsystem(u8 priority) noexcept;
+		using Subsystem::Subsystem;
 		~AppSubsystem() noexcept override = default;
 
 		virtual SystemStatus OnEarlyUpdate() = 0;
@@ -16,9 +16,4 @@ namespace TUK::Framework
 		virtual SystemStatus OnUpdate() = 0;
 		virtual SystemStatus OnLateUpdate() = 0;
 	};
-
-	inline AppSubsystem::AppSubsystem(u8 priority) noexcept
-		: Subsystem(priority)
-	{
-	}
 }

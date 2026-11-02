@@ -8,10 +8,9 @@ namespace TUK::Game
 {
 	class MyGame : public App
 	{
-	public:
-		MyGame() noexcept = default;
-		~MyGame() noexcept override = default;
+		using App::App;
 
+	public:
 		SystemStatus Startup() override;
 	};
 }
