@@ -203,6 +203,8 @@
     <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Entities.hpp" />
+    <ClInclude Include="Sources\Framework\Resources.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\App.hpp" />
     <ClInclude Include="Sources\Framework\Core\AppSubsystem.hpp" />

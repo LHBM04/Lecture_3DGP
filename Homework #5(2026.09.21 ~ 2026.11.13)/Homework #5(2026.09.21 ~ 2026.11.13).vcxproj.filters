@@ -192,6 +192,12 @@
     <ClInclude Include="Sources\Game\MyEngine.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Entities.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Core.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
