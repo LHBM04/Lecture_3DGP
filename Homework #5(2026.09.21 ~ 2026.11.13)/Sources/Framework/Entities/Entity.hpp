@@ -65,7 +65,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::span<const std::unique_ptr<Component>> GetComponents() const noexcept;
 
-		void RemoveDestroyedComponents();
+		void DestroyComponents();
 
 	private:
 		void DestroyAllComponents();

@@ -16,8 +16,6 @@ namespace TUK::Framework
 	class GPUDevice
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUDevice, std::string> Create();
-
 		~GPUDevice() noexcept = default;
 
 		GPUDevice(const GPUDevice&) = delete;
@@ -31,8 +29,10 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12CommandQueue& GetD3DCommandQueue() const noexcept;
 		[[nodiscard]] ID3D12RootSignature& GetD3DRootSignature() const noexcept;
 
+		[[nodiscard]] static std::expected<GPUDevice, std::string> Create();
+
 	private:
-		GPUDevice(
+		explicit GPUDevice(
 			ComPtr<IDXGIFactory6> dxgiFactory,
 			ComPtr<ID3D12Device> d3dDevice,
 			ComPtr<ID3D12CommandQueue> d3dCommandQueue,

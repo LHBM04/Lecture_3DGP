@@ -32,8 +32,6 @@ namespace TUK::Framework
 	class GPUCommandBuffer
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUCommandBuffer, std::string> Create(const GPUDevice& device);
-
 		~GPUCommandBuffer() noexcept = default;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
@@ -86,8 +84,10 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
+		[[nodiscard]] static std::expected<GPUCommandBuffer, std::string> Create(const GPUDevice& device);
+
 	private:
-		GPUCommandBuffer(
+		explicit GPUCommandBuffer(
 			const GPUDevice& device,
 			ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
 			ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;

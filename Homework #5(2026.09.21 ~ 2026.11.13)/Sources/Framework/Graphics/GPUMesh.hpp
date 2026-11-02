@@ -15,13 +15,6 @@ namespace TUK::Framework
 	class GPUMesh
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUMesh, std::string> Create(
-			GPUBuffer vertexBuffer,
-			u32 vertexStride,
-			GPUBuffer indexBuffer,
-			DXGI_FORMAT indexFormat,
-			D3D12_PRIMITIVE_TOPOLOGY topology);
-
 		~GPUMesh() noexcept = default;
 
 		GPUMesh(const GPUMesh&) = delete;
@@ -40,8 +33,15 @@ namespace TUK::Framework
 
 		[[nodiscard]] D3D12_PRIMITIVE_TOPOLOGY GetD3DTopology() const noexcept;
 
+		[[nodiscard]] static std::expected<GPUMesh, std::string> Create(
+			GPUBuffer vertexBuffer,
+			u32 vertexStride,
+			GPUBuffer indexBuffer,
+			DXGI_FORMAT indexFormat,
+			D3D12_PRIMITIVE_TOPOLOGY topology);
+
 	private:
-		GPUMesh(
+		explicit GPUMesh(
 			GPUBuffer&& vertexBuffer,
 			const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView,
 			GPUBuffer&& indexBuffer,

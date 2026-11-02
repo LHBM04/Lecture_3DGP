@@ -19,16 +19,6 @@ namespace TUK::Framework
 	class GPUBuffer
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUBuffer, std::string> Create(
-			const GPUDevice& device,
-			D3D12_HEAP_TYPE heapType,
-			u64 sizeInBytes,
-			D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
-			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
-		[[nodiscard]] static std::expected<GPUBuffer, std::string> CreateUpload(
-			const GPUDevice& device,
-			std::span<const std::byte> data);
-
 		~GPUBuffer() noexcept = default;
 
 		GPUBuffer(const GPUBuffer&) = delete;
@@ -44,6 +34,17 @@ namespace TUK::Framework
 		[[nodiscard]] D3D12_HEAP_TYPE GetD3DHeapType() const noexcept;
 		[[nodiscard]] D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const noexcept;
 		[[nodiscard]] ID3D12Resource& GetD3DResource() const noexcept;
+
+		[[nodiscard]] static std::expected<GPUBuffer, std::string> Create(
+			const GPUDevice& device,
+			D3D12_HEAP_TYPE heapType,
+			u64 sizeInBytes,
+			D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
+			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+
+		[[nodiscard]] static std::expected<GPUBuffer, std::string> CreateUpload(
+			const GPUDevice& device,
+			std::span<const std::byte> data);
 
 	private:
 		GPUBuffer(ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept;

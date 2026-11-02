@@ -17,10 +17,6 @@ namespace TUK::Framework
 	class GPUGraphicsPipelineState
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> Create(
-			const GPUDevice& device,
-			const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description);
-
 		~GPUGraphicsPipelineState() noexcept = default;
 
 		GPUGraphicsPipelineState(const GPUGraphicsPipelineState&) = delete;
@@ -30,6 +26,10 @@ namespace TUK::Framework
 		GPUGraphicsPipelineState& operator=(GPUGraphicsPipelineState&&) noexcept = default;
 
 		[[nodiscard]] ID3D12PipelineState& GetD3DPipelineState() const noexcept;
+
+		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> Create(
+			const GPUDevice& device,
+			const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description);
 
 	private:
 		explicit GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;

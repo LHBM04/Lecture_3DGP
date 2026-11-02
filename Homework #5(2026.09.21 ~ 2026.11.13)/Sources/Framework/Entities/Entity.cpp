@@ -11,7 +11,7 @@ namespace TUK::Framework
 		DestroyAllComponents();
 	}
 
-	void Entity::RemoveDestroyedComponents()
+	void Entity::DestroyComponents()
 	{
 		const auto destroyedCount = std::ranges::count_if(components,
 			[](const auto& component)

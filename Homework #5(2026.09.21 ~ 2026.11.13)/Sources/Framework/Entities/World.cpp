@@ -97,7 +97,7 @@ namespace TUK::Framework
 		{
 			if (!entity->IsDestroyed())
 			{
-				entity->RemoveDestroyedComponents();
+				entity->DestroyComponents();
 			}
 		}
 

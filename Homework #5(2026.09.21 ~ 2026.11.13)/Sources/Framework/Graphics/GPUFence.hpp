@@ -17,8 +17,6 @@ namespace TUK::Framework
 	class GPUFence
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUFence, std::string> Create(const GPUDevice& device);
-
 		~GPUFence() noexcept = default;
 
 		GPUFence(const GPUFence&) = delete;
@@ -31,6 +29,8 @@ namespace TUK::Framework
 		void Signal(const GPUDevice& device);
 
 		[[nodiscard]] bool IsCompleted() const noexcept;
+
+		[[nodiscard]] static std::expected<GPUFence, std::string> Create(const GPUDevice& device);
 
 	private:
 		explicit GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept;

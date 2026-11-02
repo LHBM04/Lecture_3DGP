@@ -24,11 +24,6 @@ namespace TUK::Framework
 	class GPUSwapChain
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUSwapChain, std::string> Create(
-			const GPUDevice& device,
-			const Display& display,
-			const DXGI_SWAP_CHAIN_DESC1& description);
-
 		~GPUSwapChain() noexcept = default;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
@@ -41,6 +36,11 @@ namespace TUK::Framework
 
 		[[nodiscard]] GPUTarget GetCurrentBackBufferTarget() const noexcept;
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
+
+		[[nodiscard]] static std::expected<GPUSwapChain, std::string> Create(
+			const GPUDevice& device,
+			const Display& display,
+			const DXGI_SWAP_CHAIN_DESC1& description);
 
 	private:
 		GPUSwapChain(
