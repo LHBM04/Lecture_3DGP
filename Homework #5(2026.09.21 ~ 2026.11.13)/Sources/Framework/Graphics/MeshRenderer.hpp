@@ -10,44 +10,38 @@ namespace TUK::Framework
 	class MeshRenderer final : public Component
 	{
 	public:
-		explicit MeshRenderer(Entity& owner) noexcept;
-		~MeshRenderer() noexcept override = default;
+		using Component::Component;
 
-		[[nodiscard]] const ModelAsset* GetModel() const noexcept;
-		void SetModel(const ModelAsset* value) noexcept;
-		[[nodiscard]] const MaterialAsset* GetMaterial() const noexcept;
-		void SetMaterial(const MaterialAsset* value) noexcept;
-
-	protected:
 		void OnRender(GPUCommandBuffer& commandBuffer) override;
+
+		[[nodiscard]] const ModelAsset& GetModel() const noexcept;
+		void SetModel(const ModelAsset& value) noexcept;
+
+		[[nodiscard]] const MaterialAsset& GetMaterial() const noexcept;
+		void SetMaterial(const MaterialAsset& value) noexcept;
 
 	private:
 		const ModelAsset* model = nullptr;
 		const MaterialAsset* material = nullptr;
 	};
 
-	inline MeshRenderer::MeshRenderer(Entity& owner) noexcept
-		: Component(owner)
+	inline const ModelAsset& MeshRenderer::GetModel() const noexcept
 	{
+		return *model;
 	}
 
-	inline const ModelAsset* MeshRenderer::GetModel() const noexcept
+	inline void MeshRenderer::SetModel(const ModelAsset& value) noexcept
 	{
-		return model;
+		model = &value;
 	}
 
-	inline void MeshRenderer::SetModel(const ModelAsset* value) noexcept
+	inline const MaterialAsset& MeshRenderer::GetMaterial() const noexcept
 	{
-		model = value;
+		return *material;
 	}
 
-	inline const MaterialAsset* MeshRenderer::GetMaterial() const noexcept
+	inline void MeshRenderer::SetMaterial(const MaterialAsset& value) noexcept
 	{
-		return material;
-	}
-
-	inline void MeshRenderer::SetMaterial(const MaterialAsset* value) noexcept
-	{
-		material = value;
+		material = &value;
 	}
 }

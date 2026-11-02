@@ -1,30 +1,31 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
 #include <memory>
-#include <typeindex>
-#include <unordered_map>
+#include <span>
 #include <string>
 #include <string_view>
+#include <typeindex>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
-#include "Component.hpp"
-
 #include "../Core/Common.hpp"
+
+#include "Component.hpp"
 
 namespace TUK::Framework
 {
 	class World;
-	class GPUCommandBuffer;
 
 	class Entity
 	{
-		friend class World;
-
 	public:
-		explicit Entity(std::string_view name, std::string_view tag, World& world) noexcept;
-		virtual ~Entity() noexcept = default;
-		
+		explicit Entity(World& world) noexcept;
+		explicit Entity(World& world, std::string_view name) noexcept;
+		explicit Entity(World& world, std::string_view name, std::string_view tag) noexcept;
+		virtual ~Entity() noexcept;
+
 		Entity(const Entity&) = delete;
 		Entity& operator=(const Entity&) = delete;
 
@@ -40,8 +41,15 @@ namespace TUK::Framework
 		[[nodiscard]] const World& GetWorld() const noexcept;
 		[[nodiscard]] World& GetWorld() noexcept;
 
-		template <std::derived_from<Component> TComponent>
-		TComponent* AddComponent();
+		[[nodiscard]] bool IsEnabled() const noexcept;
+		void SetEnabled(bool value) noexcept;
+
+		[[nodiscard]] bool IsDestroyed() const noexcept;
+		void Destroy() noexcept;
+
+		template <std::derived_from<Component> TComponent, class... TArgs>
+			requires std::constructible_from<TComponent, Entity&, TArgs...>
+		TComponent* AddComponent(TArgs&&... args);
 
 		template <std::derived_from<Component> TComponent>
 		[[nodiscard]] TComponent* GetComponent() noexcept;
@@ -49,28 +57,43 @@ namespace TUK::Framework
 		template <std::derived_from<Component> TComponent>
 		[[nodiscard]] const TComponent* GetComponent() const noexcept;
 
-	protected:
-		void FixedUpdate();
-		void Update();
-		void LateUpdate();
-		void PreRender(GPUCommandBuffer& commandBuffer);
-		void Render(GPUCommandBuffer& commandBuffer);
-		void PostRender(GPUCommandBuffer& commandBuffer);
+		template <std::derived_from<Component> TComponent>
+		[[nodiscard]] bool HasComponent() const noexcept;
+
+		template <std::derived_from<Component> TComponent>
+		bool RemoveComponent() noexcept;
+
+		[[nodiscard]] std::span<const std::unique_ptr<Component>> GetComponents() const noexcept;
+
+		void RemoveDestroyedComponents();
 
 	private:
-		void RemoveDestroyedComponents();
-		bool StartComponent(Component& component);
+		void DestroyAllComponents();
 
-		std::string name;
-		std::string tag;
+		std::string name{ "New Entity" };
+		std::string tag{ "Untagged" };
 
 		std::vector<std::unique_ptr<Component>> components;
 		std::unordered_map<std::type_index, Component*> componentsByType;
 
 		World& world;
+
+		bool isEnabled = true;
+		bool isDestroyed = false;
 	};
 
-	inline Entity::Entity(std::string_view name, std::string_view tag, World& world) noexcept
+	inline Entity::Entity(World& world) noexcept
+		: world(world)
+	{
+	}
+
+	inline Entity::Entity(World& world, std::string_view name) noexcept
+		: name(name)
+		, world(world)
+	{
+	}
+
+	inline Entity::Entity(World& world, std::string_view name, std::string_view tag) noexcept
 		: name(name)
 		, tag(tag)
 		, world(world)
@@ -107,18 +130,39 @@ namespace TUK::Framework
 		return world;
 	}
 
-	template <std::derived_from<Component> TComponent>
-	TComponent* Entity::AddComponent()
+	inline bool Entity::IsEnabled() const noexcept
 	{
-		auto component = std::make_unique<TComponent>(*this);
-		auto componentPtr = component.get();
+		return isEnabled;
+	}
+
+	inline void Entity::SetEnabled(bool value) noexcept
+	{
+		isEnabled = value;
+	}
+
+	inline bool Entity::IsDestroyed() const noexcept
+	{
+		return isDestroyed;
+	}
+
+	inline void Entity::Destroy() noexcept
+	{
+		isDestroyed = true;
+	}
+
+	template <std::derived_from<Component> TComponent, class... TArgs>
+		requires std::constructible_from<TComponent, Entity&, TArgs...>
+	TComponent* Entity::AddComponent(TArgs&&... args)
+	{
+		auto component = std::make_unique<TComponent>(*this, std::forward<TArgs>(args)...);
+		TComponent* componentPtr = component.get();
 
 		components.push_back(std::move(component));
 		componentsByType[std::type_index(typeid(TComponent))] = componentPtr;
 
 		Component& addedComponent = *componentPtr;
 		addedComponent.OnAwake();
-		if (addedComponent.isEnabled && !addedComponent.isDestroyed)
+		if (addedComponent.IsEnabled() && !addedComponent.IsDestroyed())
 		{
 			addedComponent.OnEnable();
 		}
@@ -129,8 +173,8 @@ namespace TUK::Framework
 	template <std::derived_from<Component> TComponent>
 	TComponent* Entity::GetComponent() noexcept
 	{
-		auto result = componentsByType.find(typeid(TComponent));
-		if (result != componentsByType.end() && !result->second->isDestroyed)
+		const auto result = componentsByType.find(std::type_index(typeid(TComponent)));
+		if (result != componentsByType.end() && !result->second->IsDestroyed())
 		{
 			return static_cast<TComponent*>(result->second);
 		}
@@ -141,12 +185,36 @@ namespace TUK::Framework
 	template <std::derived_from<Component> TComponent>
 	const TComponent* Entity::GetComponent() const noexcept
 	{
-		auto result = componentsByType.find(typeid(TComponent));
-		if (result != componentsByType.end() && !result->second->isDestroyed)
+		const auto result = componentsByType.find(std::type_index(typeid(TComponent)));
+		if (result != componentsByType.end() && !result->second->IsDestroyed())
 		{
 			return static_cast<const TComponent*>(result->second);
 		}
 
 		return nullptr;
+	}
+
+	template <std::derived_from<Component> TComponent>
+	bool Entity::HasComponent() const noexcept
+	{
+		return GetComponent<TComponent>() != nullptr;
+	}
+
+	template <std::derived_from<Component> TComponent>
+	bool Entity::RemoveComponent() noexcept
+	{
+		TComponent* component = GetComponent<TComponent>();
+		if (!component)
+		{
+			return false;
+		}
+
+		component->Destroy();
+		return true;
+	}
+
+	inline std::span<const std::unique_ptr<Component>> Entity::GetComponents() const noexcept
+	{
+		return components;
 	}
 }

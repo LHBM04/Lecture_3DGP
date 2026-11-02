@@ -1,56 +1,163 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "World.hpp"
 
-#include <iostream>
+#include <algorithm>
+#include <ranges>
 
 #include "../Graphics/Camera.hpp"
-#include "../Graphics/GPUCommandBuffer.hpp"
 
 #include "Entity.hpp"
+#include "Transform.hpp"
 
 namespace TUK::Framework
 {
-	World::World() noexcept
-		: isEntered(false)
+	Entity& World::Instantiate()
 	{
+		auto entity = std::make_unique<Entity>(*this);
+		Entity& reference = *entity;
+		entities.push_back(std::move(entity));
+		return reference;
 	}
 
-	World::~World() noexcept
+	Entity& World::Instantiate(std::string_view name)
 	{
-		// Camera 소멸자가 등록을 해제할 때 카메라 목록이 살아 있어야 합니다.
-		entities.clear();
+		auto entity = std::make_unique<Entity>(*this, name);
+		Entity& reference = *entity;
+		entities.push_back(std::move(entity));
+		return reference;
 	}
 
-	void World::Enter()
+	Entity& World::Instantiate(std::string_view name, std::string_view tag)
 	{
-		if (isEntered)
+		auto entity = std::make_unique<Entity>(*this, name, tag);
+		Entity& reference = *entity;
+		entities.push_back(std::move(entity));
+		return reference;
+	}
+
+	Entity& World::Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation)
+	{
+		Entity& entity = Instantiate();
+		Transform* transform = entity.AddComponent<Transform>();
+		transform->SetLocalPosition(position);
+		transform->SetLocalRotation(rotation);
+		return entity;
+	}
+
+	Entity& World::Instantiate(const Vector3D<f32>& position)
+	{
+		Entity& entity = Instantiate();
+		Transform* transform = entity.AddComponent<Transform>();
+		transform->SetLocalPosition(position);
+		return entity;
+	}
+
+	Entity& World::Instantiate(const Quaternion<f32>& rotation)
+	{
+		Entity& entity = Instantiate();
+		Transform* transform = entity.AddComponent<Transform>();
+		transform->SetLocalRotation(rotation);
+		return entity;
+	}
+
+	Entity& World::Instantiate(Transform* parent)
+	{
+		Entity& entity = Instantiate();
+		Transform* transform = entity.AddComponent<Transform>();
+		transform->SetParent(parent);
+		return entity;
+	}
+
+	Entity& World::Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent)
+	{
+		Entity& entity = Instantiate();
+		Transform* transform = entity.AddComponent<Transform>();
+		transform->SetParent(parent);
+		transform->SetLocalPosition(position);
+		transform->SetLocalRotation(rotation);
+		return entity;
+	}
+
+	void World::Destroy(Entity& entity) noexcept
+	{
+		entity.Destroy();
+	}
+
+	void World::Destroy(Entity* entity) noexcept
+	{
+		if (entity)
+		{
+			entity->Destroy();
+		}
+	}
+
+	void World::DestroyEntities()
+	{
+		for (const std::unique_ptr<Entity>& entity : entities)
+		{
+			if (!entity->IsDestroyed())
+			{
+				entity->RemoveDestroyedComponents();
+			}
+		}
+
+		const auto destroyedCount = std::ranges::count_if(entities,
+			[](const auto& entity)
+			{
+				return entity->IsDestroyed();
+			});
+		if (destroyedCount == 0)
 		{
 			return;
 		}
 
-		isEntered = true;
-		OnEnter();
+		std::pmr::vector<std::unique_ptr<Entity>> destroyed;
+		destroyed.reserve(static_cast<usize>(destroyedCount));
+
+		usize remainingCount = 0;
+		for (usize index = 0; index < entities.size(); ++index)
+		{
+			if (entities[index]->IsDestroyed())
+			{
+				destroyed.push_back(std::move(entities[index]));
+			}
+			else
+			{
+				if (remainingCount != index)
+				{
+					entities[remainingCount] = std::move(entities[index]);
+				}
+				++remainingCount;
+			}
+		}
+		entities.resize(remainingCount);
 	}
 
-	Entity& World::CreateEntity()
+	void World::ClearEntities()
 	{
-		return CreateEntity("New Entity", "Untagged");
-	}
+		if (entities.empty())
+		{
+			cameras.clear();
+			return;
+		}
 
-	Entity& World::CreateEntity(std::string_view name, std::string_view tag)
-	{
-		auto entity = std::make_unique<Entity>(name, tag, *this);
-		Entity& result = *entity;
-		entities.push_back(std::move(entity));
-		return result;
+		std::pmr::vector<std::unique_ptr<Entity>> removing = std::move(entities);
+		entities.clear();
+
+		for (std::unique_ptr<Entity>& entity : removing | std::views::reverse)
+		{
+			entity->Destroy();
+			entity.reset();
+		}
+
+		cameras.clear();
 	}
 
 	void World::AddCamera(Camera& camera)
 	{
-		// Camera는 5차 과제에서 독립 객체로 관리합니다.
 		if (std::ranges::find(cameras, &camera) == cameras.end())
 		{
-			cameras.emplace_back(&camera);
+			cameras.push_back(&camera);
 		}
 	}
 
@@ -59,166 +166,111 @@ namespace TUK::Framework
 		std::erase(cameras, &camera);
 	}
 
-	Camera* World::GetMainCamera() noexcept
+	Entity* World::FindEntityWithName(std::string_view name) noexcept
 	{
-		return cameras.empty() ? nullptr : cameras.front();
-	}
-
-	const Camera* World::GetMainCamera() const noexcept
-	{
-		return cameras.empty() ? nullptr : cameras.front();
-	}
-
-	void World::Exit()
-	{
-		if (!isEntered)
+		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			return;
-		}
-
-		isEntered = false;
-		OnExit();
-	}
-
-	void World::FixedUpdate()
-	{
-		OnFixedUpdate();
-
-		for (const auto& entity : entities)
-		{
-			entity->FixedUpdate();
-		}
-	}
-
-	void World::Update()
-	{
-		OnUpdate();
-
-		for (const auto& entity : entities)
-		{
-			entity->Update();
-		}
-	}
-
-	void World::LateUpdate()
-	{
-		OnLateUpdate();
-
-		for (const auto& entity : entities)
-		{
-			entity->LateUpdate();
-		}
-	}
-
-	void World::PreRender(GPUCommandBuffer& commandBuffer)
-	{
-		if (!isEntered)
-		{
-			return;
-		}
-		OnPreRender(commandBuffer);
-		if (!isEntered)
-		{
-			return;
-		}
-		const usize count = entities.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			if (!isEntered)
+			if (!entity->IsDestroyed() && entity->GetName() == name)
 			{
-				return;
+				return entity.get();
 			}
-			Entity* entity = entities[index].get();
-			entity->PreRender(commandBuffer);
 		}
+
+		return nullptr;
 	}
 
-	void World::Render(GPUCommandBuffer& commandBuffer)
+	const Entity* World::FindEntityWithName(std::string_view name) const noexcept
 	{
-		if (!isEntered)
+		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			return;
-		}
-		const Camera* camera = GetMainCamera();
-		if (!camera)
-		{
-			return;
-		}
-		if (auto result = commandBuffer.SetCamera(*camera); !result)
-		{
-			std::cerr << result.error() << std::endl;
-			return;
-		}
-
-		OnRender(commandBuffer);
-		if (!isEntered)
-		{
-			return;
-		}
-		const usize count = entities.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			if (!isEntered)
+			if (!entity->IsDestroyed() && entity->GetName() == name)
 			{
-				return;
+				return entity.get();
 			}
-			Entity* entity = entities[index].get();
-			entity->Render(commandBuffer);
 		}
+
+		return nullptr;
 	}
 
-	void World::PostRender(GPUCommandBuffer& commandBuffer)
+	std::vector<Entity*> World::FindEntitiesWithName(std::string_view name)
 	{
-		if (!isEntered)
+		std::vector<Entity*> result;
+		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			return;
-		}
-		OnPostRender(commandBuffer);
-		if (!isEntered)
-		{
-			return;
-		}
-		const usize count = entities.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			if (!isEntered)
+			if (!entity->IsDestroyed() && entity->GetName() == name)
 			{
-				return;
+				result.push_back(entity.get());
 			}
-			Entity* entity = entities[index].get();
-			entity->PostRender(commandBuffer);
 		}
+
+		return result;
 	}
 
-	void World::OnEnter()
+	std::vector<const Entity*> World::FindEntitiesWithName(std::string_view name) const
 	{
+		std::vector<const Entity*> result;
+		for (const std::unique_ptr<Entity>& entity : entities)
+		{
+			if (!entity->IsDestroyed() && entity->GetName() == name)
+			{
+				result.push_back(entity.get());
+			}
+		}
+
+		return result;
 	}
 
-	void World::OnFixedUpdate()
+	Entity* World::FindEntityWithTag(std::string_view tag) noexcept
 	{
+		for (const std::unique_ptr<Entity>& entity : entities)
+		{
+			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			{
+				return entity.get();
+			}
+		}
+
+		return nullptr;
 	}
 
-	void World::OnUpdate()
+	const Entity* World::FindEntityWithTag(std::string_view tag) const noexcept
 	{
+		for (const std::unique_ptr<Entity>& entity : entities)
+		{
+			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			{
+				return entity.get();
+			}
+		}
+
+		return nullptr;
 	}
 
-	void World::OnLateUpdate()
+	std::vector<Entity*> World::FindEntitiesWithTag(std::string_view tag)
 	{
+		std::vector<Entity*> result;
+		for (const std::unique_ptr<Entity>& entity : entities)
+		{
+			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			{
+				result.push_back(entity.get());
+			}
+		}
+
+		return result;
 	}
 
-	void World::OnPreRender(GPUCommandBuffer&)
+	std::vector<const Entity*> World::FindEntitiesWithTag(std::string_view tag) const
 	{
-	}
+		std::vector<const Entity*> result;
+		for (const std::unique_ptr<Entity>& entity : entities)
+		{
+			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			{
+				result.push_back(entity.get());
+			}
+		}
 
-	void World::OnRender(GPUCommandBuffer&)
-	{
-	}
-
-	void World::OnPostRender(GPUCommandBuffer&)
-	{
-	}
-
-	void World::OnExit()
-	{
+		return result;
 	}
 }

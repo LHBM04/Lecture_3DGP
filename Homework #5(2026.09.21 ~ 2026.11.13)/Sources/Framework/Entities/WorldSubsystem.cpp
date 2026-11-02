@@ -1,19 +1,155 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "WorldSubsystem.hpp"
 
+#include <cstdlib>
+#include <iostream>
+
+#include "../Graphics/Camera.hpp"
+#include "../Graphics/GPUCommandBuffer.hpp"
+
+#include "Component.hpp"
+#include "Entity.hpp"
 #include "World.hpp"
 
 namespace TUK::Framework
 {
-	WorldSubsystem::WorldSubsystem() noexcept
-		: AppSubsystem(20)
-		, worlds()
-	{
-	}
-
 	WorldSubsystem::~WorldSubsystem() noexcept
 	{
 		worlds.clear();
+	}
+
+	World& WorldSubsystem::AddWorld(std::unique_ptr<World> world)
+	{
+		if (!world || currentWorld)
+		{
+			std::abort();
+		}
+
+		World& result = *world;
+		worlds.push_back(std::move(world));
+		return result;
+	}
+
+	void WorldSubsystem::ExitWorld()
+	{
+		if (!currentWorld)
+		{
+			return;
+		}
+
+		World* exitingWorld = currentWorld;
+		currentWorld = nullptr;
+
+		if (exitingWorld->IsEntered())
+		{
+			exitingWorld->SetEntered(false);
+			exitingWorld->OnExit();
+		}
+		exitingWorld->ClearEntities();
+	}
+
+	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
+	{
+		if (!currentWorld || !currentWorld->IsEntered())
+		{
+			return;
+		}
+
+		const usize entityCount = currentWorld->GetEntities().size();
+		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		{
+			Entity& entity = *currentWorld->GetEntities()[entityIndex];
+			if (!entity.IsEnabled() || entity.IsDestroyed())
+			{
+				continue;
+			}
+
+			const usize componentCount = entity.GetComponents().size();
+			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			{
+				Component& component = *entity.GetComponents()[componentIndex];
+				if (component.IsStarted() && component.IsEnabled() && !component.IsDestroyed())
+				{
+					component.OnPreRender(commandBuffer);
+				}
+			}
+		}
+	}
+
+	void WorldSubsystem::Render(GPUCommandBuffer& commandBuffer)
+	{
+		if (!currentWorld || !currentWorld->IsEntered())
+		{
+			return;
+		}
+
+		for (Camera* camera : currentWorld->GetCameras())
+		{
+			if (!camera || !camera->IsEnabled() || camera->IsDestroyed())
+			{
+				continue;
+			}
+
+			const Entity& cameraOwner = camera->GetOwner();
+			if (!cameraOwner.IsEnabled() || cameraOwner.IsDestroyed())
+			{
+				continue;
+			}
+
+			if (auto result = commandBuffer.SetCamera(*camera); !result)
+			{
+				std::cerr << "WorldSubsystem 카메라 설정 실패: " << result.error() << std::endl;
+				continue;
+			}
+
+			const usize entityCount = currentWorld->GetEntities().size();
+			for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+			{
+				Entity& entity = *currentWorld->GetEntities()[entityIndex];
+				if (!entity.IsEnabled() || entity.IsDestroyed())
+				{
+					continue;
+				}
+
+				const usize componentCount = entity.GetComponents().size();
+				for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+				{
+					Component& component = *entity.GetComponents()[componentIndex];
+					if (component.IsStarted() && component.IsEnabled() && !component.IsDestroyed())
+					{
+						component.OnRender(commandBuffer);
+					}
+				}
+			}
+		}
+	}
+
+	void WorldSubsystem::PostRender(GPUCommandBuffer& commandBuffer)
+	{
+		if (!currentWorld || !currentWorld->IsEntered())
+		{
+			return;
+		}
+
+		const usize entityCount = currentWorld->GetEntities().size();
+		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		{
+			Entity& entity = *currentWorld->GetEntities()[entityIndex];
+			if (!entity.IsEnabled() || entity.IsDestroyed())
+			{
+				continue;
+			}
+
+			const usize componentCount = entity.GetComponents().size();
+			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			{
+				Component& component = *entity.GetComponents()[componentIndex];
+				if (component.IsStarted() && component.IsEnabled() && !component.IsDestroyed())
+				{
+					component.OnPostRender(commandBuffer);
+				}
+			}
+		}
 	}
 
 	SystemStatus WorldSubsystem::OnStartup()
@@ -34,75 +170,65 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		// 첫 엔진 Tick에서 창 생성 이벤트와 스왑 체인 생성이 처리된 뒤 진입합니다.
-		// World::Enter는 이미 진입한 월드에는 아무 작업도 하지 않습니다.
-		currentWorld->Enter();
+		if (!currentWorld->IsEntered())
+		{
+			currentWorld->SetEntered(true);
+			currentWorld->OnEnter();
+		}
+
+		if (currentWorld)
+		{
+			currentWorld->DestroyEntities();
+		}
+
 		return SystemStatus::CONTINUE;
-	}
-
-	World& WorldSubsystem::AddWorld(std::unique_ptr<World> world)
-	{
-		if (!world)
-		{
-			std::abort();
-		}
-		if (currentWorld)
-		{
-			std::abort();
-		}
-		World& result = *world;
-		worlds.push_back(std::move(world));
-		return result;
-	}
-
-	void WorldSubsystem::ExitWorld()
-	{
-		if (currentWorld)
-		{
-			currentWorld->Exit();
-			currentWorld = nullptr;
-		}
-	}
-
-	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
-	{
-		if (currentWorld)
-		{
-			currentWorld->PreRender(commandBuffer);
-		}
-	}
-
-	void WorldSubsystem::Render(GPUCommandBuffer& commandBuffer)
-	{
-		if (currentWorld)
-		{
-			currentWorld->Render(commandBuffer);
-		}
-	}
-
-	void WorldSubsystem::PostRender(GPUCommandBuffer& commandBuffer)
-	{
-		if (currentWorld)
-		{
-			currentWorld->PostRender(commandBuffer);
-		}
-	}
-
-	void WorldSubsystem::OnShutdown()
-	{
-		if (currentWorld)
-		{
-			currentWorld->Exit();
-		}
-		currentWorld = nullptr;
-		worlds.clear();
 	}
 
 	SystemStatus WorldSubsystem::OnFixedUpdate()
 	{
-		if (currentWorld)
+		if (!currentWorld)
 		{
-			currentWorld->FixedUpdate();
+			return SystemStatus::CONTINUE;
+		}
+
+		currentWorld->DestroyEntities();
+		currentWorld->OnFixedUpdate();
+
+		if (!currentWorld)
+		{
+			return SystemStatus::CONTINUE;
+		}
+
+		const usize entityCount = currentWorld->GetEntities().size();
+		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		{
+			Entity& entity = *currentWorld->GetEntities()[entityIndex];
+			if (!entity.IsEnabled() || entity.IsDestroyed())
+			{
+				continue;
+			}
+
+			const usize componentCount = entity.GetComponents().size();
+			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			{
+				Component& component = *entity.GetComponents()[componentIndex];
+				if (!component.IsEnabled() || component.IsDestroyed())
+				{
+					continue;
+				}
+
+				if (!component.IsStarted())
+				{
+					component.SetStarted(true);
+					component.OnStart();
+					if (!component.IsEnabled() || component.IsDestroyed() || !entity.IsEnabled() || entity.IsDestroyed())
+					{
+						continue;
+					}
+				}
+
+				component.OnFixedUpdate();
+			}
 		}
 
 		return SystemStatus::CONTINUE;
@@ -110,9 +236,49 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnUpdate()
 	{
-		if (currentWorld)
+		if (!currentWorld)
 		{
-			currentWorld->Update();
+			return SystemStatus::CONTINUE;
+		}
+
+		currentWorld->DestroyEntities();
+		currentWorld->OnUpdate();
+
+		if (!currentWorld)
+		{
+			return SystemStatus::CONTINUE;
+		}
+
+		const usize entityCount = currentWorld->GetEntities().size();
+		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		{
+			Entity& entity = *currentWorld->GetEntities()[entityIndex];
+			if (!entity.IsEnabled() || entity.IsDestroyed())
+			{
+				continue;
+			}
+
+			const usize componentCount = entity.GetComponents().size();
+			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			{
+				Component& component = *entity.GetComponents()[componentIndex];
+				if (!component.IsEnabled() || component.IsDestroyed())
+				{
+					continue;
+				}
+
+				if (!component.IsStarted())
+				{
+					component.SetStarted(true);
+					component.OnStart();
+					if (!component.IsEnabled() || component.IsDestroyed() || !entity.IsEnabled() || entity.IsDestroyed())
+					{
+						continue;
+					}
+				}
+
+				component.OnUpdate();
+			}
 		}
 
 		return SystemStatus::CONTINUE;
@@ -120,9 +286,49 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnLateUpdate()
 	{
-		if (currentWorld)
+		if (!currentWorld)
 		{
-			currentWorld->LateUpdate();
+			return SystemStatus::SUCCESS;
+		}
+
+		currentWorld->DestroyEntities();
+		currentWorld->OnLateUpdate();
+
+		if (!currentWorld)
+		{
+			return SystemStatus::SUCCESS;
+		}
+
+		const usize entityCount = currentWorld->GetEntities().size();
+		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		{
+			Entity& entity = *currentWorld->GetEntities()[entityIndex];
+			if (!entity.IsEnabled() || entity.IsDestroyed())
+			{
+				continue;
+			}
+
+			const usize componentCount = entity.GetComponents().size();
+			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			{
+				Component& component = *entity.GetComponents()[componentIndex];
+				if (!component.IsEnabled() || component.IsDestroyed())
+				{
+					continue;
+				}
+
+				if (!component.IsStarted())
+				{
+					component.SetStarted(true);
+					component.OnStart();
+					if (!component.IsEnabled() || component.IsDestroyed() || !entity.IsEnabled() || entity.IsDestroyed())
+					{
+						continue;
+					}
+				}
+
+				component.OnLateUpdate();
+			}
 		}
 
 		if (!currentWorld)
@@ -131,5 +337,11 @@ namespace TUK::Framework
 		}
 
 		return SystemStatus::CONTINUE;
+	}
+
+	void WorldSubsystem::OnShutdown()
+	{
+		ExitWorld();
+		worlds.clear();
 	}
 }

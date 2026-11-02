@@ -3,32 +3,6 @@
 
 namespace TUK::Framework
 {
-	Transform::Transform(Entity& owner) noexcept
-		: Component(owner)
-		, localPosition(Vector3D<f32>::GetZero())
-		, localRotation(Quaternion<f32>::GetIdentity())
-		, localScale(Vector3D<f32>::GetOne())
-		, parent(nullptr)
-		, children()
-	{
-	}
-
-	Transform::~Transform() noexcept
-	{
-		if (parent)
-		{
-			std::erase(parent->children, this);
-			parent = nullptr;
-		}
-		for (Transform* child : children)
-		{
-			child->parent = nullptr;
-			child->UpdateMatrices();
-		}
-		children.clear();
-		UpdateMatrices();
-	}
-
 	void Transform::OnDestroy()
 	{
 		if (parent)
@@ -36,11 +10,13 @@ namespace TUK::Framework
 			std::erase(parent->children, this);
 			parent = nullptr;
 		}
+
 		for (Transform* child : children)
 		{
 			child->parent = nullptr;
 			child->UpdateMatrices();
 		}
+
 		children.clear();
 		UpdateMatrices();
 	}
@@ -157,7 +133,6 @@ namespace TUK::Framework
 
 	Quaternion<f32> Transform::GetWorldRotation() const noexcept
 	{
-		// 로컬 회전을 적용한 뒤 부모 회전을 적용한다.
 		return parent ? (localRotation * parent->GetWorldRotation()).GetNormalized() : localRotation;
 	}
 
@@ -228,14 +203,17 @@ namespace TUK::Framework
 	{
 		return parent;
 	}
+	
 	const Transform* Transform::GetParent() const noexcept
 	{
 		return parent;
 	}
+	
 	std::span<Transform* const> Transform::GetChildren() noexcept
 	{
 		return children;
 	}
+
 	std::span<const Transform* const> Transform::GetChildren() const noexcept
 	{
 		return children;

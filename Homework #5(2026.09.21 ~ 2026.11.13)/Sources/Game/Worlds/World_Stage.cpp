@@ -2,12 +2,7 @@
 #include "World_Stage.hpp"
 
 #include "Framework/Core.hpp"
-#include "Framework/Platform.hpp"
-
-#include "Framework/Entities/Entity.hpp"
-#include "Framework/Entities/Transform.hpp"
-#include "Framework/Entities/Component.hpp"
-
+#include "Framework/Entities.hpp"
 #include "Framework/Graphics.hpp"
 
 using namespace TUK::Framework;
@@ -16,7 +11,7 @@ namespace TUK::Game
 {
 	void World_Stage::OnEnter()
 	{
-		Entity& cameraEntity = CreateEntity("Camera", "Main Camera");
+		Entity& cameraEntity = Instantiate("Camera", "Main Camera");
 		cameraEntity.AddComponent<Transform>()->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -2.0f));
 
 		Camera* camera = cameraEntity.AddComponent<Camera>();

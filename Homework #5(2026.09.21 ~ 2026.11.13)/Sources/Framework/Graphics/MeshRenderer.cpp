@@ -18,8 +18,10 @@ namespace TUK::Framework
 		{
 			return;
 		}
+		
 		const Transform* transform = GetOwner().GetComponent<Transform>();
 		const Matrix4x4<float> worldMatrix = transform ? transform->GetWorldMatrix() : Matrix4x4<float>::GetIdentity();
+		
 		for (const ModelPart& part : model->GetParts())
 		{
 			const MaterialAsset* partMaterial = material ? material : part.material;
@@ -27,16 +29,19 @@ namespace TUK::Framework
 			{
 				continue;
 			}
+			
 			if (auto result = commandBuffer.SetMaterial(*partMaterial); !result)
 			{
 				std::cerr << "MeshRenderer 머터리얼 적용 실패: " << result.error() << std::endl;
 				return;
 			}
+			
 			if (auto result = commandBuffer.SetObjectTransform(part.localToModel * worldMatrix); !result)
 			{
 				std::cerr << "MeshRenderer 오브젝트 변환 적용 실패: " << result.error() << std::endl;
 				return;
 			}
+			
 			commandBuffer.SetGPUMesh(part.mesh);
 			commandBuffer.DrawIndexed(part.mesh.GetIndexCount());
 		}

@@ -1,16 +1,14 @@
-﻿#pragma once
+#pragma once
 
-#include "../../Framework/Entities/World.hpp"
+#include "Framework/Entities.hpp"
 
 namespace TUK::Game
 {
 	class World_Stage : public Framework::World
 	{
-	public:
-		World_Stage() noexcept = default;
-		~World_Stage() noexcept override = default;
+		using World::World;
 
-	protected:
+	public:
 		void OnEnter() override;
 		void OnUpdate() override;
 	};

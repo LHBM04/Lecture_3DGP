@@ -1,15 +1,15 @@
-﻿#pragma once
+#pragma once
 
 #include <span>
 #include <vector>
+
+#include "../Core/Common.hpp"
 
 #include "../Math/Matrix4x4.hpp"
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"
 
 #include "Component.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -18,8 +18,7 @@ namespace TUK::Framework
 	class Transform : public Component
 	{
 	public:
-		Transform(Entity& owner) noexcept;
-		~Transform() noexcept override;
+		using Component::Component;
 
 		[[nodiscard]] const Vector3D<f32>& GetLocalPosition() const noexcept;
 		void SetLocalPosition(const Vector3D<f32>& position) noexcept;
@@ -51,20 +50,19 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::span<Transform* const> GetChildren() noexcept;
 		[[nodiscard]] std::span<const Transform* const> GetChildren() const noexcept;
-		
-	protected:
+
 		void OnDestroy() override;
 
 	private:
 		void UpdateMatrices() noexcept;
 
-		Vector3D<f32> localPosition;
-		Quaternion<f32> localRotation;
-		Vector3D<f32> localScale;
+		Vector3D<f32> localPosition{ 0.0f };
+		Quaternion<f32> localRotation{ 0.0f };
+		Vector3D<f32> localScale{ 1.0f };
 
-		Transform* parent;
-		std::vector<Transform*> children;
+		Transform* parent = nullptr;
+		std::pmr::vector<Transform*> children{};
 
-		Matrix4x4<f32> cachedWorldMatrix{};
+		Matrix4x4<f32> cachedWorldMatrix{ Matrix4x4<f32>::GetIdentity() };
 	};
 }

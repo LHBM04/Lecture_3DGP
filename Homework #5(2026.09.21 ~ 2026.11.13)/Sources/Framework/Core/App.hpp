@@ -11,8 +11,6 @@ namespace TUK::Framework
 	class App : public System
 	{
 	public:
-		~App() noexcept override = default;
-
 		SystemStatus Startup() override;
 		SystemStatus Routine() override;
 		void Shutdown() override;

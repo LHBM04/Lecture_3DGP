@@ -14,7 +14,6 @@ namespace TUK::Framework
 	{
 	public:
 		explicit Engine(App& app) noexcept;
-		~Engine() noexcept override = default;
 
 		[[nodiscard]] i32 Run();
 

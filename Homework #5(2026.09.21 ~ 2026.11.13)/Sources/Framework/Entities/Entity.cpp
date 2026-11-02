@@ -1,14 +1,22 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Entity.hpp"
+
+#include <algorithm>
+#include <ranges>
 
 namespace TUK::Framework
 {
+	Entity::~Entity() noexcept
+	{
+		DestroyAllComponents();
+	}
+
 	void Entity::RemoveDestroyedComponents()
 	{
 		const auto destroyedCount = std::ranges::count_if(components,
 			[](const auto& component)
 			{
-				return component->isDestroyed;
+				return component->IsDestroyed();
 			});
 		if (destroyedCount == 0)
 		{
@@ -18,14 +26,16 @@ namespace TUK::Framework
 		// 삭제 콜백이 컴포넌트를 추가하더라도 원래 컨테이너의 순회에 영향을 주지 않는다.
 		std::vector<std::unique_ptr<Component>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
-		std::erase_if(componentsByType, [](const auto& entry)
+		std::erase_if(componentsByType,
+			[](const auto& entry)
 			{
-				return entry.second->isDestroyed;
+				return entry.second->IsDestroyed();
 			});
+
 		usize remainingCount = 0;
 		for (usize index = 0; index < components.size(); ++index)
 		{
-			if (components[index]->isDestroyed)
+			if (components[index]->IsDestroyed())
 			{
 				destroyed.push_back(std::move(components[index]));
 			}
@@ -45,109 +55,37 @@ namespace TUK::Framework
 		{
 			componentsByType[std::type_index(typeid(*component))] = component.get();
 		}
+
 		for (const auto& component : destroyed)
 		{
-			if (component->isEnabled)
+			if (component->IsEnabled())
 			{
-				component->isEnabled = false;
 				component->OnDisable();
 			}
 			component->OnDestroy();
 		}
 	}
 
-	bool Entity::StartComponent(Component& component)
+	void Entity::DestroyAllComponents()
 	{
-		if (!component.isEnabled || component.isDestroyed)
+		if (components.empty())
 		{
-			return false;
+			return;
 		}
-		if (!component.isStared)
-		{
-			component.isStared = true;
-			component.OnStart();
-		}
-		return component.isEnabled && !component.isDestroyed;
-	}
 
-	void Entity::FixedUpdate()
-	{
-		RemoveDestroyedComponents();
-		const usize count = components.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			Component* component = components[index].get();
-			if (StartComponent(*component))
-			{
-				component->OnFixedUpdate();
-			}
-		}
-	}
+		componentsByType.clear();
+		std::vector<std::unique_ptr<Component>> removing = std::move(components);
+		components.clear();
 
-	void Entity::Update()
-	{
-		RemoveDestroyedComponents();
-		const usize count = components.size();
-		for (usize index = 0; index < count; ++index)
+		for (const auto& component : removing | std::views::reverse)
 		{
-			Component* component = components[index].get();
-			if (StartComponent(*component))
+			const bool wasEnabled = component->IsEnabled();
+			component->Destroy();
+			if (wasEnabled)
 			{
-				component->OnUpdate();
+				component->OnDisable();
 			}
-		}
-	}
-
-	void Entity::PreRender(GPUCommandBuffer& commandBuffer)
-	{
-		const usize count = components.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			Component* component = components[index].get();
-			if (component->isStared && component->isEnabled && !component->isDestroyed)
-			{
-				component->OnPreRender(commandBuffer);
-			}
-		}
-	}
-
-	void Entity::Render(GPUCommandBuffer& commandBuffer)
-	{
-		const usize count = components.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			Component* component = components[index].get();
-			if (component->isStared && component->isEnabled && !component->isDestroyed)
-			{
-				component->OnRender(commandBuffer);
-			}
-		}
-	}
-
-	void Entity::PostRender(GPUCommandBuffer& commandBuffer)
-	{
-		const usize count = components.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			Component* component = components[index].get();
-			if (component->isStared && component->isEnabled && !component->isDestroyed)
-			{
-				component->OnPostRender(commandBuffer);
-			}
-		}
-	}
-
-	void Entity::LateUpdate()
-	{
-		RemoveDestroyedComponents();
-		const usize count = components.size();
-		for (usize index = 0; index < count; ++index)
-		{
-			Component* component = components[index].get();
-			if (StartComponent(*component))
-			{
-				component->OnLateUpdate();
-			}
+			component->OnDestroy();
 		}
 	}
 }

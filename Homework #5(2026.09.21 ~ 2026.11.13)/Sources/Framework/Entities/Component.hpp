@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "../Core/Common.hpp"
 
@@ -6,28 +6,19 @@ namespace TUK::Framework
 {
 	class Entity;
 	class GPUCommandBuffer;
-	class World;
 
 	class Component
 	{
-		friend class Entity;
-
 	public:
-		Component(Entity& owner) noexcept;
+		explicit Component(Entity& owner) noexcept;
 		virtual ~Component() noexcept = default;
 
-		/** 복사 금지 */
 		Component(const Component&) = delete;
 		Component& operator=(const Component&) = delete;
 
-		/** 이동 금지 */
 		Component(Component&&) noexcept = default;
 		Component& operator=(Component&&) noexcept = default;
 
-		[[nodiscard]] const Entity& GetOwner() const noexcept;
-		[[nodiscard]] Entity& GetOwner() noexcept;
-
-	protected:
 		virtual void OnAwake();
 		virtual void OnStart();
 
@@ -44,30 +35,29 @@ namespace TUK::Framework
 
 		virtual void OnDestroy();
 
+		[[nodiscard]] const Entity& GetOwner() const noexcept;
+		[[nodiscard]] Entity& GetOwner() noexcept;
+
+		[[nodiscard]] bool IsStarted() const noexcept;
+		void SetStarted(bool value) noexcept;
+
+		[[nodiscard]] bool IsEnabled() const noexcept;
+		void SetEnabled(bool value) noexcept;
+
+		[[nodiscard]] bool IsDestroyed() const noexcept;
+		void Destroy() noexcept;
+
 	private:
 		Entity& owner;
 
-		bool isStared;
-		bool isEnabled;
-		bool isDestroyed;
+		bool isStarted = false;
+		bool isEnabled = true;
+		bool isDestroyed = false;
 	};
 
 	inline Component::Component(Entity& owner) noexcept
 		: owner(owner)
-		, isStared(false)
-		, isEnabled(true)
-		, isDestroyed(false)
 	{
-	}
-
-	inline const Entity& Component::GetOwner() const noexcept
-	{
-		return owner;
-	}
-
-	inline Entity& Component::GetOwner() noexcept
-	{
-		return owner;
 	}
 
 	inline void Component::OnAwake()
@@ -112,5 +102,58 @@ namespace TUK::Framework
 
 	inline void Component::OnDestroy()
 	{
+	}
+
+	inline const Entity& Component::GetOwner() const noexcept
+	{
+		return owner;
+	}
+
+	inline Entity& Component::GetOwner() noexcept
+	{
+		return owner;
+	}
+
+	inline bool Component::IsStarted() const noexcept
+	{
+		return isStarted;
+	}
+
+	inline void Component::SetStarted(bool value) noexcept
+	{
+		isStarted = value;
+	}
+
+	inline bool Component::IsEnabled() const noexcept
+	{
+		return isEnabled;
+	}
+
+	inline void Component::SetEnabled(bool value) noexcept
+	{
+		if (isDestroyed || isEnabled == value)
+		{
+			return;
+		}
+
+		isEnabled = value;
+		if (isEnabled)
+		{
+			OnEnable();
+		}
+		else
+		{
+			OnDisable();
+		}
+	}
+
+	inline bool Component::IsDestroyed() const noexcept
+	{
+		return isDestroyed;
+	}
+
+	inline void Component::Destroy() noexcept
+	{
+		isDestroyed = true;
 	}
 }
