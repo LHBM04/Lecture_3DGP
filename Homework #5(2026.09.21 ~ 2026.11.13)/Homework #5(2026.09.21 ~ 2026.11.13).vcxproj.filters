@@ -39,6 +39,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Core\App.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
@@ -313,6 +316,9 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp">
+      <Filter>Sources\Game\Worlds</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\MyGame.cpp">
       <Filter>Sources\Game</Filter>
