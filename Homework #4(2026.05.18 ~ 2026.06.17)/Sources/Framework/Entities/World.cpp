@@ -1,7 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "World.hpp"
 
+#include <iostream>
+
 #include "../Graphics/Camera.hpp"
+#include "../Graphics/GPUCommandBuffer.hpp"
 
 #include "Entity.hpp"
 
@@ -107,13 +110,13 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::PreRender(GPUCommandBuffer& renderer)
+	void World::PreRender(GPUCommandBuffer& commandBuffer)
 	{
 		if (!isEntered)
 		{
 			return;
 		}
-		OnPreRender(renderer);
+		OnPreRender(commandBuffer);
 		if (!isEntered)
 		{
 			return;
@@ -126,17 +129,28 @@ namespace TUK::Framework
 				return;
 			}
 			Entity* entity = entities[index].get();
-			entity->PreRender(renderer);
+			entity->PreRender(commandBuffer);
 		}
 	}
 
-	void World::Render(GPUCommandBuffer& renderer)
+	void World::Render(GPUCommandBuffer& commandBuffer)
 	{
 		if (!isEntered)
 		{
 			return;
 		}
-		OnRender(renderer);
+		const Camera* camera = GetMainCamera();
+		if (!camera)
+		{
+			return;
+		}
+		if (auto result = commandBuffer.SetCamera(*camera); !result)
+		{
+			std::cerr << "World 카메라 준비 실패: " << result.error() << std::endl;
+			return;
+		}
+
+		OnRender(commandBuffer);
 		if (!isEntered)
 		{
 			return;
@@ -149,17 +163,17 @@ namespace TUK::Framework
 				return;
 			}
 			Entity* entity = entities[index].get();
-			entity->Render(renderer);
+			entity->Render(commandBuffer);
 		}
 	}
 
-	void World::PostRender(GPUCommandBuffer& renderer)
+	void World::PostRender(GPUCommandBuffer& commandBuffer)
 	{
 		if (!isEntered)
 		{
 			return;
 		}
-		OnPostRender(renderer);
+		OnPostRender(commandBuffer);
 		if (!isEntered)
 		{
 			return;
@@ -172,7 +186,7 @@ namespace TUK::Framework
 				return;
 			}
 			Entity* entity = entities[index].get();
-			entity->PostRender(renderer);
+			entity->PostRender(commandBuffer);
 		}
 	}
 

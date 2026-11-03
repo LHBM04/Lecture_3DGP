@@ -8,14 +8,14 @@ namespace TUK::Framework
 		dxgiSwapChain->Present(1, 0);
 	}
 
-	GPUTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
+	GPURenderTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
 	{
 		const std::uint32_t index = dxgiSwapChain->GetCurrentBackBufferIndex();
 		D3D12_CPU_DESCRIPTOR_HANDLE rtv = rtvHeap->GetCPUDescriptorHandleForHeapStart();
 		rtv.ptr += static_cast<SIZE_T>(index) * rtvDescriptorSize;
 
 		const GPUTexture& texture = backBuffers[index];
-		return GPUTarget(texture, rtv, texture.GetD3DResource().GetDesc().Format);
+		return GPURenderTarget(texture, rtv, texture.GetD3DResource().GetDesc().Format);
 	}
 
 	IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept

@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "WorldSubsystem.hpp"
 
 #include "World.hpp"
@@ -55,27 +55,36 @@ namespace TUK::Framework
 		return result;
 	}
 
-	void WorldSubsystem::PreRender(GPUCommandBuffer& renderer)
+	void WorldSubsystem::ExitWorld()
 	{
 		if (currentWorld)
 		{
-			currentWorld->PreRender(renderer);
+			currentWorld->Exit();
+			currentWorld = nullptr;
 		}
 	}
 
-	void WorldSubsystem::Render(GPUCommandBuffer& renderer)
+	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
 	{
 		if (currentWorld)
 		{
-			currentWorld->Render(renderer);
+			currentWorld->PreRender(commandBuffer);
 		}
 	}
 
-	void WorldSubsystem::PostRender(GPUCommandBuffer& renderer)
+	void WorldSubsystem::Render(GPUCommandBuffer& commandBuffer)
 	{
 		if (currentWorld)
 		{
-			currentWorld->PostRender(renderer);
+			currentWorld->Render(commandBuffer);
+		}
+	}
+
+	void WorldSubsystem::PostRender(GPUCommandBuffer& commandBuffer)
+	{
+		if (currentWorld)
+		{
+			currentWorld->PostRender(commandBuffer);
 		}
 	}
 
@@ -91,34 +100,36 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnFixedUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::Failure;
+			currentWorld->FixedUpdate();
 		}
 
-		currentWorld->FixedUpdate();
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus WorldSubsystem::OnUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::Failure;
+			currentWorld->Update();
 		}
 
-		currentWorld->Update();
 		return SystemStatus::Continue;
 	}
 
 	SystemStatus WorldSubsystem::OnLateUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::Failure;
+			currentWorld->LateUpdate();
 		}
 
-		currentWorld->LateUpdate();
+		if (!currentWorld)
+		{
+			return SystemStatus::Success;
+		}
+
 		return SystemStatus::Continue;
 	}
 }

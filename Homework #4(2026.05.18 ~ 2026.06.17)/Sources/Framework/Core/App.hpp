@@ -2,7 +2,7 @@
 
 #include <concepts>
 
-#include "../Platform/DisplayCreateInfo.hpp"
+#include "../Platform/DisplayOptions.hpp"
 
 #include "AppSubsystem.hpp"
 #include "System.hpp"

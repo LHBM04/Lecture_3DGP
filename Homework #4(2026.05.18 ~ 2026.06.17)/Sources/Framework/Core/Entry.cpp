@@ -15,10 +15,10 @@ INT exitCode = 0;
 
 using namespace TUK::Framework;
 
-INT APIENTRY WinMain(
+INT APIENTRY wWinMain(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPSTR lpCmdLine,
+	_In_ LPTSTR lpCmdLine,
 	_In_ INT nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -27,7 +27,7 @@ INT APIENTRY WinMain(
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	
 	const int argc = __argc;
-	char** const argv = __argv;
+	wchar_t** const argv = __wargv;
 	
 	if (argc >= 3)
 	{

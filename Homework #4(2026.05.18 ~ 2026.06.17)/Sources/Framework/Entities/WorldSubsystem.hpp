@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -17,10 +17,11 @@ namespace TUK::Framework
 	public:
 		~WorldSubsystem() noexcept override;
 		World& AddWorld(std::unique_ptr<World> world);
+		void ExitWorld();
 
-		void PreRender(GPUCommandBuffer& renderer);
-		void Render(GPUCommandBuffer& renderer);
-		void PostRender(GPUCommandBuffer& renderer);
+		void PreRender(GPUCommandBuffer& commandBuffer);
+		void Render(GPUCommandBuffer& commandBuffer);
+		void PostRender(GPUCommandBuffer& commandBuffer);
 
 	protected:
 		SystemStatus OnStartup() override;

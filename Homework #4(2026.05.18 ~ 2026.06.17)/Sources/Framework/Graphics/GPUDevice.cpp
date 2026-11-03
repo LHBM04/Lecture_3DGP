@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUDevice.hpp"
 
+#include <array>
+
 namespace TUK::Framework
 {
 	std::expected<GPUBuffer, std::string> GPUDevice::CreateGPUBuffer(const D3D12_HEAP_PROPERTIES& heapProperties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initialState) const
@@ -33,71 +35,35 @@ namespace TUK::Framework
 
 	std::expected<GPUMesh, std::string> GPUDevice::CreateGPUMesh(
 		GPUBuffer vertexBuffer,
+		std::uint32_t vertextStride,
 		GPUBuffer indexBuffer,
-		std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) const
+		DXGI_FORMAT indexFormat,
+		D3D12_PRIMITIVE_TOPOLOGY topology) const
 	{
-		if (!vertexBuffer.d3dResource || vertexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
-		{
-			return std::unexpected("정점 버퍼가 유효하지 않습니다.");
-		}
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+		vertexBufferView.BufferLocation = vertexBuffer.GetGPUVirtualAddress();
+		vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBuffer.GetSizeInBytes());
+		vertexBufferView.StrideInBytes = vertextStride;
 
-		const std::uint64_t vertexSize = vertexBuffer.GetSizeInBytes();
-		if (vertexStride == 0 || vertexStride > D3D12_REQ_MULTI_ELEMENT_STRUCTURE_SIZE_IN_BYTES
-			|| vertexSize > std::numeric_limits<std::uint32_t>::max()
-			|| vertexSize % vertexStride != 0)
-		{
-			return std::unexpected("정점 버퍼 크기 또는 stride가 유효하지 않습니다.");
-		}
+		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+		indexBufferView.BufferLocation = indexBuffer.GetGPUVirtualAddress();
+		indexBufferView.SizeInBytes = static_cast<UINT>(indexBuffer.GetSizeInBytes());
+		indexBufferView.Format = indexFormat;
 
-		switch (topology)
-		{
-		case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
-		case D3D_PRIMITIVE_TOPOLOGY_LINELIST:
-		case D3D_PRIMITIVE_TOPOLOGY_LINESTRIP:
-		case D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST:
-		case D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP:
-			break;
-		default:
-			return std::unexpected("지원하지 않는 메쉬 topology입니다.");
-		}
-
-		if (!indexBuffer.d3dResource || indexBuffer.GetD3DHeapType() == D3D12_HEAP_TYPE_READBACK)
-		{
-			return std::unexpected("인덱스 버퍼가 유효하지 않습니다.");
-		}
-
-		if (indexFormat != DXGI_FORMAT_R16_UINT && indexFormat != DXGI_FORMAT_R32_UINT)
-		{
-			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
-		}
-
-		const std::uint32_t indexSize = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		const std::uint64_t bufferSize = indexBuffer.GetSizeInBytes();
-		if (bufferSize > std::numeric_limits<std::uint32_t>::max() || bufferSize % indexSize != 0)
-		{
-			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
-		}
-
-		return GPUMesh(std::move(vertexBuffer), std::move(indexBuffer), vertexStride, indexFormat, topology);
+		return GPUMesh(std::move(vertexBuffer), vertexBufferView, std::move(indexBuffer), indexBufferView, topology);
 	}
 
 	std::expected<GPUShader, std::string> GPUDevice::CreateGPUShader(const std::filesystem::path& path, std::string_view target, const std::string& entryPoint, std::uint32_t compileFlags) const
 	{
-		if (path.empty() || entryPoint.empty() || target.empty() || target.find('\0') != std::string_view::npos)
-		{
-			return std::unexpected("GPUShader 파일 경로, 진입점과 유효한 대상 프로파일을 지정해야 합니다.");
-		}
-
-		std::string targetString(target);
-
 		Microsoft::WRL::ComPtr<ID3DBlob> d3dBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+
 		const HRESULT result = D3DCompileFromFile(
 			path.c_str(),
 			nullptr,
 			D3D_COMPILE_STANDARD_FILE_INCLUDE,
 			entryPoint.c_str(),
-			targetString.c_str(),
+			target.data(),
 			compileFlags,
 			0,
 			d3dBlob.GetAddressOf(),
@@ -107,7 +73,7 @@ namespace TUK::Framework
 		{
 			std::string message = std::format(
 				"GPUShader 컴파일에 실패했습니다. Entry: {}, Target: {}, HRESULT: 0x{:08X}",
-				entryPoint, targetString, static_cast<std::uint32_t>(result));
+				entryPoint, target.data(), static_cast<std::uint32_t>(result));
 
 			if (errorBlob && errorBlob->GetBufferSize() > 0)
 			{
@@ -125,15 +91,32 @@ namespace TUK::Framework
 			return std::unexpected(std::move(message));
 		}
 
-		return GPUShader(std::move(d3dBlob), std::move(targetString));
+		return GPUShader(std::move(d3dBlob));
 	}
 
-	std::expected<GPURootSignature, std::string> GPUDevice::CreateGPURootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& description) const
+	std::expected<void, std::string> GPUDevice::InitializeRootSignature()
 	{
 		if (!d3dDevice)
 		{
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
+
+		// b0: 카메라, b1: 오브젝트, b2: 머터리얼 (모두 space0).
+		constexpr std::uint32_t CONSTANT_BUFFER_SLOT_COUNT = 3;
+		std::array<D3D12_ROOT_PARAMETER, CONSTANT_BUFFER_SLOT_COUNT> parameters{};
+		for (std::uint32_t index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
+		{
+			parameters[index].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			parameters[index].Descriptor.ShaderRegister = index;
+			parameters[index].Descriptor.RegisterSpace = 0;
+			parameters[index].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		}
+
+		D3D12_VERSIONED_ROOT_SIGNATURE_DESC description{};
+		description.Version = D3D_ROOT_SIGNATURE_VERSION_1_0;
+		description.Desc_1_0.NumParameters = CONSTANT_BUFFER_SLOT_COUNT;
+		description.Desc_1_0.pParameters = parameters.data();
+		description.Desc_1_0.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 		Microsoft::WRL::ComPtr<ID3DBlob> serializedBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
@@ -142,7 +125,7 @@ namespace TUK::Framework
 		if (FAILED(serializeResult))
 		{
 			std::string message = std::format(
-				"GPURootSignature 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
+				"공통 루트 시그니처 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
 				static_cast<std::uint32_t>(serializeResult));
 			if (errorBlob && errorBlob->GetBufferSize() > 0)
 			{
@@ -159,7 +142,6 @@ namespace TUK::Framework
 			return std::unexpected(std::move(message));
 		}
 
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature;
 		const HRESULT createResult = d3dDevice->CreateRootSignature(
 			0,
 			serializedBlob->GetBufferPointer(),
@@ -168,11 +150,11 @@ namespace TUK::Framework
 		if (FAILED(createResult))
 		{
 			return std::unexpected(std::format(
-				"GPURootSignature 생성에 실패했습니다. HRESULT: 0x{:08X}",
+				"공통 루트 시그니처 생성에 실패했습니다. HRESULT: 0x{:08X}",
 				static_cast<std::uint32_t>(createResult)));
 		}
 
-		return GPURootSignature(std::move(d3dRootSignature));
+		return {};
 	}
 
 	std::expected<GPUGraphicsPipelineState, std::string> GPUDevice::CreateGPUGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description) const
@@ -182,9 +164,17 @@ namespace TUK::Framework
 			return std::unexpected("GPUDevice가 초기화되지 않았습니다.");
 		}
 
+		if (!d3dRootSignature)
+		{
+			return std::unexpected("공통 루트 시그니처가 초기화되지 않았습니다.");
+		}
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDescription = description;
+		pipelineDescription.pRootSignature = d3dRootSignature.Get();
+
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState;
 		const HRESULT result = d3dDevice->CreateGraphicsPipelineState(
-			&description, IID_PPV_ARGS(d3dPipelineState.GetAddressOf()));
+			&pipelineDescription, IID_PPV_ARGS(d3dPipelineState.GetAddressOf()));
 		if (FAILED(result))
 		{
 			return std::unexpected(std::format(
@@ -224,7 +214,7 @@ namespace TUK::Framework
 			return std::unexpected("D3D12 Command List 초기 Close에 실패했습니다.");
 		}
 
-		return GPUCommandBuffer(std::move(d3dCommandList), std::move(d3dCommandAllocator));
+		return GPUCommandBuffer(*this, std::move(d3dCommandList), std::move(d3dCommandAllocator));
 	}
 
 	std::expected<GPUFence, std::string> GPUDevice::CreateGPUFence() const
@@ -265,6 +255,12 @@ namespace TUK::Framework
 	ID3D12CommandQueue& GPUDevice::GetD3DCommandQueue() const noexcept
 	{
 		return *(d3dCommandQueue.Get());
+	}
+
+	ID3D12RootSignature& GPUDevice::GetD3DRootSignature() const noexcept
+	{
+		assert(d3dRootSignature);
+		return *d3dRootSignature.Get();
 	}
 
 	GPUDevice::GPUDevice(

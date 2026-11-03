@@ -8,6 +8,11 @@
 
 namespace TUK::Framework
 {
+	namespace
+	{
+		std::array<TCHAR, 256> caption;
+	}
+
 	Display::Display(HWND hWnd) noexcept
 		: hWnd(hWnd)
 		, shouldClose(false)
@@ -23,20 +28,17 @@ namespace TUK::Framework
 		}
 	}
 
-	const std::string& Display::GetCaption() const noexcept
+	LPCTSTR Display::GetCaption() const noexcept
 	{
 		assert(hWnd);
-		static std::string caption;
-		caption.resize(GetWindowTextLengthA(hWnd) + 1);
-		const int length = GetWindowTextA(hWnd, caption.data(), static_cast<std::int32_t>(caption.size()));
-		caption.resize(length);
-		return caption;
+		GetWindowText(hWnd, caption.data(), caption.size());
+		return caption.data();
 	}
 
-	void Display::SetCaption(std::string_view value) noexcept
+	void Display::SetCaption(LPCTSTR value) noexcept
 	{
 		assert(hWnd);
-		SetWindowTextA(hWnd, std::string(value).c_str());
+		SetWindowText(hWnd, value);
 	}
 
 	Vector2D<std::int32_t> Display::GetPosition() const noexcept
@@ -127,7 +129,7 @@ namespace TUK::Framework
 	{
 		if (message == WM_NCCREATE)
 		{
-			const CREATESTRUCTA* creation = reinterpret_cast<const CREATESTRUCTA*>(lParam);
+			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
 
 			Display* display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)
@@ -138,87 +140,103 @@ namespace TUK::Framework
 			display->hWnd = hWnd;
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(display));
 
-			return DefWindowProcA(hWnd, message, wParam, lParam);
+			return DefWindowProcW(hWnd, message, wParam, lParam);
 		}
 
 		Display* display = reinterpret_cast<Display*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 		if (!display)
 		{
-			return DefWindowProcA(hWnd, message, wParam, lParam);
+			return DefWindowProcW(hWnd, message, wParam, lParam);
 		}
 
 		EventSubsystem* eventSubsystem = Engine::GetInstance()->GetSubsystem<EventSubsystem>();
 
 		switch (message)
 		{
-		case WM_CREATE:
-		{
-			if (eventSubsystem)
+			case WM_CREATE:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayCreateData{} });
-			}
-			return 0;
-		}
-		case WM_SIZE:
-		{
-			if (eventSubsystem)
-			{
-				eventSubsystem->PushEvent(
+				if (eventSubsystem)
 				{
-					*display,
-					DisplayResizeData{ LOWORD(lParam), HIWORD(lParam) }
-				});
+					eventSubsystem->PushEvent({ *display, DisplayCreateData{} });
+				}
+				return 0;
 			}
-			return 0;
-		}
-		case WM_MOVE:
-		{
-			if (eventSubsystem)
+			case WM_SIZE:
 			{
-				eventSubsystem->PushEvent(
+				if (eventSubsystem)
 				{
-					*display,
-					DisplayMoveData{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }
-				});
+					eventSubsystem->PushEvent(
+					{
+						*display,
+						DisplayResizeData{ LOWORD(lParam), HIWORD(lParam) }
+					});
+				}
+				return 0;
 			}
-			return 0;
-		}
-		case WM_SETFOCUS: [[fallthrough]];
-		case WM_KILLFOCUS:
-		{
-			if (eventSubsystem)
+			case WM_MOVE:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayFocusData{ message == WM_SETFOCUS } });
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent(
+					{
+						*display,
+						DisplayMoveData{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }
+					});
+				}
+				return 0;
 			}
-			return 0;
-		}
-		case WM_CLOSE:
-		{
-			display->SetShouldClose(true);
-			if (eventSubsystem)
+			case WM_SETFOCUS: [[fallthrough]];
+			case WM_KILLFOCUS:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, DisplayFocusData{ message == WM_SETFOCUS } });
+				}
+				return 0;
 			}
-			return DefWindowProcA(hWnd, message, wParam, lParam);
-		}
-		case WM_DESTROY:
-		{
-			if (eventSubsystem)
+			case WM_CLOSE:
 			{
-				eventSubsystem->PushEvent({ *display, DisplayDestroyData{} });
+				display->SetShouldClose(true);
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, DisplayCloseData{} });
+				}
+				return DefWindowProcW(hWnd, message, wParam, lParam);
 			}
-			return 0;
-		}
-		case WM_NCDESTROY:
-		{
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
-			display->hWnd = nullptr;
-			return 0;
-		}
-		default:
-		{
-			return DefWindowProcA(hWnd, message, wParam, lParam);
-		}
+			case WM_DESTROY:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, DisplayDestroyData{} });
+				}
+				return 0;
+			}
+			case WM_NCDESTROY:
+			{
+				SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+				display->hWnd = nullptr;
+				return 0;
+			}
+			case WM_KEYDOWN:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, KeyInteractData{ static_cast<int>(wParam), WM_KEYDOWN } });
+				}
+				return 0;
+			}
+			case WM_KEYUP:
+			{
+				if (eventSubsystem)
+				{
+					eventSubsystem->PushEvent({ *display, KeyInteractData{ static_cast<int>(wParam), WM_KEYUP } });
+				}
+				return 0;
+			}
+			default:
+			{
+				return DefWindowProcW(hWnd, message, wParam, lParam);
+			}
 		}
 
 		std::unreachable();

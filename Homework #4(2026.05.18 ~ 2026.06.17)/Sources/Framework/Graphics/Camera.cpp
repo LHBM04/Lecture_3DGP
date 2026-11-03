@@ -46,8 +46,8 @@ namespace TUK::Framework
 
 	Matrix4x4<float> Camera::GetProjectionMatrix() const noexcept
 	{
-		assert(viewport.width > 0.0f && viewport.height > 0.0f);
-		const float aspectRatio = viewport.width / viewport.height;
+		assert(viewport.Width > 0.0f && viewport.Height > 0.0f);
+		const float aspectRatio = viewport.Width / viewport.Height;
 
 		switch (projectionType)
 		{

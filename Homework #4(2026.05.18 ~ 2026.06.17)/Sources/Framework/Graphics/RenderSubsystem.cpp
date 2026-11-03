@@ -1,6 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
+#include <cstdint>
+#include <iostream>
+
 #include "Framework/Platform/Display.hpp"
 
 
@@ -139,30 +142,21 @@ namespace TUK::Framework
 	SystemStatus RenderSubsystem::OnPostTick()
 	{
 		// 직전 프레임의 Fence 대기가 끝난 뒤 기록용 메모리를 재사용합니다.
-		ID3D12CommandAllocator& allocator = commandBuffer->GetD3DCommandAllocator();
-		ID3D12GraphicsCommandList10& commandList = commandBuffer->GetD3DCommandList();
-
-		if (FAILED(allocator.Reset()))
+		if (auto result = commandBuffer->Reset(); !result)
 		{
-			std::cerr << "D3D12 Command Allocator Reset 실패!" << std::endl;
-			return SystemStatus::Failure;
-		}
-
-		if (FAILED(commandList.Reset(&allocator, nullptr)))
-		{
-			std::cerr << "D3D12 Command List Reset 실패!" << std::endl;
+			std::cerr << result.error() << std::endl;
 			return SystemStatus::Failure;
 		}
 
 		// 각 스왑 체인을 돌면서 명령을 기록한다.
 		for (auto& [display, swapChain] : swapChains)
 		{
-			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
+			const GPURenderTarget target = swapChain.GetCurrentBackBufferTarget();
 			const GPUTexture& backBuffer = target.GetTexture();
 
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-			commandBuffer->ClearGPUTarget(target, ColorRGBA<float>::GetBlack());
-			commandBuffer->SetGPUTarget(target);
+			commandBuffer->ClearGPURenderTarget(target, ColorRGBA<float>::GetBlack());
+			commandBuffer->SetGPURenderTarget(target);
 
 			const D3D12_RESOURCE_DESC targetDescription = backBuffer.GetD3DResource().GetDesc();
 			const D3D12_VIEWPORT viewport
@@ -175,8 +169,8 @@ namespace TUK::Framework
 			{
 				0, 0, static_cast<LONG>(targetDescription.Width), static_cast<LONG>(targetDescription.Height)
 			};
-			commandList.RSSetViewports(1, &viewport);
-			commandList.RSSetScissorRects(1, &scissor);
+			commandBuffer->SetViewport(viewport);
+			commandBuffer->SetScissorRect(scissor);
 
 			for (const RenderCallback& listener : listeners)
 			{
@@ -291,7 +285,12 @@ namespace TUK::Framework
 					return std::unexpected("D3D12 Command Queue 생성 실패!");
 				}
 
-				return GPUDevice(std::move(d3dDevice), std::move(d3dCommandQueue));
+				GPUDevice device(std::move(d3dDevice), std::move(d3dCommandQueue));
+				if (auto result = device.InitializeRootSignature(); !result)
+				{
+					return std::unexpected(result.error());
+				}
+				return device;
 			}
 			
 		}
@@ -367,4 +366,5 @@ namespace TUK::Framework
 
 		return GPUSwapChain(std::move(swapChain4), std::move(rtvHeap), std::move(backBuffers), descriptorSize);
 	}
+
 }

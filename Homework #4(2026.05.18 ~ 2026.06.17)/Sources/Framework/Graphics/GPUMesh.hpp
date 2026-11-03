@@ -6,8 +6,18 @@
 
 #include "GPUBuffer.hpp"
 
+#include "../Math/ColorRGB.hpp"
+#include "../Math/Vector3D.hpp"
+
 namespace TUK::Framework
 {
+	struct Vertex final
+	{
+		Vector3D<float> position{ 0.0f, 0.0f, 0.0f };
+		Vector3D<float> normal{ 0.0f, 0.0f, 1.0f };
+		ColorRGB<float> color{ 1.0f, 1.0f, 1.0f };
+	};
+
 	// 정점 스트림 하나와 인덱스 버퍼를 소유합니다.
 	class GPUMesh
 	{
@@ -35,8 +45,10 @@ namespace TUK::Framework
 	private:
 		explicit GPUMesh(
 			GPUBuffer vertexBuffer,
+			D3D12_VERTEX_BUFFER_VIEW vertexBufferView,
 			GPUBuffer indexBuffer,
-			std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
+			D3D12_INDEX_BUFFER_VIEW indexBufferView,
+			D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
 
 		GPUBuffer vertexBuffer;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;

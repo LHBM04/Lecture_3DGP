@@ -8,7 +8,7 @@
 
 #include <wrl/client.h>
 
-#include "GPUTarget.hpp"
+#include "GPURenderTarget.hpp"
 #include "GPUTexture.hpp"
 
 namespace TUK::Framework
@@ -28,7 +28,7 @@ namespace TUK::Framework
 
 		void Present() const;
 
-		[[nodiscard]] GPUTarget GetCurrentBackBufferTarget() const noexcept;
+		[[nodiscard]] GPURenderTarget GetCurrentBackBufferTarget() const noexcept;
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
 
 	private:

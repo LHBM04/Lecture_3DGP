@@ -41,12 +41,14 @@ namespace TUK::Framework
 
 	GPUMesh::GPUMesh(
 		GPUBuffer vertexBuffer,
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView,
 		GPUBuffer indexBuffer,
-		std::uint32_t vertexStride, DXGI_FORMAT indexFormat, D3D12_PRIMITIVE_TOPOLOGY topology) noexcept
+		D3D12_INDEX_BUFFER_VIEW indexBufferView,
+		D3D12_PRIMITIVE_TOPOLOGY topology) noexcept
 		: vertexBuffer(std::move(vertexBuffer))
-		, vertexBufferView{ this->vertexBuffer.GetGPUVirtualAddress(), static_cast<UINT>(this->vertexBuffer.GetSizeInBytes()), vertexStride }
+		, vertexBufferView(vertexBufferView)
 		, indexBuffer(std::move(indexBuffer))
-		, indexBufferView{ this->indexBuffer.GetGPUVirtualAddress(), static_cast<UINT>(this->indexBuffer.GetSizeInBytes()), indexFormat }
+		, indexBufferView(indexBufferView)
 		, topology(topology)
 	{
 	}

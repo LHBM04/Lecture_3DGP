@@ -49,9 +49,9 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		RenderSubsystem() noexcept;
-
 		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
+
+		RenderSubsystem() noexcept;
 
 		std::expected<GPUDevice, std::string> CreateGPUDevice() const;
 		std::expected<GPUSwapChain, std::string> CreateGPUSwapChain(HWND window, const DXGI_SWAP_CHAIN_DESC1& description) const;
@@ -69,9 +69,9 @@ namespace TUK::Framework
 	{
 		assert(instance && callback);
 		Subscribe(
-			[instance, callback](GPUCommandBuffer& renderer)
+			[instance, callback](GPUCommandBuffer& commandBuffer)
 			{
-				(instance->*callback)(renderer);
+				(instance->*callback)(commandBuffer);
 			});
 	}
 
@@ -80,9 +80,9 @@ namespace TUK::Framework
 	{
 		assert(instance && callback);
 		Subscribe(
-			[instance, callback](GPUCommandBuffer& renderer)
+			[instance, callback](GPUCommandBuffer& commandBuffer)
 			{
-				(instance->*callback)(renderer);
+				(instance->*callback)(commandBuffer);
 			});
 	}
 }
