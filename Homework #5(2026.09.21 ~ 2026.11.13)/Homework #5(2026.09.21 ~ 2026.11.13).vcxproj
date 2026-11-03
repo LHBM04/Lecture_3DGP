@@ -172,14 +172,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ExternalInclude);$(ExternalInclude)\directxmath;$(ExternalInclude)\directx;$(ExternalInclude)\directxtk12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(ExternalLinkage)'=='Dynamic'">DIRECTX_TOOLKIT_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ExternalInclude);$(ExternalInclude)\directxmath;$(ExternalInclude)\directx;$(ExternalInclude)\directxtk12;$(ExternalInclude)\directxtex;$(ExternalInclude)\directxmesh;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(ExternalLinkage)'=='Dynamic'">DIRECTX_TOOLKIT_IMPORT;DIRECTX_TEX_IMPORT;DIRECTX_MESH_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(ExternalLinkage)'=='Static' and '$(Configuration)'=='Debug'">MultiThreadedDebug</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(ExternalLinkage)'=='Static' and '$(Configuration)'=='Release'">MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)External\Libraries\$(ExternalTriplet)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectXTex.lib;DirectXMesh.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
@@ -199,8 +199,8 @@
     <Copy Condition="'$(Platform)'=='x64'" SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\dxcompiler.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\dxil.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
     <Copy Condition="'$(Platform)'=='Win32'" SourceFiles="$(WindowsSdkDir)bin\$(TargetPlatformVersion)\$(ExternalArchitecture)\dxcompiler.dll;$(WindowsSdkDir)bin\$(TargetPlatformVersion)\$(ExternalArchitecture)\dxil.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
-  <Target Name="CopyDirectXTK12Binary" AfterTargets="Build" Condition="'$(ExternalLinkage)'=='Dynamic'">
-    <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  <Target Name="CopyDirectXLibraryBinaries" AfterTargets="Build" Condition="'$(ExternalLinkage)'=='Dynamic'">
+    <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTex.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXMesh.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Entities.hpp" />

@@ -992,3 +992,13 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/c,c++,visualstudio,visualstudiocode,jetbrains,jetbrains+all,jetbrains+iml,rider,clion,clion+all,clion+iml,xcode,xcodeinjection,windows
+
+# DirectXTex and DirectXMesh vendored libraries
+!**/External/Libraries/*/Debug/
+!**/External/Libraries/*/Release/
+!**/External/Libraries/*/*/DirectXTex.lib
+!**/External/Libraries/*/*/DirectXMesh.lib
+!**/External/Binaries/*/Debug/
+!**/External/Binaries/*/Release/
+!**/External/Binaries/*/*/DirectXTex.dll
+!**/External/Binaries/*/*/DirectXMesh.dll
