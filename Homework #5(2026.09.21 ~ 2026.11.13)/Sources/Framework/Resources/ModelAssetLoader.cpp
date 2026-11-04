@@ -1,56 +1,89 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "ModelAssetLoader.hpp"
 
-#include <cstddef>
-#include <cstdint>
 #include <filesystem>
 #include <fstream>
-#include <istream>
-#include <limits>
-#include <span>
+#include <iterator>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <utility>
-#include <iterator>
-#include <vector>
-
-#include "../Graphics/GPUBuffer.hpp"
-#include "../Graphics/GPUDevice.hpp"
-
-#include "../Math/Quaternion.hpp"
-#include "../Math/Vector3D.hpp"
-
-#include "../Utilities/BinaryUtility.hpp"
 
 #include "AssetSubsystem.hpp"
 #include "MaterialAsset.hpp"
+#include "MeshAsset.hpp"
 
 namespace TUK::Framework
 {
-	ModelAssetLoader::ModelAssetLoader(const GPUDevice& device, AssetSubsystem& assets) noexcept
-		: device(device)
-		, assets(assets)
+	namespace
+	{
+		[[nodiscard]] std::filesystem::path BuildResourcePath(
+			const std::filesystem::path& modelPath,
+			std::string_view directory,
+			std::string_view name)
+		{
+			std::filesystem::path resource(std::u8string(name.begin(), name.end()));
+			if (!resource.has_parent_path())
+			{
+				resource = modelPath.parent_path().parent_path() / directory / resource;
+			}
+			if (resource.extension() != ".bin")
+			{
+				resource += ".bin";
+			}
+			return resource.lexically_normal();
+		}
+	}
+
+	ModelAssetLoader::ModelAssetLoader(AssetSubsystem& assets) noexcept
+		: assets(assets)
 	{
 	}
 
-	std::expected<std::unique_ptr<Asset>, std::string> ModelAssetLoader::Load(const std::filesystem::path& path) const
+	ModelAssetLoader::ModelAssetLoader([[maybe_unused]] const GPUDevice& device, AssetSubsystem& assets) noexcept
+		: assets(assets)
+	{
+	}
+
+	std::expected<std::unique_ptr<Asset>, std::string> ModelAssetLoader::Load(
+		const std::filesystem::path& path) const
 	{
 		if (path.extension() != ".bin")
 		{
 			return std::unexpected("ModelAssetLoader requires a .bin model file.");
 		}
+
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
 			return std::unexpected("Cannot open model: " + path.generic_string());
 		}
+
 		const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 		auto model = std::make_unique<ModelAsset>();
-		Asset& asset = *model;
-		if (file.bad() || !asset.Deserialize(bytes) || !model->Upload(device, assets, path))
+		if (file.bad() || !model->Deserialize(bytes))
 		{
-			return std::unexpected("Cannot deserialize or upload model: " + path.generic_string());
+			return std::unexpected("Cannot deserialize model: " + path.generic_string());
 		}
+
+		for (ModelNode& node : model->GetNodes())
+		{
+			for (ModelRendererReference& renderer : node.renderers)
+			{
+				const MeshAsset* mesh = assets.LoadAsset<MeshAsset>(
+					BuildResourcePath(path, "Meshes", renderer.meshName));
+				const MaterialAsset* material = assets.LoadAsset<MaterialAsset>(
+					BuildResourcePath(path, "Materials", renderer.materialName));
+				if (!mesh || !material)
+				{
+					return std::unexpected("Cannot load dependencies for model: " + path.generic_string());
+				}
+
+				renderer.mesh = mesh;
+				renderer.material = material;
+			}
+		}
+
 		return model;
 	}
 }

@@ -1,5 +1,10 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "MyGame.hpp"
+
+#include "../Framework/Core.hpp"
+#include "../Framework/Platform.hpp"
+#include "../Framework/Entities/WorldSubsystem.hpp"
+#include "../Framework/Graphics.hpp"
 
 #include "Worlds/World_Stage.hpp"
 
@@ -9,44 +14,14 @@ namespace TUK::Game
 {
 	SystemStatus MyGame::Startup()
 	{
-		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
-		if (!displaySubsystem)
-		{
-			return SystemStatus::FAILURE;
-		}
-		
-		renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
-		if (!renderSubsystem)
-		{
-			return SystemStatus::FAILURE;
-		}
-		
-		worldSubsystem = AddSubsystem<WorldSubsystem>();
-		if (!worldSubsystem)
-		{
-			return SystemStatus::FAILURE;
-		}
-
-		inputSubsystem = AddSubsystem<InputSubsystem>();
-		if (!inputSubsystem)
-		{
-			return SystemStatus::FAILURE;
-		}
-
-		assetSubsystem = AddSubsystem<AssetSubsystem>();
-		if (!assetSubsystem)
-		{
-			return SystemStatus::FAILURE;
-		}
-
-		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::PreRender);
-		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::Render);
-		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::PostRender);
-
-		worldSubsystem->AddWorld(std::make_unique<World_Stage>());
-
 		EventSubsystem* eventSubsystem = Engine::GetInstance().GetSubsystem<EventSubsystem>();
 		if (!eventSubsystem)
+		{
+			return SystemStatus::FAILURE;
+		}
+
+		InputSubsystem* inputSubsystem = AddSubsystem<InputSubsystem>();
+		if (!inputSubsystem)
 		{
 			return SystemStatus::FAILURE;
 		}
@@ -55,6 +30,12 @@ namespace TUK::Game
 		eventSubsystem->AddListener<DisplayCreateEvent>(inputSubsystem, &InputSubsystem::OnCreate);
 		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnClose);
 		eventSubsystem->AddListener<DisplayFocusEvent>(inputSubsystem, &InputSubsystem::OnFocus);
+
+		DisplaySubsystem* displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
+		if (!displaySubsystem)
+		{
+			return SystemStatus::FAILURE;
+		}
 
 		TCHAR caption[256]{};
 		LoadString(GetModuleHandle(nullptr), IDS_WNDCAPTION, caption, 256);
@@ -73,8 +54,28 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
+		WorldSubsystem* worldSubsystem = AddSubsystem<WorldSubsystem>();
+		worldSubsystem->AddWorld(std::make_unique<World_Stage>());
+
+		RenderSubsystem* renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
+		if (!renderSubsystem)
+		{
+			return SystemStatus::FAILURE;
+		}
+
+		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::PreRender);
+		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::Render);
+		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::PostRender);
+
+		AssetSubsystem* assetSubsystem = AddSubsystem<AssetSubsystem>();
+		if (!assetSubsystem)
+		{
+			return SystemStatus::FAILURE;
+		}
+
 		auto& device = renderSubsystem->GetDevice();
-		assetSubsystem->AddLoader<ModelAssetLoader>(device, *assetSubsystem);
+		assetSubsystem->AddLoader<ModelAssetLoader>(*assetSubsystem);
+		assetSubsystem->AddLoader<MeshAssetLoader>(device);
 		assetSubsystem->AddLoader<MaterialAssetLoader>(
 			device,
 			*assetSubsystem,

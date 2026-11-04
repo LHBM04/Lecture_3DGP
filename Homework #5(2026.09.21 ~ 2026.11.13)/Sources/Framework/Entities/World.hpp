@@ -17,6 +17,7 @@ namespace TUK::Framework
 {
 	class Camera;
 	class Entity;
+	class ModelAsset;
 	class Transform;
 
 	class World
@@ -49,6 +50,12 @@ namespace TUK::Framework
 		Entity& Instantiate(const Quaternion<f32>& rotation);
 		Entity& Instantiate(Transform* parent);
 		Entity& Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent);
+		Entity& Instantiate(const ModelAsset& model);
+		Entity& Instantiate(const ModelAsset& model, Transform* parent);
+		Entity& Instantiate(const ModelAsset& model, const Vector3D<f32>& position);
+		Entity& Instantiate(const ModelAsset& model, const Quaternion<f32>& rotation);
+		Entity& Instantiate(const ModelAsset& model, const Vector3D<f32>& position, const Quaternion<f32>& rotation);
+		Entity& Instantiate(const ModelAsset& model, const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent);
 
 		void Destroy(Entity& entity) noexcept;
 		void Destroy(Entity* entity) noexcept;

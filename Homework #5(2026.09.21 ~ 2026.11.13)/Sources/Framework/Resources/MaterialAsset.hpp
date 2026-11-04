@@ -11,17 +11,16 @@
 
 #include <directx/d3d12.h>
 
+#include "../Core/Common.hpp"
+
 #include "../Graphics/GPUGraphicsPipelineState.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 
 #include "Asset.hpp"
 
-#include "../Core/Common.hpp"
-
 namespace TUK::Framework
 {
-	class AssetSubsystem;
 	class GPUDevice;
 	class ShaderAsset;
 
@@ -39,11 +38,6 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
-		[[nodiscard]] bool Upload(
-			const GPUDevice& device,
-			AssetSubsystem& assets,
-			const std::filesystem::path& path,
-			DXGI_FORMAT format);
 
 		[[nodiscard]] static std::expected<MaterialAsset, std::string> Create(
 			const GPUDevice& device,
@@ -55,7 +49,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] D3D12_CULL_MODE GetCullMode() const noexcept;
 		[[nodiscard]] D3D12_FILL_MODE GetFillMode() const noexcept;
+		[[nodiscard]] bool HasGraphicsPipelineState() const noexcept;
 		[[nodiscard]] const GPUGraphicsPipelineState& GetGraphicsPipelineState() const noexcept;
+		void SetGraphicsPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept;
 		[[nodiscard]] DXGI_FORMAT GetTargetFormat() const noexcept;
 
 		[[nodiscard]] const ColorRGBA<f32>& GetAlbedoColor() const noexcept;
@@ -82,6 +78,8 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::string_view GetShaderPath() const noexcept;
 		void SetShaderPath(std::string_view value) noexcept;
+		[[nodiscard]] std::string_view GetVertexShaderPath() const noexcept;
+		[[nodiscard]] std::string_view GetPixelShaderPath() const noexcept;
 
 	private:
 		explicit MaterialAsset(
@@ -118,10 +116,21 @@ namespace TUK::Framework
 		return fillMode;
 	}
 
+	inline bool MaterialAsset::HasGraphicsPipelineState() const noexcept
+	{
+		return graphicsPipelineState.has_value();
+	}
+
 	inline const GPUGraphicsPipelineState& MaterialAsset::GetGraphicsPipelineState() const noexcept
 	{
 		assert(graphicsPipelineState);
 		return *graphicsPipelineState;
+	}
+
+	inline void MaterialAsset::SetGraphicsPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept
+	{
+		graphicsPipelineState = std::move(value);
+		targetFormat = format;
 	}
 
 	inline DXGI_FORMAT MaterialAsset::GetTargetFormat() const noexcept
@@ -245,6 +254,16 @@ namespace TUK::Framework
 		pixel.replace_extension(".frag.hlsl");
 		vertexShaderPath = vertex.generic_string();
 		pixelShaderPath = pixel.generic_string();
+	}
+
+	inline std::string_view MaterialAsset::GetVertexShaderPath() const noexcept
+	{
+		return vertexShaderPath;
+	}
+
+	inline std::string_view MaterialAsset::GetPixelShaderPath() const noexcept
+	{
+		return pixelShaderPath;
 	}
 
 	inline MaterialAsset::MaterialAsset(

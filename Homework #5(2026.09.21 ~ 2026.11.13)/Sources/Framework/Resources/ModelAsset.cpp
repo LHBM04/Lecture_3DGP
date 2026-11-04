@@ -1,31 +1,14 @@
 #include "Precompiled.hpp"
 #include "ModelAsset.hpp"
-#include "MeshAsset.hpp"
 
-#include <cstddef>
-#include <cstdint>
-#include <filesystem>
-#include <fstream>
 #include <istream>
-#include <iterator>
-#include <limits>
-#include <span>
 #include <sstream>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
 
-#include "../Graphics/GPUBuffer.hpp"
-#include "../Graphics/GPUDevice.hpp"
-
-#include "../Math/Quaternion.hpp"
-#include "../Math/Vector3D.hpp"
-
 #include "../Utilities/BinaryUtility.hpp"
-
-#include "AssetSubsystem.hpp"
-#include "MaterialAsset.hpp"
 
 namespace TUK::Framework
 {
@@ -57,21 +40,6 @@ namespace TUK::Framework
 				return false;
 			}
 			return count <= MAX_ELEMENT_COUNT;
-		}
-
-		[[nodiscard]] std::filesystem::path BuildResourcePath(
-			const std::filesystem::path& modelPath, std::string_view directory, const std::string& name)
-		{
-			std::filesystem::path resource(std::u8string(name.begin(), name.end()));
-			if (!resource.has_parent_path())
-			{
-				resource = modelPath.parent_path().parent_path() / directory / resource;
-			}
-			if (resource.extension() != ".bin")
-			{
-				resource += ".bin";
-			}
-			return resource.lexically_normal();
 		}
 	}
 
@@ -136,11 +104,9 @@ namespace TUK::Framework
 			return false;
 		}
 
-		std::vector<Matrix4x4<f32>> nodeMatrices;
 		std::vector<ModelNode> parsedNodes;
-		std::vector<ModelReference> parsedReferences;
-		nodeMatrices.reserve(nodeCount);
 		parsedNodes.reserve(nodeCount);
+		bool hasAnyRenderer = false;
 
 		for (u32 index = 0; index < nodeCount; ++index)
 		{
@@ -178,13 +144,6 @@ namespace TUK::Framework
 				return false;
 			}
 
-			Matrix4x4<f32> modelMatrix = Matrix4x4<f32>::TRS(position, rotation, scale);
-			if (parentIndex >= 0)
-			{
-				modelMatrix *= nodeMatrices[static_cast<usize>(parentIndex)];
-			}
-			nodeMatrices.emplace_back(modelMatrix);
-
 			ModelNode node{};
 			node.index = nodeIndex;
 			node.parentIndex = parentIndex;
@@ -203,61 +162,20 @@ namespace TUK::Framework
 				{
 					return false;
 				}
-				node.renderers.push_back(ModelRendererReference{ meshName, materialName });
-				parsedReferences.push_back(ModelReference{ std::move(meshName), std::move(materialName), modelMatrix });
+				node.renderers.push_back(ModelRendererReference{ std::move(meshName), std::move(materialName), nullptr, nullptr });
+				hasAnyRenderer = true;
 			}
 
 			parsedNodes.push_back(std::move(node));
 		}
 
-		if (parsedReferences.empty() || file.bad() || file.peek() != std::char_traits<char>::eof())
+		if (!hasAnyRenderer || file.bad() || file.peek() != std::char_traits<char>::eof())
 		{
 			return false;
 		}
 
 		name = std::move(modelName);
 		nodes = std::move(parsedNodes);
-		references = std::move(parsedReferences);
-		parts.clear();
-		return true;
-	}
-
-	bool ModelAsset::Upload(const GPUDevice& device, AssetSubsystem& assets, const std::filesystem::path& path)
-	{
-		std::vector<ModelPart> newParts;
-		for (const auto& reference : references)
-		{
-			std::ifstream file(BuildResourcePath(path, "Meshes", reference.meshName), std::ios::binary);
-			if (!file)
-			{
-				return false;
-			}
-			const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
-			MeshAsset meshAsset;
-			if (file.bad() || !meshAsset.Deserialize(bytes))
-			{
-				return false;
-			}
-			const auto* material = assets.LoadAsset<MaterialAsset>(BuildResourcePath(path, "Materials", reference.materialName));
-			if (!material)
-			{
-				return false;
-			}
-			auto vertices = GPUBuffer::CreateUpload(device, std::as_bytes(meshAsset.GetVertices()));
-			auto indices = GPUBuffer::CreateUpload(device, std::as_bytes(meshAsset.GetIndices()));
-			if (!vertices || !indices)
-			{
-				return false;
-			}
-			auto mesh = GPUMesh::Create(std::move(*vertices), sizeof(DirectX::VertexPositionNormalColor),
-				std::move(*indices), DXGI_FORMAT_R32_UINT, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			if (!mesh)
-			{
-				return false;
-			}
-			newParts.push_back(ModelPart{ std::move(*mesh), material, reference.localToModel });
-		}
-		parts = std::move(newParts);
 		return true;
 	}
 }

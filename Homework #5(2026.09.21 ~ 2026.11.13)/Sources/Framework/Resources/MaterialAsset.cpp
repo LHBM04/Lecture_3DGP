@@ -12,14 +12,11 @@
 #include <string_view>
 #include <utility>
 
-#include <directxtk12/VertexTypes.h>
-
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUGraphicsPipelineState.hpp"
 
 #include "../Utilities/BinaryUtility.hpp"
 
-#include "AssetSubsystem.hpp"
 #include "ShaderAsset.hpp"
 
 namespace TUK::Framework
@@ -51,24 +48,6 @@ namespace TUK::Framework
 			}
 
 			return ReadString(stream, value) && !value.empty();
-		}
-
-		[[nodiscard]] std::filesystem::path BuildShaderPath(
-			const std::filesystem::path& materialPath,
-			const std::string& name)
-		{
-			std::filesystem::path shader(std::u8string(name.begin(), name.end()));
-			if (shader.is_absolute())
-			{
-				return shader;
-			}
-
-			if (!shader.empty() && *shader.begin() == "Resources")
-			{
-				return (materialPath.parent_path().parent_path() / shader.lexically_relative("Resources")).lexically_normal();
-			}
-
-			return (materialPath.parent_path() / shader).lexically_normal();
 		}
 	}
 
@@ -379,30 +358,6 @@ namespace TUK::Framework
 		}
 
 		*this = std::move(candidate);
-		return true;
-	}
-
-	bool MaterialAsset::Upload(
-		const GPUDevice& device,
-		AssetSubsystem& assets,
-		const std::filesystem::path& path,
-		DXGI_FORMAT format)
-	{
-		const auto* vertex = assets.LoadAsset<ShaderAsset>(BuildShaderPath(path, vertexShaderPath));
-		const auto* pixel = assets.LoadAsset<ShaderAsset>(BuildShaderPath(path, pixelShaderPath));
-		if (!vertex || !pixel)
-		{
-			return false;
-		}
-
-		auto material = Create(device, *vertex, *pixel, format, cullMode, fillMode);
-		if (!material)
-		{
-			return false;
-		}
-
-		graphicsPipelineState = std::move(material->graphicsPipelineState);
-		targetFormat = format;
 		return true;
 	}
 }

@@ -1,16 +1,11 @@
-﻿#pragma once
+#pragma once
 
 #include <expected>
 #include <filesystem>
 #include <memory>
-#include <span>
 #include <string>
 
-#include <directxtk12/VertexTypes.h>
-
 #include "../Core/Common.hpp"
-
-#include "../Graphics/GPUMesh.hpp"
 
 #include "AssetLoader.hpp"
 #include "ModelAsset.hpp"
@@ -25,6 +20,7 @@ namespace TUK::Framework
 	public:
 		using AssetType = ModelAsset;
 
+		explicit ModelAssetLoader(AssetSubsystem& assets) noexcept;
 		ModelAssetLoader(const GPUDevice& device, AssetSubsystem& assets) noexcept;
 		~ModelAssetLoader() noexcept override = default;
 
@@ -32,7 +28,6 @@ namespace TUK::Framework
 			const std::filesystem::path& path) const override;
 
 	private:
-		const GPUDevice& device;
 		AssetSubsystem& assets;
 	};
 }

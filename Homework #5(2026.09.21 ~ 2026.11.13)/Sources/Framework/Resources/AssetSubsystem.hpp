@@ -1,10 +1,11 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
 #include <expected>
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <memory_resource>
 #include <string>
 #include <string_view>
 #include <typeindex>
@@ -13,11 +14,10 @@
 #include <vector>
 
 #include "../Core/AppSubsystem.hpp"
+#include "../Core/Common.hpp"
 
 #include "Asset.hpp"
 #include "AssetLoader.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -50,16 +50,17 @@ namespace TUK::Framework
 		using AssetLoaderDict = std::pmr::unordered_map<std::type_index, AssetLoader*>;
 
 		using AssetList = std::pmr::vector<std::unique_ptr<Asset>>;
-		using AssetDict = std::pmr::unordered_map<std::filesystem::path, AssetList>;
+		using AssetDict = std::pmr::unordered_map<std::filesystem::path, Asset*>;
 
 		AssetLoaderList assetLoaders;
 		AssetLoaderDict assetLoadersByType;
 
 		AssetList assets;
+		AssetDict assetsByPath;
 	};
 
 	inline AssetSubsystem::AssetSubsystem() noexcept
-		: AppSubsystem(10) // TODO: 이거 적당한 값 찾기
+		: AppSubsystem(10)
 	{
 	}
 
@@ -84,16 +85,22 @@ namespace TUK::Framework
 	template <std::derived_from<Asset> TAsset>
 	TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
 	{
+		const std::filesystem::path normalizedPath = path.lexically_normal();
+		if (const auto cached = assetsByPath.find(normalizedPath); cached != assetsByPath.end())
+		{
+			return dynamic_cast<TAsset*>(cached->second);
+		}
+
 		const auto assetLoader = assetLoadersByType.find(std::type_index(typeid(TAsset)));
 		if (assetLoader == assetLoadersByType.end())
 		{
 			return nullptr;
 		}
 
-		auto asset = assetLoader->second->Load(path);
+		auto asset = assetLoader->second->Load(normalizedPath);
 		if (!asset)
 		{
-			std::cerr << "Asset load failed: " << path.generic_string() << ": " << asset.error() << std::endl;
+			std::cerr << "Asset load failed: " << normalizedPath.generic_string() << ": " << asset.error() << std::endl;
 			return nullptr;
 		}
 
@@ -104,8 +111,10 @@ namespace TUK::Framework
 		}
 
 		assets.emplace_back(std::move(*asset));
+		assetsByPath.emplace(normalizedPath, result);
 		return result;
 	}
+
 	template <std::derived_from<Asset> TAsset, class... TArgs>
 	TAsset* AssetSubsystem::CreateAsset(TArgs&&... args)
 	{

@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 
 #include "AssetSubsystem.hpp"
 
@@ -31,6 +31,7 @@ namespace TUK::Framework
 
 	void AssetSubsystem::OnShutdown()
 	{
+		assetsByPath.clear();
 		assets.clear();
 		assetLoadersByType.clear();
 		assetLoaders.clear();

@@ -1,19 +1,24 @@
 #pragma once
 
+#include <cassert>
+#include <optional>
 #include <span>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include <directxtk12/VertexTypes.h>
+
+#include "../Core/Common.hpp"
+
+#include "../Graphics/GPUMesh.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Vector2D.hpp"
 #include "../Math/Vector3D.hpp"
 
 #include "Asset.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -45,6 +50,10 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<const DirectX::VertexPositionNormalColor> GetVertices() const noexcept;
 		[[nodiscard]] std::span<const u32> GetIndices() const noexcept;
 
+		[[nodiscard]] bool HasGPUMesh() const noexcept;
+		[[nodiscard]] const GPUMesh& GetGPUMesh() const noexcept;
+		void SetGPUMesh(GPUMesh value) noexcept;
+
 	private:
 		std::string name;
 		Vector3D<f32> boundsCenter{};
@@ -55,6 +64,7 @@ namespace TUK::Framework
 		std::vector<Vector2D<f32>> textureCoords;
 		std::vector<DirectX::VertexPositionNormalColor> vertices;
 		std::vector<u32> indices;
+		std::optional<GPUMesh> gpuMesh;
 	};
 
 	inline std::string_view MeshAsset::GetName() const noexcept
@@ -105,5 +115,21 @@ namespace TUK::Framework
 	inline std::span<const u32> MeshAsset::GetIndices() const noexcept
 	{
 		return indices;
+	}
+
+	inline bool MeshAsset::HasGPUMesh() const noexcept
+	{
+		return gpuMesh.has_value();
+	}
+
+	inline const GPUMesh& MeshAsset::GetGPUMesh() const noexcept
+	{
+		assert(gpuMesh);
+		return *gpuMesh;
+	}
+
+	inline void MeshAsset::SetGPUMesh(GPUMesh value) noexcept
+	{
+		gpuMesh = std::move(value);
 	}
 }

@@ -34,18 +34,9 @@ namespace TUK::Game
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
 		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 
-		Entity& entity = Instantiate("Cube", "Cube");
-		entity.AddComponent<Transform>()->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, 0.0f));
-
-		MeshRenderer* renderer = entity.AddComponent<MeshRenderer>();
 		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources\\Models\\Spaceship.bin"))
 		{
-			renderer->SetModel(*model);
-		}
-
-		if (const MaterialAsset* material = assets->LoadAsset<MaterialAsset>("Resources\\Materials\\Collider_WeaponsSupport_Collider_WeaponsSupport_Lit.bin"))
-		{
-			renderer->SetMaterial(*material);
+			Instantiate(*model, Vector3D<f32>(0.0f, 0.0f, 0.0f));
 		}
 	}
 
