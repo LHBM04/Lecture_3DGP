@@ -26,6 +26,8 @@ namespace TUK::Framework
 	using usize = std::size_t;
 	using isize = std::ptrdiff_t;
 
+	using byte = std::byte;
+
 	template <class TValue>
-	concept ScalarType = std::same_as<TValue, i32> || std::same_as<TValue, f32>;
+	concept Scalarable = std::same_as<TValue, i32> || std::same_as<TValue, f32>;
 }

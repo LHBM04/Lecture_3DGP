@@ -1,5 +1,7 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Vector2D.hpp"
+
+#include <cstring>
 
 #include "Mathf.hpp"
 #include "Vector3D.hpp"
@@ -7,77 +9,77 @@
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D() noexcept
 		: value(TScalar{}, TScalar{})
 	{
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D(TScalar scalar) noexcept
 		: value(scalar, scalar)
 	{
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D(TScalar x, TScalar y) noexcept
 		: value(x, y)
 	{
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D(const Vector2D& other) noexcept
 		: value(other.value)
 	{
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D(Vector2D&& other) noexcept
 		: value(std::move(other.value))
 	{
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D(const Vector3D<TScalar>& vector) noexcept
 		: value(TScalar{}, TScalar{})
 	{
 		Set(vector.GetX(), vector.GetY());
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::Vector2D(const Vector4D<TScalar>& vector) noexcept
 		: value(TScalar{}, TScalar{})
 	{
 		Set(vector.GetX(), vector.GetY());
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>& Vector2D<TScalar>::operator=(const Vector2D& other) noexcept
 	{
 		value = other.value;
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>& Vector2D<TScalar>::operator=(Vector2D&& other) noexcept
 	{
 		value = std::move(other.value);
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::operator Vector3D<TScalar>() const noexcept
 	{
 		return Vector3D<TScalar>(GetX(), GetY(), TScalar{});
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
 		return Vector4D<TScalar>(GetX(), GetY(), TScalar{}, TScalar{});
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	TScalar Vector2D<TScalar>::operator[](std::size_t index) const noexcept
 	{
 		assert(index < 2);
@@ -90,7 +92,7 @@ namespace TUK::Framework
 		}
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	TScalar& Vector2D<TScalar>::operator[](std::size_t index) noexcept
 	{
 		assert(index < 2);
@@ -103,13 +105,13 @@ namespace TUK::Framework
 		}
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::operator+() const noexcept
 	{
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::operator+(const Vector2D& other) const noexcept
 	{
 		if constexpr (std::same_as<TScalar, float>)
@@ -124,20 +126,20 @@ namespace TUK::Framework
 		}
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>& Vector2D<TScalar>::operator+=(const Vector2D& other) noexcept
 	{
 		*this = *this + other;
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::operator-() const noexcept
 	{
 		return Vector2D(-GetX(), -GetY());
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::operator-(const Vector2D& other) const noexcept
 	{
 		if constexpr (std::same_as<TScalar, float>)
@@ -152,14 +154,14 @@ namespace TUK::Framework
 		}
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>& Vector2D<TScalar>::operator-=(const Vector2D& other) noexcept
 	{
 		*this = *this - other;
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::operator*(TScalar scalar) const noexcept
 	{
 		if constexpr (std::same_as<TScalar, float>)
@@ -174,14 +176,14 @@ namespace TUK::Framework
 		}
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>& Vector2D<TScalar>::operator*=(TScalar scalar) noexcept
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::operator/(TScalar scalar) const noexcept
 	{
 		assert(scalar != TScalar{});
@@ -197,26 +199,26 @@ namespace TUK::Framework
 		}
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar>& Vector2D<TScalar>::operator/=(TScalar scalar) noexcept
 	{
 		*this = *this / scalar;
 		return *this;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	bool Vector2D<TScalar>::operator==(const Vector2D& other) const noexcept
 	{
 		return GetX() == other.GetX() && GetY() == other.GetY();
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	bool Vector2D<TScalar>::operator!=(const Vector2D& other) const noexcept
 	{
 		return !(*this == other);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	std::partial_ordering Vector2D<TScalar>::operator<=>(const Vector2D& other) const noexcept
 	{
 		if (const auto order = GetX() <=> other.GetX(); order != 0)
@@ -226,136 +228,136 @@ namespace TUK::Framework
 		return GetY() <=> other.GetY();
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	TScalar Vector2D<TScalar>::GetX() const noexcept
 	{
 		return value.x;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	void Vector2D<TScalar>::SetX(TScalar x) noexcept
 	{
 		value.x = x;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	TScalar Vector2D<TScalar>::GetY() const noexcept
 	{
 		return value.y;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	void Vector2D<TScalar>::SetY(TScalar y) noexcept
 	{
 		value.y = y;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	void Vector2D<TScalar>::Set(TScalar x, TScalar y) noexcept
 	{
 		SetX(x);
 		SetY(y);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::GetMagnitude() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector2Length(Load(*this)));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::GetSqrMagnitude() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, *this);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::GetLength() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return GetMagnitude();
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::GetLengthSquared() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return GetSqrMagnitude();
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetNormalized() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Normalize(*this);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	bool Vector2D<TScalar>::IsZero(float epsilon) const noexcept
 	{
 		assert(epsilon >= 0.0f);
 		return std::abs(static_cast<double>(GetX())) <= epsilon && std::abs(static_cast<double>(GetY())) <= epsilon;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	bool Vector2D<TScalar>::IsFinite() const noexcept
 	{
 		return std::isfinite(static_cast<double>(GetX())) && std::isfinite(static_cast<double>(GetY()));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	void Vector2D<TScalar>::Normalize() noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		*this = GetNormalized();
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::Dot(const Vector2D& other) const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, other);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetZero() noexcept
 	{
 		return Vector2D<TScalar>(static_cast<TScalar>(0), static_cast<TScalar>(0));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetOne() noexcept
 	{
 		return Vector2D<TScalar>(static_cast<TScalar>(1), static_cast<TScalar>(1));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetUp() noexcept
 	{
 		return Vector2D<TScalar>(static_cast<TScalar>(0), static_cast<TScalar>(1));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetDown() noexcept
 	{
 		return Vector2D<TScalar>(static_cast<TScalar>(0), static_cast<TScalar>(-1));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetLeft() noexcept
 	{
 		return Vector2D<TScalar>(static_cast<TScalar>(-1), static_cast<TScalar>(0));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetRight() noexcept
 	{
 		return Vector2D<TScalar>(static_cast<TScalar>(1), static_cast<TScalar>(0));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetPositiveInfinity() noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -363,7 +365,7 @@ namespace TUK::Framework
 			return Vector2D<TScalar>(infinity, infinity);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::GetNegativeInfinity() noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -371,42 +373,42 @@ namespace TUK::Framework
 			return Vector2D<TScalar>(negativeInfinity, negativeInfinity);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	DirectX::XMVECTOR Vector2D<TScalar>::Load(const Vector2D& vector) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMLoadFloat2(&vector.value);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	void Vector2D<TScalar>::Store(Vector2D& destination, DirectX::XMVECTOR source) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		DirectX::XMStoreFloat2(&destination.value, source);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	bool Vector2D<TScalar>::IsApproximately(const Vector2D<TScalar>& lhs, const Vector2D<TScalar>& rhs, float epsilon) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return std::abs(lhs.GetX() - rhs.GetX()) <= epsilon && std::abs(lhs.GetY() - rhs.GetY()) <= epsilon;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Max(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Vector2D<TScalar>(std::max(a.GetX(), b.GetX()), std::max(a.GetY(), b.GetY()));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Min(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Vector2D<TScalar>(std::min(a.GetX(), b.GetX()), std::min(a.GetY(), b.GetY()));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Clamp(const Vector2D<TScalar>& value, const Vector2D<TScalar>& min, const Vector2D<TScalar>& max) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -416,7 +418,7 @@ namespace TUK::Framework
 			);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::ClampMagnitude(const Vector2D<TScalar>& vector, float maxLength) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -430,14 +432,14 @@ namespace TUK::Framework
 			return Normalize(vector) * maxLength;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Scale(const Vector2D<TScalar>& vector, const Vector2D<TScalar>& scale) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Vector2D<TScalar>(vector.GetX() * scale.GetX(), vector.GetY() * scale.GetY());
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Normalize(const Vector2D<TScalar>& value) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -446,14 +448,14 @@ namespace TUK::Framework
 			return result;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::Dot(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector2Dot(Load(a), Load(b)));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Cross(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -461,21 +463,21 @@ namespace TUK::Framework
 			return Vector2D<TScalar>(0.0f, z);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Perpendicular(const Vector2D<TScalar>& vector) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Vector2D<TScalar>(-vector.GetY(), vector.GetX());
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::Distance(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return (a - b).GetMagnitude();
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::Angle(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -485,7 +487,7 @@ namespace TUK::Framework
 			return std::acos(dot);
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	float Vector2D<TScalar>::SignedAngle(const Vector2D<TScalar>& from, const Vector2D<TScalar>& to) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -494,7 +496,7 @@ namespace TUK::Framework
 			return (det >= 0.0f) ? angle : -angle;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Reflect(const Vector2D<TScalar>& vector, const Vector2D<TScalar>& normal) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -503,7 +505,7 @@ namespace TUK::Framework
 			return result;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Lerp(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b, float t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -512,7 +514,7 @@ namespace TUK::Framework
 			return result;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::LerpUnclamped(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b, float t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -521,14 +523,14 @@ namespace TUK::Framework
 			return result;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::Slerp(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b, float t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return SlerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::SlerpUnclamped(const Vector2D<TScalar>& a, const Vector2D<TScalar>& b, float t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -560,7 +562,7 @@ namespace TUK::Framework
 			return direction * magnitude;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::MoveTowards(const Vector2D<TScalar>& current, const Vector2D<TScalar>& target, float maxDistanceDelta) noexcept
 		requires std::same_as<TScalar, f32>
 	{
@@ -575,7 +577,7 @@ namespace TUK::Framework
 			return current + (delta / distance) * maxDistanceDelta;
 	}
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	Vector2D<TScalar> Vector2D<TScalar>::SmoothDamp(
 	const Vector2D<TScalar>& current,
 	const Vector2D<TScalar>& target,
@@ -608,6 +610,27 @@ namespace TUK::Framework
 			}
 		
 			return output;
+	}
+
+	template <Scalarable TScalar>
+	std::string Vector2D<TScalar>::Serialize() const
+	{
+		const TScalar components[]{ GetX(), GetY() };
+		return std::string(reinterpret_cast<const char*>(components), sizeof(components));
+	}
+
+	template <Scalarable TScalar>
+	bool Vector2D<TScalar>::Deserialize(std::string_view text) noexcept
+	{
+		TScalar components[2]{};
+		if (text.size() != sizeof(components))
+		{
+			return false;
+		}
+
+		std::memcpy(components, text.data(), sizeof(components));
+		*this = Vector2D<TScalar>{ components[0], components[1] };
+		return true;
 	}
 
 	template class Vector2D<std::int32_t>;

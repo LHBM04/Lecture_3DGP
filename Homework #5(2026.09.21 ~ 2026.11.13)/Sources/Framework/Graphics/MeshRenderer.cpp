@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "MeshRenderer.hpp"
 
 #include <iostream>
@@ -32,13 +32,13 @@ namespace TUK::Framework
 			
 			if (auto result = commandBuffer.SetMaterial(*partMaterial); !result)
 			{
-				std::cerr << "MeshRenderer 머터리얼 적용 실패: " << result.error() << std::endl;
+				std::cerr << "MeshRenderer 癒명꽣由ъ뼹 ?곸슜 ?ㅽ뙣: " << result.error() << std::endl;
 				return;
 			}
 			
 			if (auto result = commandBuffer.SetObjectTransform(part.localToModel * worldMatrix); !result)
 			{
-				std::cerr << "MeshRenderer 오브젝트 변환 적용 실패: " << result.error() << std::endl;
+				std::cerr << "MeshRenderer ?ㅻ툕?앺듃 蹂???곸슜 ?ㅽ뙣: " << result.error() << std::endl;
 				return;
 			}
 			

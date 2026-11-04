@@ -6,6 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
@@ -25,7 +26,7 @@ namespace TUK::Framework
 		friend class System;
 
 	public:
-		~AssetSubsystem() noexcept override = default;
+		AssetSubsystem() noexcept;
 
 		template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
 		void AddLoader(TArgs&&... args);
@@ -50,8 +51,6 @@ namespace TUK::Framework
 
 		using AssetList = std::pmr::vector<std::unique_ptr<Asset>>;
 		using AssetDict = std::pmr::unordered_map<std::filesystem::path, AssetList>;
-
-		AssetSubsystem() noexcept;
 
 		AssetLoaderList assetLoaders;
 		AssetLoaderDict assetLoadersByType;

@@ -252,6 +252,8 @@
     <ClInclude Include="Sources\Framework\Platform\InputEvents.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Utilities.hpp" />
+    <ClInclude Include="Sources\Framework\Utilities\BinaryUtility.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
     <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp" />
@@ -260,6 +262,7 @@
     <ClInclude Include="Sources\Framework\Resources\AssetSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\MaterialAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\MaterialAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\MeshAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ModelAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp" />
@@ -300,7 +303,10 @@
     <ClCompile Include="Sources\Framework\Resources\AssetSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\MaterialAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\MeshAsset.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\ModelAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Game\MyEngine.cpp" />

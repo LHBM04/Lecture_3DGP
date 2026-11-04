@@ -4,6 +4,8 @@
 #include <concepts>
 #include <cstddef>
 #include <limits>
+#include <string>
+#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
@@ -12,13 +14,13 @@
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector2D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector3D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector4D
 	{
 	public:
@@ -126,6 +128,9 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector4D SlerpUnclamped(const Vector4D& a, const Vector4D& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static Vector4D MoveTowards(const Vector4D& current, const Vector4D& target, f32 maxDistanceDelta) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] std::string Serialize() const;
+		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

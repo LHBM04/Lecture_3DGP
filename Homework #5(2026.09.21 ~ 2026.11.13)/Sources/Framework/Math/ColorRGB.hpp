@@ -2,6 +2,8 @@
 
 #include <concepts>
 #include <limits>
+#include <string>
+#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
@@ -13,10 +15,10 @@
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class ColorRGBA;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class ColorRGB
 	{
 	public:
@@ -89,6 +91,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] static ColorRGB Lerp(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static ColorRGB LerpUnclamped(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] std::string Serialize() const;
+		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;

@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <string>
+#include <string_view>
+
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
@@ -14,6 +17,9 @@ namespace TUK::Framework
 
 		Asset(Asset&&) noexcept = default;
 		Asset& operator=(Asset&&) noexcept = default;
+
+		[[nodiscard]] virtual std::string Serialize() const = 0;
+		[[nodiscard]] virtual bool Deserialize(std::string_view text) = 0;
 
 	protected:
 		Asset() noexcept = default;

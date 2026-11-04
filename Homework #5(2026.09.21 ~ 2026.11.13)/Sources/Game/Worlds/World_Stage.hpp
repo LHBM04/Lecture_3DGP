@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "Framework/Entities.hpp"
+#include "Framework/Resources.hpp"
+#include "Framework/Platform.hpp"
 
 namespace TUK::Game
 {
@@ -11,5 +13,9 @@ namespace TUK::Game
 	public:
 		void OnEnter() override;
 		void OnUpdate() override;
+
+	private:
+		Framework::AssetSubsystem* assets = nullptr;
+		Framework::InputSubsystem* input = nullptr;
 	};
 }

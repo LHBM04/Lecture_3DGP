@@ -4,6 +4,8 @@
 #include <concepts>
 #include <cstddef>
 #include <limits>
+#include <string>
+#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
@@ -14,7 +16,7 @@
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Quaternion
 	{
 	public:
@@ -113,6 +115,9 @@ namespace TUK::Framework
 		[[nodiscard]] static Quaternion FromToRotation(const Vector3D<f32>& fromDirection, const Vector3D<f32>& toDirection) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion LookRotation(const Vector3D<f32>& forward, const Vector3D<f32>& up) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion RotateTowards(const Quaternion& from, const Quaternion& to, f32 maxDegreesDelta) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] std::string Serialize() const;
+		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

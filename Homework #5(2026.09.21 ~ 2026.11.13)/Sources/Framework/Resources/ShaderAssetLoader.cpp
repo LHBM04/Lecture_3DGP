@@ -55,6 +55,6 @@ namespace TUK::Framework
 			return std::unexpected(shader.error());
 		}
 
-		return std::make_unique<ShaderAsset>(std::move(*shader));
+		return std::make_unique<ShaderAsset>(std::move(*shader), path);
 	}
 }

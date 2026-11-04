@@ -32,10 +32,6 @@ namespace TUK::Framework
 			const std::filesystem::path& path) const override;
 
 	private:
-		[[nodiscard]] std::expected<GPUMesh, std::string> CreateMesh(
-			std::span<const DirectX::VertexPositionNormalColor> vertices,
-			std::span<const u32> indices) const;
-
 		const GPUDevice& device;
 		AssetSubsystem& assets;
 	};

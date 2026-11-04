@@ -37,6 +37,9 @@
     <Filter Include="Sources\Framework\Graphics">
       <UniqueIdentifier>{1464633f-6db7-442e-968e-67c77d2bcbb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\Utilities">
+      <UniqueIdentifier>{90b86734-710b-46f5-afed-69aea4ebe428}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
@@ -141,6 +144,9 @@
     <ClInclude Include="Sources\Framework\Resources\MaterialAssetLoader.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\MeshAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ModelAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
@@ -231,6 +237,12 @@
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Utilities\BinaryUtility.hpp">
+      <Filter>Sources\Framework\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Utilities.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
@@ -305,7 +317,16 @@
     <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\MeshAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ModelAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp">
