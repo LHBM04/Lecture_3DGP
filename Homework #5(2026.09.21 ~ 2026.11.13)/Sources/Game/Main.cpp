@@ -1,14 +1,13 @@
 #include "Precompiled.hpp"
 
+#include "Framework/Core.hpp"
 #include "Framework/Utilities.hpp"
 
 #include "MyEngine.hpp"
 #include "MyGame.hpp"
 
+using namespace TUK::Framework;
 using namespace TUK::Game;
-
-static MyGame app;
-static MyEngine engine(&app);
 
 INT APIENTRY _tWinMain(
 	_In_ HINSTANCE hInstance,
@@ -26,8 +25,21 @@ INT APIENTRY _tWinMain(
 	Logger::LogInfo("Debug console enabled.");
 #endif
 
+	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(nCmdShow);
 
-	return engine.Run();
+	Memory::Initialize();
+
+	i32 exitCode = 0;
+	{
+		MyGame app;
+		MyEngine engine(&app);
+		exitCode = engine.Run();
+	}
+
+	Memory::Shutdown();
+
+	return exitCode;
 }

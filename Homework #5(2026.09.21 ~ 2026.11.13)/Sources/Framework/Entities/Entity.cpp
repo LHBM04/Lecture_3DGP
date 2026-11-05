@@ -4,11 +4,83 @@
 #include <algorithm>
 #include <ranges>
 
+#include "World.hpp"
+
 namespace TUK::Framework
 {
 	Entity::~Entity() noexcept
 	{
 		DestroyAllComponents();
+	}
+
+	void Entity::FixedUpdate()
+	{
+		UpdateComponents(&Component::OnFixedUpdate);
+	}
+
+	void Entity::Update()
+	{
+		UpdateComponents(&Component::OnUpdate);
+	}
+
+	void Entity::LateUpdate()
+	{
+		UpdateComponents(&Component::OnLateUpdate);
+	}
+
+	void Entity::PreRender(GPUCommandBuffer& commandBuffer)
+	{
+		RenderComponents(&Component::OnPreRender, commandBuffer);
+	}
+
+	void Entity::Render(GPUCommandBuffer& commandBuffer)
+	{
+		RenderComponents(&Component::OnRender, commandBuffer);
+	}
+
+	void Entity::PostRender(GPUCommandBuffer& commandBuffer)
+	{
+		RenderComponents(&Component::OnPostRender, commandBuffer);
+	}
+
+	void Entity::UpdateComponents(void (Component::*callback)())
+	{
+		// 콜백에서 추가한 컴포넌트는 다음 갱신 단계부터 실행합니다.
+		const usize count = components.size();
+		for (usize index = 0; index < count && world->IsEntered() && isEnabled && !isDestroyed; ++index)
+		{
+			Component* component = components[index].get();
+			if (!component->IsEnabled() || component->IsDestroyed())
+			{
+				continue;
+			}
+
+			if (!component->IsStarted())
+			{
+				component->SetStarted(true);
+				component->OnStart();
+				if (!world->IsEntered() || !isEnabled || isDestroyed ||
+					!component->IsEnabled() || component->IsDestroyed())
+				{
+					continue;
+				}
+			}
+
+			(component->*callback)();
+		}
+	}
+
+	void Entity::RenderComponents(void (Component::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer)
+	{
+		const usize count = components.size();
+		for (usize index = 0; index < count && world->IsEntered() && isEnabled && !isDestroyed; ++index)
+		{
+			Component* component = components[index].get();
+			if (component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
+			{
+				(component->*callback)(commandBuffer);
+			}
+		}
 	}
 
 	void Entity::DestroyComponents()
@@ -24,7 +96,7 @@ namespace TUK::Framework
 		}
 
 		// 삭제 콜백이 컴포넌트를 추가하더라도 원래 컨테이너의 순회에 영향을 주지 않는다.
-		std::vector<std::unique_ptr<Component>> destroyed;
+		std::pmr::vector<std::unique_ptr<Component>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
 		std::erase_if(componentsByType,
 			[](const auto& entry)
@@ -74,7 +146,7 @@ namespace TUK::Framework
 		}
 
 		componentsByType.clear();
-		std::vector<std::unique_ptr<Component>> removing = std::move(components);
+		std::pmr::vector<std::unique_ptr<Component>> removing = std::move(components);
 		components.clear();
 
 		for (const auto& component : removing | std::views::reverse)

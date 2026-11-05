@@ -2,6 +2,7 @@
 
 #include <concepts>
 #include <memory>
+#include <memory_resource>
 #include <ranges>
 #include <span>
 #include <string>
@@ -21,6 +22,8 @@ namespace TUK::Framework
 
 	class Entity
 	{
+		friend class World;
+
 	public:
 		explicit Entity(World* world) noexcept;
 		explicit Entity(World* world, std::string_view name) noexcept;
@@ -33,10 +36,10 @@ namespace TUK::Framework
 		Entity(Entity&&) noexcept = default;
 		Entity& operator=(Entity&&) noexcept = default;
 
-		[[nodiscard]] const std::string& GetName() const noexcept;
+		[[nodiscard]] const std::pmr::string& GetName() const noexcept;
 		void SetName(std::string_view value) noexcept;
 
-		[[nodiscard]] const std::string& GetTag() const noexcept;
+		[[nodiscard]] const std::pmr::string& GetTag() const noexcept;
 		void SetTag(std::string_view value) noexcept;
 
 		[[nodiscard]] const World* GetWorld() const noexcept;
@@ -67,16 +70,24 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetComponents() noexcept;
 		[[nodiscard]] auto GetComponents() const noexcept;
 
-		void DestroyComponents();
-
 	private:
+		void FixedUpdate();
+		void Update();
+		void LateUpdate();
+		void PreRender(GPUCommandBuffer& commandBuffer);
+		void Render(GPUCommandBuffer& commandBuffer);
+		void PostRender(GPUCommandBuffer& commandBuffer);
+
+		void UpdateComponents(void (Component::*callback)());
+		void RenderComponents(void (Component::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer);
+		void DestroyComponents();
 		void DestroyAllComponents();
 
-		std::string name{ "New Entity" };
-		std::string tag{ "Untagged" };
+		std::pmr::string name{ "New Entity" };
+		std::pmr::string tag{ "Untagged" };
 
-		std::vector<std::unique_ptr<Component>> components;
-		std::unordered_map<std::type_index, Component*> componentsByType;
+		std::pmr::vector<std::unique_ptr<Component>> components;
+		std::pmr::unordered_map<std::type_index, Component*> componentsByType;
 
 		World* world = nullptr;
 
@@ -102,7 +113,7 @@ namespace TUK::Framework
 	{
 	}
 
-	inline const std::string& Entity::GetName() const noexcept
+	inline const std::pmr::string& Entity::GetName() const noexcept
 	{
 		return name;
 	}
@@ -112,7 +123,7 @@ namespace TUK::Framework
 		name = value;
 	}
 
-	inline const std::string& Entity::GetTag() const noexcept
+	inline const std::pmr::string& Entity::GetTag() const noexcept
 	{
 		return tag;
 	}

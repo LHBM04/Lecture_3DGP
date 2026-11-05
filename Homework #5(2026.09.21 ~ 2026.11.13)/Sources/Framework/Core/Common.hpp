@@ -1,10 +1,24 @@
-﻿#pragma once
+#pragma once
 
+#include <cassert>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 
 #include <wrl/client.h>
+
+#ifndef ASSERT
+	#define ASSERT(condition) assert(condition)
+#endif
+
+#ifndef ASSERT_MSG
+	#define ASSERT_MSG(condition, msg) assert((condition) && (msg))
+#endif
+
+#ifndef ABORT
+	#define ABORT() do { __debugbreak(); ::exit(1); } while(0)
+#endif
 
 using namespace Microsoft::WRL;
 

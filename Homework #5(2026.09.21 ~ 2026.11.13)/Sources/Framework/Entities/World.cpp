@@ -10,6 +10,7 @@
 #include "../Core/App.hpp"
 
 #include "../Graphics/Camera.hpp"
+#include "../Graphics/GPUCommandBuffer.hpp"
 #include "../Graphics/MeshRenderer.hpp"
 
 #include "../Resources/AssetSubsystem.hpp"
@@ -23,6 +24,174 @@
 
 namespace TUK::Framework
 {
+	template <class TCallback>
+	void World::RunPhase(TCallback callback)
+	{
+		if (isRunningPhase)
+		{
+			return;
+		}
+
+		isRunningPhase = true;
+		callback();
+		isRunningPhase = false;
+
+		// 종료 요청이 들어온 콜백이 반환된 뒤에 엔티티를 해제합니다.
+		if (!isEntered)
+		{
+			ClearEntities();
+		}
+	}
+
+	template <class TCallback>
+	void World::ForEachEntity(TCallback callback)
+	{
+		const usize count = entities.size();
+		for (usize index = 0; index < count && isEntered; ++index)
+		{
+			Entity* entity = entities[index].get();
+			if (entity->IsEnabled() && !entity->IsDestroyed())
+			{
+				callback(*entity);
+			}
+		}
+	}
+
+	void World::EarlyUpdate()
+	{
+		RunPhase([this]()
+		{
+			if (!isEntered)
+			{
+				isEntered = true;
+				OnEnter();
+			}
+			if (isEntered)
+			{
+				DestroyEntities();
+			}
+		});
+	}
+
+	void World::FixedUpdate()
+	{
+		UpdateEntities(&World::OnFixedUpdate, &Entity::FixedUpdate);
+	}
+
+	void World::Update()
+	{
+		UpdateEntities(&World::OnUpdate, &Entity::Update);
+	}
+
+	void World::LateUpdate()
+	{
+		UpdateEntities(&World::OnLateUpdate, &Entity::LateUpdate);
+	}
+
+	void World::PreRender(GPUCommandBuffer& commandBuffer)
+	{
+		if (isEntered)
+		{
+			RunPhase([this, &commandBuffer]()
+			{
+				RenderEntities(&Entity::PreRender, commandBuffer);
+			});
+		}
+	}
+
+	void World::Render(GPUCommandBuffer& commandBuffer)
+	{
+		if (!isEntered)
+		{
+			return;
+		}
+
+		RunPhase([this, &commandBuffer]()
+		{
+			// 렌더 콜백은 카메라를 활성화하거나 비활성화할 수 있습니다.
+			const auto frameCameras = cameras;
+			for (Camera* camera : frameCameras)
+			{
+				if (!isEntered)
+				{
+					break;
+				}
+				if (!camera->IsEnabled() || camera->IsDestroyed())
+				{
+					continue;
+				}
+
+				const Entity* owner = camera->GetOwner();
+				if (!owner || !owner->IsEnabled() || owner->IsDestroyed())
+				{
+					continue;
+				}
+
+				if (auto result = commandBuffer.SetCamera(camera); !result)
+				{
+					Logger::LogError("World failed to set camera: {}", result.error());
+					continue;
+				}
+
+				RenderEntities(&Entity::Render, commandBuffer);
+			}
+		});
+	}
+
+	void World::PostRender(GPUCommandBuffer& commandBuffer)
+	{
+		if (isEntered)
+		{
+			RunPhase([this, &commandBuffer]()
+			{
+				RenderEntities(&Entity::PostRender, commandBuffer);
+			});
+		}
+	}
+
+	void World::Exit()
+	{
+		if (isEntered)
+		{
+			isEntered = false;
+			OnExit();
+		}
+		if (!isRunningPhase)
+		{
+			ClearEntities();
+		}
+	}
+
+	void World::UpdateEntities(void (World::*worldCallback)(), void (Entity::*entityCallback)())
+	{
+		if (!isEntered)
+		{
+			return;
+		}
+
+		RunPhase([this, worldCallback, entityCallback]()
+		{
+			DestroyEntities();
+			if (!isEntered)
+			{
+				return;
+			}
+			(this->*worldCallback)();
+			ForEachEntity([entityCallback](Entity& entity)
+			{
+				(entity.*entityCallback)();
+			});
+		});
+	}
+
+	void World::RenderEntities(void (Entity::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer)
+	{
+		ForEachEntity([callback, &commandBuffer](Entity& entity)
+		{
+			(entity.*callback)(commandBuffer);
+		});
+	}
+
 	Entity* World::Instantiate()
 	{
 		auto entity = std::make_unique<Entity>(this);
@@ -136,7 +305,7 @@ namespace TUK::Framework
 			}
 			return path.lexically_normal();
 		};
-		std::vector<std::vector<PreparedRenderer>> prepared(submodels.size());
+		std::pmr::vector<std::pmr::vector<PreparedRenderer>> prepared(submodels.size());
 		for (usize index = 0; index < submodels.size(); ++index)
 		{
 			const Submodel& submodel = submodels[index];
@@ -144,24 +313,27 @@ namespace TUK::Framework
 			{
 				const auto meshPath = resourcePath("Meshes", part.meshName);
 				const auto materialPath = resourcePath("Materials", part.materialName);
+
 				const MeshAsset* mesh = assets->FindLoadedAsset<MeshAsset>(meshPath);
 				if (!mesh)
 				{
 					Logger::LogError("Mesh {} was not loaded for model {}", meshPath.generic_string(), model.GetName());
 					return nullptr;
 				}
+
 				const MaterialAsset* material = assets->FindLoadedAsset<MaterialAsset>(materialPath);
 				if (!material || !material->GetGraphicsPipelineState())
 				{
 					Logger::LogError("Material {} was not prepared for model {}", materialPath.generic_string(), model.GetName());
 					return nullptr;
 				}
+
 				prepared[index].push_back(PreparedRenderer{ mesh, material });
 			}
 		}
 
-		std::vector<Entity*> nodeEntities(submodels.size(), nullptr);
-		std::vector<Transform*> nodeTransforms(submodels.size(), nullptr);
+		std::pmr::vector<Entity*> nodeEntities(submodels.size(), nullptr);
+		std::pmr::vector<Transform*> nodeTransforms(submodels.size(), nullptr);
 		for (usize index = 0; index < submodels.size(); ++index)
 		{
 			const Submodel& node = submodels[index];
@@ -219,12 +391,18 @@ namespace TUK::Framework
 
 	void World::DestroyEntities()
 	{
-		for (const std::unique_ptr<Entity>& entity : entities)
+		const usize count = entities.size();
+		for (usize index = 0; index < count && isEntered; ++index)
 		{
+			Entity* entity = entities[index].get();
 			if (!entity->IsDestroyed())
 			{
 				entity->DestroyComponents();
 			}
+		}
+		if (!isEntered)
+		{
+			return;
 		}
 
 		const auto destroyedCount = std::ranges::count_if(entities,
@@ -237,7 +415,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		std::vector<std::unique_ptr<Entity>> destroyed;
+		std::pmr::vector<std::unique_ptr<Entity>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
 
 		usize remainingCount = 0;
@@ -267,7 +445,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		std::vector<std::unique_ptr<Entity>> removing = std::move(entities);
+		std::pmr::vector<std::unique_ptr<Entity>> removing = std::move(entities);
 		entities.clear();
 
 		for (std::unique_ptr<Entity>& entity : removing | std::views::reverse)
@@ -318,9 +496,9 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	std::vector<Entity*> World::FindEntitiesByName(std::string_view name)
+	std::pmr::vector<Entity*> World::FindEntitiesByName(std::string_view name)
 	{
-		std::vector<Entity*> result;
+		std::pmr::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->GetName() == name)
@@ -332,9 +510,9 @@ namespace TUK::Framework
 		return result;
 	}
 
-	std::vector<const Entity*> World::FindEntitiesByName(std::string_view name) const
+	std::pmr::vector<const Entity*> World::FindEntitiesByName(std::string_view name) const
 	{
-		std::vector<const Entity*> result;
+		std::pmr::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->GetName() == name)
@@ -372,9 +550,9 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	std::vector<Entity*> World::FindEntitiesByTag(std::string_view tag)
+	std::pmr::vector<Entity*> World::FindEntitiesByTag(std::string_view tag)
 	{
-		std::vector<Entity*> result;
+		std::pmr::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->GetTag() == tag)
@@ -386,9 +564,9 @@ namespace TUK::Framework
 		return result;
 	}
 
-	std::vector<const Entity*> World::FindEntitiesByTag(std::string_view tag) const
+	std::pmr::vector<const Entity*> World::FindEntitiesByTag(std::string_view tag) const
 	{
-		std::vector<const Entity*> result;
+		std::pmr::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->GetTag() == tag)

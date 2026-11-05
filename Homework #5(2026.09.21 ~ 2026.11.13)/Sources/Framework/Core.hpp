@@ -1,5 +1,6 @@
-﻿#pragma once
+#pragma once
 
+#include "Core/Allocator.hpp"
 #include "Core/App.hpp"
 #include "Core/AppSubsystem.hpp"
 #include "Core/Common.hpp"

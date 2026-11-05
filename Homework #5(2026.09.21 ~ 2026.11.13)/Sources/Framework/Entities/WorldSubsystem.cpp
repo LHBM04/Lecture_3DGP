@@ -2,13 +2,7 @@
 #include "WorldSubsystem.hpp"
 
 #include <cstdlib>
-#include <iostream>
 
-#include "../Graphics/Camera.hpp"
-#include "../Graphics/GPUCommandBuffer.hpp"
-
-#include "Component.hpp"
-#include "Entity.hpp"
 #include "World.hpp"
 
 namespace TUK::Framework
@@ -40,103 +34,30 @@ namespace TUK::Framework
 		World* exitingWorld = currentWorld;
 		currentWorld = nullptr;
 
-		if (exitingWorld->IsEntered())
-		{
-			exitingWorld->SetEntered(false);
-			exitingWorld->OnExit();
-		}
-		exitingWorld->ClearEntities();
+		exitingWorld->Exit();
 	}
 
 	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
 	{
-		if (!currentWorld || !currentWorld->IsEntered())
+		if (currentWorld)
 		{
-			return;
-		}
-
-		for (Entity* entity : currentWorld->GetEntities())
-		{
-			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
-			{
-				continue;
-			}
-
-			for (Component* component : entity->GetComponents())
-			{
-				if (component && component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
-				{
-					component->OnPreRender(commandBuffer);
-				}
-			}
+			currentWorld->PreRender(commandBuffer);
 		}
 	}
 
 	void WorldSubsystem::Render(GPUCommandBuffer& commandBuffer)
 	{
-		if (!currentWorld || !currentWorld->IsEntered())
+		if (currentWorld)
 		{
-			return;
-		}
-
-		for (Camera* camera : currentWorld->GetCameras())
-		{
-			if (!camera || !camera->IsEnabled() || camera->IsDestroyed())
-			{
-				continue;
-			}
-
-			const Entity* cameraOwner = camera->GetOwner();
-			if (!cameraOwner || !cameraOwner->IsEnabled() || cameraOwner->IsDestroyed())
-			{
-				continue;
-			}
-
-			if (auto result = commandBuffer.SetCamera(camera); !result)
-			{
-				std::cerr << "WorldSubsystem failed to set camera: " << result.error() << std::endl;
-				continue;
-			}
-
-			for (Entity* entity : currentWorld->GetEntities())
-			{
-				if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
-				{
-					continue;
-				}
-
-				for (Component* component : entity->GetComponents())
-				{
-					if (component && component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
-					{
-						component->OnRender(commandBuffer);
-					}
-				}
-			}
+			currentWorld->Render(commandBuffer);
 		}
 	}
 
 	void WorldSubsystem::PostRender(GPUCommandBuffer& commandBuffer)
 	{
-		if (!currentWorld || !currentWorld->IsEntered())
+		if (currentWorld)
 		{
-			return;
-		}
-
-		for (Entity* entity : currentWorld->GetEntities())
-		{
-			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
-			{
-				continue;
-			}
-
-			for (Component* component : entity->GetComponents())
-			{
-				if (component && component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
-				{
-					component->OnPostRender(commandBuffer);
-				}
-			}
+			currentWorld->PostRender(commandBuffer);
 		}
 	}
 
@@ -158,61 +79,15 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		if (!currentWorld->IsEntered())
-		{
-			currentWorld->SetEntered(true);
-			currentWorld->OnEnter();
-		}
-
-		if (currentWorld)
-		{
-			currentWorld->DestroyEntities();
-		}
-
+		currentWorld->EarlyUpdate();
 		return SystemStatus::CONTINUE;
 	}
 
 	SystemStatus WorldSubsystem::OnFixedUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::CONTINUE;
-		}
-
-		currentWorld->DestroyEntities();
-		currentWorld->OnFixedUpdate();
-
-		if (!currentWorld)
-		{
-			return SystemStatus::CONTINUE;
-		}
-
-		for (Entity* entity : currentWorld->GetEntities())
-		{
-			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
-			{
-				continue;
-			}
-
-			for (Component* component : entity->GetComponents())
-			{
-				if (!component || !component->IsEnabled() || component->IsDestroyed())
-				{
-					continue;
-				}
-
-				if (!component->IsStarted())
-				{
-					component->SetStarted(true);
-					component->OnStart();
-					if (!component->IsEnabled() || component->IsDestroyed() || !entity->IsEnabled() || entity->IsDestroyed())
-					{
-						continue;
-					}
-				}
-
-				component->OnFixedUpdate();
-			}
+			currentWorld->FixedUpdate();
 		}
 
 		return SystemStatus::CONTINUE;
@@ -220,45 +95,9 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::CONTINUE;
-		}
-
-		currentWorld->DestroyEntities();
-		currentWorld->OnUpdate();
-
-		if (!currentWorld)
-		{
-			return SystemStatus::CONTINUE;
-		}
-
-		for (Entity* entity : currentWorld->GetEntities())
-		{
-			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
-			{
-				continue;
-			}
-
-			for (Component* component : entity->GetComponents())
-			{
-				if (!component || !component->IsEnabled() || component->IsDestroyed())
-				{
-					continue;
-				}
-
-				if (!component->IsStarted())
-				{
-					component->SetStarted(true);
-					component->OnStart();
-					if (!component->IsEnabled() || component->IsDestroyed() || !entity->IsEnabled() || entity->IsDestroyed())
-					{
-						continue;
-					}
-				}
-
-				component->OnUpdate();
-			}
+			currentWorld->Update();
 		}
 
 		return SystemStatus::CONTINUE;
@@ -266,53 +105,12 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnLateUpdate()
 	{
-		if (!currentWorld)
+		if (currentWorld)
 		{
-			return SystemStatus::SUCCESS;
+			currentWorld->LateUpdate();
 		}
 
-		currentWorld->DestroyEntities();
-		currentWorld->OnLateUpdate();
-
-		if (!currentWorld)
-		{
-			return SystemStatus::SUCCESS;
-		}
-
-		for (Entity* entity : currentWorld->GetEntities())
-		{
-			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
-			{
-				continue;
-			}
-
-			for (Component* component : entity->GetComponents())
-			{
-				if (!component || !component->IsEnabled() || component->IsDestroyed())
-				{
-					continue;
-				}
-
-				if (!component->IsStarted())
-				{
-					component->SetStarted(true);
-					component->OnStart();
-					if (!component->IsEnabled() || component->IsDestroyed() || !entity->IsEnabled() || entity->IsDestroyed())
-					{
-						continue;
-					}
-				}
-
-				component->OnLateUpdate();
-			}
-		}
-
-		if (!currentWorld)
-		{
-			return SystemStatus::SUCCESS;
-		}
-
-		return SystemStatus::CONTINUE;
+		return currentWorld ? SystemStatus::CONTINUE : SystemStatus::SUCCESS;
 	}
 
 	void WorldSubsystem::OnShutdown()

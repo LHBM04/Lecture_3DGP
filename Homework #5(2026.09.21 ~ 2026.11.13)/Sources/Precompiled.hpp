@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #if defined(_M_IX86)
     #error "This project is designed for x64 architecture. Please build for x64 instead of x86!"
@@ -20,20 +20,25 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
 #include <expected>
 #include <filesystem>
 #include <format>
+#include <forward_list>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <list>
+#include <map>
 #include <memory>
 #include <memory_resource>
 #include <numbers>
 #include <optional>
 #include <print>
 #include <ranges>
+#include <set>
 #include <span>
 #include <stdfloat>
 #include <string>

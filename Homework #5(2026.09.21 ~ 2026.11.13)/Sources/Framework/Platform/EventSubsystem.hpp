@@ -1,15 +1,16 @@
 #pragma once
 
-#include <cassert>
 #include <concepts>
 #include <functional>
 #include <memory>
+#include <memory_resource>
 #include <typeindex>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
+#include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
 
 #include "Event.hpp"
@@ -62,9 +63,9 @@ namespace TUK::Framework
 			std::unique_ptr<const Event, EventDeleter> event;
 		};
 
-		std::vector<QueuedEvent> writeBuffer;
-		std::vector<QueuedEvent> readBuffer;
-		std::unordered_map<std::type_index, std::vector<EventCallback>> listeners;
+		std::pmr::vector<QueuedEvent> writeBuffer;
+		std::pmr::vector<QueuedEvent> readBuffer;
+		std::pmr::unordered_map<std::type_index, std::pmr::vector<EventCallback>> listeners;
 	};
 
 	inline EventSubsystem::EventSubsystem() noexcept
@@ -134,7 +135,7 @@ namespace TUK::Framework
 	template <std::derived_from<Event> TEvent>
 	void EventSubsystem::AddListener(std::function<void(const TEvent&)> callback)
 	{
-		assert(callback);
+		ASSERT(callback);
 		listeners[std::type_index(typeid(TEvent))].push_back(
 			[cb = std::move(callback)](const Event& event)
 			{
@@ -146,7 +147,7 @@ namespace TUK::Framework
 		requires std::invocable<void (TInstance::*)(TArg), TInstance*, const TEvent&>
 	void EventSubsystem::AddListener(TInstance* instance, void (TInstance::* callback)(TArg))
 	{
-		assert(instance && callback);
+		ASSERT(instance && callback);
 		AddListener<TEvent>(
 			[instance, callback](const TEvent& event)
 			{
@@ -158,7 +159,7 @@ namespace TUK::Framework
 		requires std::invocable<void (TInstance::*)(TArg) const, const TInstance*, const TEvent&>
 	void EventSubsystem::AddListener(const TInstance* instance, void (TInstance::* callback)(TArg) const)
 	{
-		assert(instance && callback);
+		ASSERT(instance && callback);
 		AddListener<TEvent>(
 			[instance, callback](const TEvent& event)
 			{
