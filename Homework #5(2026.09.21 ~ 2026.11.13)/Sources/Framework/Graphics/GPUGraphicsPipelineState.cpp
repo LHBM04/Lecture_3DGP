@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 
 #include <format>
@@ -34,11 +34,23 @@ namespace TUK::Framework
 
 	std::expected<GPUGraphicsPipelineState, std::string> GPUGraphicsPipelineState::CreateForMaterial(
 		const GPUDevice& device,
-		const MaterialAsset& material,
-		const ShaderAsset& vertexShader,
-		const ShaderAsset& pixelShader,
+		const MaterialAsset* material,
+		const ShaderAsset* vertexShader,
+		const ShaderAsset* pixelShader,
 		DXGI_FORMAT targetFormat)
 	{
+		if (!material || !vertexShader || !pixelShader)
+		{
+			return std::unexpected("Material or shader asset is null.");
+		}
+
+		const GPUShader* vs = vertexShader->GetShader();
+		const GPUShader* ps = pixelShader->GetShader();
+		if (!vs || !ps)
+		{
+			return std::unexpected("Shader bytecode is not loaded.");
+		}
+
 		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -47,8 +59,8 @@ namespace TUK::Framework
 		};
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
-		description.VS = vertexShader.GetShader().GetD3DBytecode();
-		description.PS = pixelShader.GetShader().GetD3DBytecode();
+		description.VS = vs->GetD3DBytecode();
+		description.PS = ps->GetD3DBytecode();
 		description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
 		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		description.NumRenderTargets = 1;
@@ -56,12 +68,11 @@ namespace TUK::Framework
 		description.SampleMask = UINT_MAX;
 		description.SampleDesc = { 1, 0 };
 		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		description.RasterizerState.FillMode = material.GetFillMode();
-		description.RasterizerState.CullMode = material.GetCullMode();
+		description.RasterizerState.FillMode = material->GetFillMode();
+		description.RasterizerState.CullMode = material->GetCullMode();
 		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		description.DepthStencilState.DepthEnable = FALSE;
 		return Create(device, description);
 	}
-
 }

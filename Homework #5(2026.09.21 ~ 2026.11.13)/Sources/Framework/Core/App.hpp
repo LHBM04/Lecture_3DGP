@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
 
@@ -19,15 +19,15 @@ namespace TUK::Framework
 		TSubsystem* AddSubsystem();
 
 		template <std::derived_from<AppSubsystem> TSubsystem>
-		[[nodiscard]] TSubsystem* GetSubsystem();
+		[[nodiscard]] TSubsystem* GetSubsystem() noexcept;
 
 		template <std::derived_from<AppSubsystem> TSubsystem>
-		[[nodiscard]] const TSubsystem* GetSubsystem() const;
+		[[nodiscard]] const TSubsystem* GetSubsystem() const noexcept;
 
-		[[nodiscard]] auto GetSubsystems();
-		[[nodiscard]] const auto GetSubsystems() const;
+		[[nodiscard]] auto GetSubsystems() noexcept;
+		[[nodiscard]] auto GetSubsystems() const noexcept;
 
-		[[nodiscard]] static App& GetInstance();
+		[[nodiscard]] static App& GetInstance() noexcept;
 
 	private:
 		SystemStatus EarlyUpdate();
@@ -45,28 +45,28 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<AppSubsystem> TSubsystem>
-	TSubsystem* App::GetSubsystem()
+	TSubsystem* App::GetSubsystem() noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
 	}
 
 	template <std::derived_from<AppSubsystem> TSubsystem>
-	const TSubsystem* App::GetSubsystem() const
+	const TSubsystem* App::GetSubsystem() const noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
 	}
 
-	inline auto App::GetSubsystems()
+	inline auto App::GetSubsystems() noexcept
 	{
 		return System::GetSubsystems<AppSubsystem>();
 	}
 
-	inline const auto App::GetSubsystems() const
+	inline auto App::GetSubsystems() const noexcept
 	{
 		return System::GetSubsystems<AppSubsystem>();
 	}
 
-	inline App& App::GetInstance()
+	inline App& App::GetInstance() noexcept
 	{
 		return *instance;
 	}

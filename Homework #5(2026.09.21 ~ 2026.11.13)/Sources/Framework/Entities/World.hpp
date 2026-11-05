@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <memory_resource>
+#include <ranges>
 #include <span>
 #include <string_view>
 #include <vector>
@@ -56,26 +56,26 @@ namespace TUK::Framework
 		Entity* Instantiate(const ModelAsset* model, Transform* parent);
 		Entity* Instantiate(const ModelAsset* model, const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent);
 
-		void Destroy(Entity& entity) noexcept;
 		void Destroy(Entity* entity) noexcept;
 
 		void DestroyEntities();
 		void ClearEntities();
 
-		void AddCamera(Camera& camera);
-		void RemoveCamera(const Camera& camera);
+		void AddCamera(Camera* camera);
+		void RemoveCamera(const Camera* camera);
 
-		[[nodiscard]] Entity* FindEntityWithName(std::string_view name) noexcept;
-		[[nodiscard]] const Entity* FindEntityWithName(std::string_view name) const noexcept;
-		[[nodiscard]] std::vector<Entity*> FindEntitiesWithName(std::string_view name);
-		[[nodiscard]] std::vector<const Entity*> FindEntitiesWithName(std::string_view name) const;
+		[[nodiscard]] Entity* FindEntityByName(std::string_view name) noexcept;
+		[[nodiscard]] const Entity* FindEntityByName(std::string_view name) const noexcept;
+		[[nodiscard]] std::vector<Entity*> FindEntitiesByName(std::string_view name);
+		[[nodiscard]] std::vector<const Entity*> FindEntitiesByName(std::string_view name) const;
 
-		[[nodiscard]] Entity* FindEntityWithTag(std::string_view tag) noexcept;
-		[[nodiscard]] const Entity* FindEntityWithTag(std::string_view tag) const noexcept;
-		[[nodiscard]] std::vector<Entity*> FindEntitiesWithTag(std::string_view tag);
-		[[nodiscard]] std::vector<const Entity*> FindEntitiesWithTag(std::string_view tag) const;
+		[[nodiscard]] Entity* FindEntityByTag(std::string_view tag) noexcept;
+		[[nodiscard]] const Entity* FindEntityByTag(std::string_view tag) const noexcept;
+		[[nodiscard]] std::vector<Entity*> FindEntitiesByTag(std::string_view tag);
+		[[nodiscard]] std::vector<const Entity*> FindEntitiesByTag(std::string_view tag) const;
 
-		[[nodiscard]] std::span<const std::unique_ptr<Entity>> GetEntities() const noexcept;
+		[[nodiscard]] auto GetEntities() noexcept;
+		[[nodiscard]] auto GetEntities() const noexcept;
 
 		[[nodiscard]] std::span<Camera* const> GetCameras() noexcept;
 		[[nodiscard]] std::span<const Camera* const> GetCameras() const noexcept;
@@ -83,8 +83,8 @@ namespace TUK::Framework
 	private:
 		bool isEntered = false;
 
-		std::pmr::vector<std::unique_ptr<Entity>> entities{};
-		std::pmr::vector<Camera*> cameras{};
+		std::vector<std::unique_ptr<Entity>> entities{};
+		std::vector<Camera*> cameras{};
 	};
 
 	inline void World::OnEnter()
@@ -117,9 +117,20 @@ namespace TUK::Framework
 		isEntered = value;
 	}
 
-	inline std::span<const std::unique_ptr<Entity>> World::GetEntities() const noexcept
+	inline auto World::GetEntities() noexcept
 	{
-		return entities;
+		return entities | std::views::transform([](const std::unique_ptr<Entity>& entityPtr) -> Entity*
+			{
+				return entityPtr.get();
+			});
+	}
+
+	inline auto World::GetEntities() const noexcept
+	{
+		return entities | std::views::transform([](const std::unique_ptr<Entity>& entityPtr) -> const Entity*
+			{
+				return entityPtr.get();
+			});
 	}
 
 	inline std::span<Camera* const> World::GetCameras() noexcept

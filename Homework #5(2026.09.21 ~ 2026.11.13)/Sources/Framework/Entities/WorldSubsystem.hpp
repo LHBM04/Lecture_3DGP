@@ -17,7 +17,7 @@ namespace TUK::Framework
 		WorldSubsystem() noexcept;
 		~WorldSubsystem() noexcept override;
 
-		World& AddWorld(std::unique_ptr<World> world);
+		World* AddWorld(std::unique_ptr<World> world);
 		void ExitWorld();
 
 		[[nodiscard]] World* GetCurrentWorld() noexcept;

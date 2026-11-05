@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
 #include <iostream>
@@ -8,9 +8,9 @@
 #include "../Platform/Display.hpp"
 #include "../Platform/DisplayEvents.hpp"
 
-#include "GPUTexture2D.hpp"
-
 #include "../Utilities/Logger.hpp"
+
+#include "GPUTexture2D.hpp"
 
 namespace TUK::Framework
 {
@@ -61,7 +61,6 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		// 媛??ㅼ솑 泥댁씤???뚮㈃??紐낅졊??湲곕줉.
 		for (auto& [display, swapChain] : swapChains)
 		{
 			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
@@ -84,7 +83,6 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		// 紐⑤뱺 ?ㅼ솑 泥댁씤??Present.
 		for (auto& swapChain : swapChains | std::views::values)
 		{
 			swapChain.Present();
@@ -105,13 +103,17 @@ namespace TUK::Framework
 		device.reset();
 	}
 
-	void RenderSubsystem::OnDisplayCreated(const DisplayCreateEvent& event)
+	void RenderSubsystem::OnDisplayCreate(const DisplayCreateEvent& event)
 	{
-		const Display& display = event.display;
+		const Display* display = event.display;
+		if (!display)
+		{
+			return;
+		}
 
 		DXGI_SWAP_CHAIN_DESC1 description{};
-		description.Width = display.GetClientSize().GetX();
-		description.Height = display.GetClientSize().GetY();
+		description.Width = display->GetClientSize().GetX();
+		description.Height = display->GetClientSize().GetY();
 		description.BufferCount = 2;
 		description.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		description.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -125,14 +127,18 @@ namespace TUK::Framework
 			return;
 		}
 
-		swapChains.emplace(display.GetID(), std::move(*result));
+		swapChains.emplace(display->GetID(), std::move(*result));
 	}
 
-	void RenderSubsystem::OnDisplayClosed(const DisplayCloseEvent& event)
+	void RenderSubsystem::OnDisplayClose(const DisplayCloseEvent& event)
 	{
-		const Display& display = event.display;
+		const Display* display = event.display;
+		if (!display)
+		{
+			return;
+		}
 
-		auto result = swapChains.find(display.GetID());
+		auto result = swapChains.find(display->GetID());
 		if (result != swapChains.end())
 		{
 			swapChains.erase(result);

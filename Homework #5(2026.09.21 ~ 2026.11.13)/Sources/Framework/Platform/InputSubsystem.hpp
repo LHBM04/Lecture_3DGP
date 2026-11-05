@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <unordered_map>
 
@@ -20,8 +20,6 @@
 
 namespace TUK::Framework
 {
-	using namespace GameInput::v3;
-
 	class Display;
 
 	class InputSubsystem : public AppSubsystem
@@ -37,22 +35,22 @@ namespace TUK::Framework
 		SystemStatus OnLateUpdate() override;
 		void OnShutdown() override;
 
-		void AddProvider(const Display& display);
-		void RemoveProvider(const Display& display);
+		void AddProvider(const Display* display);
+		void RemoveProvider(const Display* display);
 
-		void OnCreate(const DisplayCreateEvent& event);
-		void OnClose(const DisplayCloseEvent& event);
-		void OnFocus(const DisplayFocusEvent& event);
-		void OnActivation(const InputActivationEvent& event);
+		void OnDisplayCreate(const DisplayCreateEvent& event);
+		void OnDisplayClose(const DisplayCloseEvent& event);
+		void OnDisplayFocus(const DisplayFocusEvent& event);
+		void OnInputActivation(const InputActivationEvent& event);
 
 		[[nodiscard]] const InputProvider* GetProvider() const noexcept;
-		[[nodiscard]] const InputProvider* GetProvider(const Display& display) const noexcept;
+		[[nodiscard]] const InputProvider* GetProvider(const Display* display) const noexcept;
 
 	private:
 		void PollKeyboard(InputProvider& provider) noexcept;
 		void PollMouse(InputProvider& provider) noexcept;
 
-		ComPtr<IGameInput> gameInput;
+		ComPtr<GameInput::v3::IGameInput> gameInput;
 
 		const Display* activeDisplay;
 		
@@ -76,12 +74,17 @@ namespace TUK::Framework
 
 	inline const InputProvider* InputSubsystem::GetProvider() const noexcept
 	{
-		return activeDisplay ? GetProvider(*activeDisplay) : nullptr;
+		return activeDisplay ? GetProvider(activeDisplay) : nullptr;
 	}
 
-	inline const InputProvider* InputSubsystem::GetProvider(const Display& display) const noexcept
+	inline const InputProvider* InputSubsystem::GetProvider(const Display* display) const noexcept
 	{
-		const auto it = providers.find(&display);
+		if (!display)
+		{
+			return nullptr;
+		}
+
+		const auto it = providers.find(display);
 		return it != providers.end() ? &it->second : nullptr;
 	}
 }

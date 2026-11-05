@@ -61,7 +61,7 @@ namespace TUK::Framework
 		Vector3D<f32> localScale{ 1.0f };
 
 		Transform* parent = nullptr;
-		std::pmr::vector<Transform*> children{};
+		std::vector<Transform*> children{};
 
 		Matrix4x4<f32> cachedWorldMatrix{ Matrix4x4<f32>::GetIdentity() };
 	};

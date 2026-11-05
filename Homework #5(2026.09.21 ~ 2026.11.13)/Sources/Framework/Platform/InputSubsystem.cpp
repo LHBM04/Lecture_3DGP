@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "InputSubsystem.hpp"
 
 #include "Display.hpp"
@@ -64,39 +64,49 @@ namespace TUK::Framework
 		hasMouseHistory = false;
 	}
 
-	void InputSubsystem::AddProvider(const Display& display)
+	void InputSubsystem::AddProvider(const Display* display)
 	{
-		providers.try_emplace(&display);
-		if (display.GetHWND() == GetFocus())
+		if (!display)
 		{
-			activeDisplay = &display;
+			return;
+		}
+
+		providers.try_emplace(display);
+		if (display->GetHWND() == GetFocus())
+		{
+			activeDisplay = display;
 			hasMouseHistory = false;
 		}
 	}
 
-	void InputSubsystem::RemoveProvider(const Display& display)
+	void InputSubsystem::RemoveProvider(const Display* display)
 	{
-		if (activeDisplay == &display)
+		if (!display)
+		{
+			return;
+		}
+
+		if (activeDisplay == display)
 		{
 			activeDisplay = nullptr;
 			hasMouseHistory = false;
 		}
-		providers.erase(&display);
+		providers.erase(display);
 	}
 
-	void InputSubsystem::OnCreate(const DisplayCreateEvent& event)
+	void InputSubsystem::OnDisplayCreate(const DisplayCreateEvent& event)
 	{
 		AddProvider(event.display);
 	}
 
-	void InputSubsystem::OnClose(const DisplayCloseEvent& event)
+	void InputSubsystem::OnDisplayClose(const DisplayCloseEvent& event)
 	{
 		RemoveProvider(event.display);
 	}
 
-	void InputSubsystem::OnFocus(const DisplayFocusEvent& event)
+	void InputSubsystem::OnDisplayFocus(const DisplayFocusEvent& event)
 	{
-		const auto it = providers.find(&event.display);
+		const auto it = providers.find(event.display);
 		if (it == providers.end())
 		{
 			return;
@@ -107,7 +117,7 @@ namespace TUK::Framework
 
 		if (!event.isFocused)
 		{
-			if (activeDisplay == &event.display)
+			if (activeDisplay == event.display)
 			{
 				activeDisplay = nullptr;
 			}
@@ -119,10 +129,10 @@ namespace TUK::Framework
 			previous->second.Reset();
 		}
 
-		activeDisplay = &event.display;
+		activeDisplay = event.display;
 	}
 
-	void InputSubsystem::OnActivation(const InputActivationEvent& event)
+	void InputSubsystem::OnInputActivation(const InputActivationEvent& event)
 	{
 		if (!event.isActive)
 		{

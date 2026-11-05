@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "Engine.hpp"
 
 #include "App.hpp"
@@ -12,9 +12,9 @@ namespace TUK::Framework
 			Shutdown();
 			return std::to_underlying(status);
 		}
-		if (const SystemStatus status = app.get().Startup(); status != SystemStatus::CONTINUE)
+		if (const SystemStatus status = app->Startup(); status != SystemStatus::CONTINUE)
 		{
-			app.get().Shutdown();
+			app->Shutdown();
 			Shutdown();
 			return std::to_underlying(status);
 		}
@@ -23,7 +23,7 @@ namespace TUK::Framework
 		{
 			if (SystemStatus status = Routine(); status != SystemStatus::CONTINUE)
 			{
-				app.get().Shutdown();
+				app->Shutdown();
 				Shutdown();
 
 				return std::to_underlying(status);
@@ -43,34 +43,22 @@ namespace TUK::Framework
 	{
 		if (SystemStatus status = PreTick(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
 		if (SystemStatus status = Tick(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
-		if (SystemStatus status = app.get().Routine(); status != SystemStatus::CONTINUE)
+		if (SystemStatus status = app->Routine(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
 		if (SystemStatus status = PostTick(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
 		return SystemStatus::CONTINUE;
@@ -84,9 +72,9 @@ namespace TUK::Framework
 
 	SystemStatus Engine::PreTick()
 	{
-		for (EngineSubsystem& subsystem : GetSubsystems())
+		for (EngineSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnPreTick(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnPreTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
@@ -97,9 +85,9 @@ namespace TUK::Framework
 
 	SystemStatus Engine::Tick()
 	{
-		for (EngineSubsystem& subsystem : GetSubsystems())
+		for (EngineSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnTick(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
@@ -110,9 +98,9 @@ namespace TUK::Framework
 
 	SystemStatus Engine::PostTick()
 	{
-		for (EngineSubsystem& subsystem : GetSubsystems())
+		for (EngineSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnPostTick(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnPostTick(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}

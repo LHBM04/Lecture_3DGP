@@ -1,10 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include <cassert>
 #include <concepts>
 #include <functional>
 #include <memory>
-#include <memory_resource>
 #include <typeindex>
 #include <type_traits>
 #include <unordered_map>
@@ -63,9 +62,9 @@ namespace TUK::Framework
 			std::unique_ptr<const Event, EventDeleter> event;
 		};
 
-		std::pmr::vector<QueuedEvent> writeBuffer;
-		std::pmr::vector<QueuedEvent> readBuffer;
-		std::pmr::unordered_map<std::type_index, std::vector<EventCallback>> listeners;
+		std::vector<QueuedEvent> writeBuffer;
+		std::vector<QueuedEvent> readBuffer;
+		std::unordered_map<std::type_index, std::vector<EventCallback>> listeners;
 	};
 
 	inline EventSubsystem::EventSubsystem() noexcept

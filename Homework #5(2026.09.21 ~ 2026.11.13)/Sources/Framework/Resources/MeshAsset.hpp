@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cassert>
 #include <optional>
 #include <span>
 #include <string>
@@ -43,7 +42,7 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<const u32> GetIndices() const noexcept;
 
 		[[nodiscard]] bool HasGPUMesh() const noexcept;
-		[[nodiscard]] const GPUMesh& GetGPUMesh() const noexcept;
+		[[nodiscard]] const GPUMesh* GetGPUMesh() const noexcept;
 		void SetGPUMesh(GPUMesh value) noexcept;
 
 	private:
@@ -103,10 +102,9 @@ namespace TUK::Framework
 		return gpuMesh.has_value();
 	}
 
-	inline const GPUMesh& MeshAsset::GetGPUMesh() const noexcept
+	inline const GPUMesh* MeshAsset::GetGPUMesh() const noexcept
 	{
-		assert(gpuMesh);
-		return *gpuMesh;
+		return gpuMesh ? &*gpuMesh : nullptr;
 	}
 
 	inline void MeshAsset::SetGPUMesh(GPUMesh value) noexcept

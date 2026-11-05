@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "GPUCommandBuffer.hpp"
 
 #include <cassert>
@@ -113,37 +113,53 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity& entity) noexcept
+	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity* entity)
 	{
-		const Transform* transform = entity.GetComponent<Transform>();
+		if (!entity)
+		{
+			return std::unexpected("Entity is null.");
+		}
+
+		const Transform* transform = entity->GetComponent<Transform>();
 		return SetObjectTransform(transform ? transform->GetWorldMatrix() : Matrix4x4<f32>::GetIdentity());
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera& camera) noexcept
+	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera* camera)
 	{
 		cameraPrepared = false;
+		if (!camera)
+		{
+			return std::unexpected("Camera is null.");
+		}
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
 			return std::unexpected("A render target must be set before applying a camera.");
 		}
 
 		CameraConstants constants{};
-		DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(camera.GetViewMatrix()));
-		DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(camera.GetProjectionMatrix()));
+		DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(camera->GetViewMatrix()));
+		DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(camera->GetProjectionMatrix()));
 		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
 		if (!allocation)
 		{
 			return std::unexpected(allocation.error());
 		}
 		SetGPUCameraConstantBuffer(*allocation->first, allocation->second);
-		SetViewport(camera.GetViewport());
-		SetScissorRect(camera.GetScissorRect());
+		SetViewport(camera->GetViewport());
+		SetScissorRect(camera->GetScissorRect());
 		cameraPrepared = true;
 		return {};
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetMaterial(const MaterialAsset& material, const GPUGraphicsPipelineState& pipelineState, DXGI_FORMAT targetFormat) noexcept
+	std::expected<void, std::string> GPUCommandBuffer::SetMaterial(
+		const MaterialAsset* material,
+		const GPUGraphicsPipelineState& pipelineState,
+		DXGI_FORMAT targetFormat)
 	{
+		if (!material)
+		{
+			return std::unexpected("Material is null.");
+		}
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
 			return std::unexpected("A render target must be set before applying a material.");
@@ -153,13 +169,13 @@ namespace TUK::Framework
 		{
 			return std::unexpected("Material pipeline format does not match the render target format.");
 		}
-		const ColorRGBA<f32>& baseColor = material.GetBaseColor();
-		const ColorRGBA<f32>& emissiveColor = material.GetEmissiveColor();
+		const ColorRGBA<f32>& baseColor = material->GetBaseColor();
+		const ColorRGBA<f32>& emissiveColor = material->GetEmissiveColor();
 		MaterialConstants constants{};
 		constants.baseColor = { baseColor.GetR(), baseColor.GetG(), baseColor.GetB(), baseColor.GetA() };
 		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
-		constants.metallic = material.GetMetallic();
-		constants.roughness = material.GetRoughness();
+		constants.metallic = material->GetMetallic();
+		constants.roughness = material->GetRoughness();
 		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
 		if (!allocation)
 		{
@@ -170,7 +186,7 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetObjectTransform(const Matrix4x4<f32>& worldMatrix) noexcept
+	std::expected<void, std::string> GPUCommandBuffer::SetObjectTransform(const Matrix4x4<f32>& worldMatrix)
 	{
 		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{

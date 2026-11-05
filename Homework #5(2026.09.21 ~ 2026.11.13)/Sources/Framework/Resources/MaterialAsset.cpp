@@ -14,7 +14,6 @@
 
 #include "../Utilities/BinaryUtility.hpp"
 
-
 namespace TUK::Framework
 {
 	namespace
@@ -51,22 +50,16 @@ namespace TUK::Framework
 	{
 		std::ostringstream stream(std::ios::binary);
 		ToBin(stream, std::string_view("<Material>:"));
-		ToBin(stream, std::string_view("<AlbedoColor>:"));
-		ToBin(stream, albedoColor);
+		ToBin(stream, std::string_view("<BaseColor>:"));
+		ToBin(stream, baseColor);
 		ToBin(stream, std::string_view("<EmissiveColor>:"));
 		ToBin(stream, emissiveColor);
 		ToBin(stream, std::string_view("<SpecularColor>:"));
 		ToBin(stream, specularColor);
-		ToBin(stream, std::string_view("<Glossiness>:"));
-		ToBin(stream, glossiness);
-		ToBin(stream, std::string_view("<Smoothness>:"));
-		ToBin(stream, smoothness);
 		ToBin(stream, std::string_view("<Metallic>:"));
 		ToBin(stream, metallic);
-		ToBin(stream, std::string_view("<SpecularHighlight>:"));
-		ToBin(stream, specularHighlight);
-		ToBin(stream, std::string_view("<GlossyReflection>:"));
-		ToBin(stream, glossyReflection);
+		ToBin(stream, std::string_view("<Roughness>:"));
+		ToBin(stream, roughness);
 		ToBin(stream, std::string_view("<Shader>:"));
 		const std::string_view targetShader = shaderPath.empty()
 			? std::string_view("Resources/Shaders/Standard.hlsl")
@@ -88,20 +81,15 @@ namespace TUK::Framework
 		std::string parsedShaderPath;
 		std::string parsedVertexShaderPath;
 		std::string parsedPixelShaderPath;
-		ColorRGBA<f32> parsedAlbedoColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		ColorRGBA<f32> parsedBaseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 		ColorRGBA<f32> parsedEmissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
 		ColorRGBA<f32> parsedSpecularColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 		D3D12_CULL_MODE parsedCullMode = D3D12_CULL_MODE_BACK;
 		D3D12_FILL_MODE parsedFillMode = D3D12_FILL_MODE_SOLID;
-		f32 parsedGlossiness = 0.5f;
-		f32 parsedSmoothness = 0.5f;
 		f32 parsedMetallic = 0.0f;
-		f32 parsedSpecularHighlight = 0.0f;
-		f32 parsedGlossyReflection = 0.0f;
 		f32 parsedRoughness = 0.5f;
-		bool hasGlossiness = false;
 		bool hasSmoothness = false;
-		bool hasRoughness = false;
+		f32 parsedSmoothness = 0.5f;
 		bool hasShaderTag = false;
 
 		while (file.peek() != std::char_traits<char>::eof())
@@ -146,7 +134,7 @@ namespace TUK::Framework
 			}
 			else if (tag == "<AlbedoColor>:" || tag == "<BaseColor>:")
 			{
-				if (!FromBin(file, parsedAlbedoColor))
+				if (!FromBin(file, parsedBaseColor))
 				{
 					return false;
 				}
@@ -165,39 +153,9 @@ namespace TUK::Framework
 					return false;
 				}
 			}
-			else if (tag == "<Glossiness>:")
-			{
-				if (!FromBin(file, parsedGlossiness))
-				{
-					return false;
-				}
-				hasGlossiness = true;
-			}
-			else if (tag == "<Smoothness>:")
-			{
-				if (!FromBin(file, parsedSmoothness))
-				{
-					return false;
-				}
-				hasSmoothness = true;
-			}
 			else if (tag == "<Metallic>:")
 			{
 				if (!FromBin(file, parsedMetallic))
-				{
-					return false;
-				}
-			}
-			else if (tag == "<SpecularHighlight>:")
-			{
-				if (!FromBin(file, parsedSpecularHighlight))
-				{
-					return false;
-				}
-			}
-			else if (tag == "<GlossyReflection>:")
-			{
-				if (!FromBin(file, parsedGlossyReflection))
 				{
 					return false;
 				}
@@ -208,7 +166,22 @@ namespace TUK::Framework
 				{
 					return false;
 				}
-				hasRoughness = true;
+			}
+			else if (tag == "<Smoothness>:" || tag == "<Glossiness>:")
+			{
+				if (!FromBin(file, parsedSmoothness))
+				{
+					return false;
+				}
+				hasSmoothness = true;
+			}
+			else if (tag == "<SpecularHighlight>:" || tag == "<GlossyReflection>:")
+			{
+				f32 dummy = 0.0f;
+				if (!FromBin(file, dummy))
+				{
+					return false;
+				}
 			}
 			else if (tag == "<CullMode>:" || tag == "<FillMode>:")
 			{
@@ -247,41 +220,20 @@ namespace TUK::Framework
 		}
 
 		parsedMetallic = std::clamp(parsedMetallic, 0.0f, 1.0f);
-		parsedGlossiness = std::clamp(parsedGlossiness, 0.0f, 1.0f);
-		parsedSmoothness = std::clamp(parsedSmoothness, 0.0f, 1.0f);
-		parsedSpecularHighlight = std::clamp(parsedSpecularHighlight, 0.0f, 1.0f);
-		parsedGlossyReflection = std::clamp(parsedGlossyReflection, 0.0f, 1.0f);
-		parsedRoughness = std::clamp(parsedRoughness, 0.0f, 1.0f);
-
 		if (hasSmoothness)
 		{
-			parsedRoughness = 1.0f - parsedSmoothness;
-		}
-		else if (hasRoughness)
-		{
-			parsedSmoothness = 1.0f - parsedRoughness;
-			parsedGlossiness = parsedSmoothness;
-		}
-		else if (hasGlossiness)
-		{
-			parsedSmoothness = parsedGlossiness;
-			parsedRoughness = 1.0f - parsedSmoothness;
+			parsedRoughness = 1.0f - std::clamp(parsedSmoothness, 0.0f, 1.0f);
 		}
 		else
 		{
-			parsedSmoothness = 1.0f - parsedRoughness;
-			parsedGlossiness = parsedSmoothness;
+			parsedRoughness = std::clamp(parsedRoughness, 0.0f, 1.0f);
 		}
 
 		MaterialAsset candidate;
-		candidate.albedoColor = parsedAlbedoColor;
+		candidate.baseColor = parsedBaseColor;
 		candidate.emissiveColor = parsedEmissiveColor;
 		candidate.specularColor = parsedSpecularColor;
-		candidate.glossiness = parsedGlossiness;
-		candidate.smoothness = parsedSmoothness;
 		candidate.metallic = parsedMetallic;
-		candidate.specularHighlight = parsedSpecularHighlight;
-		candidate.glossyReflection = parsedGlossyReflection;
 		candidate.roughness = parsedRoughness;
 		candidate.cullMode = parsedCullMode;
 		candidate.fillMode = parsedFillMode;

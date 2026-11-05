@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 #include "GPUSwapChain.hpp"
 
 #include "../Platform/Display.hpp"
@@ -9,9 +9,14 @@ namespace TUK::Framework
 {
 	std::expected<GPUSwapChain, std::string> GPUSwapChain::Create(
 		const GPUDevice& device,
-		const Display& display,
+		const Display* display,
 		const DXGI_SWAP_CHAIN_DESC1& description)
 	{
+		if (!display)
+		{
+			return std::unexpected("Display is null.");
+		}
+
 		IDXGIFactory6& dxgiFactory = device.GetDXGIFactory();
 		ID3D12Device& d3dDevice = device.GetD3DDevice();
 		ID3D12CommandQueue& d3dCommandQueue = device.GetD3DCommandQueue();
@@ -19,7 +24,7 @@ namespace TUK::Framework
 		ComPtr<IDXGISwapChain1> swapChain1;
 		if (FAILED(dxgiFactory.CreateSwapChainForHwnd(
 			&d3dCommandQueue,
-			display.GetHWND(),
+			display->GetHWND(),
 			&description,
 			nullptr,
 			nullptr,
@@ -49,7 +54,7 @@ namespace TUK::Framework
 		const u32 descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
-		std::pmr::vector<GPUTexture2D> backBuffers;
+		std::vector<GPUTexture2D> backBuffers;
 		backBuffers.reserve(description.BufferCount);
 
 		for (u32 index = 0; index < description.BufferCount; ++index)

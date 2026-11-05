@@ -2,15 +2,14 @@
 #include "MyGame.hpp"
 
 #include "../Framework/Core.hpp"
-#include "../Framework/Platform.hpp"
 #include "../Framework/Entities/WorldSubsystem.hpp"
 #include "../Framework/Graphics.hpp"
-
-#include "Worlds/World_Stage.hpp"
+#include "../Framework/Platform.hpp"
+#include "../Framework/Utilities/Logger.hpp"
 
 #include "Resource.h"
 
-#include "Framework/Utilities/Logger.hpp"
+#include "Worlds/World_Stage.hpp"
 
 namespace TUK::Game
 {
@@ -23,19 +22,19 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		InputSubsystem* inputSubsystem = AddSubsystem<InputSubsystem>();
+		inputSubsystem = AddSubsystem<InputSubsystem>();
 		if (!inputSubsystem)
 		{
 			Logger::LogError("Failed to get Input Subsystem.");
 			return SystemStatus::FAILURE;
 		}
 
-		eventSubsystem->AddListener<InputActivationEvent>(inputSubsystem, &InputSubsystem::OnActivation);
-		eventSubsystem->AddListener<DisplayCreateEvent>(inputSubsystem, &InputSubsystem::OnCreate);
-		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnClose);
-		eventSubsystem->AddListener<DisplayFocusEvent>(inputSubsystem, &InputSubsystem::OnFocus);
+		eventSubsystem->AddListener<InputActivationEvent>(inputSubsystem, &InputSubsystem::OnInputActivation);
+		eventSubsystem->AddListener<DisplayCreateEvent>(inputSubsystem, &InputSubsystem::OnDisplayCreate);
+		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnDisplayClose);
+		eventSubsystem->AddListener<DisplayFocusEvent>(inputSubsystem, &InputSubsystem::OnDisplayFocus);
 
-		DisplaySubsystem* displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
+		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{
 			Logger::LogError("Failed to get Display Subsystem.");
@@ -60,10 +59,10 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		WorldSubsystem* worldSubsystem = AddSubsystem<WorldSubsystem>();
+		worldSubsystem = AddSubsystem<WorldSubsystem>();
 		worldSubsystem->AddWorld(std::make_unique<World_Stage>());
 
-		RenderSubsystem* renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
+		renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
 		if (!renderSubsystem)
 		{
 			Logger::LogError("Failed to get Render Subsystem.");
@@ -74,7 +73,7 @@ namespace TUK::Game
 		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::Render);
 		renderSubsystem->AddListener(worldSubsystem, &WorldSubsystem::PostRender);
 
-		AssetSubsystem* assetSubsystem = AddSubsystem<AssetSubsystem>();
+		assetSubsystem = AddSubsystem<AssetSubsystem>();
 		if (!assetSubsystem)
 		{
 			Logger::LogError("Failed to get Asset Subsystem.");
@@ -85,7 +84,7 @@ namespace TUK::Game
 		assetSubsystem->AddLoader<ModelAssetLoader>();
 		assetSubsystem->AddLoader<MeshAssetLoader>(device);
 		assetSubsystem->AddLoader<ImageAssetLoader>(device);
-		assetSubsystem->AddLoader<MaterialAssetLoader>(*assetSubsystem, device, DXGI_FORMAT_R8G8B8A8_UNORM);
+		assetSubsystem->AddLoader<MaterialAssetLoader>(assetSubsystem, device, DXGI_FORMAT_R8G8B8A8_UNORM);
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
 
 		return App::Startup();

@@ -1,31 +1,30 @@
 #include "Precompiled.hpp"
 #include "MeshRenderer.hpp"
 
-#include <iostream>
-
 #include "../Resources/MaterialAsset.hpp"
 #include "../Resources/MeshAsset.hpp"
 
-#include "GPUCommandBuffer.hpp"
-
 #include "../Utilities/Logger.hpp"
+
+#include "GPUCommandBuffer.hpp"
 
 namespace TUK::Framework
 {
 	void MeshRenderer::OnRender(GPUCommandBuffer& commandBuffer)
 	{
-		if (!mesh || !material || !mesh->HasGPUMesh())
+		if (!mesh || !material)
 		{
 			return;
 		}
 
+		const GPUMesh* gpuMesh = mesh->GetGPUMesh();
 		const GPUGraphicsPipelineState* pipeline = material->GetGraphicsPipelineState();
-		if (!pipeline)
+		if (!gpuMesh || !pipeline)
 		{
 			return;
 		}
 
-		if (auto result = commandBuffer.SetMaterial(*material, *pipeline, material->GetTargetFormat()); !result)
+		if (auto result = commandBuffer.SetMaterial(material, *pipeline, material->GetTargetFormat()); !result)
 		{
 			Logger::LogError("{}{}", "MeshRenderer failed to apply material: ", result.error());
 			return;
@@ -37,8 +36,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		const GPUMesh& gpuMesh = mesh->GetGPUMesh();
-		commandBuffer.SetGPUMesh(gpuMesh);
-		commandBuffer.DrawIndexed(gpuMesh.GetIndexCount());
+		commandBuffer.SetGPUMesh(*gpuMesh);
+		commandBuffer.DrawIndexed(gpuMesh->GetIndexCount());
 	}
 }

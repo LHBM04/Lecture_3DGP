@@ -1,7 +1,6 @@
-﻿#pragma once
+#pragma once
 
 #include <functional>
-#include <memory_resource>
 #include <optional>
 #include <unordered_map>
 #include <utility>
@@ -42,8 +41,8 @@ namespace TUK::Framework
 		template <class TListener>
 		void AddListener(const TListener* listener, void (TListener::* callback)(GPUCommandBuffer&) const);
 
-		void OnDisplayCreated(const DisplayCreateEvent& event);
-		void OnDisplayClosed(const DisplayCloseEvent& event);
+		void OnDisplayCreate(const DisplayCreateEvent& event);
+		void OnDisplayClose(const DisplayCloseEvent& event);
 
 		[[nodiscard]] GPUDevice& GetDevice() noexcept;
 		[[nodiscard]] const GPUDevice& GetDevice() const noexcept;
@@ -53,7 +52,7 @@ namespace TUK::Framework
 
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
-		std::pmr::unordered_map<Display::ID, GPUSwapChain> swapChains;
+		std::unordered_map<Display::ID, GPUSwapChain> swapChains;
 		std::optional<GPUFence> fence;
 
 		std::vector<RenderCallback> listeners;

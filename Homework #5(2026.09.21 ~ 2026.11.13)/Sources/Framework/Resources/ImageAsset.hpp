@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cassert>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -23,7 +22,7 @@ namespace TUK::Framework
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
 
 		[[nodiscard]] bool HasTexture() const noexcept;
-		[[nodiscard]] const GPUTexture2D& GetTexture() const noexcept;
+		[[nodiscard]] const GPUTexture2D* GetTexture() const noexcept;
 		void SetTexture(GPUTexture2D value) noexcept;
 
 	private:
@@ -35,10 +34,9 @@ namespace TUK::Framework
 		return texture.has_value();
 	}
 
-	inline const GPUTexture2D& ImageAsset::GetTexture() const noexcept
+	inline const GPUTexture2D* ImageAsset::GetTexture() const noexcept
 	{
-		assert(texture);
-		return *texture;
+		return texture ? &*texture : nullptr;
 	}
 
 	inline void ImageAsset::SetTexture(GPUTexture2D value) noexcept

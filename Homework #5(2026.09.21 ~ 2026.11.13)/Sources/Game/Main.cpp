@@ -1,4 +1,4 @@
-﻿#include "Precompiled.hpp"
+#include "Precompiled.hpp"
 
 #include "Framework/Utilities.hpp"
 
@@ -8,7 +8,7 @@
 using namespace TUK::Game;
 
 static MyGame app;
-static MyEngine engine(app);
+static MyEngine engine(&app);
 
 INT APIENTRY _tWinMain(
 	_In_ HINSTANCE hInstance,

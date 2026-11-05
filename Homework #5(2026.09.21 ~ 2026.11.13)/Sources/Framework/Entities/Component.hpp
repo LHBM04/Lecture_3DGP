@@ -10,7 +10,7 @@ namespace TUK::Framework
 	class Component
 	{
 	public:
-		explicit Component(Entity& owner) noexcept;
+		explicit Component(Entity* owner) noexcept;
 		virtual ~Component() noexcept = default;
 
 		Component(const Component&) = delete;
@@ -35,8 +35,8 @@ namespace TUK::Framework
 
 		virtual void OnDestroy();
 
-		[[nodiscard]] const Entity& GetOwner() const noexcept;
-		[[nodiscard]] Entity& GetOwner() noexcept;
+		[[nodiscard]] const Entity* GetOwner() const noexcept;
+		[[nodiscard]] Entity* GetOwner() noexcept;
 
 		[[nodiscard]] bool IsStarted() const noexcept;
 		void SetStarted(bool value) noexcept;
@@ -48,14 +48,14 @@ namespace TUK::Framework
 		void Destroy() noexcept;
 
 	private:
-		Entity& owner;
+		Entity* owner = nullptr;
 
 		bool isStarted = false;
 		bool isEnabled = true;
 		bool isDestroyed = false;
 	};
 
-	inline Component::Component(Entity& owner) noexcept
+	inline Component::Component(Entity* owner) noexcept
 		: owner(owner)
 	{
 	}
@@ -104,12 +104,12 @@ namespace TUK::Framework
 	{
 	}
 
-	inline const Entity& Component::GetOwner() const noexcept
+	inline const Entity* Component::GetOwner() const noexcept
 	{
 		return owner;
 	}
 
-	inline Entity& Component::GetOwner() noexcept
+	inline Entity* Component::GetOwner() noexcept
 	{
 		return owner;
 	}

@@ -1,7 +1,6 @@
-﻿#pragma once
+#pragma once
 
 #include <concepts>
-#include <functional>
 
 #include "System.hpp"
 #include "EngineSubsystem.hpp"
@@ -13,7 +12,7 @@ namespace TUK::Framework
 	class Engine : public System
 	{
 	public:
-		explicit Engine(App& app) noexcept;
+		explicit Engine(App* app) noexcept;
 
 		[[nodiscard]] i32 Run();
 
@@ -25,15 +24,15 @@ namespace TUK::Framework
 		TSubsystem* AddSubsystem();
 
 		template <std::derived_from<EngineSubsystem> TSubsystem>
-		[[nodiscard]] TSubsystem* GetSubsystem();
+		[[nodiscard]] TSubsystem* GetSubsystem() noexcept;
 
 		template <std::derived_from<EngineSubsystem> TSubsystem>
-		[[nodiscard]] const TSubsystem* GetSubsystem() const;
+		[[nodiscard]] const TSubsystem* GetSubsystem() const noexcept;
 
-		[[nodiscard]] auto GetSubsystems();
-		[[nodiscard]] const auto GetSubsystems() const;
+		[[nodiscard]] auto GetSubsystems() noexcept;
+		[[nodiscard]] auto GetSubsystems() const noexcept;
 
-		[[nodiscard]] static Engine& GetInstance();
+		[[nodiscard]] static Engine& GetInstance() noexcept;
 
 	private:
 		SystemStatus PreTick();
@@ -42,10 +41,10 @@ namespace TUK::Framework
 
 		inline static Engine* instance = nullptr;
 
-		std::reference_wrapper<App> app;
+		App* app = nullptr;
 	};
 
-	inline Engine::Engine(App& app) noexcept
+	inline Engine::Engine(App* app) noexcept
 		: app(app)
 	{
 	}
@@ -57,28 +56,28 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
-	TSubsystem* Engine::GetSubsystem()
+	TSubsystem* Engine::GetSubsystem() noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
 	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
-	const TSubsystem* Engine::GetSubsystem() const
+	const TSubsystem* Engine::GetSubsystem() const noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
 	}
 
-	inline auto Engine::GetSubsystems()
+	inline auto Engine::GetSubsystems() noexcept
 	{
 		return System::GetSubsystems<EngineSubsystem>();
 	}
 
-	inline const auto Engine::GetSubsystems() const
+	inline auto Engine::GetSubsystems() const noexcept
 	{
 		return System::GetSubsystems<EngineSubsystem>();
 	}
 	
-	inline Engine& Engine::GetInstance()
+	inline Engine& Engine::GetInstance() noexcept
 	{
 		return *instance;
 	}

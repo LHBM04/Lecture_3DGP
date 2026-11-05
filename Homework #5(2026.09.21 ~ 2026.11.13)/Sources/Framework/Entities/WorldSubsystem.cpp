@@ -18,14 +18,14 @@ namespace TUK::Framework
 		worlds.clear();
 	}
 
-	World& WorldSubsystem::AddWorld(std::unique_ptr<World> world)
+	World* WorldSubsystem::AddWorld(std::unique_ptr<World> world)
 	{
 		if (!world || currentWorld)
 		{
 			std::abort();
 		}
 
-		World& result = *world;
+		World* result = world.get();
 		worlds.push_back(std::move(world));
 		return result;
 	}
@@ -55,22 +55,18 @@ namespace TUK::Framework
 			return;
 		}
 
-		const usize entityCount = currentWorld->GetEntities().size();
-		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		for (Entity* entity : currentWorld->GetEntities())
 		{
-			Entity& entity = *currentWorld->GetEntities()[entityIndex];
-			if (!entity.IsEnabled() || entity.IsDestroyed())
+			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
 			{
 				continue;
 			}
 
-			const usize componentCount = entity.GetComponents().size();
-			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			for (Component* component : entity->GetComponents())
 			{
-				Component& component = *entity.GetComponents()[componentIndex];
-				if (component.IsStarted() && component.IsEnabled() && !component.IsDestroyed())
+				if (component && component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
 				{
-					component.OnPreRender(commandBuffer);
+					component->OnPreRender(commandBuffer);
 				}
 			}
 		}
@@ -90,34 +86,30 @@ namespace TUK::Framework
 				continue;
 			}
 
-			const Entity& cameraOwner = camera->GetOwner();
-			if (!cameraOwner.IsEnabled() || cameraOwner.IsDestroyed())
+			const Entity* cameraOwner = camera->GetOwner();
+			if (!cameraOwner || !cameraOwner->IsEnabled() || cameraOwner->IsDestroyed())
 			{
 				continue;
 			}
 
-			if (auto result = commandBuffer.SetCamera(*camera); !result)
+			if (auto result = commandBuffer.SetCamera(camera); !result)
 			{
 				std::cerr << "WorldSubsystem failed to set camera: " << result.error() << std::endl;
 				continue;
 			}
 
-			const usize entityCount = currentWorld->GetEntities().size();
-			for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+			for (Entity* entity : currentWorld->GetEntities())
 			{
-				Entity& entity = *currentWorld->GetEntities()[entityIndex];
-				if (!entity.IsEnabled() || entity.IsDestroyed())
+				if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
 				{
 					continue;
 				}
 
-				const usize componentCount = entity.GetComponents().size();
-				for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+				for (Component* component : entity->GetComponents())
 				{
-					Component& component = *entity.GetComponents()[componentIndex];
-					if (component.IsStarted() && component.IsEnabled() && !component.IsDestroyed())
+					if (component && component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
 					{
-						component.OnRender(commandBuffer);
+						component->OnRender(commandBuffer);
 					}
 				}
 			}
@@ -131,22 +123,18 @@ namespace TUK::Framework
 			return;
 		}
 
-		const usize entityCount = currentWorld->GetEntities().size();
-		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		for (Entity* entity : currentWorld->GetEntities())
 		{
-			Entity& entity = *currentWorld->GetEntities()[entityIndex];
-			if (!entity.IsEnabled() || entity.IsDestroyed())
+			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
 			{
 				continue;
 			}
 
-			const usize componentCount = entity.GetComponents().size();
-			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			for (Component* component : entity->GetComponents())
 			{
-				Component& component = *entity.GetComponents()[componentIndex];
-				if (component.IsStarted() && component.IsEnabled() && !component.IsDestroyed())
+				if (component && component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
 				{
-					component.OnPostRender(commandBuffer);
+					component->OnPostRender(commandBuffer);
 				}
 			}
 		}
@@ -199,35 +187,31 @@ namespace TUK::Framework
 			return SystemStatus::CONTINUE;
 		}
 
-		const usize entityCount = currentWorld->GetEntities().size();
-		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		for (Entity* entity : currentWorld->GetEntities())
 		{
-			Entity& entity = *currentWorld->GetEntities()[entityIndex];
-			if (!entity.IsEnabled() || entity.IsDestroyed())
+			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
 			{
 				continue;
 			}
 
-			const usize componentCount = entity.GetComponents().size();
-			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			for (Component* component : entity->GetComponents())
 			{
-				Component& component = *entity.GetComponents()[componentIndex];
-				if (!component.IsEnabled() || component.IsDestroyed())
+				if (!component || !component->IsEnabled() || component->IsDestroyed())
 				{
 					continue;
 				}
 
-				if (!component.IsStarted())
+				if (!component->IsStarted())
 				{
-					component.SetStarted(true);
-					component.OnStart();
-					if (!component.IsEnabled() || component.IsDestroyed() || !entity.IsEnabled() || entity.IsDestroyed())
+					component->SetStarted(true);
+					component->OnStart();
+					if (!component->IsEnabled() || component->IsDestroyed() || !entity->IsEnabled() || entity->IsDestroyed())
 					{
 						continue;
 					}
 				}
 
-				component.OnFixedUpdate();
+				component->OnFixedUpdate();
 			}
 		}
 
@@ -249,35 +233,31 @@ namespace TUK::Framework
 			return SystemStatus::CONTINUE;
 		}
 
-		const usize entityCount = currentWorld->GetEntities().size();
-		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		for (Entity* entity : currentWorld->GetEntities())
 		{
-			Entity& entity = *currentWorld->GetEntities()[entityIndex];
-			if (!entity.IsEnabled() || entity.IsDestroyed())
+			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
 			{
 				continue;
 			}
 
-			const usize componentCount = entity.GetComponents().size();
-			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			for (Component* component : entity->GetComponents())
 			{
-				Component& component = *entity.GetComponents()[componentIndex];
-				if (!component.IsEnabled() || component.IsDestroyed())
+				if (!component || !component->IsEnabled() || component->IsDestroyed())
 				{
 					continue;
 				}
 
-				if (!component.IsStarted())
+				if (!component->IsStarted())
 				{
-					component.SetStarted(true);
-					component.OnStart();
-					if (!component.IsEnabled() || component.IsDestroyed() || !entity.IsEnabled() || entity.IsDestroyed())
+					component->SetStarted(true);
+					component->OnStart();
+					if (!component->IsEnabled() || component->IsDestroyed() || !entity->IsEnabled() || entity->IsDestroyed())
 					{
 						continue;
 					}
 				}
 
-				component.OnUpdate();
+				component->OnUpdate();
 			}
 		}
 
@@ -299,35 +279,31 @@ namespace TUK::Framework
 			return SystemStatus::SUCCESS;
 		}
 
-		const usize entityCount = currentWorld->GetEntities().size();
-		for (usize entityIndex = 0; entityIndex < entityCount; ++entityIndex)
+		for (Entity* entity : currentWorld->GetEntities())
 		{
-			Entity& entity = *currentWorld->GetEntities()[entityIndex];
-			if (!entity.IsEnabled() || entity.IsDestroyed())
+			if (!entity || !entity->IsEnabled() || entity->IsDestroyed())
 			{
 				continue;
 			}
 
-			const usize componentCount = entity.GetComponents().size();
-			for (usize componentIndex = 0; componentIndex < componentCount; ++componentIndex)
+			for (Component* component : entity->GetComponents())
 			{
-				Component& component = *entity.GetComponents()[componentIndex];
-				if (!component.IsEnabled() || component.IsDestroyed())
+				if (!component || !component->IsEnabled() || component->IsDestroyed())
 				{
 					continue;
 				}
 
-				if (!component.IsStarted())
+				if (!component->IsStarted())
 				{
-					component.SetStarted(true);
-					component.OnStart();
-					if (!component.IsEnabled() || component.IsDestroyed() || !entity.IsEnabled() || entity.IsDestroyed())
+					component->SetStarted(true);
+					component->OnStart();
+					if (!component->IsEnabled() || component->IsDestroyed() || !entity->IsEnabled() || entity->IsDestroyed())
 					{
 						continue;
 					}
 				}
 
-				component.OnLateUpdate();
+				component->OnLateUpdate();
 			}
 		}
 

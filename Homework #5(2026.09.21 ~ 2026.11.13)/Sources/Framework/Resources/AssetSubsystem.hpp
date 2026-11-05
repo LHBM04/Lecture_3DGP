@@ -5,7 +5,6 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
-#include <memory_resource>
 #include <string>
 #include <string_view>
 #include <typeindex>
@@ -25,8 +24,6 @@ namespace TUK::Framework
 {
 	class AssetSubsystem : public AppSubsystem
 	{
-		friend class System;
-
 	public:
 		AssetSubsystem() noexcept;
 
@@ -34,7 +31,7 @@ namespace TUK::Framework
 		void AddLoader(TArgs&&... args);
 
 		template <std::derived_from<Asset> TAsset>
-		[[nodiscard]] const TAsset* FindLoadedAsset(const std::filesystem::path& path) const;
+		[[nodiscard]] const TAsset* FindLoadedAsset(const std::filesystem::path& path) const noexcept;
 
 		template <std::derived_from<Asset> TAsset>
 		TAsset* LoadAsset(const std::filesystem::path& path);
@@ -42,7 +39,6 @@ namespace TUK::Framework
 		template <std::derived_from<Asset> TAsset, class... TArgs>
 		TAsset* CreateAsset(TArgs&&... args);
 
-	protected:
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;
 		SystemStatus OnFixedUpdate() override;
@@ -51,11 +47,11 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		using AssetLoaderList = std::pmr::vector<std::unique_ptr<AssetLoader>>;
-		using AssetLoaderDict = std::pmr::unordered_map<std::type_index, AssetLoader*>;
+		using AssetLoaderList = std::vector<std::unique_ptr<AssetLoader>>;
+		using AssetLoaderDict = std::unordered_map<std::type_index, AssetLoader*>;
 
-		using AssetList = std::pmr::vector<std::unique_ptr<Asset>>;
-		using AssetDict = std::pmr::unordered_map<std::filesystem::path, Asset*>;
+		using AssetList = std::vector<std::unique_ptr<Asset>>;
+		using AssetDict = std::unordered_map<std::filesystem::path, Asset*>;
 
 		AssetLoaderList assetLoaders;
 		AssetLoaderDict assetLoadersByType;
@@ -88,7 +84,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Asset> TAsset>
-	const TAsset* AssetSubsystem::FindLoadedAsset(const std::filesystem::path& path) const
+	const TAsset* AssetSubsystem::FindLoadedAsset(const std::filesystem::path& path) const noexcept
 	{
 		const auto cached = assetsByPath.find(path.lexically_normal());
 		if (cached == assetsByPath.end())

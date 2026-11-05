@@ -32,28 +32,28 @@ namespace TUK::Framework
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
 
 		[[nodiscard]] D3D12_CULL_MODE GetCullMode() const noexcept;
+		void SetCullMode(D3D12_CULL_MODE value) noexcept;
+
 		[[nodiscard]] D3D12_FILL_MODE GetFillMode() const noexcept;
-		[[nodiscard]] const ColorRGBA<f32>& GetAlbedoColor() const noexcept;
-		void SetAlbedoColor(const ColorRGBA<f32>& value) noexcept;
+		void SetFillMode(D3D12_FILL_MODE value) noexcept;
+
 		[[nodiscard]] const ColorRGBA<f32>& GetBaseColor() const noexcept;
 		void SetBaseColor(const ColorRGBA<f32>& value) noexcept;
+
 		[[nodiscard]] const ColorRGBA<f32>& GetEmissiveColor() const noexcept;
 		void SetEmissiveColor(const ColorRGBA<f32>& value) noexcept;
+
 		[[nodiscard]] const ColorRGBA<f32>& GetSpecularColor() const noexcept;
 		void SetSpecularColor(const ColorRGBA<f32>& value) noexcept;
 
-		[[nodiscard]] f32 GetGlossiness() const noexcept;
-		void SetGlossiness(f32 value) noexcept;
-		[[nodiscard]] f32 GetSmoothness() const noexcept;
-		void SetSmoothness(f32 value) noexcept;
 		[[nodiscard]] f32 GetMetallic() const noexcept;
 		void SetMetallic(f32 value) noexcept;
-		[[nodiscard]] f32 GetSpecularHighlight() const noexcept;
-		void SetSpecularHighlight(f32 value) noexcept;
-		[[nodiscard]] f32 GetGlossyReflection() const noexcept;
-		void SetGlossyReflection(f32 value) noexcept;
+
 		[[nodiscard]] f32 GetRoughness() const noexcept;
 		void SetRoughness(f32 value) noexcept;
+
+		[[nodiscard]] f32 GetSmoothness() const noexcept;
+		void SetSmoothness(f32 value) noexcept;
 
 		[[nodiscard]] std::string_view GetShaderPath() const noexcept;
 		void SetShaderPath(std::string_view value) noexcept;
@@ -69,17 +69,16 @@ namespace TUK::Framework
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
 		D3D12_FILL_MODE fillMode = D3D12_FILL_MODE_SOLID;
+
 		std::string shaderPath = "Resources/Shaders/Standard.hlsl";
 		std::string vertexShaderPath = "Resources/Shaders/Standard.vert.cso";
 		std::string pixelShaderPath = "Resources/Shaders/Standard.frag.cso";
-		ColorRGBA<f32> albedoColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+		ColorRGBA<f32> baseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 		ColorRGBA<f32> emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
 		ColorRGBA<f32> specularColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		f32 glossiness = 0.5f;
-		f32 smoothness = 0.5f;
+
 		f32 metallic = 0.0f;
-		f32 specularHighlight = 0.0f;
-		f32 glossyReflection = 0.0f;
 		f32 roughness = 0.5f;
 	};
 
@@ -88,29 +87,29 @@ namespace TUK::Framework
 		return cullMode;
 	}
 
+	inline void MaterialAsset::SetCullMode(D3D12_CULL_MODE value) noexcept
+	{
+		cullMode = value;
+	}
+
 	inline D3D12_FILL_MODE MaterialAsset::GetFillMode() const noexcept
 	{
 		return fillMode;
 	}
 
-	inline const ColorRGBA<f32>& MaterialAsset::GetAlbedoColor() const noexcept
+	inline void MaterialAsset::SetFillMode(D3D12_FILL_MODE value) noexcept
 	{
-		return albedoColor;
-	}
-
-	inline void MaterialAsset::SetAlbedoColor(const ColorRGBA<f32>& value) noexcept
-	{
-		albedoColor = value;
+		fillMode = value;
 	}
 
 	inline const ColorRGBA<f32>& MaterialAsset::GetBaseColor() const noexcept
 	{
-		return albedoColor;
+		return baseColor;
 	}
 
 	inline void MaterialAsset::SetBaseColor(const ColorRGBA<f32>& value) noexcept
 	{
-		albedoColor = value;
+		baseColor = value;
 	}
 
 	inline const ColorRGBA<f32>& MaterialAsset::GetEmissiveColor() const noexcept
@@ -133,27 +132,6 @@ namespace TUK::Framework
 		specularColor = value;
 	}
 
-	inline f32 MaterialAsset::GetGlossiness() const noexcept
-	{
-		return glossiness;
-	}
-
-	inline void MaterialAsset::SetGlossiness(f32 value) noexcept
-	{
-		glossiness = std::clamp(value, 0.0f, 1.0f);
-	}
-
-	inline f32 MaterialAsset::GetSmoothness() const noexcept
-	{
-		return smoothness;
-	}
-
-	inline void MaterialAsset::SetSmoothness(f32 value) noexcept
-	{
-		smoothness = std::clamp(value, 0.0f, 1.0f);
-		roughness = 1.0f - smoothness;
-	}
-
 	inline f32 MaterialAsset::GetMetallic() const noexcept
 	{
 		return metallic;
@@ -164,26 +142,6 @@ namespace TUK::Framework
 		metallic = std::clamp(value, 0.0f, 1.0f);
 	}
 
-	inline f32 MaterialAsset::GetSpecularHighlight() const noexcept
-	{
-		return specularHighlight;
-	}
-
-	inline void MaterialAsset::SetSpecularHighlight(f32 value) noexcept
-	{
-		specularHighlight = std::clamp(value, 0.0f, 1.0f);
-	}
-
-	inline f32 MaterialAsset::GetGlossyReflection() const noexcept
-	{
-		return glossyReflection;
-	}
-
-	inline void MaterialAsset::SetGlossyReflection(f32 value) noexcept
-	{
-		glossyReflection = std::clamp(value, 0.0f, 1.0f);
-	}
-
 	inline f32 MaterialAsset::GetRoughness() const noexcept
 	{
 		return roughness;
@@ -192,7 +150,16 @@ namespace TUK::Framework
 	inline void MaterialAsset::SetRoughness(f32 value) noexcept
 	{
 		roughness = std::clamp(value, 0.0f, 1.0f);
-		smoothness = 1.0f - roughness;
+	}
+
+	inline f32 MaterialAsset::GetSmoothness() const noexcept
+	{
+		return 1.0f - roughness;
+	}
+
+	inline void MaterialAsset::SetSmoothness(f32 value) noexcept
+	{
+		SetRoughness(1.0f - value);
 	}
 
 	inline std::string_view MaterialAsset::GetShaderPath() const noexcept
@@ -223,11 +190,7 @@ namespace TUK::Framework
 
 	inline const GPUGraphicsPipelineState* MaterialAsset::GetGraphicsPipelineState() const noexcept
 	{
-		if (pipelineState)
-		{
-			return &*pipelineState;
-		}
-		return nullptr;
+		return pipelineState ? &*pipelineState : nullptr;
 	}
 
 	inline DXGI_FORMAT MaterialAsset::GetTargetFormat() const noexcept
@@ -240,5 +203,4 @@ namespace TUK::Framework
 		pipelineState = std::move(value);
 		targetFormat = format;
 	}
-
 }

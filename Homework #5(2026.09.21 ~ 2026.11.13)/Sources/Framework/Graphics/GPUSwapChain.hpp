@@ -1,7 +1,6 @@
-﻿#pragma once
+#pragma once
 
 #include <expected>
-#include <memory_resource>
 #include <string>
 #include <utility>
 #include <vector>
@@ -39,19 +38,19 @@ namespace TUK::Framework
 
 		[[nodiscard]] static std::expected<GPUSwapChain, std::string> Create(
 			const GPUDevice& device,
-			const Display& display,
+			const Display* display,
 			const DXGI_SWAP_CHAIN_DESC1& description);
 
 	private:
 		GPUSwapChain(
 			ComPtr<IDXGISwapChain4> dxgiSwapChain,
 			ComPtr<ID3D12DescriptorHeap> rtvHeap,
-			std::pmr::vector<GPUTexture2D>&& backBuffers,
+			std::vector<GPUTexture2D>&& backBuffers,
 			u32 rtvDescriptorSize) noexcept;
 
 		ComPtr<IDXGISwapChain4> dxgiSwapChain;
 		ComPtr<ID3D12DescriptorHeap> rtvHeap;
-		std::pmr::vector<GPUTexture2D> backBuffers;
+		std::vector<GPUTexture2D> backBuffers;
 		u32 rtvDescriptorSize;
 	};
 
@@ -63,7 +62,7 @@ namespace TUK::Framework
 	inline GPUSwapChain::GPUSwapChain(
 		ComPtr<IDXGISwapChain4> dxgiSwapChain,
 		ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		std::pmr::vector<GPUTexture2D>&& backBuffers,
+		std::vector<GPUTexture2D>&& backBuffers,
 		u32 rtvDescriptorSize) noexcept
 		: dxgiSwapChain(std::move(dxgiSwapChain))
 		, rtvHeap(std::move(rtvHeap))

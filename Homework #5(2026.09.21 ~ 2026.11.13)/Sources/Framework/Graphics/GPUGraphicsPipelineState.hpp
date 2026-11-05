@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <expected>
 #include <string>
@@ -35,9 +35,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> CreateForMaterial(
 			const GPUDevice& device,
-			const MaterialAsset& material,
-			const ShaderAsset& vertexShader,
-			const ShaderAsset& pixelShader,
+			const MaterialAsset* material,
+			const ShaderAsset* vertexShader,
+			const ShaderAsset* pixelShader,
 			DXGI_FORMAT targetFormat);
 
 	private:

@@ -2,6 +2,7 @@
 
 #include <concepts>
 #include <memory>
+#include <ranges>
 #include <span>
 #include <string>
 #include <string_view>
@@ -21,9 +22,9 @@ namespace TUK::Framework
 	class Entity
 	{
 	public:
-		explicit Entity(World& world) noexcept;
-		explicit Entity(World& world, std::string_view name) noexcept;
-		explicit Entity(World& world, std::string_view name, std::string_view tag) noexcept;
+		explicit Entity(World* world) noexcept;
+		explicit Entity(World* world, std::string_view name) noexcept;
+		explicit Entity(World* world, std::string_view name, std::string_view tag) noexcept;
 		virtual ~Entity() noexcept;
 
 		Entity(const Entity&) = delete;
@@ -38,8 +39,8 @@ namespace TUK::Framework
 		[[nodiscard]] const std::string& GetTag() const noexcept;
 		void SetTag(std::string_view value) noexcept;
 
-		[[nodiscard]] const World& GetWorld() const noexcept;
-		[[nodiscard]] World& GetWorld() noexcept;
+		[[nodiscard]] const World* GetWorld() const noexcept;
+		[[nodiscard]] World* GetWorld() noexcept;
 
 		[[nodiscard]] bool IsEnabled() const noexcept;
 		void SetEnabled(bool value) noexcept;
@@ -48,7 +49,7 @@ namespace TUK::Framework
 		void Destroy() noexcept;
 
 		template <std::derived_from<Component> TComponent, class... TArgs>
-			requires std::constructible_from<TComponent, Entity&, TArgs...>
+			requires std::constructible_from<TComponent, Entity*, TArgs...>
 		TComponent* AddComponent(TArgs&&... args);
 
 		template <std::derived_from<Component> TComponent>
@@ -63,7 +64,8 @@ namespace TUK::Framework
 		template <std::derived_from<Component> TComponent>
 		bool RemoveComponent() noexcept;
 
-		[[nodiscard]] std::span<const std::unique_ptr<Component>> GetComponents() const noexcept;
+		[[nodiscard]] auto GetComponents() noexcept;
+		[[nodiscard]] auto GetComponents() const noexcept;
 
 		void DestroyComponents();
 
@@ -76,24 +78,24 @@ namespace TUK::Framework
 		std::vector<std::unique_ptr<Component>> components;
 		std::unordered_map<std::type_index, Component*> componentsByType;
 
-		World& world;
+		World* world = nullptr;
 
 		bool isEnabled = true;
 		bool isDestroyed = false;
 	};
 
-	inline Entity::Entity(World& world) noexcept
+	inline Entity::Entity(World* world) noexcept
 		: world(world)
 	{
 	}
 
-	inline Entity::Entity(World& world, std::string_view name) noexcept
+	inline Entity::Entity(World* world, std::string_view name) noexcept
 		: name(name)
 		, world(world)
 	{
 	}
 
-	inline Entity::Entity(World& world, std::string_view name, std::string_view tag) noexcept
+	inline Entity::Entity(World* world, std::string_view name, std::string_view tag) noexcept
 		: name(name)
 		, tag(tag)
 		, world(world)
@@ -120,12 +122,12 @@ namespace TUK::Framework
 		tag = value;
 	}
 
-	inline const World& Entity::GetWorld() const noexcept
+	inline const World* Entity::GetWorld() const noexcept
 	{
 		return world;
 	}
 
-	inline World& Entity::GetWorld() noexcept
+	inline World* Entity::GetWorld() noexcept
 	{
 		return world;
 	}
@@ -151,10 +153,10 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Component> TComponent, class... TArgs>
-		requires std::constructible_from<TComponent, Entity&, TArgs...>
+		requires std::constructible_from<TComponent, Entity*, TArgs...>
 	TComponent* Entity::AddComponent(TArgs&&... args)
 	{
-		auto component = std::make_unique<TComponent>(*this, std::forward<TArgs>(args)...);
+		auto component = std::make_unique<TComponent>(this, std::forward<TArgs>(args)...);
 		TComponent* componentPtr = component.get();
 
 		components.push_back(std::move(component));
@@ -213,8 +215,19 @@ namespace TUK::Framework
 		return true;
 	}
 
-	inline std::span<const std::unique_ptr<Component>> Entity::GetComponents() const noexcept
+	inline auto Entity::GetComponents() noexcept
 	{
-		return components;
+		return components | std::views::transform([](const std::unique_ptr<Component>& componentPtr) -> Component*
+			{
+				return componentPtr.get();
+			});
+	}
+
+	inline auto Entity::GetComponents() const noexcept
+	{
+		return components | std::views::transform([](const std::unique_ptr<Component>& componentPtr) -> const Component*
+			{
+				return componentPtr.get();
+			});
 	}
 }

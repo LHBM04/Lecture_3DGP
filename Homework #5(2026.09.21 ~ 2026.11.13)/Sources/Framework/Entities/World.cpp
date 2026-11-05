@@ -3,9 +3,9 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <ranges>
 #include <string>
 #include <utility>
-#include <ranges>
 
 #include "../Core/App.hpp"
 
@@ -25,7 +25,7 @@ namespace TUK::Framework
 {
 	Entity* World::Instantiate()
 	{
-		auto entity = std::make_unique<Entity>(*this);
+		auto entity = std::make_unique<Entity>(this);
 		Entity* result = entity.get();
 		entities.push_back(std::move(entity));
 		return result;
@@ -184,8 +184,8 @@ namespace TUK::Framework
 			{
 				Entity* part = Instantiate(transform);
 				MeshRenderer* renderer = part->AddComponent<MeshRenderer>();
-				renderer->SetMesh(*reference.mesh);
-				renderer->SetMaterial(*reference.material);
+				renderer->SetMesh(reference.mesh);
+				renderer->SetMaterial(reference.material);
 			}
 			nodeEntities[index] = entity;
 			nodeTransforms[index] = transform;
@@ -207,11 +207,6 @@ namespace TUK::Framework
 			transform->SetLocalRotation(rotation);
 		}
 		return entity;
-	}
-
-	void World::Destroy(Entity& entity) noexcept
-	{
-		entity.Destroy();
 	}
 
 	void World::Destroy(Entity* entity) noexcept
@@ -242,7 +237,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		std::pmr::vector<std::unique_ptr<Entity>> destroyed;
+		std::vector<std::unique_ptr<Entity>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
 
 		usize remainingCount = 0;
@@ -272,7 +267,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		std::pmr::vector<std::unique_ptr<Entity>> removing = std::move(entities);
+		std::vector<std::unique_ptr<Entity>> removing = std::move(entities);
 		entities.clear();
 
 		for (std::unique_ptr<Entity>& entity : removing | std::views::reverse)
@@ -284,20 +279,20 @@ namespace TUK::Framework
 		cameras.clear();
 	}
 
-	void World::AddCamera(Camera& camera)
+	void World::AddCamera(Camera* camera)
 	{
-		if (std::ranges::find(cameras, &camera) == cameras.end())
+		if (camera && std::ranges::find(cameras, camera) == cameras.end())
 		{
-			cameras.push_back(&camera);
+			cameras.push_back(camera);
 		}
 	}
 
-	void World::RemoveCamera(const Camera& camera)
+	void World::RemoveCamera(const Camera* camera)
 	{
-		std::erase(cameras, &camera);
+		std::erase(cameras, camera);
 	}
 
-	Entity* World::FindEntityWithName(std::string_view name) noexcept
+	Entity* World::FindEntityByName(std::string_view name) noexcept
 	{
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
@@ -310,7 +305,7 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	const Entity* World::FindEntityWithName(std::string_view name) const noexcept
+	const Entity* World::FindEntityByName(std::string_view name) const noexcept
 	{
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
@@ -323,7 +318,7 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	std::vector<Entity*> World::FindEntitiesWithName(std::string_view name)
+	std::vector<Entity*> World::FindEntitiesByName(std::string_view name)
 	{
 		std::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
@@ -337,7 +332,7 @@ namespace TUK::Framework
 		return result;
 	}
 
-	std::vector<const Entity*> World::FindEntitiesWithName(std::string_view name) const
+	std::vector<const Entity*> World::FindEntitiesByName(std::string_view name) const
 	{
 		std::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
@@ -351,7 +346,7 @@ namespace TUK::Framework
 		return result;
 	}
 
-	Entity* World::FindEntityWithTag(std::string_view tag) noexcept
+	Entity* World::FindEntityByTag(std::string_view tag) noexcept
 	{
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
@@ -364,7 +359,7 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	const Entity* World::FindEntityWithTag(std::string_view tag) const noexcept
+	const Entity* World::FindEntityByTag(std::string_view tag) const noexcept
 	{
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
@@ -377,7 +372,7 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	std::vector<Entity*> World::FindEntitiesWithTag(std::string_view tag)
+	std::vector<Entity*> World::FindEntitiesByTag(std::string_view tag)
 	{
 		std::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
@@ -391,7 +386,7 @@ namespace TUK::Framework
 		return result;
 	}
 
-	std::vector<const Entity*> World::FindEntitiesWithTag(std::string_view tag) const
+	std::vector<const Entity*> World::FindEntitiesByTag(std::string_view tag) const
 	{
 		std::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
