@@ -93,8 +93,8 @@ namespace TUK::Framework
 		std::optional<GPUGraphicsPipelineState> graphicsPipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 		std::string shaderPath = "Resources/Shaders/Standard.hlsl";
-		std::string vertexShaderPath = "Resources/Shaders/Standard.vert.hlsl";
-		std::string pixelShaderPath = "Resources/Shaders/Standard.frag.hlsl";
+		std::string vertexShaderPath = "Resources/Shaders/Standard.vert.cso";
+		std::string pixelShaderPath = "Resources/Shaders/Standard.frag.cso";
 		ColorRGBA<f32> albedoColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 		ColorRGBA<f32> emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
 		ColorRGBA<f32> specularColor{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -250,8 +250,8 @@ namespace TUK::Framework
 		shaderPath.assign(value);
 		std::filesystem::path vertex(shaderPath);
 		std::filesystem::path pixel(shaderPath);
-		vertex.replace_extension(".vert.hlsl");
-		pixel.replace_extension(".frag.hlsl");
+		vertex.replace_extension(".vert.cso");
+		pixel.replace_extension(".frag.cso");
 		vertexShaderPath = vertex.generic_string();
 		pixelShaderPath = pixel.generic_string();
 	}

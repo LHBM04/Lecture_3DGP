@@ -330,22 +330,26 @@
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\DisplaySubsystem.hpp" />
   </ItemGroup>
+  <PropertyGroup>
+    <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <RuntimeResource Include="Resources\Models\**\*;Resources\Meshes\**\*;Resources\Materials\**\*" />
+  </ItemGroup>
+  <Target Name="CopyRuntimeResources" AfterTargets="Build">
+    <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />
+  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <CustomBuild Include="Resources\Shaders\Standard.vert.hlsl">
-      <Command>if not exist "$(OutDir)Resources\Shaders" mkdir "$(OutDir)Resources\Shaders"
-copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Standard.vert.hlsl"</Command>
-      <Message>Copying Standard.vert.hlsl</Message>
-      <Outputs>$(OutDir)Resources\Shaders\Standard.vert.hlsl</Outputs>
+    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Resources\Shaders\CompileShader.ps1" -Source "%(FullPath)" -OutputDirectory "$(OutDir)Resources\Shaders" -IntermediateDirectory "$(IntDir)Shaders" -Compiler "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe"</Command>
+      <Message>Compiling Standard.hlsl</Message>
+      <AdditionalInputs>$(ProjectDir)Resources\Shaders\CompileShader.ps1;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(OutDir)Resources\Shaders\Standard.vert.cso;$(OutDir)Resources\Shaders\Standard.frag.cso</Outputs>
     </CustomBuild>
-    <CustomBuild Include="Resources\Shaders\Standard.frag.hlsl">
-      <Command>if not exist "$(OutDir)Resources\Shaders" mkdir "$(OutDir)Resources\Shaders"
-copy /Y "%(FullPath)" "$(OutDir)Resources\Shaders\Standard.frag.hlsl"</Command>
-      <Message>Copying Standard.frag.hlsl</Message>
-      <Outputs>$(OutDir)Resources\Shaders\Standard.frag.hlsl</Outputs>
-    </CustomBuild>
+    <None Include="Resources\Shaders\CompileShader.ps1" />
     <None Include="Resources\Models\Apache.bin" />
     <None Include="Resources\Models\Gunship.bin" />
     <None Include="Resources\Models\Hummer.bin" />
