@@ -49,7 +49,7 @@ namespace TUK::Framework
 			return std::unexpected("Unsupported shader stage extension: " + stageExtension);
 		}
 
-		auto shader = GPUShader::Create(path, target, TEXT("main"));
+		auto shader = GPUShader::Create(path);
 		if (!shader)
 		{
 			return std::unexpected(shader.error());

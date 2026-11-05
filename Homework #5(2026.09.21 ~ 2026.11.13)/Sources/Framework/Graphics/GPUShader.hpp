@@ -19,11 +19,6 @@ namespace TUK::Framework
 	class GPUShader
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUShader, std::string> Create(
-			const std::filesystem::path& path,
-			LPCTSTR target,
-			LPCTSTR entryPoint);
-
 		~GPUShader() noexcept = default;
 
 		GPUShader(const GPUShader&) = delete;
@@ -34,6 +29,8 @@ namespace TUK::Framework
 
 		[[nodiscard]] IDxcBlob& GetDXCBlob() const noexcept;
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
+
+		[[nodiscard]] static std::expected<GPUShader, std::string> Create(const std::filesystem::path& path);
 
 	private:
 		explicit GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept;
