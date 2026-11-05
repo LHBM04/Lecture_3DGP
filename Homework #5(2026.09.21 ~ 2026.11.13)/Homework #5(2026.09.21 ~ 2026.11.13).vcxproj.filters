@@ -433,9 +433,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </CustomBuild>
     <None Include="Resources\Models\Apache.bin">
       <Filter>Resources\Models</Filter>
     </None>
@@ -2146,5 +2143,10 @@
     <None Include="Resources\Materials\wheel_spare_wheel_spare_Wheel2_SM0.bin">
       <Filter>Resources\Materials</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
