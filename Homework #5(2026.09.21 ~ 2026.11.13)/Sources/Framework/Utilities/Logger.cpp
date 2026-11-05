@@ -1,31 +1,24 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Logger.hpp"
-
-#include <format>
-#include <iostream>
-#include <source_location>
-#include <string>
-#include <string_view>
-#include <syncstream>
-
-#include <windows.h>
 
 namespace TUK::Framework
 {
 	namespace
 	{
-		[[nodiscard]] std::string_view GetLevelName(LogLevel level) noexcept
+		[[nodiscard]] std::string_view GetCategoryName(Logger::Category level) noexcept
 		{
 			switch (level)
 			{
-			case LogLevel::DEBUG:
+			case Logger::Category::TRACE:
 				return "TRACE";
-			case LogLevel::INFO:
+			case Logger::Category::INFO:
 				return "INFO";
-			case LogLevel::WARNING:
+			case Logger::Category::WARNING:
 				return "WARNING";
-			case LogLevel::ERROR_LEVEL:
+			case Logger::Category::ERROR:
 				return "ERROR";
+			case Logger::Category::CRITICAL:
+				return "CRITICAL";
 			default:
 				return "UNKNOWN";
 			}
@@ -36,9 +29,9 @@ namespace TUK::Framework
 	{
 		void Log(Category level, std::string_view message, std::source_location location)
 		{
-			const std::string line = std::format("[{}] {} ({}:{})\n", GetLevelName(level), message, location.file_name(), location.line());
+			LPCTSTR line = std::format(TEXT("[{}] {} ({}:{})\n"), GetCategoryName(level), message, location.file_name(), location.line()).c_str();
 			std::osyncstream(std::clog) << line << std::flush;
-			OutputDebugStringA(line.c_str());
+			OutputDebugString(line);
 		}
 	}
 }

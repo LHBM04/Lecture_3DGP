@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include <system_error>
 
 #include "AssetSubsystem.hpp"

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #if defined(_M_IX86)
     #error "This project is designed for x64 architecture. Please build for x64 instead of x86!"
@@ -43,6 +43,7 @@
 #include <stdfloat>
 #include <string>
 #include <string_view>
+#include <syncstream>
 #include <tchar.h>
 #include <tuple>
 #include <type_traits>
