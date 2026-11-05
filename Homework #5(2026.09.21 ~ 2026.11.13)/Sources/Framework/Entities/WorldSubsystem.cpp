@@ -79,7 +79,12 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		currentWorld->EarlyUpdate();
+		currentWorld->Enter();
+		// OnEnter에서 월드 종료를 요청하면 currentWorld가 비워집니다.
+		if (currentWorld)
+		{
+			currentWorld->EarlyUpdate();
+		}
 		return SystemStatus::CONTINUE;
 	}
 

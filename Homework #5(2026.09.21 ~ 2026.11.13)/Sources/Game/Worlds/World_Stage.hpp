@@ -10,7 +10,7 @@ namespace TUK::Game
 	{
 		using World::World;
 
-	public:
+	protected:
 		void OnEnter() override;
 		void OnUpdate() override;
 

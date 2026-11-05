@@ -34,13 +34,13 @@ namespace TUK::Framework
 
 		isRunningPhase = true;
 		callback();
-		isRunningPhase = false;
 
 		// 종료 요청이 들어온 콜백이 반환된 뒤에 엔티티를 해제합니다.
 		if (!isEntered)
 		{
 			ClearEntities();
 		}
+		isRunningPhase = false;
 	}
 
 	template <class TCallback>
@@ -57,20 +57,29 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::EarlyUpdate()
+	void World::Enter()
 	{
+		if (isEntered)
+		{
+			return;
+		}
+
 		RunPhase([this]()
 		{
-			if (!isEntered)
-			{
-				isEntered = true;
-				OnEnter();
-			}
-			if (isEntered)
+			isEntered = true;
+			OnEnter();
+		});
+	}
+
+	void World::EarlyUpdate()
+	{
+		if (isEntered)
+		{
+			RunPhase([this]()
 			{
 				DestroyEntities();
-			}
-		});
+			});
+		}
 	}
 
 	void World::FixedUpdate()
@@ -151,14 +160,22 @@ namespace TUK::Framework
 
 	void World::Exit()
 	{
-		if (isEntered)
+		const auto exit = [this]()
 		{
-			isEntered = false;
-			OnExit();
+			if (isEntered)
+			{
+				isEntered = false;
+				OnExit();
+			}
+		};
+
+		if (isRunningPhase)
+		{
+			exit();
 		}
-		if (!isRunningPhase)
+		else
 		{
-			ClearEntities();
+			RunPhase(exit);
 		}
 	}
 

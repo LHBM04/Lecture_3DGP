@@ -21,12 +21,9 @@ namespace TUK::Framework
 	class GPUCommandBuffer;
 	class ModelAsset;
 	class Transform;
-	class WorldSubsystem;
 
 	class World
 	{
-		friend class WorldSubsystem;
-
 	public:
 		World() noexcept = default;
 		virtual ~World() noexcept = default;
@@ -37,12 +34,15 @@ namespace TUK::Framework
 		World(World&&) = delete;
 		World& operator=(World&&) = delete;
 
-		virtual void OnEnter();
-		virtual void OnExit();
-
-		virtual void OnFixedUpdate();
-		virtual void OnUpdate();
-		virtual void OnLateUpdate();
+		void Enter();
+		void EarlyUpdate();
+		void FixedUpdate();
+		void Update();
+		void LateUpdate();
+		void PreRender(GPUCommandBuffer& commandBuffer);
+		void Render(GPUCommandBuffer& commandBuffer);
+		void PostRender(GPUCommandBuffer& commandBuffer);
+		void Exit();
 
 		[[nodiscard]] bool IsEntered() const noexcept;
 
@@ -81,19 +81,18 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<Camera* const> GetCameras() noexcept;
 		[[nodiscard]] std::span<const Camera* const> GetCameras() const noexcept;
 
+	protected:
+		virtual void OnEnter();
+		virtual void OnExit();
+
+		virtual void OnFixedUpdate();
+		virtual void OnUpdate();
+		virtual void OnLateUpdate();
+
 	private:
 		using WorldCallback = void (World::*)();
 		using EntityCallback = void (Entity::*)();
 		using RenderCallback = void (Entity::*)(GPUCommandBuffer&);
-
-		void EarlyUpdate();
-		void FixedUpdate();
-		void Update();
-		void LateUpdate();
-		void PreRender(GPUCommandBuffer& commandBuffer);
-		void Render(GPUCommandBuffer& commandBuffer);
-		void PostRender(GPUCommandBuffer& commandBuffer);
-		void Exit();
 
 		template <class TCallback>
 		void RunPhase(TCallback callback);
@@ -112,26 +111,6 @@ namespace TUK::Framework
 		std::pmr::vector<std::unique_ptr<Entity>> entities{};
 		std::pmr::vector<Camera*> cameras{};
 	};
-
-	inline void World::OnEnter()
-	{
-	}
-
-	inline void World::OnExit()
-	{
-	}
-
-	inline void World::OnFixedUpdate()
-	{
-	}
-
-	inline void World::OnUpdate()
-	{
-	}
-
-	inline void World::OnLateUpdate()
-	{
-	}
 
 	inline bool World::IsEntered() const noexcept
 	{
@@ -162,5 +141,25 @@ namespace TUK::Framework
 	inline std::span<const Camera* const> World::GetCameras() const noexcept
 	{
 		return cameras;
+	}
+
+	inline void World::OnEnter()
+	{
+	}
+
+	inline void World::OnExit()
+	{
+	}
+
+	inline void World::OnFixedUpdate()
+	{
+	}
+
+	inline void World::OnUpdate()
+	{
+	}
+
+	inline void World::OnLateUpdate()
+	{
 	}
 }
