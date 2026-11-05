@@ -528,7 +528,7 @@ namespace TUK::Framework
 	{
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			if (!entity->IsDestroyed() && entity->CompareTag(tag))
 			{
 				return entity.get();
 			}
@@ -541,7 +541,7 @@ namespace TUK::Framework
 	{
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			if (!entity->IsDestroyed() && entity->CompareTag(tag))
 			{
 				return entity.get();
 			}
@@ -555,7 +555,7 @@ namespace TUK::Framework
 		std::pmr::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			if (!entity->IsDestroyed() && entity->CompareTag(tag))
 			{
 				result.push_back(entity.get());
 			}
@@ -569,7 +569,7 @@ namespace TUK::Framework
 		std::pmr::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
-			if (!entity->IsDestroyed() && entity->GetTag() == tag)
+			if (!entity->IsDestroyed() && entity->CompareTag(tag))
 			{
 				result.push_back(entity.get());
 			}

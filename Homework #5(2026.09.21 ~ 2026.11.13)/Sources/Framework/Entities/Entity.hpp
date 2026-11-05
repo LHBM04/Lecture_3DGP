@@ -41,6 +41,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] const std::pmr::string& GetTag() const noexcept;
 		void SetTag(std::string_view value) noexcept;
+		[[nodiscard]] bool CompareTag(std::string_view value) const noexcept;
 
 		[[nodiscard]] const World* GetWorld() const noexcept;
 		[[nodiscard]] World* GetWorld() noexcept;
@@ -131,6 +132,11 @@ namespace TUK::Framework
 	inline void Entity::SetTag(std::string_view value) noexcept
 	{
 		tag = value;
+	}
+
+	inline bool Entity::CompareTag(std::string_view value) const noexcept
+	{
+		return std::string_view(tag) == value;
 	}
 
 	inline const World* Entity::GetWorld() const noexcept
