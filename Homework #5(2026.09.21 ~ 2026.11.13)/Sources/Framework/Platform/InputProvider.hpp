@@ -46,10 +46,8 @@ namespace TUK::Framework
 		[[nodiscard]] Vector2D<i32> GetMouseWheelDelta() const noexcept;
 
 	private:
-		using KeyState = std::bitset<256>;
-
-		KeyState currentkeys{};
-		KeyState previousKeys{};
+		std::bitset<256> currentkeys{};
+		std::bitset<256> previousKeys{};
 	
 		u32 currentButtons = 0;
 		u32 previousButtons = 0;

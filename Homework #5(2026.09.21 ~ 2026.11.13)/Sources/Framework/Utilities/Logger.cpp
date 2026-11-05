@@ -29,9 +29,16 @@ namespace TUK::Framework
 	{
 		void Log(Category level, std::string_view message, std::source_location location)
 		{
-			LPCTSTR line = std::format(TEXT("[{}] {} ({}:{})\n"), GetCategoryName(level), message, location.file_name(), location.line()).c_str();
+			const std::string line = std::format(
+				"[{}] {} ({}:{})\n",
+				GetCategoryName(level),
+				message,
+				location.file_name(),
+				location.line()
+			);
+
 			std::osyncstream(std::clog) << line << std::flush;
-			OutputDebugString(line);
+			OutputDebugStringA(line.c_str());
 		}
 	}
 }
