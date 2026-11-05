@@ -43,8 +43,15 @@ namespace TUK::Framework
 		RenderComponents(&Component::OnPostRender, commandBuffer);
 	}
 
-	void Entity::UpdateComponents(void (Component::*callback)())
+	void Entity::UpdateComponents(ComponentCallback callback)
 	{
+		if (!world || !world->IsEntered() || isDestroyed)
+		{
+			return;
+		}
+
+		DestroyComponents();
+
 		// 콜백에서 추가한 컴포넌트는 다음 갱신 단계부터 실행합니다.
 		const usize count = components.size();
 		for (usize index = 0; index < count && world->IsEntered() && isEnabled && !isDestroyed; ++index)
@@ -66,11 +73,11 @@ namespace TUK::Framework
 				}
 			}
 
-			(component->*callback)();
+			callback(*component);
 		}
 	}
 
-	void Entity::RenderComponents(void (Component::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer)
+	void Entity::RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
 		const usize count = components.size();
 		for (usize index = 0; index < count && world->IsEntered() && isEnabled && !isDestroyed; ++index)
@@ -78,7 +85,7 @@ namespace TUK::Framework
 			Component* component = components[index].get();
 			if (component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
 			{
-				(component->*callback)(commandBuffer);
+				callback(*component, commandBuffer);
 			}
 		}
 	}

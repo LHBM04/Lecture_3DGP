@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <memory_resource>
 #include <ranges>
 #include <span>
 #include <string_view>
@@ -44,8 +43,6 @@ namespace TUK::Framework
 		void PostRender(GPUCommandBuffer& commandBuffer);
 		void Exit();
 
-		[[nodiscard]] bool IsEntered() const noexcept;
-
 		Entity* Instantiate();
 		Entity* Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation);
 		Entity* Instantiate(const Vector3D<f32>& position);
@@ -64,6 +61,8 @@ namespace TUK::Framework
 
 		void AddCamera(Camera* camera);
 		void RemoveCamera(const Camera* camera);
+
+		[[nodiscard]] bool IsEntered() const noexcept;
 
 		[[nodiscard]] Entity* FindEntityByName(std::string_view name) noexcept;
 		[[nodiscard]] const Entity* FindEntityByName(std::string_view name) const noexcept;

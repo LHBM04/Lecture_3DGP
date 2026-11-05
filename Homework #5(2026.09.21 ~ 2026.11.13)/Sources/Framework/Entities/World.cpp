@@ -1,12 +1,6 @@
 #include "Precompiled.hpp"
 #include "World.hpp"
 
-#include <algorithm>
-#include <filesystem>
-#include <ranges>
-#include <string>
-#include <utility>
-
 #include "../Core/App.hpp"
 
 #include "../Graphics/Camera.hpp"
@@ -17,6 +11,7 @@
 #include "../Resources/MaterialAsset.hpp"
 #include "../Resources/MeshAsset.hpp"
 #include "../Resources/ModelAsset.hpp"
+
 #include "../Utilities/Logger.hpp"
 
 #include "Entity.hpp"
@@ -35,7 +30,6 @@ namespace TUK::Framework
 		isRunningPhase = true;
 		callback();
 
-		// 종료 요청이 들어온 콜백이 반환된 뒤에 엔티티를 해제합니다.
 		if (!isEntered)
 		{
 			ClearEntities();
@@ -49,10 +43,10 @@ namespace TUK::Framework
 		const usize count = entities.size();
 		for (usize index = 0; index < count && isEntered; ++index)
 		{
-			Entity* entity = entities[index].get();
-			if (entity->IsEnabled() && !entity->IsDestroyed())
+			Entity& entity = *entities[index];
+			if (!entity.IsDestroyed())
 			{
-				callback(*entity);
+				callback(entity);
 			}
 		}
 	}
@@ -290,6 +284,7 @@ namespace TUK::Framework
 		}
 
 		const ModelAsset& model = *modelAsset;
+
 		const std::span<const Submodel> submodels = model.GetSubmodels();
 		if (submodels.empty())
 		{
@@ -354,9 +349,10 @@ namespace TUK::Framework
 		for (usize index = 0; index < submodels.size(); ++index)
 		{
 			const Submodel& node = submodels[index];
-			const std::string_view entityName = !node.name.empty() ? std::string_view(node.name) : model.GetName();
+
 			Entity* entity = Instantiate();
-			entity->SetName(entityName);
+			entity->SetName(model.GetName());
+
 			Transform* transform = entity->AddComponent<Transform>();
 			if (node.parentIndex >= 0 && static_cast<usize>(node.parentIndex) < index)
 			{
@@ -366,9 +362,11 @@ namespace TUK::Framework
 			{
 				transform->SetParent(parent);
 			}
+
 			transform->SetLocalPosition(node.localPosition);
 			transform->SetLocalRotation(node.localRotation);
 			transform->SetLocalScale(node.localScale);
+
 			for (const PreparedRenderer& reference : prepared[index])
 			{
 				Entity* part = Instantiate(transform);
@@ -376,6 +374,7 @@ namespace TUK::Framework
 				renderer->SetMesh(reference.mesh);
 				renderer->SetMaterial(reference.material);
 			}
+
 			nodeEntities[index] = entity;
 			nodeTransforms[index] = transform;
 		}
@@ -408,15 +407,6 @@ namespace TUK::Framework
 
 	void World::DestroyEntities()
 	{
-		const usize count = entities.size();
-		for (usize index = 0; index < count && isEntered; ++index)
-		{
-			Entity* entity = entities[index].get();
-			if (!entity->IsDestroyed())
-			{
-				entity->DestroyComponents();
-			}
-		}
 		if (!isEntered)
 		{
 			return;

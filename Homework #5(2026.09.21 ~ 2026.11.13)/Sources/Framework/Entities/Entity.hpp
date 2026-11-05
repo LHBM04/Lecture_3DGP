@@ -22,8 +22,6 @@ namespace TUK::Framework
 
 	class Entity
 	{
-		friend class World;
-
 	public:
 		explicit Entity(World* world) noexcept;
 		explicit Entity(World* world, std::string_view name) noexcept;
@@ -36,11 +34,19 @@ namespace TUK::Framework
 		Entity(Entity&&) noexcept = default;
 		Entity& operator=(Entity&&) noexcept = default;
 
+		void FixedUpdate();
+		void Update();
+		void LateUpdate();
+		void PreRender(GPUCommandBuffer& commandBuffer);
+		void Render(GPUCommandBuffer& commandBuffer);
+		void PostRender(GPUCommandBuffer& commandBuffer);
+
 		[[nodiscard]] const std::pmr::string& GetName() const noexcept;
 		void SetName(std::string_view value) noexcept;
 
 		[[nodiscard]] const std::pmr::string& GetTag() const noexcept;
 		void SetTag(std::string_view value) noexcept;
+
 		[[nodiscard]] bool CompareTag(std::string_view value) const noexcept;
 
 		[[nodiscard]] const World* GetWorld() const noexcept;
@@ -72,15 +78,11 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetComponents() const noexcept;
 
 	private:
-		void FixedUpdate();
-		void Update();
-		void LateUpdate();
-		void PreRender(GPUCommandBuffer& commandBuffer);
-		void Render(GPUCommandBuffer& commandBuffer);
-		void PostRender(GPUCommandBuffer& commandBuffer);
+		using ComponentCallback = std::function<void(Component&)>;
+		using RenderCallback = std::function<void(Component&, GPUCommandBuffer&)>;
 
-		void UpdateComponents(void (Component::*callback)());
-		void RenderComponents(void (Component::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer);
+		void UpdateComponents(ComponentCallback callback);
+		void RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer);
 		void DestroyComponents();
 		void DestroyAllComponents();
 
