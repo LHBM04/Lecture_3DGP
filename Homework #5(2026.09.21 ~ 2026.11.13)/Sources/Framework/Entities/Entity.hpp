@@ -58,9 +58,8 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsDestroyed() const noexcept;
 		void Destroy() noexcept;
 
-		template <std::derived_from<Component> TComponent, class... TArgs>
-			requires std::constructible_from<TComponent, Entity*, TArgs...>
-		TComponent* AddComponent(TArgs&&... args);
+		template <std::derived_from<Component> TComponent>
+		TComponent* AddComponent();
 
 		template <std::derived_from<Component> TComponent>
 		[[nodiscard]] TComponent* GetComponent() noexcept;
@@ -171,11 +170,10 @@ namespace TUK::Framework
 		isDestroyed = true;
 	}
 
-	template <std::derived_from<Component> TComponent, class... TArgs>
-		requires std::constructible_from<TComponent, Entity*, TArgs...>
-	TComponent* Entity::AddComponent(TArgs&&... args)
+	template <std::derived_from<Component> TComponent>
+	TComponent* Entity::AddComponent()
 	{
-		auto component = std::make_unique<TComponent>(this, std::forward<TArgs>(args)...);
+		auto component = std::make_unique<TComponent>(this);
 		TComponent* componentPtr = component.get();
 
 		components.push_back(std::move(component));
