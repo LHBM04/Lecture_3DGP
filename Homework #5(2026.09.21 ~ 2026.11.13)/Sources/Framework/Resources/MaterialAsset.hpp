@@ -4,6 +4,7 @@
 #include <cassert>
 #include <expected>
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -14,6 +15,8 @@
 
 #include "../Math/ColorRGBA.hpp"
 
+#include "../Graphics/GPUGraphicsPipelineState.hpp"
+
 #include "Asset.hpp"
 
 namespace TUK::Framework
@@ -21,6 +24,8 @@ namespace TUK::Framework
 	class MaterialAsset final : public Asset
 	{
 	public:
+		using Asset::Asset;
+
 		MaterialAsset() noexcept = default;
 		~MaterialAsset() noexcept override = default;
 
@@ -62,7 +67,13 @@ namespace TUK::Framework
 		[[nodiscard]] std::string_view GetVertexShaderPath() const noexcept;
 		[[nodiscard]] std::string_view GetPixelShaderPath() const noexcept;
 
+		[[nodiscard]] const GPUGraphicsPipelineState* GetGraphicsPipelineState() const noexcept;
+		[[nodiscard]] DXGI_FORMAT GetTargetFormat() const noexcept;
+		void SetGraphicsPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept;
+
 	private:
+		std::optional<GPUGraphicsPipelineState> pipelineState;
+		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
 		D3D12_FILL_MODE fillMode = D3D12_FILL_MODE_SOLID;
 		std::string shaderPath = "Resources/Shaders/Standard.hlsl";
@@ -215,6 +226,26 @@ namespace TUK::Framework
 	inline std::string_view MaterialAsset::GetPixelShaderPath() const noexcept
 	{
 		return pixelShaderPath;
+	}
+
+	inline const GPUGraphicsPipelineState* MaterialAsset::GetGraphicsPipelineState() const noexcept
+	{
+		if (pipelineState)
+		{
+			return &*pipelineState;
+		}
+		return nullptr;
+	}
+
+	inline DXGI_FORMAT MaterialAsset::GetTargetFormat() const noexcept
+	{
+		return targetFormat;
+	}
+
+	inline void MaterialAsset::SetGraphicsPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept
+	{
+		pipelineState = std::move(value);
+		targetFormat = format;
 	}
 
 }

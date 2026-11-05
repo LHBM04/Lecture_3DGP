@@ -1,10 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <optional>
-#include <utility>
-
-#include "GPUGraphicsPipelineState.hpp"
 
 #include "../Entities/Component.hpp"
 
@@ -25,13 +21,10 @@ namespace TUK::Framework
 
 		[[nodiscard]] const MaterialAsset& GetMaterial() const noexcept;
 		void SetMaterial(const MaterialAsset& value) noexcept;
-		void SetPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept;
 
 	private:
 		const MeshAsset* mesh = nullptr;
 		const MaterialAsset* material = nullptr;
-		std::optional<GPUGraphicsPipelineState> pipelineState;
-		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
 	};
 
 	inline const MeshAsset& MeshRenderer::GetMesh() const noexcept
@@ -54,11 +47,6 @@ namespace TUK::Framework
 	inline void MeshRenderer::SetMaterial(const MaterialAsset& value) noexcept
 	{
 		material = &value;
-	}
-	inline void MeshRenderer::SetPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept
-	{
-		pipelineState = std::move(value);
-		targetFormat = format;
 	}
 
 }

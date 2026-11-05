@@ -50,7 +50,7 @@ namespace TUK::Framework
 		std::ostringstream stream(std::ios::binary);
 		ToBin(stream, std::string_view("<Mesh>:"));
 		ToBin(stream, static_cast<u32>(positions.size()));
-		ToBin(stream, name.empty() ? std::string_view("Unnamed") : std::string_view(name));
+		ToBin(stream, GetName().empty() ? std::string_view("Unnamed") : GetName());
 
 		ToBin(stream, std::string_view("<Bounds>:"));
 		ToBin(stream, boundsCenter);
@@ -348,7 +348,7 @@ namespace TUK::Framework
 			};
 		}
 
-		name = std::move(parsedName);
+		SetName(parsedName);
 		boundsCenter = parsedBoundsCenter;
 		boundsExtents = parsedBoundsExtents;
 		positions = std::move(parsedPositions);

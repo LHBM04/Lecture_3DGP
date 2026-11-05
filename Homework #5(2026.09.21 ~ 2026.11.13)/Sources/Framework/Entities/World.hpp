@@ -1,11 +1,8 @@
 #pragma once
 
-#include <expected>
-#include <filesystem>
 #include <memory>
 #include <memory_resource>
 #include <span>
-#include <string>
 #include <string_view>
 #include <vector>
 
@@ -18,8 +15,6 @@
 
 namespace TUK::Framework
 {
-	class AssetSubsystem;
-	class GPUDevice;
 	class Camera;
 	class Entity;
 	class ModelAsset;
@@ -47,21 +42,19 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsEntered() const noexcept;
 		void SetEntered(bool value) noexcept;
 
-		Entity& Instantiate();
-		Entity& Instantiate(std::string_view name);
-		Entity& Instantiate(std::string_view name, std::string_view tag);
-		Entity& Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation);
-		Entity& Instantiate(const Vector3D<f32>& position);
-		Entity& Instantiate(const Quaternion<f32>& rotation);
-		Entity& Instantiate(Transform* parent);
-		Entity& Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent);
-		[[nodiscard]] std::expected<Entity*, std::string> Instantiate(
-			const ModelAsset& model,
-			const std::filesystem::path& modelPath,
-			AssetSubsystem& assets,
-			const GPUDevice& device,
-			const Vector3D<f32>& position,
-			Transform* parent = nullptr);
+		Entity* Instantiate();
+		Entity* Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation);
+		Entity* Instantiate(const Vector3D<f32>& position);
+		Entity* Instantiate(const Quaternion<f32>& rotation);
+		Entity* Instantiate(Transform* parent);
+		Entity* Instantiate(const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent);
+
+		Entity* Instantiate(const ModelAsset* model);
+		Entity* Instantiate(const ModelAsset* model, const Vector3D<f32>& position, const Quaternion<f32>& rotation);
+		Entity* Instantiate(const ModelAsset* model, const Vector3D<f32>& position);
+		Entity* Instantiate(const ModelAsset* model, const Quaternion<f32>& rotation);
+		Entity* Instantiate(const ModelAsset* model, Transform* parent);
+		Entity* Instantiate(const ModelAsset* model, const Vector3D<f32>& position, const Quaternion<f32>& rotation, Transform* parent);
 
 		void Destroy(Entity& entity) noexcept;
 		void Destroy(Entity* entity) noexcept;

@@ -32,6 +32,9 @@ namespace TUK::Framework
 		void AddLoader(TArgs&&... args);
 
 		template <std::derived_from<Asset> TAsset>
+		[[nodiscard]] const TAsset* FindLoadedAsset(const std::filesystem::path& path) const;
+
+		template <std::derived_from<Asset> TAsset>
 		TAsset* LoadAsset(const std::filesystem::path& path);
 
 		template <std::derived_from<Asset> TAsset, class... TArgs>
@@ -83,6 +86,17 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Asset> TAsset>
+	const TAsset* AssetSubsystem::FindLoadedAsset(const std::filesystem::path& path) const
+	{
+		const auto cached = assetsByPath.find(path.lexically_normal());
+		if (cached == assetsByPath.end())
+		{
+			return nullptr;
+		}
+		return dynamic_cast<const TAsset*>(cached->second);
+	}
+
+	template <std::derived_from<Asset> TAsset>
 	TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
 	{
 		const std::filesystem::path normalizedPath = path.lexically_normal();
@@ -108,6 +122,13 @@ namespace TUK::Framework
 		if (!result)
 		{
 			return nullptr;
+		}
+
+		Asset& loadedAsset = *result;
+		loadedAsset.path = normalizedPath;
+		if (loadedAsset.name.empty())
+		{
+			loadedAsset.name = normalizedPath.stem().string();
 		}
 
 		assets.emplace_back(std::move(*asset));

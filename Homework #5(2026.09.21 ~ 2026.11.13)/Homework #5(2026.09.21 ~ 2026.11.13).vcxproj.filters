@@ -243,6 +243,9 @@
     <ClInclude Include="Sources\Framework\Utilities\BinaryUtility.hpp">
       <Filter>Sources\Framework\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Utilities\Logger.hpp">
+      <Filter>Sources\Framework\Utilities</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Utilities.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
@@ -250,6 +253,9 @@
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
       <Filter>Sources\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Utilities\Logger.cpp">
+      <Filter>Sources\Framework\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Engine.cpp">
       <Filter>Sources\Framework\Core</Filter>

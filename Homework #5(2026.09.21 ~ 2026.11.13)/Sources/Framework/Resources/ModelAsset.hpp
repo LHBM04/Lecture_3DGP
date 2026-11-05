@@ -14,65 +14,55 @@
 
 namespace TUK::Framework
 {
-	struct ModelRendererReference final
+	struct Submodel final
 	{
-		std::string meshName;
-		std::string materialName;
-	};
+		struct RenderPart final
+		{
+			std::string meshName;
+			std::string materialName;
+		};
 
-	struct ModelNode final
-	{
-		i32 index = 0;
 		i32 parentIndex = -1;
 		std::string name;
+
 		Vector3D<f32> localPosition{ 0.0f, 0.0f, 0.0f };
 		Quaternion<f32> localRotation{ 0.0f, 0.0f, 0.0f, 1.0f };
 		Vector3D<f32> localScale{ 1.0f, 1.0f, 1.0f };
-		std::vector<ModelRendererReference> renderers;
+
+		std::vector<RenderPart> renderParts;
 	};
 
 	class ModelAsset final : public Asset
 	{
 	public:
+		using Asset::Asset;
+
 		ModelAsset() noexcept = default;
 		~ModelAsset() noexcept override = default;
 
 		ModelAsset(const ModelAsset&) = delete;
 		ModelAsset& operator=(const ModelAsset&) = delete;
+
 		ModelAsset(ModelAsset&&) noexcept = default;
 		ModelAsset& operator=(ModelAsset&&) noexcept = default;
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
 
-		[[nodiscard]] std::string_view GetName() const noexcept;
-		void SetName(std::string_view value) noexcept;
-
-		[[nodiscard]] std::span<ModelNode> GetNodes() noexcept;
-		[[nodiscard]] std::span<const ModelNode> GetNodes() const noexcept;
+		[[nodiscard]] std::span<Submodel> GetSubmodels() noexcept;
+		[[nodiscard]] std::span<const Submodel> GetSubmodels() const noexcept;
 
 	private:
-		std::string name;
-		std::vector<ModelNode> nodes;
+		std::vector<Submodel> submodels;
 	};
 
-	inline std::string_view ModelAsset::GetName() const noexcept
+	inline std::span<Submodel> ModelAsset::GetSubmodels() noexcept
 	{
-		return name;
+		return submodels;
 	}
 
-	inline void ModelAsset::SetName(std::string_view value) noexcept
+	inline std::span<const Submodel> ModelAsset::GetSubmodels() const noexcept
 	{
-		name.assign(value);
-	}
-
-	inline std::span<ModelNode> ModelAsset::GetNodes() noexcept
-	{
-		return nodes;
-	}
-
-	inline std::span<const ModelNode> ModelAsset::GetNodes() const noexcept
-	{
-		return nodes;
+		return submodels;
 	}
 }

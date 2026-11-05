@@ -45,22 +45,23 @@ namespace TUK::Framework
 
 	std::string ModelAsset::Serialize() const
 	{
-		if (nodes.empty())
+		if (submodels.empty())
 		{
 			return {};
 		}
 
 		std::ostringstream stream(std::ios::binary);
-		if (!ToBin(stream, std::string_view("<Model>:")) || !ToBin(stream, name)
-			|| !ToBin(stream, std::string_view("<Nodes>:")) || !ToBin(stream, static_cast<u32>(nodes.size())))
+		if (!ToBin(stream, std::string_view("<Model>:")) || !ToBin(stream, GetName())
+			|| !ToBin(stream, std::string_view("<Nodes>:")) || !ToBin(stream, static_cast<u32>(submodels.size())))
 		{
 			return {};
 		}
 
-		for (const auto& node : nodes)
+		for (usize index = 0; index < submodels.size(); ++index)
 		{
+			const Submodel& node = submodels[index];
 			if (!ToBin(stream, std::string_view("<Node>:"))
-				|| !ToBin(stream, node.index)
+				|| !ToBin(stream, static_cast<i32>(index))
 				|| !ToBin(stream, node.parentIndex)
 				|| !ToBin(stream, node.name)
 				|| !ToBin(stream, std::string_view("<LocalPosition>:"))
@@ -70,16 +71,17 @@ namespace TUK::Framework
 				|| !ToBin(stream, std::string_view("<LocalScale>:"))
 				|| !ToBin(stream, node.localScale)
 				|| !ToBin(stream, std::string_view("<Renderers>:"))
-				|| !ToBin(stream, static_cast<u32>(node.renderers.size())))
+				|| !ToBin(stream, static_cast<u32>(node.renderParts.size())))
 			{
 				return {};
 			}
 
-			for (const auto& renderer : node.renderers)
+			for (const Submodel::RenderPart& part : node.renderParts)
 			{
 				if (!ToBin(stream, std::string_view("<Renderer>:"))
-					|| !ToBin(stream, renderer.meshName)
-					|| !ToBin(stream, renderer.materialName))
+					|| part.meshName.empty() || part.materialName.empty()
+					|| !ToBin(stream, part.meshName)
+					|| !ToBin(stream, part.materialName))
 				{
 					return {};
 				}
@@ -104,8 +106,8 @@ namespace TUK::Framework
 			return false;
 		}
 
-		std::vector<ModelNode> parsedNodes;
-		parsedNodes.reserve(nodeCount);
+		std::vector<Submodel> parsedSubmodels;
+		parsedSubmodels.reserve(nodeCount);
 		bool hasAnyRenderer = false;
 
 		for (u32 index = 0; index < nodeCount; ++index)
@@ -144,14 +146,13 @@ namespace TUK::Framework
 				return false;
 			}
 
-			ModelNode node{};
-			node.index = nodeIndex;
+			Submodel node{};
 			node.parentIndex = parentIndex;
 			node.name = std::move(nodeName);
 			node.localPosition = position;
 			node.localRotation = rotation;
 			node.localScale = scale;
-			node.renderers.reserve(partCount);
+			node.renderParts.reserve(partCount);
 
 			for (u32 partIndex = 0; partIndex < partCount; ++partIndex)
 			{
@@ -162,11 +163,11 @@ namespace TUK::Framework
 				{
 					return false;
 				}
-				node.renderers.push_back(ModelRendererReference{ std::move(meshName), std::move(materialName) });
+				node.renderParts.push_back(Submodel::RenderPart{ std::move(meshName), std::move(materialName) });
 				hasAnyRenderer = true;
 			}
 
-			parsedNodes.push_back(std::move(node));
+			parsedSubmodels.push_back(std::move(node));
 		}
 
 		if (!hasAnyRenderer || file.bad() || file.peek() != std::char_traits<char>::eof())
@@ -174,8 +175,8 @@ namespace TUK::Framework
 			return false;
 		}
 
-		name = std::move(modelName);
-		nodes = std::move(parsedNodes);
+		SetName(modelName);
+		submodels = std::move(parsedSubmodels);
 		return true;
 	}
 }

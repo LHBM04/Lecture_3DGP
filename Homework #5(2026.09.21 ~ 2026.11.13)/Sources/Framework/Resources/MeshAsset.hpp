@@ -25,6 +25,8 @@ namespace TUK::Framework
 	class MeshAsset final : public Asset
 	{
 	public:
+		using Asset::Asset;
+
 		MeshAsset() noexcept = default;
 		~MeshAsset() noexcept override = default;
 
@@ -36,9 +38,6 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
-
-		[[nodiscard]] std::string_view GetName() const noexcept;
-		void SetName(std::string_view value) noexcept;
 
 		[[nodiscard]] const Vector3D<f32>& GetBoundsCenter() const noexcept;
 		[[nodiscard]] const Vector3D<f32>& GetBoundsExtents() const noexcept;
@@ -55,7 +54,6 @@ namespace TUK::Framework
 		void SetGPUMesh(GPUMesh value) noexcept;
 
 	private:
-		std::string name;
 		Vector3D<f32> boundsCenter{};
 		Vector3D<f32> boundsExtents{};
 		std::vector<Vector3D<f32>> positions;
@@ -66,16 +64,6 @@ namespace TUK::Framework
 		std::vector<u32> indices;
 		std::optional<GPUMesh> gpuMesh;
 	};
-
-	inline std::string_view MeshAsset::GetName() const noexcept
-	{
-		return name;
-	}
-
-	inline void MeshAsset::SetName(std::string_view value) noexcept
-	{
-		name.assign(value);
-	}
 
 	inline const Vector3D<f32>& MeshAsset::GetBoundsCenter() const noexcept
 	{

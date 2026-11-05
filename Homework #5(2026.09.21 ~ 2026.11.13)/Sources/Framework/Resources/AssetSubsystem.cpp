@@ -1,4 +1,6 @@
 #include "Precompiled.hpp"
+#include <system_error>
+
 #include "AssetSubsystem.hpp"
 
 #include "MaterialAsset.hpp"
@@ -10,13 +12,31 @@ namespace TUK::Framework
 {
 	SystemStatus AssetSubsystem::OnStartup()
 	{
-		std::filesystem::path materialAssetsPath = "Resources/Materials";
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(materialAssetsPath))
+		const auto preload = [this]<class TAsset>(const std::filesystem::path& directory, std::string_view extension)
 		{
-			if (entry.path().extension() == ".bin")
-			{	
-				LoadAsset<MaterialAsset>(entry.path());
+			std::error_code error;
+			std::filesystem::recursive_directory_iterator entry(directory, error);
+			const std::filesystem::recursive_directory_iterator END;
+			for (; !error && entry != END; entry.increment(error))
+			{
+				if (entry->is_regular_file(error) && entry->path().extension() == extension
+					&& !LoadAsset<TAsset>(entry->path()))
+				{
+					return false;
+				}
 			}
+			if (error)
+			{
+				std::cerr << "Cannot scan assets: " << directory.generic_string() << ": " << error.message() << '\n';
+				return false;
+			}
+			return true;
+		};
+
+		if (!preload.operator()<ShaderAsset>("Resources/Shaders", ".cso")
+			|| !preload.operator()<MaterialAsset>("Resources/Materials", ".bin"))
+		{
+			return SystemStatus::FAILURE;
 		}
 
 		std::filesystem::path meshesAssetsPath = "Resources/Meshes";
@@ -37,14 +57,6 @@ namespace TUK::Framework
 			}
 		}
 
-		std::filesystem::path shaderAssetsPath = "Resources/Shaders";
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(shaderAssetsPath))
-		{
-			if (entry.path().extension() == ".cso")
-			{	
-				LoadAsset<ShaderAsset>(entry.path());
-			}
-		}
 
 		return SystemStatus::CONTINUE;
 	}

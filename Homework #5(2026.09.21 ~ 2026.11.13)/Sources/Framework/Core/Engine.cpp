@@ -7,8 +7,17 @@ namespace TUK::Framework
 {
 	i32 Engine::Run()
 	{
-		Startup();
-		app.get().Startup();
+		if (const SystemStatus status = Startup(); status != SystemStatus::CONTINUE)
+		{
+			Shutdown();
+			return std::to_underlying(status);
+		}
+		if (const SystemStatus status = app.get().Startup(); status != SystemStatus::CONTINUE)
+		{
+			app.get().Shutdown();
+			Shutdown();
+			return std::to_underlying(status);
+		}
 
 		while (true)
 		{

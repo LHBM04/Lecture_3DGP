@@ -16,6 +16,8 @@ namespace TUK::Framework
 	class ShaderAsset : public Asset
 	{
 	public:
+		using Asset::Asset;
+
 		ShaderAsset() noexcept = default;
 		ShaderAsset(GPUShader shader, std::filesystem::path sourcePath = {}) noexcept;
 		~ShaderAsset() noexcept override = default;
@@ -34,7 +36,6 @@ namespace TUK::Framework
 
 	private:
 		std::optional<GPUShader> shader;
-		std::filesystem::path sourcePath;
 	};
 
 	inline const GPUShader& ShaderAsset::GetShader() const noexcept
@@ -44,12 +45,12 @@ namespace TUK::Framework
 	}
 
 	inline ShaderAsset::ShaderAsset(GPUShader shader, std::filesystem::path sourcePath) noexcept
-		: shader(std::move(shader))
-		, sourcePath(std::move(sourcePath))
+		: Asset(std::move(sourcePath))
+		, shader(std::move(shader))
 	{
 	}
 	inline const std::filesystem::path& ShaderAsset::GetSourcePath() const noexcept
 	{
-		return sourcePath;
+		return GetPath();
 	}
 }

@@ -9,8 +9,21 @@
 #include <string_view>
 #include <utility>
 
+#include "AssetSubsystem.hpp"
+#include "ShaderAsset.hpp"
+
 namespace TUK::Framework
 {
+	MaterialAssetLoader::MaterialAssetLoader(
+		const AssetSubsystem& assets,
+		const GPUDevice& device,
+		DXGI_FORMAT targetFormat) noexcept
+		: assets(assets)
+		, device(device)
+		, targetFormat(targetFormat)
+	{
+	}
+
 	std::expected<std::unique_ptr<Asset>, std::string> MaterialAssetLoader::Load(
 		const std::filesystem::path& path) const
 	{
@@ -32,6 +45,39 @@ namespace TUK::Framework
 			return std::unexpected("Cannot deserialize material: " + path.generic_string());
 		}
 
+		const auto shaderPath = [&path](std::string_view name)
+		{
+			const std::filesystem::path shader(std::u8string(name.begin(), name.end()));
+			if (shader.is_absolute())
+			{
+				return shader.lexically_normal();
+			}
+			if (!shader.empty() && *shader.begin() == "Resources")
+			{
+				return (path.parent_path().parent_path() / shader.lexically_relative("Resources")).lexically_normal();
+			}
+			return (path.parent_path() / shader).lexically_normal();
+		};
+
+		const auto vertexPath = shaderPath(material->GetVertexShaderPath());
+		const auto pixelPath = shaderPath(material->GetPixelShaderPath());
+		const ShaderAsset* vertex = assets.FindLoadedAsset<ShaderAsset>(vertexPath);
+		if (!vertex)
+		{
+			return std::unexpected("Vertex shader was not preloaded: " + vertexPath.generic_string());
+		}
+		const ShaderAsset* pixel = assets.FindLoadedAsset<ShaderAsset>(pixelPath);
+		if (!pixel)
+		{
+			return std::unexpected("Pixel shader was not preloaded: " + pixelPath.generic_string());
+		}
+
+		auto pipeline = GPUGraphicsPipelineState::CreateForMaterial(device, *material, *vertex, *pixel, targetFormat);
+		if (!pipeline)
+		{
+			return std::unexpected(pipeline.error());
+		}
+		material->SetGraphicsPipelineState(std::move(*pipeline), targetFormat);
 		return material;
 	}
 }
