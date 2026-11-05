@@ -162,7 +162,7 @@ namespace TUK::Framework
 				{
 					return false;
 				}
-				node.renderers.push_back(ModelRendererReference{ std::move(meshName), std::move(materialName), nullptr, nullptr });
+				node.renderers.push_back(ModelRendererReference{ std::move(meshName), std::move(materialName) });
 				hasAnyRenderer = true;
 			}
 

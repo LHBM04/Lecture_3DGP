@@ -2,12 +2,19 @@
 #include "World.hpp"
 
 #include <algorithm>
+#include <filesystem>
+#include <string>
+#include <utility>
 #include <ranges>
 
 #include "../Graphics/Camera.hpp"
 #include "../Graphics/MeshRenderer.hpp"
 
+#include "../Resources/AssetSubsystem.hpp"
+#include "../Resources/MaterialAsset.hpp"
+#include "../Resources/MeshAsset.hpp"
 #include "../Resources/ModelAsset.hpp"
+#include "../Resources/ShaderAsset.hpp"
 
 #include "Entity.hpp"
 #include "Transform.hpp"
@@ -81,32 +88,103 @@ namespace TUK::Framework
 		return entity;
 	}
 
-	Entity& World::Instantiate(const ModelAsset& model)
+	std::expected<Entity*, std::string> World::Instantiate(
+		const ModelAsset& model,
+		const std::filesystem::path& modelPath,
+		AssetSubsystem& assets,
+		const GPUDevice& device,
+		const Vector3D<f32>& position,
+		Transform* parent)
 	{
-		return Instantiate(model, nullptr);
-	}
+		constexpr DXGI_FORMAT TARGET_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM;
+		struct PreparedRenderer
+		{
+			const MeshAsset* mesh;
+			const MaterialAsset* material;
+			GPUGraphicsPipelineState pipeline;
+		};
 
-	Entity& World::Instantiate(const ModelAsset& model, Transform* parent)
-	{
+		const auto resourcePath = [&modelPath](std::string_view directory, std::string_view name)
+		{
+			std::filesystem::path path(std::u8string(name.begin(), name.end()));
+			if (!path.has_parent_path())
+			{
+				path = modelPath.parent_path().parent_path() / directory / path;
+			}
+			if (path.extension() != ".bin")
+			{
+				path += ".bin";
+			}
+			return path.lexically_normal();
+		};
+		const auto shaderPath = [](const std::filesystem::path& materialPath, std::string_view name)
+		{
+			std::filesystem::path path(std::u8string(name.begin(), name.end()));
+			if (path.is_absolute())
+			{
+				return path.lexically_normal();
+			}
+			if (!path.empty() && *path.begin() == "Resources")
+			{
+				return (materialPath.parent_path().parent_path() / path.lexically_relative("Resources")).lexically_normal();
+			}
+			return (materialPath.parent_path() / path).lexically_normal();
+		};
+
 		const std::span<const ModelNode> nodes = model.GetNodes();
+		std::vector<std::vector<PreparedRenderer>> prepared(nodes.size());
+		for (usize index = 0; index < nodes.size(); ++index)
+		{
+			for (const ModelRendererReference& reference : nodes[index].renderers)
+			{
+				const auto meshPath = resourcePath("Meshes", reference.meshName);
+				const auto materialPath = resourcePath("Materials", reference.materialName);
+				const MeshAsset* mesh = assets.LoadAsset<MeshAsset>(meshPath);
+				if (!mesh)
+				{
+					return std::unexpected("Cannot load mesh: " + meshPath.generic_string());
+				}
+				const MaterialAsset* material = assets.LoadAsset<MaterialAsset>(materialPath);
+				if (!material)
+				{
+					return std::unexpected("Cannot load material: " + materialPath.generic_string());
+				}
+				const auto vertexPath = shaderPath(materialPath, material->GetVertexShaderPath());
+				const auto pixelPath = shaderPath(materialPath, material->GetPixelShaderPath());
+				const ShaderAsset* vertex = assets.LoadAsset<ShaderAsset>(vertexPath);
+				if (!vertex)
+				{
+					return std::unexpected("Cannot load vertex shader: " + vertexPath.generic_string());
+				}
+				const ShaderAsset* pixel = assets.LoadAsset<ShaderAsset>(pixelPath);
+				if (!pixel)
+				{
+					return std::unexpected("Cannot load pixel shader: " + pixelPath.generic_string());
+				}
+				auto pipeline = GPUGraphicsPipelineState::CreateForMaterial(device, *material, *vertex, *pixel, TARGET_FORMAT);
+				if (!pipeline)
+				{
+					return std::unexpected("Cannot create pipeline for " + materialPath.generic_string() + ": " + pipeline.error());
+				}
+				prepared[index].push_back(PreparedRenderer{ mesh, material, std::move(*pipeline) });
+			}
+		}
+
 		if (nodes.empty())
 		{
 			Entity& entity = Instantiate(model.GetName());
 			Transform* transform = entity.AddComponent<Transform>();
 			transform->SetParent(parent);
-			return entity;
+			transform->SetLocalPosition(position);
+			return &entity;
 		}
 
 		std::vector<Entity*> nodeEntities(nodes.size(), nullptr);
 		std::vector<Transform*> nodeTransforms(nodes.size(), nullptr);
-
 		for (usize index = 0; index < nodes.size(); ++index)
 		{
 			const ModelNode& node = nodes[index];
-			const std::string_view entityName = !node.name.empty()
-				? std::string_view(node.name)
-				: model.GetName();
-
+			const std::string_view entityName = !node.name.empty() ? std::string_view(node.name) : model.GetName();
 			Entity& entity = Instantiate(entityName);
 			Transform* transform = entity.AddComponent<Transform>();
 			if (node.parentIndex >= 0 && static_cast<usize>(node.parentIndex) < index)
@@ -117,68 +195,21 @@ namespace TUK::Framework
 			{
 				transform->SetParent(parent);
 			}
-
 			transform->SetLocalPosition(node.localPosition);
 			transform->SetLocalRotation(node.localRotation);
 			transform->SetLocalScale(node.localScale);
-
-			for (const ModelRendererReference& rendererReference : node.renderers)
+			for (PreparedRenderer& reference : prepared[index])
 			{
-				if (!rendererReference.mesh || !rendererReference.material)
-				{
-					continue;
-				}
-
 				MeshRenderer* renderer = entity.AddComponent<MeshRenderer>();
-				renderer->SetMesh(*rendererReference.mesh);
-				renderer->SetMaterial(*rendererReference.material);
+				renderer->SetMesh(*reference.mesh);
+				renderer->SetMaterial(*reference.material);
+				renderer->SetPipelineState(std::move(reference.pipeline), TARGET_FORMAT);
 			}
-
 			nodeEntities[index] = &entity;
 			nodeTransforms[index] = transform;
 		}
-
-		return *nodeEntities.front();
-	}
-
-	Entity& World::Instantiate(const ModelAsset& model, const Vector3D<f32>& position)
-	{
-		Entity& entity = Instantiate(model, nullptr);
-		if (Transform* transform = entity.GetComponent<Transform>())
-		{
-			transform->SetLocalPosition(position);
-		}
-		return entity;
-	}
-
-	Entity& World::Instantiate(const ModelAsset& model, const Quaternion<f32>& rotation)
-	{
-		Entity& entity = Instantiate(model, nullptr);
-		if (Transform* transform = entity.GetComponent<Transform>())
-		{
-			transform->SetLocalRotation(rotation);
-		}
-		return entity;
-	}
-
-	Entity& World::Instantiate(const ModelAsset& model, const Vector3D<f32>& position, const Quaternion<f32>& rotation)
-	{
-		return Instantiate(model, position, rotation, nullptr);
-	}
-
-	Entity& World::Instantiate(
-		const ModelAsset& model,
-		const Vector3D<f32>& position,
-		const Quaternion<f32>& rotation,
-		Transform* parent)
-	{
-		Entity& entity = Instantiate(model, parent);
-		if (Transform* transform = entity.GetComponent<Transform>())
-		{
-			transform->SetLocalPosition(position);
-			transform->SetLocalRotation(rotation);
-		}
-		return entity;
+		nodeTransforms.front()->SetLocalPosition(position);
+		return nodeEntities.front();
 	}
 
 	void World::Destroy(Entity& entity) noexcept

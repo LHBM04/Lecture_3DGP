@@ -13,6 +13,8 @@
 namespace TUK::Framework
 {
 	class GPUDevice;
+	class MaterialAsset;
+	class ShaderAsset;
 
 	class GPUGraphicsPipelineState
 	{
@@ -30,6 +32,13 @@ namespace TUK::Framework
 		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> Create(
 			const GPUDevice& device,
 			const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description);
+
+		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> CreateForMaterial(
+			const GPUDevice& device,
+			const MaterialAsset& material,
+			const ShaderAsset& vertexShader,
+			const ShaderAsset& pixelShader,
+			DXGI_FORMAT targetFormat);
 
 	private:
 		explicit GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;

@@ -12,12 +12,8 @@
 #include <string_view>
 #include <utility>
 
-#include "../Graphics/GPUDevice.hpp"
-#include "../Graphics/GPUGraphicsPipelineState.hpp"
-
 #include "../Utilities/BinaryUtility.hpp"
 
-#include "ShaderAsset.hpp"
 
 namespace TUK::Framework
 {
@@ -49,59 +45,6 @@ namespace TUK::Framework
 
 			return ReadString(stream, value) && !value.empty();
 		}
-	}
-
-	std::expected<MaterialAsset, std::string> MaterialAsset::Create(
-		const GPUDevice& device,
-		const ShaderAsset& vertexShader,
-		const ShaderAsset& pixelShader,
-		DXGI_FORMAT targetFormat,
-		D3D12_CULL_MODE cullMode,
-		D3D12_FILL_MODE fillMode)
-	{
-		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-		};
-
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineInfo{};
-		pipelineInfo.VS = vertexShader.GetShader().GetD3DBytecode();
-		pipelineInfo.PS = pixelShader.GetShader().GetD3DBytecode();
-		pipelineInfo.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
-		pipelineInfo.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		pipelineInfo.NumRenderTargets = 1;
-		pipelineInfo.RTVFormats[0] = targetFormat;
-		pipelineInfo.SampleMask = UINT_MAX;
-		pipelineInfo.SampleDesc = { 1, 0 };
-		pipelineInfo.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		pipelineInfo.RasterizerState.FillMode = fillMode;
-		pipelineInfo.RasterizerState.CullMode = cullMode;
-		pipelineInfo.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		pipelineInfo.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		pipelineInfo.DepthStencilState.DepthEnable = FALSE;
-
-		auto pipeline = GPUGraphicsPipelineState::Create(device, pipelineInfo);
-		if (!pipeline)
-		{
-			return std::unexpected(pipeline.error());
-		}
-
-		MaterialAsset material(std::move(*pipeline), targetFormat, cullMode, fillMode);
-		material.vertexShaderPath = vertexShader.GetSourcePath().generic_string();
-		material.pixelShaderPath = pixelShader.GetSourcePath().generic_string();
-		if (!vertexShader.GetSourcePath().empty())
-		{
-			std::filesystem::path combined = vertexShader.GetSourcePath();
-			if (combined.stem().extension() == ".vert")
-			{
-				combined = combined.parent_path() / combined.stem().stem();
-				combined.replace_extension(".hlsl");
-			}
-			material.shaderPath = combined.generic_string();
-		}
-		return material;
 	}
 
 	std::string MaterialAsset::Serialize() const

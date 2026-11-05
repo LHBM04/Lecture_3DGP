@@ -45,7 +45,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::expected<void, std::string> SetEntity(const Entity& entity) noexcept;
 		[[nodiscard]] std::expected<void, std::string> SetCamera(const Camera& camera) noexcept;
-		[[nodiscard]] std::expected<void, std::string> SetMaterial(const MaterialAsset& material) noexcept;
+		[[nodiscard]] std::expected<void, std::string> SetMaterial(const MaterialAsset& material, const GPUGraphicsPipelineState& pipelineState, DXGI_FORMAT targetFormat) noexcept;
 		[[nodiscard]] std::expected<void, std::string> SetObjectTransform(const Matrix4x4<f32>& worldMatrix) noexcept;
 
 		void TransitionTexture(

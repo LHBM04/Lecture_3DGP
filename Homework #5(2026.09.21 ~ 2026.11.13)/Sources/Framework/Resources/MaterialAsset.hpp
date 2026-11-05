@@ -4,7 +4,6 @@
 #include <cassert>
 #include <expected>
 #include <filesystem>
-#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -13,17 +12,12 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Graphics/GPUGraphicsPipelineState.hpp"
-
 #include "../Math/ColorRGBA.hpp"
 
 #include "Asset.hpp"
 
 namespace TUK::Framework
 {
-	class GPUDevice;
-	class ShaderAsset;
-
 	class MaterialAsset final : public Asset
 	{
 	public:
@@ -39,21 +33,8 @@ namespace TUK::Framework
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
 
-		[[nodiscard]] static std::expected<MaterialAsset, std::string> Create(
-			const GPUDevice& device,
-			const ShaderAsset& vertexShader,
-			const ShaderAsset& pixelShader,
-			DXGI_FORMAT targetFormat,
-			D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK,
-			D3D12_FILL_MODE fillMode = D3D12_FILL_MODE_SOLID);
-
 		[[nodiscard]] D3D12_CULL_MODE GetCullMode() const noexcept;
 		[[nodiscard]] D3D12_FILL_MODE GetFillMode() const noexcept;
-		[[nodiscard]] bool HasGraphicsPipelineState() const noexcept;
-		[[nodiscard]] const GPUGraphicsPipelineState& GetGraphicsPipelineState() const noexcept;
-		void SetGraphicsPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept;
-		[[nodiscard]] DXGI_FORMAT GetTargetFormat() const noexcept;
-
 		[[nodiscard]] const ColorRGBA<f32>& GetAlbedoColor() const noexcept;
 		void SetAlbedoColor(const ColorRGBA<f32>& value) noexcept;
 		[[nodiscard]] const ColorRGBA<f32>& GetBaseColor() const noexcept;
@@ -82,16 +63,8 @@ namespace TUK::Framework
 		[[nodiscard]] std::string_view GetPixelShaderPath() const noexcept;
 
 	private:
-		explicit MaterialAsset(
-			GPUGraphicsPipelineState graphicsPipelineState,
-			DXGI_FORMAT targetFormat,
-			D3D12_CULL_MODE cullMode,
-			D3D12_FILL_MODE fillMode) noexcept;
-
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
 		D3D12_FILL_MODE fillMode = D3D12_FILL_MODE_SOLID;
-		std::optional<GPUGraphicsPipelineState> graphicsPipelineState;
-		DXGI_FORMAT targetFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 		std::string shaderPath = "Resources/Shaders/Standard.hlsl";
 		std::string vertexShaderPath = "Resources/Shaders/Standard.vert.cso";
 		std::string pixelShaderPath = "Resources/Shaders/Standard.frag.cso";
@@ -114,28 +87,6 @@ namespace TUK::Framework
 	inline D3D12_FILL_MODE MaterialAsset::GetFillMode() const noexcept
 	{
 		return fillMode;
-	}
-
-	inline bool MaterialAsset::HasGraphicsPipelineState() const noexcept
-	{
-		return graphicsPipelineState.has_value();
-	}
-
-	inline const GPUGraphicsPipelineState& MaterialAsset::GetGraphicsPipelineState() const noexcept
-	{
-		assert(graphicsPipelineState);
-		return *graphicsPipelineState;
-	}
-
-	inline void MaterialAsset::SetGraphicsPipelineState(GPUGraphicsPipelineState value, DXGI_FORMAT format) noexcept
-	{
-		graphicsPipelineState = std::move(value);
-		targetFormat = format;
-	}
-
-	inline DXGI_FORMAT MaterialAsset::GetTargetFormat() const noexcept
-	{
-		return targetFormat;
 	}
 
 	inline const ColorRGBA<f32>& MaterialAsset::GetAlbedoColor() const noexcept
@@ -266,15 +217,4 @@ namespace TUK::Framework
 		return pixelShaderPath;
 	}
 
-	inline MaterialAsset::MaterialAsset(
-		GPUGraphicsPipelineState graphicsPipelineState,
-		DXGI_FORMAT targetFormat,
-		D3D12_CULL_MODE cullMode,
-		D3D12_FILL_MODE fillMode) noexcept
-		: cullMode(cullMode)
-		, fillMode(fillMode)
-		, graphicsPipelineState(std::move(graphicsPipelineState))
-		, targetFormat(targetFormat)
-	{
-	}
 }

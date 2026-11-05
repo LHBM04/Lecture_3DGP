@@ -74,13 +74,9 @@ namespace TUK::Game
 		}
 
 		auto& device = renderSubsystem->GetDevice();
-		assetSubsystem->AddLoader<ModelAssetLoader>(*assetSubsystem);
+		assetSubsystem->AddLoader<ModelAssetLoader>();
 		assetSubsystem->AddLoader<MeshAssetLoader>(device);
-		assetSubsystem->AddLoader<MaterialAssetLoader>(
-			device,
-			*assetSubsystem,
-			DXGI_FORMAT_R8G8B8A8_UNORM
-		);
+		assetSubsystem->AddLoader<MaterialAssetLoader>();
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
 
 		return App::Startup();

@@ -1,4 +1,7 @@
 #include "Precompiled.hpp"
+
+#include <filesystem>
+#include <iostream>
 #include "World_Stage.hpp"
 
 #include "Framework/Core.hpp"
@@ -34,9 +37,20 @@ namespace TUK::Game
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
 		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 
-		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources\\Models\\Spaceship.bin"))
+		const std::filesystem::path MODEL_PATH = "Resources/Models/Spaceship.bin";
+		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>(MODEL_PATH))
 		{
-			Instantiate(*model, Vector3D<f32>(0.0f, 0.0f, 0.0f));
+			RenderSubsystem* render = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
+			if (!render)
+			{
+				std::cerr << "World_Stage: RenderSubsystem is not available." << std::endl;
+				return;
+			}
+			auto result = Instantiate(*model, MODEL_PATH, *assets, render->GetDevice(), Vector3D<f32>(0.0f, 0.0f, 0.0f));
+			if (!result)
+			{
+				std::cerr << "World_Stage: " << result.error() << std::endl;
+			}
 		}
 	}
 

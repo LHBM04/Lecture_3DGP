@@ -142,14 +142,14 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetMaterial(const MaterialAsset& material) noexcept
+	std::expected<void, std::string> GPUCommandBuffer::SetMaterial(const MaterialAsset& material, const GPUGraphicsPipelineState& pipelineState, DXGI_FORMAT targetFormat) noexcept
 	{
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
 			return std::unexpected("癒명꽣由ъ뼹 ?곸슜 ?꾩뿉 ?뚮뜑 ?源껋쓣 吏?뺥빐???⑸땲??");
 		}
 
-		if (material.GetTargetFormat() != activeTargetFormat)
+		if (targetFormat != activeTargetFormat)
 		{
 			return std::unexpected("癒명꽣由ъ뼹??PSO? ?뚮뜑 ?源??щ㎎???쇱튂?섏? ?딆뒿?덈떎.");
 		}
@@ -166,7 +166,7 @@ namespace TUK::Framework
 			return std::unexpected(allocation.error());
 		}
 		SetGPUMaterialConstantBuffer(*allocation->first, allocation->second);
-		SetGPUGraphicsPipelineState(material.GetGraphicsPipelineState());
+		SetGPUGraphicsPipelineState(pipelineState);
 		return {};
 	}
 

@@ -12,12 +12,12 @@ namespace TUK::Framework
 {
 	void MeshRenderer::OnRender(GPUCommandBuffer& commandBuffer)
 	{
-		if (!mesh || !material || !mesh->HasGPUMesh() || !material->HasGraphicsPipelineState())
+		if (!mesh || !material || !mesh->HasGPUMesh() || !pipelineState)
 		{
 			return;
 		}
 
-		if (auto result = commandBuffer.SetMaterial(*material); !result)
+		if (auto result = commandBuffer.SetMaterial(*material, *pipelineState, targetFormat); !result)
 		{
 			std::cerr << "MeshRenderer 머티리얼 적용 실패: " << result.error() << std::endl;
 			return;

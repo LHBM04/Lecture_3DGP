@@ -343,12 +343,17 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
+    <FxCompile Include="Resources\Shaders\Standard.hlsl">
       <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Resources\Shaders\CompileShader.ps1" -Source "%(FullPath)" -OutputDirectory "$(OutDir)Resources\Shaders" -IntermediateDirectory "$(IntDir)Shaders" -Compiler "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe"</Command>
       <Message>Compiling Standard.hlsl</Message>
       <AdditionalInputs>$(ProjectDir)Resources\Shaders\CompileShader.ps1;%(AdditionalInputs)</AdditionalInputs>
       <Outputs>$(OutDir)Resources\Shaders\Standard.vert.cso;$(OutDir)Resources\Shaders\Standard.frag.cso</Outputs>
-    </CustomBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <None Include="Resources\Shaders\CompileShader.ps1" />
     <None Include="Resources\Models\Apache.bin" />
     <None Include="Resources\Models\Gunship.bin" />

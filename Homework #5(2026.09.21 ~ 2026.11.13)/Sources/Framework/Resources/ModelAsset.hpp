@@ -14,15 +14,10 @@
 
 namespace TUK::Framework
 {
-	class MaterialAsset;
-	class MeshAsset;
-
 	struct ModelRendererReference final
 	{
 		std::string meshName;
 		std::string materialName;
-		const MeshAsset* mesh = nullptr;
-		const MaterialAsset* material = nullptr;
 	};
 
 	struct ModelNode final

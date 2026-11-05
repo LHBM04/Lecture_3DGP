@@ -403,10 +403,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Resources\Shaders\Standard.vert.hlsl">
-      <Filter>Resources\Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Resources\Shaders\Standard.frag.hlsl">
+    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
     <None Include="Resources\Models\Apache.bin">
