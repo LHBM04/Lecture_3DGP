@@ -19,7 +19,7 @@ namespace TUK::Framework
 			switch (level)
 			{
 			case LogLevel::DEBUG:
-				return "DEBUG";
+				return "TRACE";
 			case LogLevel::INFO:
 				return "INFO";
 			case LogLevel::WARNING:
@@ -34,7 +34,7 @@ namespace TUK::Framework
 
 	namespace Logger
 	{
-		void Log(LogLevel level, std::string_view message, std::source_location location)
+		void Log(Category level, std::string_view message, std::source_location location)
 		{
 			const std::string line = std::format("[{}] {} ({}:{})\n", GetLevelName(level), message, location.file_name(), location.line());
 			std::osyncstream(std::clog) << line << std::flush;

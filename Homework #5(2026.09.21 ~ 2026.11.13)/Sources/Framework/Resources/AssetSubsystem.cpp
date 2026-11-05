@@ -18,7 +18,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".cso")
 			{	
 				LoadAsset<ShaderAsset>(entry.path());
-				Logger::LogDebug("{}", entry.path().generic_string());
+				Logger::LogTrace("{}", entry.path().generic_string());
 			}
 		}
 
@@ -28,7 +28,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<MaterialAsset>(entry.path());
-				Logger::LogDebug("{}", entry.path().generic_string());
+				Logger::LogTrace("{}", entry.path().generic_string());
 			}
 		}
 
@@ -38,7 +38,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<MeshAsset>(entry.path());
-				Logger::LogDebug("{}", entry.path().generic_string());
+				Logger::LogTrace("{}", entry.path().generic_string());
 			}
 		}
 
@@ -48,7 +48,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<ModelAsset>(entry.path());
-				Logger::LogDebug("{}", entry.path().generic_string());
+				Logger::LogTrace("{}", entry.path().generic_string());
 			}
 		}
 
