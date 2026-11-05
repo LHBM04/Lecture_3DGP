@@ -42,6 +42,9 @@
 | 멤버 변수, 지역 변수, 매개변수 | camelCase |
 | 매크로 및 모든 상수 | SCREAMING_SNAKE_CASE |
 
+- 이벤트 핸들러: `On` + `이벤트 구조체명(접미사 Event 제외)` 형식을 사용한다. (예: `OnDisplayCreate`, `OnDisplayClose`, `OnInputActivation`)
+- 탐색 함수: 식별자나 조건으로 단일 또는 다중 탐색을 수행할 경우 `By` 전치사를 명시한다. (예: `FindEntityByName`, `FindEntityByTag`, `FindDisplayByID`, `FindDisplayByHWND`)
+
 ### 코드 스타일
 
 - 조건문과 반복문은 한 줄이어도 반드시 중괄호로 감싼다. 람다식 본문도 동일하게 적용한다.
@@ -56,6 +59,21 @@
 - `[[nodiscard]]`, `[[maybe_unused]]` 같은 표준 어트리뷰트를 적극적으로 사용한다.
 - `throw`와 `try-catch`를 사용하지 않는다. 오류와 불변식 검증에는 `ASSERT`와 `ABORT` 사용을 우선한다.
 - 생성자, 소멸자, 연산자 오버로딩, Getter와 Setter에는 반드시 `noexcept`를 명시한다.
+
+### 객체 참조 및 매개변수/반환값 규칙 (언리얼 엔진 스타일)
+
+- **엔진 생명주기 관리 객체**: `App`, `Subsystem`, `World`, `Entity`, `Component` 파생, `Asset` 파생, `Display`, `InputProvider` 등 힙에 할당되어 프레임워크가 생명주기를 관리하거나 `nullptr` 상태가 유효한 객체는 입출력/조회/소유자 참조 모두 원시 포인터(`T*` / `const T*`)를 기본으로 사용한다. `std::reference_wrapper`는 사용하지 않는다.
+- **값 타입 및 RHI 실행 컨텍스트**: `Vector*`, `Quaternion`, `Matrix4x4`, `Color*`, 옵션 구조체, `Event` 파생 구조체, `std::string_view`, `std::filesystem::path` 등 복사 비용이 있거나 불변인 값 타입은 `const T&`(또는 경량 기본 타입은 값)로 전달한다. 렌더링 프레임 내 유효성이 상시 보장되는 GPU 실행 컨텍스트(`GPUCommandBuffer&` 등)는 참조자를 사용한다.
+
+### 컨테이너 및 컬렉션 조회 규칙
+
+- 다중 객체 순회용 `Get*s()` 조회 함수는 내부 `unique_ptr` 컨테이너나 소유권을 외부에 노출하지 않고, C++20 range 뷰(`auto`, `std::views::transform`) 또는 포인터 span(`std::span<T* const>`)을 반환하여 호출부에서 `for (T* item : Get*s())` 형태로 직관적으로 순회할 수 있도록 한다.
+- 메모리 리소스(할당자)를 동적으로 주입하지 않는 일반 컨테이너는 불필요한 추상화(`std::pmr`)를 지양하고 표준 컨테이너(`std::vector`, `std::unordered_map` 등)를 기본으로 사용한다.
+
+### PBR 머티리얼 속성 표준화
+
+- PBR 물리 기반 셰이딩 속성은 `BaseColor`, `EmissiveColor`, `SpecularColor`, `Metallic`, `Roughness`를 기본 프로퍼티로 정의한다.
+- `Smoothness`는 별도 독립 상태로 두지 않고 $1.0f - \text{Roughness}$를 계산하여 반환/설정하는 편의 인터페이스로만 제공한다. `AlbedoColor`나 `Glossiness` 등 동의어 속성의 중복 선언을 지양한다.
 
 ### 헤더 인클루드
 
@@ -96,10 +114,10 @@
 | --- | --- |
 | `main` | 1~3차 |
 | `develop` | 1~3차 |
-| `project/homework-1` ~ `project/homework-4` | 각각 해당 과제만 |
+| `project/homework-1` ~ `project/homework-5` | 각각 해당 과제만 |
 
-- 4차는 해당 프로젝트 브랜치에 보관하고, 현재는 `develop`과 `main`에 병합하지 않는다.
-- 4차는 사용자 보고상 `Camera.hpp` 내용 유실이 있으며, 소스 분석에서도 실행 제어 관련 결함을 확인했다.
+- 4·5차는 각 프로젝트 브랜치에 보관하고, 현재는 `develop`과 `main`에 병합하지 않는다.
+- 4차는 사용자 보고상 `Camera.hpp` 내용 유실이 있으며, 소스 분석에서도 실행 제어 관련 결함을 확인했다. 5차에는 함수 중복 정의, 프로젝트 컴파일 대상 누락, 실행 흐름 미연결 문제가 확인되었다.
 - 이후 수정과 사용자 실행 확인을 거쳐 통합 가능하다고 판단되면 사용자의 지시에 따라 범위를 갱신한다. 과거 진행 정도만으로 포함 범위를 바꾸지 않는다.
 - 이 표는 확정된 목표 구성이다. 문서 수정 자체가 기존 브랜치나 이력을 변경한 것은 아니므로 실제 Git 상태는 별도로 확인한다.
 
@@ -111,6 +129,16 @@
 - 커밋 메시지에 `검증:` 항목을 넣지 않는다. 실행하지 않은 확인 결과나 존재하지 않는 이슈 번호를 기록하지 않는다.
 - 요청한 변경만 스테이징한다. 사용자 작업이나 다른 과제의 변경을 임의로 포함하지 않는다.
 - 상태와 차이 확인은 필요한 최소 범위로 제한한다.
+
+### 커밋 메시지 작성 예시
+
+```text
+refactor: 디스플레이 및 입력 컴포넌트 생명주기 관리 구조 개선
+
+- Display 서브시스템 이벤트 핸들러 명명 규칙 적용
+- 엔진 객체 접근자 반환 타입을 포인터로 통일
+- 엔티티 목록 조회 뷰 함수 추가
+```
 
 | 타입 | 용도 |
 | --- | --- |
