@@ -82,6 +82,10 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<const Camera* const> GetCameras() const noexcept;
 
 	private:
+		using WorldCallback = void (World::*)();
+		using EntityCallback = void (Entity::*)();
+		using RenderCallback = void (Entity::*)(GPUCommandBuffer&);
+
 		void EarlyUpdate();
 		void FixedUpdate();
 		void Update();
@@ -97,8 +101,8 @@ namespace TUK::Framework
 		template <class TCallback>
 		void ForEachEntity(TCallback callback);
 
-		void UpdateEntities(void (World::*worldCallback)(), void (Entity::*entityCallback)());
-		void RenderEntities(void (Entity::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer);
+		void UpdateEntities(WorldCallback worldCallback, EntityCallback entityCallback);
+		void RenderEntities(RenderCallback callback, GPUCommandBuffer& commandBuffer);
 		void DestroyEntities();
 		void ClearEntities();
 

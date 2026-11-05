@@ -162,7 +162,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void World::UpdateEntities(void (World::*worldCallback)(), void (Entity::*entityCallback)())
+	void World::UpdateEntities(WorldCallback worldCallback, EntityCallback entityCallback)
 	{
 		if (!isEntered)
 		{
@@ -184,7 +184,7 @@ namespace TUK::Framework
 		});
 	}
 
-	void World::RenderEntities(void (Entity::*callback)(GPUCommandBuffer&), GPUCommandBuffer& commandBuffer)
+	void World::RenderEntities(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
 		ForEachEntity([callback, &commandBuffer](Entity& entity)
 		{
