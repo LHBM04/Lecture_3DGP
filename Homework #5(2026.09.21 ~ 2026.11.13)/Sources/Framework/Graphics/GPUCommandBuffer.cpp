@@ -17,7 +17,7 @@
 #include "GPUGraphicsPipelineState.hpp"
 #include "GPUMesh.hpp"
 #include "GPUTarget.hpp"
-#include "GPUTexture.hpp"
+#include "GPUTexture2D.hpp"
 
 namespace TUK::Framework
 {
@@ -189,7 +189,7 @@ namespace TUK::Framework
 	}
 
 	void GPUCommandBuffer::TransitionTexture(
-		const GPUTexture& texture,
+		const GPUTexture2D& texture,
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
 	{

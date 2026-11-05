@@ -3,6 +3,8 @@
 #include "Resources/Asset.hpp"
 #include "Resources/AssetLoader.hpp"
 #include "Resources/AssetSubsystem.hpp"
+#include "Resources/ImageAsset.hpp"
+#include "Resources/ImageAssetLoader.hpp"
 #include "Resources/MaterialAsset.hpp"
 #include "Resources/MaterialAssetLoader.hpp"
 #include "Resources/MeshAsset.hpp"

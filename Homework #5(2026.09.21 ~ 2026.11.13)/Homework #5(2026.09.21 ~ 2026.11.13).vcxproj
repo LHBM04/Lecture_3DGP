@@ -179,7 +179,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)External\Libraries\$(ExternalTriplet)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectXTex.lib;DirectXMesh.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ole32.lib;windowscodecs.lib;dxcompiler.lib;d3d12.lib;dxgi.lib;DirectXTK12.lib;DirectXTex.lib;DirectXMesh.lib;DirectX-Headers.lib;DirectX-Guids.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
@@ -204,6 +204,7 @@
   </Target>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Entities.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp" />
     <ClInclude Include="Sources\Framework\Resources.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\App.hpp" />
@@ -221,7 +222,7 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUDevice.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture2D.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\RenderSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUBuffer.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUFence.hpp" />
@@ -252,6 +253,8 @@
     <ClInclude Include="Sources\Framework\Platform\InputEvents.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Utilities.hpp" />
     <ClInclude Include="Sources\Framework\Utilities\BinaryUtility.hpp" />
     <ClInclude Include="Sources\Framework\Utilities\Logger.hpp" />
@@ -274,6 +277,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\ImageAsset.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\ImageAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Utilities\Logger.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Core\System.cpp" />
@@ -287,6 +292,7 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp" />
+    <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp" />
     <ClCompile Include="Sources\Framework\Entities\Entity.cpp" />
     <ClCompile Include="Sources\Framework\Entities\Transform.cpp" />
@@ -336,7 +342,7 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <RuntimeResource Include="Resources\Models\**\*;Resources\Meshes\**\*;Resources\Materials\**\*" />
+    <RuntimeResource Include="Resources\Models\**\*;Resources\Meshes\**\*;Resources\Materials\**\*;Resources\Images\**\*" />
   </ItemGroup>
   <Target Name="CopyRuntimeResources" AfterTargets="Build">
     <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />

@@ -156,6 +156,12 @@
     <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
@@ -225,7 +231,10 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture2D.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp">
@@ -273,6 +282,9 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp">
@@ -336,6 +348,12 @@
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ImageAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ImageAssetLoader.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp">

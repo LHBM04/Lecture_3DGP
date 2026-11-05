@@ -1,8 +1,10 @@
-﻿#include "Precompiled.hpp"
-#include "GPUDevice.hpp"
+#include "Precompiled.hpp"
 
 #include <array>
 #include <format>
+
+#include "GPUDevice.hpp"
+#include "GPUSampler.hpp"
 
 namespace TUK::Framework
 {
@@ -68,12 +70,18 @@ namespace TUK::Framework
 					D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE);
 			}
 
+			const std::array samplers = {
+				GPUSampler::LinearWrap().ToStaticDescription(0),
+				GPUSampler::LinearClamp().ToStaticDescription(1),
+				GPUSampler::PointClamp().ToStaticDescription(2)
+			};
+
 			CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription{};
 			rootSignatureDescription.Init_1_1(
 				CONSTANT_BUFFER_SLOT_COUNT,
 				parameters.data(),
-				0,
-				nullptr,
+				static_cast<u32>(samplers.size()),
+				samplers.data(),
 				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 			ComPtr<ID3DBlob> serializedBlob;

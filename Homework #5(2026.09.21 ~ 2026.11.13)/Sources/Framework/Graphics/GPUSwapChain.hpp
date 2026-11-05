@@ -14,7 +14,7 @@
 #include "../Core/Common.hpp"
 
 #include "GPUTarget.hpp"
-#include "GPUTexture.hpp"
+#include "GPUTexture2D.hpp"
 
 namespace TUK::Framework
 {
@@ -46,12 +46,12 @@ namespace TUK::Framework
 		GPUSwapChain(
 			ComPtr<IDXGISwapChain4> dxgiSwapChain,
 			ComPtr<ID3D12DescriptorHeap> rtvHeap,
-			std::pmr::vector<GPUTexture>&& backBuffers,
+			std::pmr::vector<GPUTexture2D>&& backBuffers,
 			u32 rtvDescriptorSize) noexcept;
 
 		ComPtr<IDXGISwapChain4> dxgiSwapChain;
 		ComPtr<ID3D12DescriptorHeap> rtvHeap;
-		std::pmr::vector<GPUTexture> backBuffers;
+		std::pmr::vector<GPUTexture2D> backBuffers;
 		u32 rtvDescriptorSize;
 	};
 
@@ -63,7 +63,7 @@ namespace TUK::Framework
 	inline GPUSwapChain::GPUSwapChain(
 		ComPtr<IDXGISwapChain4> dxgiSwapChain,
 		ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		std::pmr::vector<GPUTexture>&& backBuffers,
+		std::pmr::vector<GPUTexture2D>&& backBuffers,
 		u32 rtvDescriptorSize) noexcept
 		: dxgiSwapChain(std::move(dxgiSwapChain))
 		, rtvHeap(std::move(rtvHeap))

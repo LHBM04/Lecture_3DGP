@@ -26,7 +26,7 @@ namespace TUK::Framework
 	class GPUDevice;
 	class GPUMesh;
 	class GPUTarget;
-	class GPUTexture;
+	class GPUTexture2D;
 	class MaterialAsset;
 
 	class GPUCommandBuffer
@@ -49,7 +49,7 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> SetObjectTransform(const Matrix4x4<f32>& worldMatrix) noexcept;
 
 		void TransitionTexture(
-			const GPUTexture& texture,
+			const GPUTexture2D& texture,
 			D3D12_RESOURCE_STATES stateBefore,
 			D3D12_RESOURCE_STATES stateAfter);
 

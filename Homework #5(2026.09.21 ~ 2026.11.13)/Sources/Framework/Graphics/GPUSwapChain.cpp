@@ -49,7 +49,7 @@ namespace TUK::Framework
 		const u32 descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
-		std::pmr::vector<GPUTexture> backBuffers;
+		std::pmr::vector<GPUTexture2D> backBuffers;
 		backBuffers.reserve(description.BufferCount);
 
 		for (u32 index = 0; index < description.BufferCount; ++index)
@@ -86,7 +86,7 @@ namespace TUK::Framework
 			static_cast<INT>(index),
 			rtvDescriptorSize);
 
-		const GPUTexture& texture = backBuffers[index];
+		const GPUTexture2D& texture = backBuffers[index];
 		return GPUTarget(texture, rtvHandle, texture.GetD3DResource().GetDesc().Format);
 	}
 }

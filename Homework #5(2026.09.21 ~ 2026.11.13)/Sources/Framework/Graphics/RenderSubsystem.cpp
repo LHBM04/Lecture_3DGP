@@ -8,7 +8,7 @@
 #include "../Platform/Display.hpp"
 #include "../Platform/DisplayEvents.hpp"
 
-#include "GPUTexture.hpp"
+#include "GPUTexture2D.hpp"
 
 #include "../Utilities/Logger.hpp"
 
@@ -65,7 +65,7 @@ namespace TUK::Framework
 		for (auto& [display, swapChain] : swapChains)
 		{
 			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
-			const GPUTexture& backBuffer = target.GetTexture();
+			const GPUTexture2D& backBuffer = target.GetTexture();
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			commandBuffer->ClearGPUTarget(target, ColorRGBA<f32>::GetBlack());
 			commandBuffer->SetGPUTarget(target);

@@ -4,12 +4,12 @@
 
 namespace TUK::Framework
 {
-	class GPUTexture;
+	class GPUTexture2D;
 
 	class GPUTarget
 	{
 	public:
-		GPUTarget(const GPUTexture& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept;
+		GPUTarget(const GPUTexture2D& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept;
 		~GPUTarget() noexcept = default;
 
 		GPUTarget(const GPUTarget&) = delete;
@@ -18,24 +18,24 @@ namespace TUK::Framework
 		GPUTarget(GPUTarget&&) = delete;
 		GPUTarget& operator=(GPUTarget&&) = delete;
 
-		[[nodiscard]] const GPUTexture& GetTexture() const noexcept;
+		[[nodiscard]] const GPUTexture2D& GetTexture() const noexcept;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetD3DRTVHandle() const noexcept;
 		[[nodiscard]] DXGI_FORMAT GetDXGIFormat() const noexcept;
 
 	private:
-		const GPUTexture* texture;
+		const GPUTexture2D* texture;
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 		DXGI_FORMAT format;
 	};
 
-	inline GPUTarget::GPUTarget(const GPUTexture& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept
+	inline GPUTarget::GPUTarget(const GPUTexture2D& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept
 		: texture(&texture)
 		, rtvHandle(rtvHandle)
 		, format(format)
 	{
 	}
 
-	inline const GPUTexture& GPUTarget::GetTexture() const noexcept
+	inline const GPUTexture2D& GPUTarget::GetTexture() const noexcept
 	{
 		return *texture;
 	}

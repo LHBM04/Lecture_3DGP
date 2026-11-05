@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Graphics/Camera.hpp"
 #include "Graphics/GPUBuffer.hpp"
@@ -7,9 +7,10 @@
 #include "Graphics/GPUFence.hpp"
 #include "Graphics/GPUGraphicsPipelineState.hpp"
 #include "Graphics/GPUMesh.hpp"
+#include "Graphics/GPUSampler.hpp"
 #include "Graphics/GPUShader.hpp"
 #include "Graphics/GPUSwapChain.hpp"
 #include "Graphics/GPUTarget.hpp"
-#include "Graphics/GPUTexture.hpp"
+#include "Graphics/GPUTexture2D.hpp"
 #include "Graphics/MeshRenderer.hpp"
 #include "Graphics/RenderSubsystem.hpp"
