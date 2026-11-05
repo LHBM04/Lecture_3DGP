@@ -17,7 +17,7 @@ namespace TUK::Framework
 	{
 		if (sizeInBytes == 0 || sizeInBytes > std::numeric_limits<usize>::max())
 		{
-			return std::unexpected("GPUBuffer 크기가 유효하지 않습니다.");
+			return std::unexpected("Invalid GPU buffer size.");
 		}
 
 		const CD3DX12_HEAP_PROPERTIES heapProperties(heapType);
@@ -32,7 +32,7 @@ namespace TUK::Framework
 			nullptr,
 			IID_PPV_ARGS(resource.GetAddressOf()))))
 		{
-			return std::unexpected("GPUBuffer 리소스 생성에 실패했습니다.");
+			return std::unexpected("Failed to create GPU buffer resource.");
 		}
 
 		return GPUBuffer(std::move(resource), heapType);
@@ -60,13 +60,13 @@ namespace TUK::Framework
 	{
 		if (!d3dResource || heapType != D3D12_HEAP_TYPE_UPLOAD)
 		{
-			return std::unexpected("Write는 유효한 UPLOAD 버퍼에서만 사용할 수 있습니다.");
+			return std::unexpected("Write requires a valid UPLOAD buffer.");
 		}
 
 		const u64 size = GetSizeInBytes();
 		if (offset > size || data.size() > size - offset)
 		{
-			return std::unexpected("GPUBuffer Write 범위를 초과했습니다.");
+			return std::unexpected("GPU buffer write range is out of bounds.");
 		}
 
 		if (data.empty())
@@ -78,7 +78,7 @@ namespace TUK::Framework
 		const CD3DX12_RANGE readRange{ 0, 0 };
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
-			return std::unexpected("GPUBuffer Write Map에 실패했습니다.");
+			return std::unexpected("Failed to map GPU buffer for writing.");
 		}
 
 		const auto begin = static_cast<usize>(offset);
@@ -93,13 +93,13 @@ namespace TUK::Framework
 	{
 		if (!d3dResource || heapType != D3D12_HEAP_TYPE_READBACK)
 		{
-			return std::unexpected("Read는 유효한 READBACK 버퍼에서만 사용할 수 있습니다.");
+			return std::unexpected("Read requires a valid READBACK buffer.");
 		}
 
 		const u64 size = GetSizeInBytes();
 		if (offset > size || data.size() > size - offset)
 		{
-			return std::unexpected("GPUBuffer Read 범위를 초과했습니다.");
+			return std::unexpected("GPU buffer read range is out of bounds.");
 		}
 
 		if (data.empty())
@@ -112,7 +112,7 @@ namespace TUK::Framework
 		void* mappedData = nullptr;
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
-			return std::unexpected("GPUBuffer Read Map에 실패했습니다.");
+			return std::unexpected("Failed to map GPU buffer for reading.");
 		}
 
 		std::memcpy(data.data(), static_cast<const u8*>(mappedData) + begin, data.size());

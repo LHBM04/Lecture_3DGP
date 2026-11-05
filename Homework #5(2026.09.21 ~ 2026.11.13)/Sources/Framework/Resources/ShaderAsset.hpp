@@ -20,13 +20,6 @@ namespace TUK::Framework
 
 		ShaderAsset() noexcept = default;
 		ShaderAsset(GPUShader shader, std::filesystem::path sourcePath = {}) noexcept;
-		~ShaderAsset() noexcept override = default;
-
-		ShaderAsset(const ShaderAsset&) = delete;
-		ShaderAsset& operator=(const ShaderAsset&) = delete;
-
-		ShaderAsset(ShaderAsset&&) noexcept = default;
-		ShaderAsset& operator=(ShaderAsset&&) noexcept = default;
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;

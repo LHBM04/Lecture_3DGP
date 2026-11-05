@@ -12,31 +12,24 @@ namespace TUK::Framework
 {
 	SystemStatus AssetSubsystem::OnStartup()
 	{
-		const auto preload = [this]<class TAsset>(const std::filesystem::path& directory, std::string_view extension)
+		std::filesystem::path shadersAssetsPath = "Resources/Shaders";
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(shadersAssetsPath))
 		{
-			std::error_code error;
-			std::filesystem::recursive_directory_iterator entry(directory, error);
-			const std::filesystem::recursive_directory_iterator END;
-			for (; !error && entry != END; entry.increment(error))
-			{
-				if (entry->is_regular_file(error) && entry->path().extension() == extension
-					&& !LoadAsset<TAsset>(entry->path()))
-				{
-					return false;
-				}
+			if (entry.path().extension() == ".cso")
+			{	
+				LoadAsset<ShaderAsset>(entry.path());
+				Logger::LogDebug("{}", entry.path().generic_string());
 			}
-			if (error)
-			{
-				std::cerr << "Cannot scan assets: " << directory.generic_string() << ": " << error.message() << '\n';
-				return false;
-			}
-			return true;
-		};
+		}
 
-		if (!preload.operator()<ShaderAsset>("Resources/Shaders", ".cso")
-			|| !preload.operator()<MaterialAsset>("Resources/Materials", ".bin"))
+		std::filesystem::path materialsAssetsPath = "Resources/Materials";
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(materialsAssetsPath))
 		{
-			return SystemStatus::FAILURE;
+			if (entry.path().extension() == ".bin")
+			{	
+				LoadAsset<MaterialAsset>(entry.path());
+				Logger::LogDebug("{}", entry.path().generic_string());
+			}
 		}
 
 		std::filesystem::path meshesAssetsPath = "Resources/Meshes";
@@ -45,6 +38,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<MeshAsset>(entry.path());
+				Logger::LogDebug("{}", entry.path().generic_string());
 			}
 		}
 
@@ -54,9 +48,9 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<ModelAsset>(entry.path());
+				Logger::LogDebug("{}", entry.path().generic_string());
 			}
 		}
-
 
 		return SystemStatus::CONTINUE;
 	}

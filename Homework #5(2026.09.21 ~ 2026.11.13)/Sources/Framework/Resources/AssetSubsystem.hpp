@@ -16,6 +16,8 @@
 #include "../Core/AppSubsystem.hpp"
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 #include "Asset.hpp"
 #include "AssetLoader.hpp"
 
@@ -114,7 +116,7 @@ namespace TUK::Framework
 		auto asset = assetLoader->second->Load(normalizedPath);
 		if (!asset)
 		{
-			std::cerr << "Asset load failed: " << normalizedPath.generic_string() << ": " << asset.error() << std::endl;
+			Logger::LogError("Asset load failed: {}: {}", normalizedPath.generic_string(), asset.error());
 			return nullptr;
 		}
 

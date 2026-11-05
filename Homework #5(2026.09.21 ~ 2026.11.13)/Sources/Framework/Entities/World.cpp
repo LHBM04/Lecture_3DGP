@@ -107,14 +107,14 @@ namespace TUK::Framework
 		const std::span<const Submodel> submodels = model.GetSubmodels();
 		if (submodels.empty())
 		{
-			Logger::Error("Model has no submodels: {}", model.GetName());
+			Logger::LogError("Model has no submodels: {}", model.GetName());
 			return nullptr;
 		}
 
 		const AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		if (!assets)
 		{
-			Logger::Error("AssetSubsystem is unavailable for model: {}", model.GetName());
+			Logger::LogError("AssetSubsystem is unavailable for model: {}", model.GetName());
 			return nullptr;
 		}
 		struct PreparedRenderer
@@ -147,13 +147,13 @@ namespace TUK::Framework
 				const MeshAsset* mesh = assets->FindLoadedAsset<MeshAsset>(meshPath);
 				if (!mesh)
 				{
-					Logger::Error("Mesh {} was not loaded for model {}", meshPath.generic_string(), model.GetName());
+					Logger::LogError("Mesh {} was not loaded for model {}", meshPath.generic_string(), model.GetName());
 					return nullptr;
 				}
 				const MaterialAsset* material = assets->FindLoadedAsset<MaterialAsset>(materialPath);
 				if (!material || !material->GetGraphicsPipelineState())
 				{
-					Logger::Error("Material {} was not prepared for model {}", materialPath.generic_string(), model.GetName());
+					Logger::LogError("Material {} was not prepared for model {}", materialPath.generic_string(), model.GetName());
 					return nullptr;
 				}
 				prepared[index].push_back(PreparedRenderer{ mesh, material });

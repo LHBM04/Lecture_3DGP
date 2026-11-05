@@ -25,7 +25,7 @@ namespace TUK::Framework
 		if (FAILED(result))
 		{
 			return std::unexpected(std::format(
-				"GPUGraphicsPipelineState 생성에 실패했습니다. HRESULT: 0x{:08X}",
+				"Failed to create graphics pipeline state. HRESULT: 0x{:08X}",
 				static_cast<u32>(result)));
 		}
 

@@ -27,13 +27,6 @@ namespace TUK::Framework
 		using Asset::Asset;
 
 		MaterialAsset() noexcept = default;
-		~MaterialAsset() noexcept override = default;
-
-		MaterialAsset(const MaterialAsset&) = delete;
-		MaterialAsset& operator=(const MaterialAsset&) = delete;
-
-		MaterialAsset(MaterialAsset&&) noexcept = default;
-		MaterialAsset& operator=(MaterialAsset&&) noexcept = default;
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;

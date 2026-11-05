@@ -1,18 +1,36 @@
 ﻿#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
-#include "../Framework/Platform.hpp"
-#include "../Framework/Graphics.hpp"
+#include "Framework/Platform.hpp"
+#include "Framework/Graphics.hpp"
+#include "Framework/Utilities.hpp"
 
 namespace TUK::Game
 {
 	SystemStatus MyEngine::Startup()
 	{
-		AddSubsystem<DisplaySubsystem>();
+		displaySubsystem = AddSubsystem<DisplaySubsystem>();
+		if (!displaySubsystem)
+		{
+			Logger::LogError("Failed to add DisplaySubsystem.");
+			return SystemStatus::FAILURE;
+		}
 
-		EventSubsystem* eventSubsystem = AddSubsystem<EventSubsystem>();
+		eventSubsystem = AddSubsystem<EventSubsystem>();
+		if (!eventSubsystem)
+		{
+			Logger::LogError("Failed to add EventSubsystem.");
+			return SystemStatus::FAILURE;
+		}
 		
-		RenderSubsystem* renderSubsystem = AddSubsystem<RenderSubsystem>();
+		renderSubsystem = AddSubsystem<RenderSubsystem>();
+		if (!renderSubsystem)
+		{
+			Logger::LogError("Failed to add RenderSubsystem.");
+			return SystemStatus::FAILURE;
+		}
+
+		// Register event listeners for display events
 		eventSubsystem->AddListener<DisplayCreateEvent>(renderSubsystem, &RenderSubsystem::OnDisplayCreated);
 		eventSubsystem->AddListener<DisplayCloseEvent>(renderSubsystem, &RenderSubsystem::OnDisplayClosed);
 

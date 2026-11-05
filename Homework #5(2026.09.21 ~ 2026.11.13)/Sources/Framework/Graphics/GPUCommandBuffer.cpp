@@ -61,7 +61,7 @@ namespace TUK::Framework
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(d3dCommandAllocator.GetAddressOf()))))
 		{
-			return std::unexpected("D3D12 Command Allocator ?앹꽦???ㅽ뙣?덉뒿?덈떎.");
+			return std::unexpected("Failed to create D3D12 command allocator.");
 		}
 
 		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
@@ -72,12 +72,12 @@ namespace TUK::Framework
 			nullptr,
 			IID_PPV_ARGS(d3dCommandList.GetAddressOf()))))
 		{
-			return std::unexpected("D3D12 Command List ?앹꽦???ㅽ뙣?덉뒿?덈떎.");
+			return std::unexpected("Failed to create D3D12 command list.");
 		}
 
 		if (FAILED(d3dCommandList->Close()))
 		{
-			return std::unexpected("D3D12 Command List 珥덇린 Close???ㅽ뙣?덉뒿?덈떎.");
+			return std::unexpected("Failed to close initial D3D12 command list.");
 		}
 
 		return GPUCommandBuffer(device, std::move(d3dCommandList), std::move(d3dCommandAllocator));
@@ -87,11 +87,11 @@ namespace TUK::Framework
 	{
 		if (FAILED(d3dCommandAllocator->Reset()))
 		{
-			return std::unexpected("D3D12 Command Allocator Reset???ㅽ뙣?덉뒿?덈떎.");
+			return std::unexpected("Failed to reset D3D12 command allocator.");
 		}
 		if (FAILED(d3dCommandList->Reset(d3dCommandAllocator.Get(), nullptr)))
 		{
-			return std::unexpected("D3D12 Command List Reset???ㅽ뙣?덉뒿?덈떎.");
+			return std::unexpected("Failed to reset D3D12 command list.");
 		}
 
 		constantBufferPageIndex = 0;
@@ -124,7 +124,7 @@ namespace TUK::Framework
 		cameraPrepared = false;
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("移대찓???곸슜 ?꾩뿉 ?뚮뜑 ?源껋쓣 吏?뺥빐???⑸땲??");
+			return std::unexpected("A render target must be set before applying a camera.");
 		}
 
 		CameraConstants constants{};
@@ -146,12 +146,12 @@ namespace TUK::Framework
 	{
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("癒명꽣由ъ뼹 ?곸슜 ?꾩뿉 ?뚮뜑 ?源껋쓣 吏?뺥빐???⑸땲??");
+			return std::unexpected("A render target must be set before applying a material.");
 		}
 
 		if (targetFormat != activeTargetFormat)
 		{
-			return std::unexpected("癒명꽣由ъ뼹??PSO? ?뚮뜑 ?源??щ㎎???쇱튂?섏? ?딆뒿?덈떎.");
+			return std::unexpected("Material pipeline format does not match the render target format.");
 		}
 		const ColorRGBA<f32>& baseColor = material.GetBaseColor();
 		const ColorRGBA<f32>& emissiveColor = material.GetEmissiveColor();
@@ -174,7 +174,7 @@ namespace TUK::Framework
 	{
 		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("?ㅻ툕?앺듃 蹂???곸슜 ?꾩뿉 移대찓?쇰? 吏?뺥빐???⑸땲??");
+			return std::unexpected("A camera and render target must be set before applying an object transform.");
 		}
 
 		ObjectConstants constants{};
@@ -324,7 +324,7 @@ namespace TUK::Framework
 		constexpr u64 ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
 		if (!device || bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
 		{
-			return std::unexpected("?곸닔 踰꾪띁 ?곗씠???먮뒗 GPUDevice媛 ?좏슚?섏? ?딆뒿?덈떎.");
+			return std::unexpected("Invalid GPU device or constant buffer data.");
 		}
 
 		const u64 alignedSize = (bytes.size() + ALIGNMENT - 1) / ALIGNMENT * ALIGNMENT;

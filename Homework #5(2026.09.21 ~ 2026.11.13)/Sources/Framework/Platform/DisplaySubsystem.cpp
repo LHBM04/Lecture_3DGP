@@ -1,9 +1,11 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
-#include "Resource.h"
-
 #include "../Core/Engine.hpp"
+
+#include "../Utilities/Logger.hpp"
+
+#include "Resource.h"
 
 #include "DisplayEvents.hpp"
 #include "EventSubsystem.hpp"
@@ -127,6 +129,7 @@ namespace TUK::Framework
 
 		if (wndClass = RegisterClassEx(&windowClass); wndClass == 0)
 		{
+			Logger::LogError("Failed to register window class (Win32 error: {}).", GetLastError());
 			return SystemStatus::FAILURE;
 		}
 
@@ -187,7 +190,7 @@ namespace TUK::Framework
 
 		if (!hWnd)
 		{
-			return std::unexpected(std::format("창 생성 실패 (Win32 오류: {}).", GetLastError()));
+			return std::unexpected(std::format("Failed to create window (Win32 error: {}).", GetLastError()));
 		}
 
 		auto reference = std::ref(*newWindow);

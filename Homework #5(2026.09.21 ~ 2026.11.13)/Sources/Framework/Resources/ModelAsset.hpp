@@ -38,13 +38,6 @@ namespace TUK::Framework
 		using Asset::Asset;
 
 		ModelAsset() noexcept = default;
-		~ModelAsset() noexcept override = default;
-
-		ModelAsset(const ModelAsset&) = delete;
-		ModelAsset& operator=(const ModelAsset&) = delete;
-
-		ModelAsset(ModelAsset&&) noexcept = default;
-		ModelAsset& operator=(ModelAsset&&) noexcept = default;
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;

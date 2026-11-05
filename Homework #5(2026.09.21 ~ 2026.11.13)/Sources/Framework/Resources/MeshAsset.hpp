@@ -28,13 +28,6 @@ namespace TUK::Framework
 		using Asset::Asset;
 
 		MeshAsset() noexcept = default;
-		~MeshAsset() noexcept override = default;
-
-		MeshAsset(const MeshAsset&) = delete;
-		MeshAsset& operator=(const MeshAsset&) = delete;
-
-		MeshAsset(MeshAsset&&) noexcept = default;
-		MeshAsset& operator=(MeshAsset&&) noexcept = default;
 
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;

@@ -22,7 +22,7 @@ namespace TUK::Framework
 		ComPtr<IDXGIFactory6> dxgiFactory;
 		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf()))))
 		{
-			return std::unexpected("DXGI Factory 생성 실패!");
+			return std::unexpected("Failed to create DXGI factory.");
 		}
 
 		for (UINT adapterIndex = 0; ; ++adapterIndex)
@@ -55,7 +55,7 @@ namespace TUK::Framework
 			ComPtr<ID3D12CommandQueue> d3dCommandQueue;
 			if (FAILED(d3dDevice->CreateCommandQueue(&queueDescription, IID_PPV_ARGS(d3dCommandQueue.GetAddressOf()))))
 			{
-				return std::unexpected("D3D12 Command Queue 생성 실패!");
+				return std::unexpected("Failed to create D3D12 command queue.");
 			}
 
 			constexpr u32 CONSTANT_BUFFER_SLOT_COUNT = 3;
@@ -86,7 +86,7 @@ namespace TUK::Framework
 			if (FAILED(serializeResult))
 			{
 				std::string message = std::format(
-					"공통 루트 시그니처 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
+					"Failed to serialize shared root signature. HRESULT: 0x{:08X}",
 					static_cast<u32>(serializeResult));
 				if (errorBlob && errorBlob->GetBufferSize() > 0)
 				{
@@ -113,7 +113,7 @@ namespace TUK::Framework
 			if (FAILED(createResult))
 			{
 				return std::unexpected(std::format(
-					"공통 루트 시그니처 생성에 실패했습니다. HRESULT: 0x{:08X}",
+					"Failed to create shared root signature. HRESULT: 0x{:08X}",
 					static_cast<u32>(createResult)));
 			}
 
@@ -124,6 +124,6 @@ namespace TUK::Framework
 				std::move(d3dRootSignature));
 		}
 
-		return std::unexpected("GPU 장치 생성 실패!");
+		return std::unexpected("Failed to create GPU device.");
 	}
 }

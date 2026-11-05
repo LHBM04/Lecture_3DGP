@@ -10,6 +10,8 @@
 
 #include "GPUTexture.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	SystemStatus RenderSubsystem::OnStartup()
@@ -17,7 +19,7 @@ namespace TUK::Framework
 		auto newDevice = GPUDevice::Create();
 		if (!newDevice)
 		{
-			std::cerr << "Render Subsystem Startup ?ㅽ뙣: " << newDevice.error() << std::endl;
+			Logger::LogError("{}{}", "RenderSubsystem startup failed: ", newDevice.error());
 			return SystemStatus::FAILURE;
 		}
 		device = std::move(*newDevice);
@@ -25,7 +27,7 @@ namespace TUK::Framework
 		auto newCommandBuffer = GPUCommandBuffer::Create(*device);
 		if (!newCommandBuffer)
 		{
-			std::cerr << "Render Subsystem Startup ?ㅽ뙣: " << newCommandBuffer.error() << std::endl;
+			Logger::LogError("{}{}", "RenderSubsystem startup failed: ", newCommandBuffer.error());
 			return SystemStatus::FAILURE;
 		}
 		commandBuffer = std::move(*newCommandBuffer);
@@ -33,7 +35,7 @@ namespace TUK::Framework
 		auto newFence = GPUFence::Create(*device);
 		if (!newFence)
 		{
-			std::cerr << "Render Subsystem Startup ?ㅽ뙣: " << newFence.error() << std::endl;
+			Logger::LogError("{}{}", "RenderSubsystem startup failed: ", newFence.error());
 			return SystemStatus::FAILURE;
 		}
 		fence = std::move(*newFence);
@@ -55,7 +57,7 @@ namespace TUK::Framework
 	{
 		if (auto result = commandBuffer->Reset(); !result)
 		{
-			std::cerr << result.error() << std::endl;
+			Logger::LogError("{}", result.error());
 			return SystemStatus::FAILURE;
 		}
 
@@ -78,7 +80,7 @@ namespace TUK::Framework
 
 		if (auto result = commandBuffer->Submit(); !result)
 		{
-			std::cerr << result.error() << std::endl;
+			Logger::LogError("{}", result.error());
 			return SystemStatus::FAILURE;
 		}
 
@@ -119,7 +121,7 @@ namespace TUK::Framework
 		auto result = GPUSwapChain::Create(*device, display, description);
 		if (!result)
 		{
-			std::cerr << "Render Subsystem Display Registration ?ㅽ뙣: " << result.error() << std::endl;
+			Logger::LogError("{}{}", "RenderSubsystem display registration failed: ", result.error());
 			return;
 		}
 

@@ -12,7 +12,7 @@ namespace TUK::Framework
 		ComPtr<ID3D12Fence> d3dFence;
 		if (FAILED(device.GetD3DDevice().CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(d3dFence.GetAddressOf()))))
 		{
-			return std::unexpected("D3D12 Fence 생성에 실패했습니다.");
+			return std::unexpected("Failed to create D3D12 fence.");
 		}
 
 		return GPUFence(std::move(d3dFence));

@@ -356,7 +356,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <None Include="Resources\Shaders\CompileShader.ps1" />
     <None Include="Resources\Models\Apache.bin" />
     <None Include="Resources\Models\Gunship.bin" />
     <None Include="Resources\Models\Hummer.bin" />

@@ -12,6 +12,8 @@
 #include "AssetSubsystem.hpp"
 #include "ShaderAsset.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	MaterialAssetLoader::MaterialAssetLoader(
@@ -33,16 +35,17 @@ namespace TUK::Framework
 		}
 
 		std::ifstream file(path, std::ios::binary);
-		if (!file)
+		if (not file)
 		{
-			return std::unexpected("Cannot open material: " + path.generic_string());
+			return std::unexpected(std::format("Cannot open material: {}", path.generic_string()));
 		}
 
 		const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
+		
 		auto material = std::make_unique<MaterialAsset>();
 		if (file.bad() || !material->Deserialize(bytes))
 		{
-			return std::unexpected("Cannot deserialize material: " + path.generic_string());
+			return std::unexpected(std::format("Cannot deserialize material: {}", path.generic_string()));
 		}
 
 		const auto shaderPath = [&path](std::string_view name)
@@ -64,19 +67,21 @@ namespace TUK::Framework
 		const ShaderAsset* vertex = assets.FindLoadedAsset<ShaderAsset>(vertexPath);
 		if (!vertex)
 		{
-			return std::unexpected("Vertex shader was not preloaded: " + vertexPath.generic_string());
+			return std::unexpected(std::format("Vertex shader was not preloaded: {}", vertexPath.generic_string()));
 		}
+
 		const ShaderAsset* pixel = assets.FindLoadedAsset<ShaderAsset>(pixelPath);
 		if (!pixel)
 		{
-			return std::unexpected("Pixel shader was not preloaded: " + pixelPath.generic_string());
+			return std::unexpected(std::format("Pixel shader was not preloaded: {}", pixelPath.generic_string()));
 		}
 
 		auto pipeline = GPUGraphicsPipelineState::CreateForMaterial(device, *material, *vertex, *pixel, targetFormat);
 		if (!pipeline)
 		{
-			return std::unexpected(pipeline.error());
+			return std::unexpected(std::format("Cannot create graphics pipeline state: {}", pipeline.error()));
 		}
+
 		material->SetGraphicsPipelineState(std::move(*pipeline), targetFormat);
 		return material;
 	}

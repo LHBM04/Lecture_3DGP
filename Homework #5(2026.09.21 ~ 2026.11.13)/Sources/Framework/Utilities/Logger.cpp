@@ -34,7 +34,7 @@ namespace TUK::Framework
 
 	namespace Logger
 	{
-		void Write(LogLevel level, std::string_view message, std::source_location location)
+		void Log(LogLevel level, std::string_view message, std::source_location location)
 		{
 			const std::string line = std::format("[{}] {} ({}:{})\n", GetLevelName(level), message, location.file_name(), location.line());
 			std::osyncstream(std::clog) << line << std::flush;

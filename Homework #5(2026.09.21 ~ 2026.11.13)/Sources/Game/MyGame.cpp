@@ -10,6 +10,8 @@
 
 #include "Resource.h"
 
+#include "Framework/Utilities/Logger.hpp"
+
 namespace TUK::Game
 {
 	SystemStatus MyGame::Startup()
@@ -17,12 +19,14 @@ namespace TUK::Game
 		EventSubsystem* eventSubsystem = Engine::GetInstance().GetSubsystem<EventSubsystem>();
 		if (!eventSubsystem)
 		{
+			Logger::LogError("Failed to get Event Subsystem.");
 			return SystemStatus::FAILURE;
 		}
 
 		InputSubsystem* inputSubsystem = AddSubsystem<InputSubsystem>();
 		if (!inputSubsystem)
 		{
+			Logger::LogError("Failed to get Input Subsystem.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -34,6 +38,7 @@ namespace TUK::Game
 		DisplaySubsystem* displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{
+			Logger::LogError("Failed to get Display Subsystem.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -51,6 +56,7 @@ namespace TUK::Game
 		auto result = displaySubsystem->CreateDisplay(options);
 		if (!result)
 		{
+			Logger::LogError("Display creation failed: {}", result.error());
 			return SystemStatus::FAILURE;
 		}
 
@@ -60,6 +66,7 @@ namespace TUK::Game
 		RenderSubsystem* renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
 		if (!renderSubsystem)
 		{
+			Logger::LogError("Failed to get Render Subsystem.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -70,6 +77,7 @@ namespace TUK::Game
 		AssetSubsystem* assetSubsystem = AddSubsystem<AssetSubsystem>();
 		if (!assetSubsystem)
 		{
+			Logger::LogError("Failed to get Asset Subsystem.");
 			return SystemStatus::FAILURE;
 		}
 

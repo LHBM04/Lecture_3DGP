@@ -98,7 +98,7 @@ namespace TUK::Framework
 
 			if (auto result = commandBuffer.SetCamera(*camera); !result)
 			{
-				std::cerr << "WorldSubsystem 카메라 설정 실패: " << result.error() << std::endl;
+				std::cerr << "WorldSubsystem failed to set camera: " << result.error() << std::endl;
 				continue;
 			}
 

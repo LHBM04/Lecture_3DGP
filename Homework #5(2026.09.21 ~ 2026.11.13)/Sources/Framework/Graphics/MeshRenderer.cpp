@@ -8,6 +8,8 @@
 
 #include "GPUCommandBuffer.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	void MeshRenderer::OnRender(GPUCommandBuffer& commandBuffer)
@@ -25,13 +27,13 @@ namespace TUK::Framework
 
 		if (auto result = commandBuffer.SetMaterial(*material, *pipeline, material->GetTargetFormat()); !result)
 		{
-			std::cerr << "MeshRenderer 머티리얼 적용 실패: " << result.error() << std::endl;
+			Logger::LogError("{}{}", "MeshRenderer failed to apply material: ", result.error());
 			return;
 		}
 
 		if (auto result = commandBuffer.SetEntity(GetOwner()); !result)
 		{
-			std::cerr << "MeshRenderer 오브젝트 변환 적용 실패: " << result.error() << std::endl;
+			Logger::LogError("{}{}", "MeshRenderer failed to apply object transform: ", result.error());
 			return;
 		}
 
