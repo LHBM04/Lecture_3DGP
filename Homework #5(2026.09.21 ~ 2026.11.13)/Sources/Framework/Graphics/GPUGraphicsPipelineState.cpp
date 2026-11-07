@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 
 #include <format>
@@ -8,6 +8,7 @@
 #include "../Resources/ShaderAsset.hpp"
 
 #include "GPUDevice.hpp"
+#include "GPUTarget.hpp"
 
 namespace TUK::Framework
 {
@@ -51,6 +52,8 @@ namespace TUK::Framework
 			return std::unexpected("셰이더 바이트코드가 로드되지 않았습니다.");
 		}
 
+		// 이걸 고정시켜야 쉐이더를 추가하기 수월해짐
+		// 안 그러면 쉐이더 만들 때마다 레이아웃을 추가로 넣어야 함
 		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -72,7 +75,7 @@ namespace TUK::Framework
 		description.RasterizerState.CullMode = material->GetCullMode();
 		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		description.DepthStencilState.DepthEnable = FALSE;
+		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
 		return Create(device, description);
 	}
 }

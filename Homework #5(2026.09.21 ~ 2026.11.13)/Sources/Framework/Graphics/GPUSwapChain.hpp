@@ -44,11 +44,15 @@ namespace TUK::Framework
 		GPUSwapChain(
 			ComPtr<IDXGISwapChain4> dxgiSwapChain,
 			ComPtr<ID3D12DescriptorHeap> rtvHeap,
+			ComPtr<ID3D12DescriptorHeap> dsvHeap,
+			ComPtr<ID3D12Resource> depthStencil,
 			std::vector<GPUTexture2D>&& backBuffers,
 			u32 rtvDescriptorSize) noexcept;
 
 		ComPtr<IDXGISwapChain4> dxgiSwapChain;
 		ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		ComPtr<ID3D12Resource> depthStencil;
 		std::vector<GPUTexture2D> backBuffers;
 		u32 rtvDescriptorSize;
 	};
@@ -61,10 +65,14 @@ namespace TUK::Framework
 	inline GPUSwapChain::GPUSwapChain(
 		ComPtr<IDXGISwapChain4> dxgiSwapChain,
 		ComPtr<ID3D12DescriptorHeap> rtvHeap,
+		ComPtr<ID3D12DescriptorHeap> dsvHeap,
+		ComPtr<ID3D12Resource> depthStencil,
 		std::vector<GPUTexture2D>&& backBuffers,
 		u32 rtvDescriptorSize) noexcept
 		: dxgiSwapChain(std::move(dxgiSwapChain))
 		, rtvHeap(std::move(rtvHeap))
+		, dsvHeap(std::move(dsvHeap))
+		, depthStencil(std::move(depthStencil))
 		, backBuffers(std::move(backBuffers))
 		, rtvDescriptorSize(rtvDescriptorSize)
 	{

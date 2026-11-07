@@ -328,6 +328,13 @@ namespace TUK::Framework
 		};
 
 		d3dCommandList->ClearRenderTargetView(target.GetD3DRTVHandle(), color, 0, nullptr);
+		d3dCommandList->ClearDepthStencilView(
+			target.GetD3DDSVHandle(),
+			D3D12_CLEAR_FLAG_DEPTH,
+			GPUTarget::DEPTH_CLEAR_VALUE,
+			0,
+			0,
+			nullptr);
 	}
 
 	void GPUCommandBuffer::SetGPUTarget(const GPUTarget& target) noexcept
@@ -335,7 +342,8 @@ namespace TUK::Framework
 		activeTargetFormat = target.GetTexture().GetD3DResource().GetDesc().Format;
 		cameraPrepared = false;
 		const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = target.GetD3DRTVHandle();
-		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+		const D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = target.GetD3DDSVHandle();
+		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
 	}
 
 	std::expected<std::pair<const GPUBuffer*, u64>, std::string> GPUCommandBuffer::UploadConstants(

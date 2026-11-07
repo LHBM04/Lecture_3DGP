@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "GPUSwapChain.hpp"
 
 #include "../Platform/Display.hpp"
@@ -71,9 +71,51 @@ namespace TUK::Framework
 			backBuffers.emplace_back(std::move(backBuffer));
 		}
 
+		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDescription{};
+		dsvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		dsvHeapDescription.NumDescriptors = 1;
+
+		ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		if (FAILED(d3dDevice.CreateDescriptorHeap(&dsvHeapDescription, IID_PPV_ARGS(dsvHeap.GetAddressOf()))))
+		{
+			return std::unexpected("DSV 디스크립터 힙 생성에 실패했습니다.");
+		}
+
+		const CD3DX12_HEAP_PROPERTIES depthHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
+		const D3D12_RESOURCE_DESC backBufferDescription = backBuffers.front().GetD3DResource().GetDesc();
+		const CD3DX12_RESOURCE_DESC depthDescription = CD3DX12_RESOURCE_DESC::Tex2D(
+			GPUTarget::DEPTH_FORMAT,
+			backBufferDescription.Width,
+			backBufferDescription.Height,
+			1,
+			1,
+			backBufferDescription.SampleDesc.Count,
+			backBufferDescription.SampleDesc.Quality,
+			D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL | D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE);
+
+		D3D12_CLEAR_VALUE depthClearValue{};
+		depthClearValue.Format = GPUTarget::DEPTH_FORMAT;
+		depthClearValue.DepthStencil.Depth = GPUTarget::DEPTH_CLEAR_VALUE;
+
+		ComPtr<ID3D12Resource> depthStencil;
+		if (FAILED(d3dDevice.CreateCommittedResource(
+			&depthHeapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&depthDescription,
+			D3D12_RESOURCE_STATE_DEPTH_WRITE,
+			&depthClearValue,
+			IID_PPV_ARGS(depthStencil.GetAddressOf()))))
+		{
+			return std::unexpected("깊이 버퍼 생성에 실패했습니다.");
+		}
+
+		d3dDevice.CreateDepthStencilView(depthStencil.Get(), nullptr, dsvHeap->GetCPUDescriptorHandleForHeapStart());
+
 		return GPUSwapChain(
 			std::move(swapChain4),
 			std::move(rtvHeap),
+			std::move(dsvHeap),
+			std::move(depthStencil),
 			std::move(backBuffers),
 			descriptorSize);
 	}
@@ -92,6 +134,10 @@ namespace TUK::Framework
 			rtvDescriptorSize);
 
 		const GPUTexture2D& texture = backBuffers[index];
-		return GPUTarget(texture, rtvHandle, texture.GetD3DResource().GetDesc().Format);
+		return GPUTarget(
+			texture,
+			rtvHandle,
+			dsvHeap->GetCPUDescriptorHandleForHeapStart(),
+			texture.GetD3DResource().GetDesc().Format);
 	}
 }
