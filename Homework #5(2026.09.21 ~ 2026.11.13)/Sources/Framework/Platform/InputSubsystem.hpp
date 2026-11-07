@@ -26,7 +26,6 @@ namespace TUK::Framework
 	{
 	public:
 		InputSubsystem() noexcept;
-		~InputSubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;

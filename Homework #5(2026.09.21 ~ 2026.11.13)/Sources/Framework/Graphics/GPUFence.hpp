@@ -17,7 +17,6 @@ namespace TUK::Framework
 	class GPUFence
 	{
 	public:
-		~GPUFence() noexcept = default;
 
 		GPUFence(const GPUFence&) = delete;
 		GPUFence& operator=(const GPUFence&) = delete;

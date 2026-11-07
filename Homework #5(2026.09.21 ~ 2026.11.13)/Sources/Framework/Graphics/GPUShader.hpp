@@ -19,7 +19,6 @@ namespace TUK::Framework
 	class GPUShader
 	{
 	public:
-		~GPUShader() noexcept = default;
 
 		GPUShader(const GPUShader&) = delete;
 		GPUShader& operator=(const GPUShader&) = delete;

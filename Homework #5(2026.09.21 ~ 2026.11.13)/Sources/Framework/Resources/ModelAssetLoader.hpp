@@ -17,9 +17,6 @@ namespace TUK::Framework
 	public:
 		using AssetType = ModelAsset;
 
-		ModelAssetLoader() noexcept = default;
-		~ModelAssetLoader() noexcept override = default;
-
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 

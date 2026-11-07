@@ -34,13 +34,13 @@ namespace TUK::Framework
 			TScalar m20, TScalar m21, TScalar m22, TScalar m23,
 			TScalar m30, TScalar m31, TScalar m32, TScalar m33) noexcept;
 
-		Matrix4x4(const Matrix4x4& other) noexcept;
-		Matrix4x4(Matrix4x4&& other) noexcept;
+		Matrix4x4(const Matrix4x4& other) noexcept = default;
+		Matrix4x4(Matrix4x4&& other) noexcept = default;
 
 		explicit Matrix4x4(DirectX::XMMATRIX matrix) noexcept requires std::same_as<TScalar, f32>;
 
-		Matrix4x4& operator=(const Matrix4x4& other) noexcept;
-		Matrix4x4& operator=(Matrix4x4&& other) noexcept;
+		Matrix4x4& operator=(const Matrix4x4& other) noexcept = default;
+		Matrix4x4& operator=(Matrix4x4&& other) noexcept = default;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;

@@ -27,15 +27,15 @@ namespace TUK::Framework
 		ColorRGBA(TScalar r, TScalar g, TScalar b, TScalar a = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1)) noexcept;
 		explicit ColorRGBA(const TScalar* values) noexcept;
 
-		ColorRGBA(const ColorRGBA& other) noexcept;
-		ColorRGBA(ColorRGBA&& other) noexcept;
+		ColorRGBA(const ColorRGBA& other) noexcept = default;
+		ColorRGBA(ColorRGBA&& other) noexcept = default;
 
 		ColorRGBA(const ColorRGB<TScalar>& rgb, TScalar a = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1)) noexcept;
 		explicit ColorRGBA(const Vector3D<TScalar>& vector, TScalar alpha = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1)) noexcept;
 		ColorRGBA(const Vector4D<TScalar>& vector) noexcept;
 
-		ColorRGBA& operator=(const ColorRGBA& other) noexcept;
-		ColorRGBA& operator=(ColorRGBA&& other) noexcept;
+		ColorRGBA& operator=(const ColorRGBA& other) noexcept = default;
+		ColorRGBA& operator=(ColorRGBA&& other) noexcept = default;
 		ColorRGBA& operator=(const Vector4D<TScalar>& other) noexcept;
 
 		operator Vector4D<TScalar>() const noexcept;

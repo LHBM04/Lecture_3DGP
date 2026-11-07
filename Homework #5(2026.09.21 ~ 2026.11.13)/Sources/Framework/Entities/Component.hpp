@@ -60,7 +60,7 @@ namespace TUK::Framework
 	inline Component::Component(Entity* owner) noexcept
 		: owner(owner)
 	{
-		ASSERT_FMT(owner, "而댄룷?뚰듃 ?뚯쑀?먭? nullptr?낅땲??");
+		ASSERT_FMT(owner, "컴포넌트 소유자가 nullptr입니다.");
 	}
 
 	inline void Component::OnAwake()

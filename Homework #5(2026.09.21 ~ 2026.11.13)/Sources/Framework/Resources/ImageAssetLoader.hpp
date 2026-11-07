@@ -18,7 +18,6 @@ namespace TUK::Framework
 		using AssetType = ImageAsset;
 
 		explicit ImageAssetLoader(const GPUDevice& device) noexcept;
-		~ImageAssetLoader() noexcept override = default;
 
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
 			const std::filesystem::path& path) const override;

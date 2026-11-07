@@ -20,7 +20,6 @@ namespace TUK::Framework
 		using AssetType = MeshAsset;
 
 		explicit MeshAssetLoader(const GPUDevice& device) noexcept;
-		~MeshAssetLoader() noexcept override = default;
 
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
 			const std::filesystem::path& path) const override;

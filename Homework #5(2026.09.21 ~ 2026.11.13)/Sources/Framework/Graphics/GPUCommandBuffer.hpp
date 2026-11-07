@@ -34,7 +34,6 @@ namespace TUK::Framework
 	class GPUCommandBuffer
 	{
 	public:
-		~GPUCommandBuffer() noexcept = default;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
 		GPUCommandBuffer& operator=(const GPUCommandBuffer&) = delete;

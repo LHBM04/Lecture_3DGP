@@ -28,18 +28,6 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar>::Vector3D(const Vector3D& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
-	Vector3D<TScalar>::Vector3D(Vector3D&& other) noexcept
-		: value(std::move(other.value))
-	{
-	}
-
-	template <Scalarable TScalar>
 	Vector3D<TScalar>::Vector3D(const Vector2D<TScalar>& vector, TScalar z) noexcept
 		: value(TScalar{}, TScalar{}, TScalar{})
 	{
@@ -59,20 +47,6 @@ namespace TUK::Framework
 		: value(TScalar{}, TScalar{}, TScalar{})
 	{
 		Store(*this, vector);
-	}
-
-	template <Scalarable TScalar>
-	Vector3D<TScalar>& Vector3D<TScalar>::operator=(const Vector3D& other) noexcept
-	{
-		value = other.value;
-		return *this;
-	}
-
-	template <Scalarable TScalar>
-	Vector3D<TScalar>& Vector3D<TScalar>::operator=(Vector3D&& other) noexcept
-	{
-		value = std::move(other.value);
-		return *this;
 	}
 
 	template <Scalarable TScalar>

@@ -26,15 +26,15 @@ namespace TUK::Framework
 		explicit ColorRGB(TScalar value) noexcept;
 		ColorRGB(TScalar r, TScalar g, TScalar b) noexcept;
 
-		ColorRGB(const ColorRGB& color) noexcept;
-		ColorRGB(ColorRGB&& color) noexcept;
+		ColorRGB(const ColorRGB& color) noexcept = default;
+		ColorRGB(ColorRGB&& color) noexcept = default;
 
 		explicit ColorRGB(const Vector3D<TScalar>& vector) noexcept;
 		explicit ColorRGB(const Vector4D<TScalar>& vector) noexcept;
 		explicit ColorRGB(const ColorRGBA<TScalar>& color) noexcept;
 
-		ColorRGB& operator=(const ColorRGB& other) noexcept;
-		ColorRGB& operator=(ColorRGB&& other) noexcept;
+		ColorRGB& operator=(const ColorRGB& other) noexcept = default;
+		ColorRGB& operator=(ColorRGB&& other) noexcept = default;
 
 		[[nodiscard]] bool operator==(const ColorRGB& other) const noexcept;
 		[[nodiscard]] bool operator!=(const ColorRGB& other) const noexcept;

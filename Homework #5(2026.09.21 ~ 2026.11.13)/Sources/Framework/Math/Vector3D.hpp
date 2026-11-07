@@ -28,16 +28,16 @@ namespace TUK::Framework
 		explicit Vector3D(TScalar scalar) noexcept;
 		Vector3D(TScalar x, TScalar y, TScalar z) noexcept;
 
-		Vector3D(const Vector3D& other) noexcept;
-		Vector3D(Vector3D&& other) noexcept;
+		Vector3D(const Vector3D& other) noexcept = default;
+		Vector3D(Vector3D&& other) noexcept = default;
 
 		explicit Vector3D(const Vector2D<TScalar>& vector, TScalar z = TScalar{}) noexcept;
 		explicit Vector3D(const Vector4D<TScalar>& vector) noexcept;
 
 		explicit Vector3D(DirectX::XMVECTOR vector) noexcept requires std::same_as<TScalar, f32>;
 
-		Vector3D& operator=(const Vector3D& other) noexcept;
-		Vector3D& operator=(Vector3D&& other) noexcept;
+		Vector3D& operator=(const Vector3D& other) noexcept = default;
+		Vector3D& operator=(Vector3D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector2D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector4D<TScalar>() const noexcept;

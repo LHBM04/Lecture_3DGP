@@ -24,11 +24,11 @@ namespace TUK::Framework
 		explicit Quaternion(TScalar value) noexcept;
 		Quaternion(TScalar x, TScalar y, TScalar z, TScalar w) noexcept;
 
-		Quaternion(const Quaternion& other) noexcept;
-		Quaternion(Quaternion&& other) noexcept;
+		Quaternion(const Quaternion& other) noexcept = default;
+		Quaternion(Quaternion&& other) noexcept = default;
 
-		Quaternion& operator=(const Quaternion& other) noexcept;
-		Quaternion& operator=(Quaternion&& other) noexcept;
+		Quaternion& operator=(const Quaternion& other) noexcept = default;
+		Quaternion& operator=(Quaternion&& other) noexcept = default;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;

@@ -28,14 +28,14 @@ namespace TUK::Framework
 		explicit Vector2D(TScalar scalar) noexcept;
 		Vector2D(TScalar x, TScalar y) noexcept;
 
-		Vector2D(const Vector2D& other) noexcept;
-		Vector2D(Vector2D&& other) noexcept;
+		Vector2D(const Vector2D& other) noexcept = default;
+		Vector2D(Vector2D&& other) noexcept = default;
 
 		explicit Vector2D(const Vector3D<TScalar>& vector) noexcept;
 		explicit Vector2D(const Vector4D<TScalar>& vector) noexcept;
 
-		Vector2D& operator=(const Vector2D& other) noexcept;
-		Vector2D& operator=(Vector2D&& other) noexcept;
+		Vector2D& operator=(const Vector2D& other) noexcept = default;
+		Vector2D& operator=(Vector2D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector3D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector4D<TScalar>() const noexcept;

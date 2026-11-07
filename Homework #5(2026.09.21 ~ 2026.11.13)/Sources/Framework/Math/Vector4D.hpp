@@ -28,14 +28,14 @@ namespace TUK::Framework
 		explicit Vector4D(TScalar scalar) noexcept;
 		Vector4D(TScalar x, TScalar y, TScalar z, TScalar w) noexcept;
 
-		Vector4D(const Vector4D& other) noexcept;
-		Vector4D(Vector4D&& other) noexcept;
+		Vector4D(const Vector4D& other) noexcept = default;
+		Vector4D(Vector4D&& other) noexcept = default;
 
 		explicit Vector4D(const Vector2D<TScalar>& vector, TScalar z = TScalar{}, TScalar w = TScalar{}) noexcept;
 		explicit Vector4D(const Vector3D<TScalar>& vector, TScalar w = TScalar{}) noexcept;
 
-		Vector4D& operator=(const Vector4D& other) noexcept;
-		Vector4D& operator=(Vector4D&& other) noexcept;
+		Vector4D& operator=(const Vector4D& other) noexcept = default;
+		Vector4D& operator=(Vector4D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector2D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector3D<TScalar>() const noexcept;

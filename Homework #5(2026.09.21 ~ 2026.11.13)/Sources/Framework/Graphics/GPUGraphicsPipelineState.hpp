@@ -19,7 +19,6 @@ namespace TUK::Framework
 	class GPUGraphicsPipelineState
 	{
 	public:
-		~GPUGraphicsPipelineState() noexcept = default;
 
 		GPUGraphicsPipelineState(const GPUGraphicsPipelineState&) = delete;
 		GPUGraphicsPipelineState& operator=(const GPUGraphicsPipelineState&) = delete;

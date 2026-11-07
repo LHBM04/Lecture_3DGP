@@ -28,8 +28,7 @@ namespace TUK::Framework
 	class Camera : public Component
 	{
 	public:
-		explicit Camera(Entity* owner) noexcept;
-		~Camera() noexcept override = default;
+		using Component::Component;
 
 		void OnEnable() override;
 		void OnDisable() override;
@@ -62,32 +61,19 @@ namespace TUK::Framework
 		[[nodiscard]] Matrix4x4<f32> GetProjectionMatrix() const noexcept;
 
 	private:
-		CameraClearFlags clearFlags;
-		CameraProjectionType projectionType;
+		CameraClearFlags clearFlags = CameraClearFlags::SolidColor;
+		CameraProjectionType projectionType = CameraProjectionType::Perspective;
 
-		f32 fieldOfView;
+		f32 fieldOfView = 60.0f;
 
-		f32 nearPlane;
-		f32 farPlane;
+		f32 nearPlane = 0.1f;
+		f32 farPlane = 1000.0f;
 
-		CD3DX12_VIEWPORT viewport;
-		CD3DX12_RECT scissorRect;
+		CD3DX12_VIEWPORT viewport{ 0.0f, 0.0f, 1280.0f, 960.0f };
+		CD3DX12_RECT scissorRect{ 0, 0, 1280, 960 };
 
-		f32 orthoSize;
+		f32 orthoSize = 10.0f;
 	};
-
-	inline Camera::Camera(Entity* owner) noexcept
-		: Component(owner)
-		, clearFlags(CameraClearFlags::SolidColor)
-		, projectionType(CameraProjectionType::Perspective)
-		, fieldOfView(60.0f)
-		, nearPlane(0.1f)
-		, farPlane(1000.0f)
-		, viewport(0.0f, 0.0f, 1280.0f, 960.0f)
-		, scissorRect(0, 0, 1280, 960)
-		, orthoSize(10.0f)
-	{
-	}
 
 	inline CameraClearFlags Camera::GetClearFlags() const noexcept
 	{

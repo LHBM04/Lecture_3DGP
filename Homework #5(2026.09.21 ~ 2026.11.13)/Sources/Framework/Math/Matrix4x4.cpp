@@ -59,37 +59,11 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	Matrix4x4<TScalar>::Matrix4x4(const Matrix4x4<TScalar>& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
-	Matrix4x4<TScalar>::Matrix4x4(Matrix4x4<TScalar>&& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
 	Matrix4x4<TScalar>::Matrix4x4(DirectX::XMMATRIX matrix) noexcept
 		requires std::same_as<TScalar, f32>
 		: value{}
 	{
 		Store(*this, matrix);
-	}
-
-	template <Scalarable TScalar>
-	Matrix4x4<TScalar>& Matrix4x4<TScalar>::operator=(const Matrix4x4<TScalar>& other) noexcept
-	{
-		value = other.value;
-		return *this;
-	}
-
-	template <Scalarable TScalar>
-	Matrix4x4<TScalar>& Matrix4x4<TScalar>::operator=(Matrix4x4<TScalar>&& other) noexcept
-	{
-		value = other.value;
-		return *this;
 	}
 
 	template <Scalarable TScalar>

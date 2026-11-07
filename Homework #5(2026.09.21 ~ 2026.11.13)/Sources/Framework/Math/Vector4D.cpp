@@ -28,18 +28,6 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	Vector4D<TScalar>::Vector4D(const Vector4D& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
-	Vector4D<TScalar>::Vector4D(Vector4D&& other) noexcept
-		: value(std::move(other.value))
-	{
-	}
-
-	template <Scalarable TScalar>
 	Vector4D<TScalar>::Vector4D(const Vector2D<TScalar>& vector, TScalar z, TScalar w) noexcept
 		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
 	{
@@ -51,20 +39,6 @@ namespace TUK::Framework
 		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
 	{
 		Set(vector.GetX(), vector.GetY(), vector.GetZ(), w);
-	}
-
-	template <Scalarable TScalar>
-	Vector4D<TScalar>& Vector4D<TScalar>::operator=(const Vector4D& other) noexcept
-	{
-		value = other.value;
-		return *this;
-	}
-
-	template <Scalarable TScalar>
-	Vector4D<TScalar>& Vector4D<TScalar>::operator=(Vector4D&& other) noexcept
-	{
-		value = std::move(other.value);
-		return *this;
 	}
 
 	template <Scalarable TScalar>

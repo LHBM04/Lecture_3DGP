@@ -26,8 +26,6 @@ namespace TUK::Framework
 	public:
 		using Asset::Asset;
 
-		MaterialAsset() noexcept = default;
-
 		[[nodiscard]] std::string Serialize() const override;
 		[[nodiscard]] bool Deserialize(std::string_view text) override;
 

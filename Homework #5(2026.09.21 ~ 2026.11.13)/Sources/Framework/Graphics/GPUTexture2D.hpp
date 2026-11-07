@@ -14,7 +14,6 @@ namespace TUK::Framework
 	{
 	public:
 		explicit GPUTexture2D(ComPtr<ID3D12Resource> d3dResource) noexcept;
-		~GPUTexture2D() noexcept = default;
 
 		GPUTexture2D(const GPUTexture2D&) = delete;
 		GPUTexture2D& operator=(const GPUTexture2D&) = delete;

@@ -26,13 +26,6 @@ namespace TUK::Framework
 	{
 	public:
 		explicit GPUSampler(const D3D12_SAMPLER_DESC& description) noexcept;
-		~GPUSampler() noexcept = default;
-
-		GPUSampler(const GPUSampler&) noexcept = default;
-		GPUSampler& operator=(const GPUSampler&) noexcept = default;
-
-		GPUSampler(GPUSampler&&) noexcept = default;
-		GPUSampler& operator=(GPUSampler&&) noexcept = default;
 
 		[[nodiscard]] const D3D12_SAMPLER_DESC& GetDescription() const noexcept;
 

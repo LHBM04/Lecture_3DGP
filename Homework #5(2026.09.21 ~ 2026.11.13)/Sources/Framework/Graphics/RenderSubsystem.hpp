@@ -29,7 +29,6 @@ namespace TUK::Framework
 		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
 
 		RenderSubsystem() noexcept;
-		~RenderSubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;

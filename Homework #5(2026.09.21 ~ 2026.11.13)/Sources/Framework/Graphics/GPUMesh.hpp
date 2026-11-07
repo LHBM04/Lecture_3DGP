@@ -15,7 +15,6 @@ namespace TUK::Framework
 	class GPUMesh
 	{
 	public:
-		~GPUMesh() noexcept = default;
 
 		GPUMesh(const GPUMesh&) = delete;
 		GPUMesh& operator=(const GPUMesh&) = delete;

@@ -19,7 +19,6 @@ namespace TUK::Framework
 	class GPUBuffer
 	{
 	public:
-		~GPUBuffer() noexcept = default;
 
 		GPUBuffer(const GPUBuffer&) = delete;
 		GPUBuffer& operator=(const GPUBuffer&) = delete;

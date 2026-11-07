@@ -16,7 +16,6 @@ namespace TUK::Framework
 		using AssetType = MaterialAsset;
 
 		MaterialAssetLoader(const AssetSubsystem* assets, const GPUDevice& device, DXGI_FORMAT targetFormat) noexcept;
-		~MaterialAssetLoader() noexcept override = default;
 
 		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
 			const std::filesystem::path& path) const override;

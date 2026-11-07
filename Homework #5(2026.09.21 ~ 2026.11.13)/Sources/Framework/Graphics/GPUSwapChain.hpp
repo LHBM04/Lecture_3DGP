@@ -23,7 +23,6 @@ namespace TUK::Framework
 	class GPUSwapChain
 	{
 	public:
-		~GPUSwapChain() noexcept = default;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
 		GPUSwapChain& operator=(const GPUSwapChain&) = delete;

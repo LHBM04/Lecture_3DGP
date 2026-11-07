@@ -34,18 +34,6 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	ColorRGBA<TScalar>::ColorRGBA(const ColorRGBA<TScalar>& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
-	ColorRGBA<TScalar>::ColorRGBA(ColorRGBA<TScalar>&& other) noexcept
-		: value(std::move(other.value))
-	{
-	}
-
-	template <Scalarable TScalar>
 	ColorRGBA<TScalar>::ColorRGBA(const ColorRGB<TScalar>& rgb, TScalar a) noexcept
 		: value(rgb.GetR(), rgb.GetG(), rgb.GetB(), a)
 	{
@@ -61,26 +49,6 @@ namespace TUK::Framework
 	ColorRGBA<TScalar>::ColorRGBA(const Vector4D<TScalar>& vector) noexcept
 		: value(vector.GetX(), vector.GetY(), vector.GetZ(), vector.GetW())
 	{
-	}
-
-	template <Scalarable TScalar>
-	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(const ColorRGBA<TScalar>& other) noexcept
-	{
-		value.x = other.value.x;
-		value.y = other.value.y;
-		value.z = other.value.z;
-		value.w = other.value.w;
-		return *this;
-	}
-
-	template <Scalarable TScalar>
-	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(ColorRGBA<TScalar>&& other) noexcept
-	{
-		value.x = other.value.x;
-		value.y = other.value.y;
-		value.z = other.value.z;
-		value.w = other.value.w;
-		return *this;
 	}
 
 	template <Scalarable TScalar>

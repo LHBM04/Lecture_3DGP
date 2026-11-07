@@ -26,38 +26,6 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	Quaternion<TScalar>::Quaternion(const Quaternion<TScalar>& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
-	Quaternion<TScalar>::Quaternion(Quaternion<TScalar>&& other) noexcept
-		: value(other.value)
-	{
-	}
-
-	template <Scalarable TScalar>
-	Quaternion<TScalar>& Quaternion<TScalar>::operator=(const Quaternion<TScalar>& _other) noexcept
-	{
-		value.x = _other.GetX();
-		value.y = _other.GetY();
-		value.z = _other.GetZ();
-		value.w = _other.GetW();
-		return *this;
-	}
-
-	template <Scalarable TScalar>
-	Quaternion<TScalar>& Quaternion<TScalar>::operator=(Quaternion<TScalar>&& _other) noexcept
-	{
-		value.x = _other.GetX();
-		value.y = _other.GetY();
-		value.z = _other.GetZ();
-		value.w = _other.GetW();
-		return *this;
-	}
-
-	template <Scalarable TScalar>
 	TScalar Quaternion<TScalar>::operator[](size_t index) const noexcept
 	{
 		assert(index < 4);

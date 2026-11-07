@@ -16,7 +16,6 @@ namespace TUK::Framework
 	class GPUDevice
 	{
 	public:
-		~GPUDevice() noexcept = default;
 
 		GPUDevice(const GPUDevice&) = delete;
 		GPUDevice& operator=(const GPUDevice&) = delete;

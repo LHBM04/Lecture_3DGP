@@ -10,7 +10,6 @@ namespace TUK::Framework
 	{
 	public:
 		GPUTarget(const GPUTexture2D& texture, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, DXGI_FORMAT format) noexcept;
-		~GPUTarget() noexcept = default;
 
 		GPUTarget(const GPUTarget&) = delete;
 		GPUTarget& operator=(const GPUTarget&) = delete;

@@ -9,7 +9,6 @@ namespace TUK::Framework
 	{
 	public:
 		using Subsystem::Subsystem;
-		~AppSubsystem() noexcept override = default;
 
 		virtual SystemStatus OnEarlyUpdate() = 0;
 		virtual SystemStatus OnFixedUpdate() = 0;

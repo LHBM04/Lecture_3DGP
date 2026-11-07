@@ -24,7 +24,6 @@ namespace TUK::Framework
 		using EventCallback = std::function<void(const Event&)>;
 
 		explicit EventSubsystem() noexcept;
-		~EventSubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;
