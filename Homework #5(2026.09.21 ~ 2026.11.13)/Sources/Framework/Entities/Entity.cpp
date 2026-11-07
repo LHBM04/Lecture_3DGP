@@ -73,7 +73,7 @@ namespace TUK::Framework
 				}
 			}
 
-			callback(*component);
+			(component->*callback)();
 		}
 	}
 
@@ -85,7 +85,7 @@ namespace TUK::Framework
 			Component* component = components[index].get();
 			if (component->IsStarted() && component->IsEnabled() && !component->IsDestroyed())
 			{
-				callback(*component, commandBuffer);
+				(component->*callback)(commandBuffer);
 			}
 		}
 	}

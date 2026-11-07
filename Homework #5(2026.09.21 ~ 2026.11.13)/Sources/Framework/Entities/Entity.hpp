@@ -78,8 +78,8 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetComponents() const noexcept;
 
 	private:
-		using ComponentCallback = std::function<void(Component&)>;
-		using RenderCallback = std::function<void(Component&, GPUCommandBuffer&)>;
+		using ComponentCallback = void (Component::*)();
+		using RenderCallback = void (Component::*)(GPUCommandBuffer&);
 
 		void UpdateComponents(ComponentCallback callback);
 		void RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer);

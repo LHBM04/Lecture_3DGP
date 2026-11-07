@@ -43,8 +43,8 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetSubsystems() const noexcept;
 
 	private:
-		std::vector<std::unique_ptr<Subsystem>> subsystems;
-		std::unordered_map<std::type_index, Subsystem*> subsystemsByType;
+		std::vector<std::unique_ptr<TSubsystem>> subsystems;
+		std::unordered_map<std::type_index, TSubsystem*> subsystemsByType;
 	};
 
 	template <std::derived_from<Subsystem> TSubsystem>
@@ -52,7 +52,7 @@ namespace TUK::Framework
 	{
 		std::ranges::sort(subsystems, std::ranges::less{}, &Subsystem::GetPriority);
 
-		for (const std::unique_ptr<Subsystem>& subsystem : subsystems)
+		for (const std::unique_ptr<TSubsystem>& subsystem : subsystems)
 		{
 			if (subsystem->OnStartup() == SystemStatus::FAILURE)
 			{
@@ -73,7 +73,7 @@ namespace TUK::Framework
 	template <std::derived_from<Subsystem> TSubsystem>
 	void System<TSubsystem>::Shutdown()
 	{
-		for (const std::unique_ptr<Subsystem>& subsystem : subsystems | std::views::reverse)
+		for (const std::unique_ptr<TSubsystem>& subsystem : subsystems | std::views::reverse)
 		{
 			subsystem->OnShutdown();
 		}
@@ -89,7 +89,7 @@ namespace TUK::Framework
 		const auto result = subsystemsByType.find(std::type_index(typeid(TResult)));
 		if (result != subsystemsByType.end())
 		{
-			return dynamic_cast<TResult*>(result->second);
+			return static_cast<TResult*>(result->second);
 		}
 
 		auto subsystem = std::make_unique<TResult>();
@@ -128,26 +128,18 @@ namespace TUK::Framework
 	template <std::derived_from<Subsystem> TSubsystem>
 	auto System<TSubsystem>::GetSubsystems() noexcept
 	{
-		return subsystems | std::views::filter([](const auto& subsystem)
+		return subsystems | std::views::transform([](const auto& subsystem) -> TSubsystem*
 			{
-				return dynamic_cast<TSubsystem*>(subsystem.get()) != nullptr;
-			})
-			| std::views::transform([](const auto& subsystem) -> TSubsystem*
-			{
-				return static_cast<TSubsystem*>(subsystem.get());
+				return subsystem.get();
 			});
 	}
 
 	template <std::derived_from<Subsystem> TSubsystem>
 	auto System<TSubsystem>::GetSubsystems() const noexcept
 	{
-		return subsystems | std::views::filter([](const auto& subsystem)
+		return subsystems | std::views::transform([](const auto& subsystem) -> const TSubsystem*
 			{
-				return dynamic_cast<const TSubsystem*>(subsystem.get()) != nullptr;
-			})
-			| std::views::transform([](const auto& subsystem) -> const TSubsystem*
-			{
-				return static_cast<const TSubsystem*>(subsystem.get());
+				return subsystem.get();
 			});
 	}
 }
