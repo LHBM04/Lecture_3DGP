@@ -1,11 +1,9 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
 #include "../Core/Engine.hpp"
 
 #include "../Utilities/Logger.hpp"
-
-#include "Resource.h"
 
 #include "DisplayEvents.hpp"
 #include "EventSubsystem.hpp"

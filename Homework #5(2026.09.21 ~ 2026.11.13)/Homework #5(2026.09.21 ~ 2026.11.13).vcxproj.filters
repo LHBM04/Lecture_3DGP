@@ -171,7 +171,7 @@
     <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Resource.h">
+    <ClInclude Include="Sources\Resource.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">

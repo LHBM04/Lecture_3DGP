@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "MyGame.hpp"
 
 #include "../Framework/Core.hpp"
@@ -6,8 +6,6 @@
 #include "../Framework/Graphics.hpp"
 #include "../Framework/Platform.hpp"
 #include "../Framework/Utilities/Logger.hpp"
-
-#include "Resource.h"
 
 #include "Worlds/World_Stage.hpp"
 

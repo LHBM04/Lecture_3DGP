@@ -273,7 +273,7 @@
     <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp" />
-    <ClInclude Include="Sources\Resource.h" />
+    <ClInclude Include="Sources\Resource.hpp" />
     <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
   <ItemGroup>

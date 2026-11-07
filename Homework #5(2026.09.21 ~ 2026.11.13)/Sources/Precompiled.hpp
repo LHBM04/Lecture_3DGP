@@ -118,3 +118,5 @@
 #include <xaudio2redist/x3daudioRedist.h>
 #include <xaudio2redist/xapobaseRedist.h>
 #include <xaudio2redist/xapofxRedist.h>
+
+#include "Resource.hpp"
