@@ -42,5 +42,6 @@ namespace TUK::Framework
 		: d3dFence(std::move(d3dFence))
 		, fenceValue(0)
 	{
+		ASSERT(this->d3dFence.Get());
 	}
 }

@@ -7,6 +7,8 @@
 #include "../Resources/MaterialAsset.hpp"
 #include "../Resources/ShaderAsset.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 #include "GPUDevice.hpp"
 #include "GPUTarget.hpp"
 
@@ -40,6 +42,7 @@ namespace TUK::Framework
 		const ShaderAsset* pixelShader,
 		DXGI_FORMAT targetFormat)
 	{
+		ASSERT_FMT(material && vertexShader && pixelShader, "파이프라인 생성에 필요한 머티리얼 또는 셰이더가 nullptr입니다.");
 		if (!material || !vertexShader || !pixelShader)
 		{
 			return std::unexpected("머티리얼 또는 셰이더 에셋이 nullptr입니다.");

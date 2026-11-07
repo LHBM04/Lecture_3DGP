@@ -114,24 +114,22 @@ namespace TUK::Framework::Logger
 	#define LOG_WARNING(...) TUK::Framework::Logger::LogWarning(__VA_ARGS__)
 	#define LOG_ERROR(...) TUK::Framework::Logger::LogError(__VA_ARGS__)
 	#define LOG_CRITICAL(...) TUK::Framework::Logger::LogCritical(__VA_ARGS__)
-
-	#ifndef ASSERT_FMT
-		#define ASSERT_FMT(condition, msg, ...) \
-				do \
-				{ \
-					if (!(condition)) \
-					{ \
-						LOG_CRITICAL(msg __VA_OPT__(,) __VA_ARGS__); \
-						ASSERT(condition); \
-					} \
-				} while (0)
-	#endif
 #else
 	#define LOG_TRACE(...) ((void)0)
 	#define LOG_INFO(...) ((void)0)
 	#define LOG_WARNING(...) ((void)0)
 	#define LOG_ERROR(...) ((void)0)
 	#define LOG_CRITICAL(...) ((void)0)
+#endif
 
-	#define ASSERT_FMT(condition, msg, ...) ((void)0)
+#ifndef ASSERT_FMT
+	#define ASSERT_FMT(condition, msg, ...) \
+			do \
+			{ \
+				if (!(condition)) \
+				{ \
+					LOG_CRITICAL(msg __VA_OPT__(,) __VA_ARGS__); \
+					ABORT(); \
+				} \
+			} while (0)
 #endif

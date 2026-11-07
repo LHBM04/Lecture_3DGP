@@ -175,6 +175,7 @@ namespace TUK::Framework
 
 	void World::UpdateEntities(WorldCallback worldCallback, EntityCallback entityCallback)
 	{
+		ASSERT(worldCallback && entityCallback);
 		if (!isEntered)
 		{
 			return;
@@ -197,6 +198,7 @@ namespace TUK::Framework
 
 	void World::RenderEntities(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
+		ASSERT(callback);
 		ForEachEntity([callback, &commandBuffer](Entity& entity)
 		{
 			(entity.*callback)(commandBuffer);
@@ -400,6 +402,7 @@ namespace TUK::Framework
 
 	void World::Destroy(Entity* entity) noexcept
 	{
+		ASSERT_FMT(entity, "삭제할 엔티티가 nullptr입니다.");
 		if (entity)
 		{
 			entity->Destroy();
@@ -467,6 +470,7 @@ namespace TUK::Framework
 
 	void World::AddCamera(Camera* camera)
 	{
+		ASSERT_FMT(camera, "등록할 카메라가 nullptr입니다.");
 		if (camera && std::ranges::find(cameras, camera) == cameras.end())
 		{
 			cameras.push_back(camera);
@@ -475,6 +479,7 @@ namespace TUK::Framework
 
 	void World::RemoveCamera(const Camera* camera)
 	{
+		ASSERT_FMT(camera, "등록 해제할 카메라가 nullptr입니다.");
 		std::erase(cameras, camera);
 	}
 

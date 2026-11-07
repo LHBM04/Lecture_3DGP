@@ -73,5 +73,7 @@ namespace TUK::Framework
 		, d3dCommandQueue(std::move(d3dCommandQueue))
 		, d3dRootSignature(std::move(d3dRootSignature))
 	{
+		ASSERT(this->dxgiFactory.Get() && this->d3dDevice.Get() &&
+			this->d3dCommandQueue.Get() && this->d3dRootSignature.Get());
 	}
 }

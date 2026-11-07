@@ -76,5 +76,7 @@ namespace TUK::Framework
 		, backBuffers(std::move(backBuffers))
 		, rtvDescriptorSize(rtvDescriptorSize)
 	{
+		ASSERT(this->dxgiSwapChain.Get() && this->rtvHeap.Get() &&
+			this->dsvHeap.Get() && this->depthStencil.Get());
 	}
 }

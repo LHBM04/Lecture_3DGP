@@ -53,5 +53,6 @@ namespace TUK::Framework
 	inline GPUShader::GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept
 		: dxcBlob(std::move(dxcBlob))
 	{
+		ASSERT(this->dxcBlob.Get());
 	}
 }

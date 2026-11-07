@@ -12,10 +12,7 @@ namespace TUK::Framework
 
 	World* WorldSubsystem::AddWorld(std::unique_ptr<World> world)
 	{
-		if (!world || currentWorld)
-		{
-			std::abort();
-		}
+		ASSERT(world && !currentWorld);
 
 		World* result = world.get();
 		worlds.push_back(std::move(world));

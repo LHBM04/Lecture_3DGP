@@ -126,5 +126,6 @@ namespace TUK::Framework
 		, d3dCommandList(std::move(d3dCommandList))
 		, d3dCommandAllocator(std::move(d3dCommandAllocator))
 	{
+		ASSERT(this->d3dCommandList.Get() && this->d3dCommandAllocator.Get());
 	}
 }

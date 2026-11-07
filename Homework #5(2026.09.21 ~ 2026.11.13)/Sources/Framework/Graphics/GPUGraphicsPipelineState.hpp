@@ -53,5 +53,6 @@ namespace TUK::Framework
 	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
 		: d3dPipelineState(std::move(d3dPipelineState))
 	{
+		ASSERT(this->d3dPipelineState.Get());
 	}
 }

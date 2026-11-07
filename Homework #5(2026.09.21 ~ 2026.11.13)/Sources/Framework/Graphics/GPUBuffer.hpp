@@ -76,5 +76,6 @@ namespace TUK::Framework
 		: d3dResource(std::move(d3dResource))
 		, heapType(heapType)
 	{
+		ASSERT(this->d3dResource.Get());
 	}
 }

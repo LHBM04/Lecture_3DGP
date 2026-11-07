@@ -3,6 +3,8 @@
 
 #include "../Platform/Display.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 #include "GPUDevice.hpp"
 
 namespace TUK::Framework
@@ -12,6 +14,7 @@ namespace TUK::Framework
 		const Display* display,
 		const DXGI_SWAP_CHAIN_DESC1& description)
 	{
+		ASSERT_FMT(display, "스왑체인을 생성할 디스플레이가 nullptr입니다.");
 		if (!display)
 		{
 			return std::unexpected("디스플레이가 nullptr입니다.");

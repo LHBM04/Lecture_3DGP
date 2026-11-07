@@ -1,6 +1,8 @@
 #include "Precompiled.hpp"
 #include "InputSubsystem.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 #include "Display.hpp"
 
 namespace TUK::Framework
@@ -66,6 +68,7 @@ namespace TUK::Framework
 
 	void InputSubsystem::AddProvider(const Display* display)
 	{
+		ASSERT_FMT(display, "입력 제공자를 등록할 디스플레이가 nullptr입니다.");
 		if (!display)
 		{
 			return;
@@ -81,6 +84,7 @@ namespace TUK::Framework
 
 	void InputSubsystem::RemoveProvider(const Display* display)
 	{
+		ASSERT_FMT(display, "입력 제공자를 해제할 디스플레이가 nullptr입니다.");
 		if (!display)
 		{
 			return;

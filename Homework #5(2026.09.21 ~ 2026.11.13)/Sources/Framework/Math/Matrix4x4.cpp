@@ -31,7 +31,7 @@ namespace TUK::Framework
 	Matrix4x4<TScalar>::Matrix4x4(const TScalar values[16]) noexcept
 		: value{}
 	{
-		assert(values);
+		ASSERT(values);
 		for (std::size_t index = 0; index < 16; ++index)
 		{
 			(*this)[index] = values[index];

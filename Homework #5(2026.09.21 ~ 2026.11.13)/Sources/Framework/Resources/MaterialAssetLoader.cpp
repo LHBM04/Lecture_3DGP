@@ -24,6 +24,7 @@ namespace TUK::Framework
 		, device(device)
 		, targetFormat(targetFormat)
 	{
+		ASSERT_FMT(assets, "머티리얼 로더의 에셋 서브시스템이 nullptr입니다.");
 	}
 
 	std::expected<std::unique_ptr<MaterialAsset>, std::string> MaterialAssetLoader::Load(

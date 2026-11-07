@@ -29,7 +29,7 @@ namespace TUK::Framework
 	ColorRGBA<TScalar>::ColorRGBA(const TScalar* values) noexcept
 		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
 	{
-		assert(values);
+		ASSERT(values);
 		value = decltype(value)(values);
 	}
 
