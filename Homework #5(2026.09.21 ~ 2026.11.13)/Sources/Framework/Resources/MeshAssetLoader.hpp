@@ -14,14 +14,12 @@ namespace TUK::Framework
 {
 	class GPUDevice;
 
-	class MeshAssetLoader final : public AssetLoader
+	class MeshAssetLoader final : public AssetLoader<MeshAsset>
 	{
 	public:
-		using AssetType = MeshAsset;
-
 		explicit MeshAssetLoader(const GPUDevice& device) noexcept;
 
-		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
+		[[nodiscard]] std::expected<std::unique_ptr<MeshAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
 	private:

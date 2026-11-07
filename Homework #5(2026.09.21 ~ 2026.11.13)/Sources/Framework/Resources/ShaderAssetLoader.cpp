@@ -9,7 +9,7 @@
 
 namespace TUK::Framework
 {
-	std::expected<std::unique_ptr<Asset>, std::string> ShaderAssetLoader::Load(
+	std::expected<std::unique_ptr<ShaderAsset>, std::string> ShaderAssetLoader::Load(
 		const std::filesystem::path& path) const
 	{
 		if (path.extension() != ".cso")

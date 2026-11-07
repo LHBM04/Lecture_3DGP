@@ -13,7 +13,7 @@ namespace TUK::Framework
 	{
 	}
 
-	std::expected<std::unique_ptr<Asset>, std::string> ImageAssetLoader::Load(
+	std::expected<std::unique_ptr<ImageAsset>, std::string> ImageAssetLoader::Load(
 		const std::filesystem::path& path) const
 	{
 		std::string extension = path.extension().string();
@@ -130,7 +130,7 @@ namespace TUK::Framework
 			return std::unexpected("이미지 업로드 중 디바이스가 제거되었습니다.");
 		}
 
-		auto image = std::make_unique<ImageAsset>();
+		auto image = std::make_unique<ImageAsset>(path);
 		image->SetTexture(GPUTexture2D(std::move(resource)));
 		return image;
 	}

@@ -10,14 +10,12 @@ namespace TUK::Framework
 	class AssetSubsystem;
 	class GPUDevice;
 
-	class MaterialAssetLoader final : public AssetLoader
+	class MaterialAssetLoader final : public AssetLoader<MaterialAsset>
 	{
 	public:
-		using AssetType = MaterialAsset;
-
 		MaterialAssetLoader(const AssetSubsystem* assets, const GPUDevice& device, DXGI_FORMAT targetFormat) noexcept;
 
-		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
+		[[nodiscard]] std::expected<std::unique_ptr<MaterialAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
 	private:

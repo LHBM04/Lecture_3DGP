@@ -12,14 +12,12 @@ namespace TUK::Framework
 {
 	class GPUDevice;
 
-	class ImageAssetLoader final : public AssetLoader
+	class ImageAssetLoader final : public AssetLoader<ImageAsset>
 	{
 	public:
-		using AssetType = ImageAsset;
-
 		explicit ImageAssetLoader(const GPUDevice& device) noexcept;
 
-		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
+		[[nodiscard]] std::expected<std::unique_ptr<ImageAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
 	private:

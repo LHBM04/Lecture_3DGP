@@ -22,7 +22,7 @@ namespace TUK::Framework
 	{
 	}
 
-	std::expected<std::unique_ptr<Asset>, std::string> MeshAssetLoader::Load(
+	std::expected<std::unique_ptr<MeshAsset>, std::string> MeshAssetLoader::Load(
 		const std::filesystem::path& path) const
 	{
 		if (path.extension() != ".bin")
@@ -37,10 +37,15 @@ namespace TUK::Framework
 		}
 
 		const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
-		auto mesh = std::make_unique<MeshAsset>();
+		auto mesh = std::make_unique<MeshAsset>(path);
 		if (file.bad() || !mesh->Deserialize(bytes))
 		{
 			return std::unexpected("메시 역직렬화에 실패했습니다: " + path.generic_string());
+		}
+
+		if (mesh->GetName().empty())
+		{
+			mesh->SetName(path.stem().string());
 		}
 
 		auto vertices = GPUBuffer::CreateUpload(device, std::as_bytes(mesh->GetVertices()));

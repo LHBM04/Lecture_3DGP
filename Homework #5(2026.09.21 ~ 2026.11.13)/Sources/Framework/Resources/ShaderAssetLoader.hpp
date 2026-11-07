@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "../Core/Common.hpp"
 
@@ -9,12 +9,10 @@ namespace TUK::Framework
 {
 	class GPUDevice;
 
-	class ShaderAssetLoader final : public AssetLoader
+	class ShaderAssetLoader final : public AssetLoader<ShaderAsset>
 	{
 	public:
-		using AssetType = ShaderAsset;
-
-		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
+		[[nodiscard]] std::expected<std::unique_ptr<ShaderAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 	};
 }

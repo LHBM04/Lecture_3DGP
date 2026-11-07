@@ -11,8 +11,6 @@ namespace TUK::Framework
 {
 	class Asset
 	{
-		friend class AssetSubsystem;
-
 	public:
 		Asset() noexcept = default;
 		virtual ~Asset() noexcept = default;
@@ -30,6 +28,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::string_view GetName() const noexcept;
 		void SetName(std::string_view value) noexcept;
+
 		[[nodiscard]] const std::filesystem::path& GetPath() const noexcept;
 
 	private:
@@ -53,7 +52,8 @@ namespace TUK::Framework
 	}
 
 	inline Asset::Asset(std::filesystem::path sourcePath) noexcept
-		: path(std::move(sourcePath))
+		: name(sourcePath.stem().string())
+		, path(std::move(sourcePath))
 	{
 	}
 }

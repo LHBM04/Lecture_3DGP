@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 #include <expected>
@@ -27,7 +27,7 @@ namespace TUK::Framework
 	public:
 		AssetSubsystem() noexcept;
 
-		template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
+		template <std::derived_from<AssetLoader<>> TAssetLoader, class... TArgs>
 		void AddLoader(TArgs&&... args);
 
 		template <std::derived_from<Asset> TAsset>
@@ -47,8 +47,8 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		using AssetLoaderList = std::vector<std::unique_ptr<AssetLoader>>;
-		using AssetLoaderDict = std::unordered_map<std::type_index, AssetLoader*>;
+		using AssetLoaderList = std::vector<std::unique_ptr<AssetLoader<>>>;
+		using AssetLoaderDict = std::unordered_map<std::type_index, AssetLoader<>*>;
 
 		using AssetList = std::vector<std::unique_ptr<Asset>>;
 		using AssetDict = std::unordered_map<std::filesystem::path, Asset*>;
@@ -65,20 +65,23 @@ namespace TUK::Framework
 	{
 	}
 
-	template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
+	template <std::derived_from<AssetLoader<>> TAssetLoader, class... TArgs>
 	void AssetSubsystem::AddLoader(TArgs&&... args)
 	{
-		using TAsset = typename TAssetLoader::AssetType;
-		static_assert(std::derived_from<TAsset, Asset>);
+		const auto getAssetType = []<class TLoader, std::derived_from<Asset> TAsset>(
+			std::expected<std::unique_ptr<TAsset>, std::string>(TLoader::*)(const std::filesystem::path&) const) noexcept
+		{
+			return std::type_index(typeid(TAsset));
+		};
 
-		const std::type_index assetType(typeid(TAsset));
+		const std::type_index assetType = getAssetType(&TAssetLoader::Load);
 		if (assetLoadersByType.contains(assetType))
 		{
 			return;
 		}
 
 		auto loader = std::make_unique<TAssetLoader>(std::forward<TArgs>(args)...);
-		AssetLoader* pointer = loader.get();
+		AssetLoader<>* pointer = loader.get();
 		assetLoaders.emplace_back(std::move(loader));
 		assetLoadersByType.emplace(assetType, pointer);
 	}
@@ -109,24 +112,18 @@ namespace TUK::Framework
 			return nullptr;
 		}
 
-		auto asset = assetLoader->second->Load(normalizedPath);
+		const auto* loader = static_cast<const AssetLoader<TAsset>*>(assetLoader->second);
+		auto asset = loader->Load(normalizedPath);
 		if (!asset)
 		{
 			LOG_ERROR("에셋 로드에 실패했습니다: {}: {}", normalizedPath.generic_string(), asset.error());
 			return nullptr;
 		}
 
-		auto* result = dynamic_cast<TAsset*>(asset->get());
+		TAsset* result = asset->get();
 		if (!result)
 		{
 			return nullptr;
-		}
-
-		Asset& loadedAsset = *result;
-		loadedAsset.path = normalizedPath;
-		if (loadedAsset.name.empty())
-		{
-			loadedAsset.name = normalizedPath.stem().string();
 		}
 
 		assets.emplace_back(std::move(*asset));

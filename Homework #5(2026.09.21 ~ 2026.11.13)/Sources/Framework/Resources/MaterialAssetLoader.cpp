@@ -26,7 +26,7 @@ namespace TUK::Framework
 	{
 	}
 
-	std::expected<std::unique_ptr<Asset>, std::string> MaterialAssetLoader::Load(
+	std::expected<std::unique_ptr<MaterialAsset>, std::string> MaterialAssetLoader::Load(
 		const std::filesystem::path& path) const
 	{
 		if (!assets)
@@ -47,7 +47,7 @@ namespace TUK::Framework
 
 		const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 		
-		auto material = std::make_unique<MaterialAsset>();
+		auto material = std::make_unique<MaterialAsset>(path);
 		if (file.bad() || !material->Deserialize(bytes))
 		{
 			return std::unexpected(std::format("머티리얼 역직렬화에 실패했습니다: {}", path.generic_string()));

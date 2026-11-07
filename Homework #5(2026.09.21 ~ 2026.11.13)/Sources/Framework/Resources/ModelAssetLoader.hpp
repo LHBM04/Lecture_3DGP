@@ -12,12 +12,10 @@
 
 namespace TUK::Framework
 {
-	class ModelAssetLoader final : public AssetLoader
+	class ModelAssetLoader final : public AssetLoader<ModelAsset>
 	{
 	public:
-		using AssetType = ModelAsset;
-
-		[[nodiscard]] std::expected<std::unique_ptr<Asset>, std::string> Load(
+		[[nodiscard]] std::expected<std::unique_ptr<ModelAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
 	};
