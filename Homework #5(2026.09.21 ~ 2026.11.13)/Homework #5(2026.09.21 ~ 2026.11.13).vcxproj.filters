@@ -45,9 +45,6 @@
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Core\Allocator.hpp">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Core\App.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
@@ -263,9 +260,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Framework\Core\Allocator.cpp">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>

@@ -317,7 +317,7 @@ namespace TUK::Framework
 			}
 			return path.lexically_normal();
 		};
-		std::pmr::vector<std::pmr::vector<PreparedRenderer>> prepared(submodels.size());
+		std::vector<std::vector<PreparedRenderer>> prepared(submodels.size());
 		for (usize index = 0; index < submodels.size(); ++index)
 		{
 			const Submodel& submodel = submodels[index];
@@ -344,8 +344,8 @@ namespace TUK::Framework
 			}
 		}
 
-		std::pmr::vector<Entity*> nodeEntities(submodels.size(), nullptr);
-		std::pmr::vector<Transform*> nodeTransforms(submodels.size(), nullptr);
+		std::vector<Entity*> nodeEntities(submodels.size(), nullptr);
+		std::vector<Transform*> nodeTransforms(submodels.size(), nullptr);
 		for (usize index = 0; index < submodels.size(); ++index)
 		{
 			const Submodel& node = submodels[index];
@@ -422,7 +422,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		std::pmr::vector<std::unique_ptr<Entity>> destroyed;
+		std::vector<std::unique_ptr<Entity>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
 
 		usize remainingCount = 0;
@@ -452,7 +452,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		std::pmr::vector<std::unique_ptr<Entity>> removing = std::move(entities);
+		std::vector<std::unique_ptr<Entity>> removing = std::move(entities);
 		entities.clear();
 
 		for (std::unique_ptr<Entity>& entity : removing | std::views::reverse)
@@ -503,9 +503,9 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	std::pmr::vector<Entity*> World::FindEntitiesByName(std::string_view name)
+	std::vector<Entity*> World::FindEntitiesByName(std::string_view name)
 	{
-		std::pmr::vector<Entity*> result;
+		std::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->GetName() == name)
@@ -517,9 +517,9 @@ namespace TUK::Framework
 		return result;
 	}
 
-	std::pmr::vector<const Entity*> World::FindEntitiesByName(std::string_view name) const
+	std::vector<const Entity*> World::FindEntitiesByName(std::string_view name) const
 	{
-		std::pmr::vector<const Entity*> result;
+		std::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->GetName() == name)
@@ -557,9 +557,9 @@ namespace TUK::Framework
 		return nullptr;
 	}
 
-	std::pmr::vector<Entity*> World::FindEntitiesByTag(std::string_view tag)
+	std::vector<Entity*> World::FindEntitiesByTag(std::string_view tag)
 	{
-		std::pmr::vector<Entity*> result;
+		std::vector<Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->CompareTag(tag))
@@ -571,9 +571,9 @@ namespace TUK::Framework
 		return result;
 	}
 
-	std::pmr::vector<const Entity*> World::FindEntitiesByTag(std::string_view tag) const
+	std::vector<const Entity*> World::FindEntitiesByTag(std::string_view tag) const
 	{
-		std::pmr::vector<const Entity*> result;
+		std::vector<const Entity*> result;
 		for (const std::unique_ptr<Entity>& entity : entities)
 		{
 			if (!entity->IsDestroyed() && entity->CompareTag(tag))

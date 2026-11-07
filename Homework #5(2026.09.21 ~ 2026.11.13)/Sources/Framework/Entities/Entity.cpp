@@ -103,7 +103,7 @@ namespace TUK::Framework
 		}
 
 		// 삭제 콜백이 컴포넌트를 추가하더라도 원래 컨테이너의 순회에 영향을 주지 않는다.
-		std::pmr::vector<std::unique_ptr<Component>> destroyed;
+		std::vector<std::unique_ptr<Component>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
 		std::erase_if(componentsByType,
 			[](const auto& entry)
@@ -153,7 +153,7 @@ namespace TUK::Framework
 		}
 
 		componentsByType.clear();
-		std::pmr::vector<std::unique_ptr<Component>> removing = std::move(components);
+		std::vector<std::unique_ptr<Component>> removing = std::move(components);
 		components.clear();
 
 		for (const auto& component : removing | std::views::reverse)

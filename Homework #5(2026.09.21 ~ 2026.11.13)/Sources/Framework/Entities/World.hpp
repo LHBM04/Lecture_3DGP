@@ -66,13 +66,13 @@ namespace TUK::Framework
 
 		[[nodiscard]] Entity* FindEntityByName(std::string_view name) noexcept;
 		[[nodiscard]] const Entity* FindEntityByName(std::string_view name) const noexcept;
-		[[nodiscard]] std::pmr::vector<Entity*> FindEntitiesByName(std::string_view name);
-		[[nodiscard]] std::pmr::vector<const Entity*> FindEntitiesByName(std::string_view name) const;
+		[[nodiscard]] std::vector<Entity*> FindEntitiesByName(std::string_view name);
+		[[nodiscard]] std::vector<const Entity*> FindEntitiesByName(std::string_view name) const;
 
 		[[nodiscard]] Entity* FindEntityByTag(std::string_view tag) noexcept;
 		[[nodiscard]] const Entity* FindEntityByTag(std::string_view tag) const noexcept;
-		[[nodiscard]] std::pmr::vector<Entity*> FindEntitiesByTag(std::string_view tag);
-		[[nodiscard]] std::pmr::vector<const Entity*> FindEntitiesByTag(std::string_view tag) const;
+		[[nodiscard]] std::vector<Entity*> FindEntitiesByTag(std::string_view tag);
+		[[nodiscard]] std::vector<const Entity*> FindEntitiesByTag(std::string_view tag) const;
 
 		[[nodiscard]] auto GetEntities() noexcept;
 		[[nodiscard]] auto GetEntities() const noexcept;
@@ -107,8 +107,8 @@ namespace TUK::Framework
 		bool isEntered = false;
 		bool isRunningPhase = false;
 
-		std::pmr::vector<std::unique_ptr<Entity>> entities{};
-		std::pmr::vector<Camera*> cameras{};
+		std::vector<std::unique_ptr<Entity>> entities{};
+		std::vector<Camera*> cameras{};
 	};
 
 	inline bool World::IsEntered() const noexcept

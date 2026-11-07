@@ -1,11 +1,5 @@
 ﻿#include "Precompiled.hpp"
 
-#include <cerrno>
-#include <cstdlib>
-#include <cwchar>
-#include <cwctype>
-#include <limits>
-
 #include "Framework/Core.hpp"
 #include "Framework/Utilities.hpp"
 
@@ -35,20 +29,7 @@ INT APIENTRY _tWinMain(
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(nCmdShow);
 
-	const TCHAR* argument = lpCmdLine;
-	while (std::iswspace(*argument))
-	{
-		++argument;
-	}
-
-	usize poolSize = DEFAULT_POOL_SIZE;
-	if (*argument != '\0')
-	{
-		const long long parsedSize = std::wcstoll(argument, nullptr, 10);
-		poolSize = static_cast<usize>(parsedSize);
-	}
-
-	Memory::Initialize(poolSize);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	i32 exitCode = 0;
 	{
@@ -57,6 +38,5 @@ INT APIENTRY _tWinMain(
 		exitCode = engine.Run(&app);
 	}
 
-	Memory::Shutdown();
 	return exitCode;
 }

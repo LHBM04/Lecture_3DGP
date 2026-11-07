@@ -2,7 +2,6 @@
 
 #include <concepts>
 #include <memory>
-#include <memory_resource>
 #include <ranges>
 #include <typeindex>
 #include <unordered_map>
@@ -44,8 +43,8 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetSubsystems() const noexcept;
 
 	private:
-		std::pmr::vector<std::unique_ptr<Subsystem>> subsystems;
-		std::pmr::unordered_map<std::type_index, Subsystem*> subsystemsByType;
+		std::vector<std::unique_ptr<Subsystem>> subsystems;
+		std::unordered_map<std::type_index, Subsystem*> subsystemsByType;
 	};
 
 	template <std::derived_from<Subsystem> TSubsystem>

@@ -2,7 +2,6 @@
 
 #include <concepts>
 #include <memory>
-#include <memory_resource>
 #include <ranges>
 #include <span>
 #include <string>
@@ -41,10 +40,10 @@ namespace TUK::Framework
 		void Render(GPUCommandBuffer& commandBuffer);
 		void PostRender(GPUCommandBuffer& commandBuffer);
 
-		[[nodiscard]] const std::pmr::string& GetName() const noexcept;
+		[[nodiscard]] const std::string& GetName() const noexcept;
 		void SetName(std::string_view value) noexcept;
 
-		[[nodiscard]] const std::pmr::string& GetTag() const noexcept;
+		[[nodiscard]] const std::string& GetTag() const noexcept;
 		void SetTag(std::string_view value) noexcept;
 
 		[[nodiscard]] bool CompareTag(std::string_view value) const noexcept;
@@ -85,11 +84,11 @@ namespace TUK::Framework
 		void DestroyComponents();
 		void DestroyAllComponents();
 
-		std::pmr::string name{ "New Entity" };
-		std::pmr::string tag{ "Untagged" };
+		std::string name{ "New Entity" };
+		std::string tag{ "Untagged" };
 
-		std::pmr::vector<std::unique_ptr<Component>> components;
-		std::pmr::unordered_map<std::type_index, Component*> componentsByType;
+		std::vector<std::unique_ptr<Component>> components;
+		std::unordered_map<std::type_index, Component*> componentsByType;
 
 		World* world = nullptr;
 
@@ -115,7 +114,7 @@ namespace TUK::Framework
 	{
 	}
 
-	inline const std::pmr::string& Entity::GetName() const noexcept
+	inline const std::string& Entity::GetName() const noexcept
 	{
 		return name;
 	}
@@ -125,7 +124,7 @@ namespace TUK::Framework
 		name = value;
 	}
 
-	inline const std::pmr::string& Entity::GetTag() const noexcept
+	inline const std::string& Entity::GetTag() const noexcept
 	{
 		return tag;
 	}
