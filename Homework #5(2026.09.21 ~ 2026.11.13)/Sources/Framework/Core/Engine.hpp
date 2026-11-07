@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 
@@ -9,13 +9,9 @@ namespace TUK::Framework
 {
 	class App;
 
-	class Engine : public System
+	class Engine : public System<EngineSubsystem>
 	{
 	public:
-		explicit Engine(App* app) noexcept;
-
-		[[nodiscard]] i32 Run();
-
 		SystemStatus Startup() override;
 		SystemStatus Routine() override;
 		void Shutdown() override;
@@ -29,8 +25,7 @@ namespace TUK::Framework
 		template <std::derived_from<EngineSubsystem> TSubsystem>
 		[[nodiscard]] const TSubsystem* GetSubsystem() const noexcept;
 
-		[[nodiscard]] auto GetSubsystems() noexcept;
-		[[nodiscard]] auto GetSubsystems() const noexcept;
+		[[nodiscard]] i32 Run(App* target);
 
 		[[nodiscard]] static Engine& GetInstance() noexcept;
 
@@ -41,13 +36,8 @@ namespace TUK::Framework
 
 		inline static Engine* instance = nullptr;
 
-		App* app = nullptr;
+		App* app;
 	};
-
-	inline Engine::Engine(App* app) noexcept
-		: app(app)
-	{
-	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
 	TSubsystem* Engine::AddSubsystem()
@@ -67,16 +57,6 @@ namespace TUK::Framework
 		return System::GetSubsystem<TSubsystem>();
 	}
 
-	inline auto Engine::GetSubsystems() noexcept
-	{
-		return System::GetSubsystems<EngineSubsystem>();
-	}
-
-	inline auto Engine::GetSubsystems() const noexcept
-	{
-		return System::GetSubsystems<EngineSubsystem>();
-	}
-	
 	inline Engine& Engine::GetInstance() noexcept
 	{
 		return *instance;

@@ -53,8 +53,8 @@ INT APIENTRY _tWinMain(
 	i32 exitCode = 0;
 	{
 		MyGame app;
-		MyEngine engine(&app);
-		exitCode = engine.Run();
+		MyEngine engine;
+		exitCode = engine.Run(&app);
 	}
 
 	Memory::Shutdown();

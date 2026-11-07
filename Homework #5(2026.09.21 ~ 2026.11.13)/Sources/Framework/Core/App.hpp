@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 
@@ -8,7 +8,7 @@
 
 namespace TUK::Framework
 {
-	class App : public System
+	class App : public System<AppSubsystem>
 	{
 	public:
 		SystemStatus Startup() override;
@@ -23,9 +23,6 @@ namespace TUK::Framework
 
 		template <std::derived_from<AppSubsystem> TSubsystem>
 		[[nodiscard]] const TSubsystem* GetSubsystem() const noexcept;
-
-		[[nodiscard]] auto GetSubsystems() noexcept;
-		[[nodiscard]] auto GetSubsystems() const noexcept;
 
 		[[nodiscard]] static App& GetInstance() noexcept;
 
@@ -54,16 +51,6 @@ namespace TUK::Framework
 	const TSubsystem* App::GetSubsystem() const noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
-	}
-
-	inline auto App::GetSubsystems() noexcept
-	{
-		return System::GetSubsystems<AppSubsystem>();
-	}
-
-	inline auto App::GetSubsystems() const noexcept
-	{
-		return System::GetSubsystems<AppSubsystem>();
 	}
 
 	inline App& App::GetInstance() noexcept

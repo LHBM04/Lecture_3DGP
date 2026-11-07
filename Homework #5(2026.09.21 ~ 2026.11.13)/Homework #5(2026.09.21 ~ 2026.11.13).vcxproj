@@ -283,7 +283,6 @@
     <ClCompile Include="Sources\Framework\Resources\ImageAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Utilities\Logger.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
-    <ClCompile Include="Sources\Framework\Core\System.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUCommandBuffer.cpp" />

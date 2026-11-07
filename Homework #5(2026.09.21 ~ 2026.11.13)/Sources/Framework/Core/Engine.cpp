@@ -1,12 +1,14 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Engine.hpp"
 
 #include "App.hpp"
 
 namespace TUK::Framework
 {
-	i32 Engine::Run()
+	i32 Engine::Run(App* target)
 	{
+		app = target;
+
 		if (const SystemStatus status = Startup(); status != SystemStatus::CONTINUE)
 		{
 			Shutdown();
