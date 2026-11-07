@@ -25,7 +25,7 @@ namespace TUK::Framework
 		if (FAILED(result))
 		{
 			return std::unexpected(std::format(
-				"Failed to create graphics pipeline state. HRESULT: 0x{:08X}",
+				"그래픽스 파이프라인 상태 생성에 실패했습니다. HRESULT: 0x{:08X}",
 				static_cast<u32>(result)));
 		}
 
@@ -41,14 +41,14 @@ namespace TUK::Framework
 	{
 		if (!material || !vertexShader || !pixelShader)
 		{
-			return std::unexpected("Material or shader asset is null.");
+			return std::unexpected("머티리얼 또는 셰이더 에셋이 nullptr입니다.");
 		}
 
 		const GPUShader* vs = vertexShader->GetShader();
 		const GPUShader* ps = pixelShader->GetShader();
 		if (!vs || !ps)
 		{
-			return std::unexpected("Shader bytecode is not loaded.");
+			return std::unexpected("셰이더 바이트코드가 로드되지 않았습니다.");
 		}
 
 		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =

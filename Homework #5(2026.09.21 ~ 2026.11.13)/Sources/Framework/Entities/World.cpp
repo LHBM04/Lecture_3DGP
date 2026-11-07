@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "World.hpp"
 
 #include "../Core/App.hpp"
@@ -132,7 +132,7 @@ namespace TUK::Framework
 
 				if (auto result = commandBuffer.SetCamera(camera); !result)
 				{
-					Logger::LogError("World failed to set camera: {}", result.error());
+					LOG_ERROR("월드의 카메라 설정에 실패했습니다: {}", result.error());
 					continue;
 				}
 
@@ -278,6 +278,7 @@ namespace TUK::Framework
 
 	Entity* World::Instantiate(const ModelAsset* modelAsset, Transform* parent)
 	{
+		ASSERT_FMT(modelAsset, "인스턴스화할 모델이 nullptr입니다.");
 		if (!modelAsset)
 		{
 			return nullptr;
@@ -288,14 +289,14 @@ namespace TUK::Framework
 		const std::span<const Submodel> submodels = model.GetSubmodels();
 		if (submodels.empty())
 		{
-			Logger::LogError("Model has no submodels: {}", model.GetName());
+			LOG_ERROR("모델에 서브모델이 없습니다: {}", model.GetName());
 			return nullptr;
 		}
 
 		const AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		if (!assets)
 		{
-			Logger::LogError("AssetSubsystem is unavailable for model: {}", model.GetName());
+			LOG_ERROR("모델에 사용할 에셋 서브시스템이 없습니다: {}", model.GetName());
 			return nullptr;
 		}
 		struct PreparedRenderer
@@ -329,14 +330,14 @@ namespace TUK::Framework
 				const MeshAsset* mesh = assets->FindLoadedAsset<MeshAsset>(meshPath);
 				if (!mesh)
 				{
-					Logger::LogError("Mesh {} was not loaded for model {}", meshPath.generic_string(), model.GetName());
+					LOG_ERROR("메시가 로드되지 않았습니다: {} (모델: {})", meshPath.generic_string(), model.GetName());
 					return nullptr;
 				}
 
 				const MaterialAsset* material = assets->FindLoadedAsset<MaterialAsset>(materialPath);
 				if (!material || !material->GetGraphicsPipelineState())
 				{
-					Logger::LogError("Material {} was not prepared for model {}", materialPath.generic_string(), model.GetName());
+					LOG_ERROR("머티리얼이 준비되지 않았습니다: {} (모델: {})", materialPath.generic_string(), model.GetName());
 					return nullptr;
 				}
 

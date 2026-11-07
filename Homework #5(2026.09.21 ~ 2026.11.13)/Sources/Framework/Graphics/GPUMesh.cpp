@@ -16,12 +16,12 @@ namespace TUK::Framework
 			|| vertexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
 			|| vertexBuffer.GetSizeInBytes() % vertexStride != 0)
 		{
-			return std::unexpected("Invalid vertex buffer size or stride.");
+			return std::unexpected("정점 버퍼 크기 또는 스트라이드가 유효하지 않습니다.");
 		}
 
 		if (indexFormat != DXGI_FORMAT_R16_UINT && indexFormat != DXGI_FORMAT_R32_UINT)
 		{
-			return std::unexpected("Index format must be R16_UINT or R32_UINT.");
+			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
 		}
 
 		const u32 INDEX_SIZE = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
@@ -29,7 +29,7 @@ namespace TUK::Framework
 			|| indexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
 			|| indexBuffer.GetSizeInBytes() % INDEX_SIZE != 0)
 		{
-			return std::unexpected("Invalid index buffer size.");
+			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
 		}
 
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};

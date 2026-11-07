@@ -127,7 +127,7 @@ namespace TUK::Framework
 
 		if (wndClass = RegisterClassEx(&windowClass); wndClass == 0)
 		{
-			Logger::LogError("Failed to register window class (Win32 error: {}).", GetLastError());
+			LOG_ERROR("윈도우 클래스 등록에 실패했습니다 (Win32 오류: {}).", GetLastError());
 			return SystemStatus::FAILURE;
 		}
 
@@ -188,7 +188,7 @@ namespace TUK::Framework
 
 		if (!hWnd)
 		{
-			return std::unexpected(std::format("Failed to create window (Win32 error: {}).", GetLastError()));
+			return std::unexpected(std::format("윈도우 생성에 실패했습니다 (Win32 오류: {}).", GetLastError()));
 		}
 
 		Display* pointer = newWindow.get();

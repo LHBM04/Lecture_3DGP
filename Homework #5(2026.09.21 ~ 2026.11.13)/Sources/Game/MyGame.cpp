@@ -16,14 +16,14 @@ namespace TUK::Game
 		EventSubsystem* eventSubsystem = Engine::GetInstance().GetSubsystem<EventSubsystem>();
 		if (!eventSubsystem)
 		{
-			Logger::LogError("Failed to get Event Subsystem.");
+			LOG_ERROR("이벤트 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
 		inputSubsystem = AddSubsystem<InputSubsystem>();
 		if (!inputSubsystem)
 		{
-			Logger::LogError("Failed to get Input Subsystem.");
+			LOG_ERROR("입력 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -35,7 +35,7 @@ namespace TUK::Game
 		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{
-			Logger::LogError("Failed to get Display Subsystem.");
+			LOG_ERROR("디스플레이 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -53,7 +53,7 @@ namespace TUK::Game
 		auto result = displaySubsystem->CreateDisplay(options);
 		if (!result)
 		{
-			Logger::LogError("Display creation failed: {}", result.error());
+			LOG_ERROR("디스플레이 생성에 실패했습니다: {}", result.error());
 			return SystemStatus::FAILURE;
 		}
 
@@ -63,7 +63,7 @@ namespace TUK::Game
 		renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
 		if (!renderSubsystem)
 		{
-			Logger::LogError("Failed to get Render Subsystem.");
+			LOG_ERROR("렌더 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -74,7 +74,7 @@ namespace TUK::Game
 		assetSubsystem = AddSubsystem<AssetSubsystem>();
 		if (!assetSubsystem)
 		{
-			Logger::LogError("Failed to get Asset Subsystem.");
+			LOG_ERROR("에셋 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 

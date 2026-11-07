@@ -2,6 +2,8 @@
 
 #include <concepts>
 
+#include "../Utilities/Logger.hpp"
+
 #include "System.hpp"
 #include "EngineSubsystem.hpp"
 
@@ -59,6 +61,7 @@ namespace TUK::Framework
 
 	inline Engine& Engine::GetInstance() noexcept
 	{
+		ASSERT_FMT(instance, "Engine 인스턴스가 초기화되지 않았습니다.");
 		return *instance;
 	}
 }

@@ -1,7 +1,5 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "WorldSubsystem.hpp"
-
-#include <cstdlib>
 
 #include "World.hpp"
 
@@ -80,7 +78,7 @@ namespace TUK::Framework
 		}
 
 		currentWorld->Enter();
-		// OnEnter에서 월드 종료를 요청하면 currentWorld가 비워집니다.
+
 		if (currentWorld)
 		{
 			currentWorld->EarlyUpdate();
@@ -94,7 +92,6 @@ namespace TUK::Framework
 		{
 			currentWorld->FixedUpdate();
 		}
-
 		return SystemStatus::CONTINUE;
 	}
 
@@ -104,7 +101,6 @@ namespace TUK::Framework
 		{
 			currentWorld->Update();
 		}
-
 		return SystemStatus::CONTINUE;
 	}
 
@@ -114,7 +110,6 @@ namespace TUK::Framework
 		{
 			currentWorld->LateUpdate();
 		}
-
 		return currentWorld ? SystemStatus::CONTINUE : SystemStatus::SUCCESS;
 	}
 

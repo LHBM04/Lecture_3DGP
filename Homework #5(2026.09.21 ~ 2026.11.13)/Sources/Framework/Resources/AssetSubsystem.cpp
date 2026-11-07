@@ -1,6 +1,4 @@
 ﻿#include "Precompiled.hpp"
-#include <system_error>
-
 #include "AssetSubsystem.hpp"
 
 #include "MaterialAsset.hpp"
@@ -18,7 +16,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".cso")
 			{	
 				LoadAsset<ShaderAsset>(entry.path());
-				Logger::LogTrace("{}", entry.path().generic_string());
+				LOG_TRACE("에셋 로드: {}", entry.path().generic_string());
 			}
 		}
 
@@ -28,7 +26,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<MaterialAsset>(entry.path());
-				Logger::LogTrace("{}", entry.path().generic_string());
+				LOG_TRACE("{}", entry.path().generic_string());
 			}
 		}
 
@@ -38,7 +36,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<MeshAsset>(entry.path());
-				Logger::LogTrace("{}", entry.path().generic_string());
+				LOG_TRACE("{}", entry.path().generic_string());
 			}
 		}
 
@@ -48,7 +46,7 @@ namespace TUK::Framework
 			if (entry.path().extension() == ".bin")
 			{	
 				LoadAsset<ModelAsset>(entry.path());
-				Logger::LogTrace("{}", entry.path().generic_string());
+				LOG_TRACE("{}", entry.path().generic_string());
 			}
 		}
 

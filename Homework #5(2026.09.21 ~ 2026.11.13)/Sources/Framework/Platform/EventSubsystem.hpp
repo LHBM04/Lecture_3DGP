@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 #include <functional>
@@ -11,6 +11,8 @@
 
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
+
+#include "../Utilities/Logger.hpp"
 
 #include "Event.hpp"
 
@@ -134,7 +136,7 @@ namespace TUK::Framework
 	template <std::derived_from<Event> TEvent>
 	void EventSubsystem::AddListener(std::function<void(const TEvent&)> callback)
 	{
-		ASSERT(callback);
+		ASSERT_FMT(callback, "이벤트 콜백이 비어 있습니다.");
 		listeners[std::type_index(typeid(TEvent))].push_back(
 			[cb = std::move(callback)](const Event& event)
 			{
@@ -146,7 +148,7 @@ namespace TUK::Framework
 		requires std::invocable<void (TInstance::*)(TArg), TInstance*, const TEvent&>
 	void EventSubsystem::AddListener(TInstance* instance, void (TInstance::* callback)(TArg))
 	{
-		ASSERT(instance && callback);
+		ASSERT_FMT(instance && callback, "이벤트 수신 객체 또는 콜백이 nullptr입니다.");
 		AddListener<TEvent>(
 			[instance, callback](const TEvent& event)
 			{
@@ -158,7 +160,7 @@ namespace TUK::Framework
 		requires std::invocable<void (TInstance::*)(TArg) const, const TInstance*, const TEvent&>
 	void EventSubsystem::AddListener(const TInstance* instance, void (TInstance::* callback)(TArg) const)
 	{
-		ASSERT(instance && callback);
+		ASSERT_FMT(instance && callback, "이벤트 수신 객체 또는 콜백이 nullptr입니다.");
 		AddListener<TEvent>(
 			[instance, callback](const TEvent& event)
 			{

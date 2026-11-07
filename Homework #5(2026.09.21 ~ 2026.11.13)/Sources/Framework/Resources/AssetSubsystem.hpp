@@ -112,7 +112,7 @@ namespace TUK::Framework
 		auto asset = assetLoader->second->Load(normalizedPath);
 		if (!asset)
 		{
-			Logger::LogError("Asset load failed: {}: {}", normalizedPath.generic_string(), asset.error());
+			LOG_ERROR("에셋 로드에 실패했습니다: {}: {}", normalizedPath.generic_string(), asset.error());
 			return nullptr;
 		}
 

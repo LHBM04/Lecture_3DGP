@@ -14,7 +14,7 @@ namespace TUK::Framework
 	{
 		if (!display)
 		{
-			return std::unexpected("Display is null.");
+			return std::unexpected("디스플레이가 nullptr입니다.");
 		}
 
 		IDXGIFactory6& dxgiFactory = device.GetDXGIFactory();
@@ -30,13 +30,13 @@ namespace TUK::Framework
 			nullptr,
 			swapChain1.GetAddressOf())))
 		{
-			return std::unexpected("Failed to create DXGI swap chain.");
+			return std::unexpected("DXGI 스왑체인 생성에 실패했습니다.");
 		}
 
 		ComPtr<IDXGISwapChain4> swapChain4;
 		if (FAILED(swapChain1.As(&swapChain4)))
 		{
-			return std::unexpected("Failed to query IDXGISwapChain4 interface.");
+			return std::unexpected("IDXGISwapChain4 인터페이스 조회에 실패했습니다.");
 		}
 
 		D3D12_DESCRIPTOR_HEAP_DESC heapDescription{};
@@ -48,7 +48,7 @@ namespace TUK::Framework
 		ComPtr<ID3D12DescriptorHeap> rtvHeap;
 		if (FAILED(d3dDevice.CreateDescriptorHeap(&heapDescription, IID_PPV_ARGS(rtvHeap.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create RTV descriptor heap.");
+			return std::unexpected("RTV 디스크립터 힙 생성에 실패했습니다.");
 		}
 
 		const u32 descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -62,7 +62,7 @@ namespace TUK::Framework
 			ComPtr<ID3D12Resource> backBuffer;
 			if (FAILED(swapChain4->GetBuffer(index, IID_PPV_ARGS(backBuffer.GetAddressOf()))))
 			{
-				return std::unexpected("Failed to retrieve D3D12 back buffer.");
+				return std::unexpected("D3D12 백 버퍼 조회에 실패했습니다.");
 			}
 
 			d3dDevice.CreateRenderTargetView(backBuffer.Get(), nullptr, rtvHandle);

@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 
 #include <array>
 #include <format>
@@ -24,7 +24,7 @@ namespace TUK::Framework
 		ComPtr<IDXGIFactory6> dxgiFactory;
 		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create DXGI factory.");
+			return std::unexpected("DXGI ?⑺넗由??앹꽦???ㅽ뙣?덉뒿?덈떎.");
 		}
 
 		for (UINT adapterIndex = 0; ; ++adapterIndex)
@@ -57,7 +57,7 @@ namespace TUK::Framework
 			ComPtr<ID3D12CommandQueue> d3dCommandQueue;
 			if (FAILED(d3dDevice->CreateCommandQueue(&queueDescription, IID_PPV_ARGS(d3dCommandQueue.GetAddressOf()))))
 			{
-				return std::unexpected("Failed to create D3D12 command queue.");
+				return std::unexpected("D3D12 紐낅졊 ???앹꽦???ㅽ뙣?덉뒿?덈떎.");
 			}
 
 			constexpr u32 CONSTANT_BUFFER_SLOT_COUNT = 3;
@@ -94,7 +94,7 @@ namespace TUK::Framework
 			if (FAILED(serializeResult))
 			{
 				std::string message = std::format(
-					"Failed to serialize shared root signature. HRESULT: 0x{:08X}",
+					"怨듭쑀 猷⑦듃 ?쒓렇?덉쿂 吏곷젹?붿뿉 ?ㅽ뙣?덉뒿?덈떎. HRESULT: 0x{:08X}",
 					static_cast<u32>(serializeResult));
 				if (errorBlob && errorBlob->GetBufferSize() > 0)
 				{
@@ -121,7 +121,7 @@ namespace TUK::Framework
 			if (FAILED(createResult))
 			{
 				return std::unexpected(std::format(
-					"Failed to create shared root signature. HRESULT: 0x{:08X}",
+					"怨듭쑀 猷⑦듃 ?쒓렇?덉쿂 ?앹꽦???ㅽ뙣?덉뒿?덈떎. HRESULT: 0x{:08X}",
 					static_cast<u32>(createResult)));
 			}
 
@@ -132,6 +132,6 @@ namespace TUK::Framework
 				std::move(d3dRootSignature));
 		}
 
-		return std::unexpected("Failed to create GPU device.");
+		return std::unexpected("GPU ?붾컮?댁뒪 ?앹꽦???ㅽ뙣?덉뒿?덈떎.");
 	}
 }

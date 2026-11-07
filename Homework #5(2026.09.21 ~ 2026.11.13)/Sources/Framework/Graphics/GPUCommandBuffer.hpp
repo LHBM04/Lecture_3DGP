@@ -16,6 +16,8 @@
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Matrix4x4.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 #include "GPUBuffer.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 
@@ -107,11 +109,13 @@ namespace TUK::Framework
 
 	inline ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "GPU 명령 리스트가 nullptr입니다.");
 		return *d3dCommandList.Get();
 	}
 
 	inline ID3D12CommandAllocator& GPUCommandBuffer::GetD3DCommandAllocator() const noexcept
 	{
+		ASSERT_FMT(d3dCommandAllocator.Get(), "GPU 명령 할당자가 nullptr입니다.");
 		return *d3dCommandAllocator.Get();
 	}
 

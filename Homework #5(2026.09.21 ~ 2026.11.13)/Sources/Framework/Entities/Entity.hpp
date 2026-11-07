@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 #include <memory>
@@ -12,6 +12,8 @@
 #include <vector>
 
 #include "../Core/Common.hpp"
+
+#include "../Utilities/Logger.hpp"
 
 #include "Component.hpp"
 
@@ -99,12 +101,14 @@ namespace TUK::Framework
 	inline Entity::Entity(World* world) noexcept
 		: world(world)
 	{
+		ASSERT_FMT(world, "?뷀떚?곗쓽 ?붾뱶媛 nullptr?낅땲??");
 	}
 
 	inline Entity::Entity(World* world, std::string_view name) noexcept
 		: name(name)
 		, world(world)
 	{
+		ASSERT_FMT(world, "?뷀떚?곗쓽 ?붾뱶媛 nullptr?낅땲??");
 	}
 
 	inline Entity::Entity(World* world, std::string_view name, std::string_view tag) noexcept
@@ -112,6 +116,7 @@ namespace TUK::Framework
 		, tag(tag)
 		, world(world)
 	{
+		ASSERT_FMT(world, "?뷀떚?곗쓽 ?붾뱶媛 nullptr?낅땲??");
 	}
 
 	inline const std::string& Entity::GetName() const noexcept

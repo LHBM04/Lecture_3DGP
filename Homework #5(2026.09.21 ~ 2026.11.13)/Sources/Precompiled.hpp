@@ -112,10 +112,10 @@
 
 #include <gameinput/gameinput.h>
 
-#include <xaudio2redist/xaudio2Redist.h>
-#include <xaudio2redist/xaudio2fxRedist.h>
 #include <xaudio2redist/x3daudioRedist.h>
 #include <xaudio2redist/xapobaseRedist.h>
 #include <xaudio2redist/xapofxRedist.h>
+#include <xaudio2redist/xaudio2Redist.h>
+#include <xaudio2redist/xaudio2fxRedist.h>
 
 #include "Resource.hpp"

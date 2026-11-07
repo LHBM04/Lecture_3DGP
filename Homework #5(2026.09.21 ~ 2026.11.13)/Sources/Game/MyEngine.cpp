@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
 #include "Framework/Platform.hpp"
@@ -12,25 +12,24 @@ namespace TUK::Game
 		displaySubsystem = AddSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{
-			Logger::LogError("Failed to add DisplaySubsystem.");
+			LOG_ERROR("디스플레이 서브시스템을 추가하지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
 		eventSubsystem = AddSubsystem<EventSubsystem>();
 		if (!eventSubsystem)
 		{
-			Logger::LogError("Failed to add EventSubsystem.");
+			LOG_ERROR("이벤트 서브시스템을 추가하지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 		
 		renderSubsystem = AddSubsystem<RenderSubsystem>();
 		if (!renderSubsystem)
 		{
-			Logger::LogError("Failed to add RenderSubsystem.");
+			LOG_ERROR("렌더링 서브시스템을 추가하지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
-		// Register event listeners for display events
 		eventSubsystem->AddListener<DisplayCreateEvent>(renderSubsystem, &RenderSubsystem::OnDisplayCreate);
 		eventSubsystem->AddListener<DisplayCloseEvent>(renderSubsystem, &RenderSubsystem::OnDisplayClose);
 

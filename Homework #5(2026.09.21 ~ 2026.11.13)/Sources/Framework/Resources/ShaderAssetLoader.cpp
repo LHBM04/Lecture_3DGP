@@ -14,7 +14,7 @@ namespace TUK::Framework
 	{
 		if (path.extension() != ".cso")
 		{
-			return std::unexpected("ShaderAssetLoader requires a .cso file.");
+			return std::unexpected("셰이더 로더에는 .cso 파일이 필요합니다.");
 		}
 
 		auto shader = GPUShader::Create(path);

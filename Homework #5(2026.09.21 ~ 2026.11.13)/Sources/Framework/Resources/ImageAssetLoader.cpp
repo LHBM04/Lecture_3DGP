@@ -25,7 +25,7 @@ namespace TUK::Framework
 		const bool isDDS = extension == ".dds";
 		if (!isDDS && extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".bmp")
 		{
-			return std::unexpected("Unsupported image file extension: " + extension);
+			return std::unexpected("지원하지 않는 이미지 파일 확장자입니다: " + extension);
 		}
 
 		auto& d3dDevice = device.GetD3DDevice();
@@ -44,7 +44,7 @@ namespace TUK::Framework
 			const HRESULT initialization = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 			if (FAILED(initialization) && initialization != RPC_E_CHANGED_MODE)
 			{
-				return std::unexpected("Failed to initialize COM for image decoding.");
+				return std::unexpected("이미지 디코딩을 위한 COM 초기화에 실패했습니다.");
 			}
 			D3D12_SUBRESOURCE_DATA subresource{};
 			result = DirectX::LoadWICTextureFromFile(&d3dDevice, path.c_str(),
@@ -57,17 +57,17 @@ namespace TUK::Framework
 		}
 		if (FAILED(result))
 		{
-			return std::unexpected("Failed to decode image: " + path.generic_string());
+			return std::unexpected("이미지 디코딩에 실패했습니다: " + path.generic_string());
 		}
 
 		const auto description = resource->GetDesc();
 		if (isCubeMap || description.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D || description.DepthOrArraySize != 1)
 		{
-			return std::unexpected("ImageAssetLoader supports only non-array 2D textures.");
+			return std::unexpected("이미지 로더는 배열이 아닌 2D 텍스처만 지원합니다.");
 		}
 		if (subresources.empty())
 		{
-			return std::unexpected("Image contains no texture subresources.");
+			return std::unexpected("이미지에 텍스처 하위 리소스가 없습니다.");
 		}
 
 		const UINT subresourceCount = static_cast<UINT>(subresources.size());
@@ -81,24 +81,24 @@ namespace TUK::Framework
 		ComPtr<ID3D12CommandAllocator> allocator;
 		if (FAILED(d3dDevice.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(allocator.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create image upload command allocator.");
+			return std::unexpected("이미지 업로드 명령 할당자 생성에 실패했습니다.");
 		}
 		ComPtr<ID3D12GraphicsCommandList> commands;
 		if (FAILED(d3dDevice.CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, allocator.Get(), nullptr,
 			IID_PPV_ARGS(commands.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create image upload command list.");
+			return std::unexpected("이미지 업로드 명령 리스트 생성에 실패했습니다.");
 		}
 		ComPtr<ID3D12Fence> fence;
 		if (FAILED(d3dDevice.CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create image upload fence.");
+			return std::unexpected("이미지 업로드 펜스 생성에 실패했습니다.");
 		}
 
 		if (UpdateSubresources(commands.Get(), resource.Get(), &upload->GetD3DResource(),
 			0, 0, subresourceCount, subresources.data()) == 0)
 		{
-			return std::unexpected("Failed to copy image data into upload buffer.");
+			return std::unexpected("업로드 버퍼로 이미지 데이터를 복사하지 못했습니다.");
 		}
 		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST,
@@ -106,7 +106,7 @@ namespace TUK::Framework
 		commands->ResourceBarrier(1, &barrier);
 		if (FAILED(commands->Close()))
 		{
-			return std::unexpected("Failed to close image upload command list.");
+			return std::unexpected("이미지 업로드 명령 리스트 닫기에 실패했습니다.");
 		}
 
 		auto& queue = device.GetD3DCommandQueue();
@@ -119,15 +119,15 @@ namespace TUK::Framework
 		{
 			if (FAILED(d3dDevice.GetDeviceRemovedReason()))
 			{
-				return std::unexpected("Device removed during image upload.");
+				return std::unexpected("이미지 업로드 중 디바이스가 제거되었습니다.");
 			}
 			// Returning would release resources that may still be in use by the GPU.
-			Logger::LogError("Cannot synchronize image upload; GPU resource lifetime cannot be guaranteed.");
+			LOG_ERROR("이미지 업로드를 동기화할 수 없어 GPU 리소스의 수명을 보장할 수 없습니다.");
 			std::abort();
 		}
 		if (fence->GetCompletedValue() == std::numeric_limits<UINT64>::max())
 		{
-			return std::unexpected("Device removed during image upload.");
+			return std::unexpected("이미지 업로드 중 디바이스가 제거되었습니다.");
 		}
 
 		auto image = std::make_unique<ImageAsset>();

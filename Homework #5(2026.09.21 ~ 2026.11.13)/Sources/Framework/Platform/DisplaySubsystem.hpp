@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <expected>
 #include <memory>
@@ -20,7 +20,6 @@ namespace TUK::Framework
 	{
 	public:
 		DisplaySubsystem() noexcept;
-		~DisplaySubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;

@@ -11,6 +11,8 @@
 
 #include "../Platform/Display.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 #include "GPUCommandBuffer.hpp"
 #include "GPUDevice.hpp"
 #include "GPUFence.hpp"
@@ -66,6 +68,7 @@ namespace TUK::Framework
 	template <class TInstance>
 	void RenderSubsystem::AddListener(TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&))
 	{
+		ASSERT_FMT(listener && callback, "렌더 이벤트 수신 객체 또는 콜백이 nullptr입니다.");
 		AddListener(
 			[listener, callback](GPUCommandBuffer& commandBuffer)
 			{
@@ -76,6 +79,7 @@ namespace TUK::Framework
 	template <class TInstance>
 	void RenderSubsystem::AddListener(const TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&) const)
 	{
+		ASSERT_FMT(listener && callback, "렌더 이벤트 수신 객체 또는 콜백이 nullptr입니다.");
 		AddListener(
 			[listener, callback](GPUCommandBuffer& commandBuffer)
 			{

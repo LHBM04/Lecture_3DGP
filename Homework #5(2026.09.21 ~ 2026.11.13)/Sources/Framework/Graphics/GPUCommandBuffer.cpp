@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "GPUCommandBuffer.hpp"
 
 #include <cassert>
@@ -10,6 +10,8 @@
 #include "../Entities/Transform.hpp"
 
 #include "../Resources/MaterialAsset.hpp"
+
+#include "../Utilities/Logger.hpp"
 
 #include "Camera.hpp"
 #include "GPUBuffer.hpp"
@@ -61,7 +63,7 @@ namespace TUK::Framework
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(d3dCommandAllocator.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create D3D12 command allocator.");
+			return std::unexpected("D3D12 명령 할당자 생성에 실패했습니다.");
 		}
 
 		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
@@ -72,12 +74,12 @@ namespace TUK::Framework
 			nullptr,
 			IID_PPV_ARGS(d3dCommandList.GetAddressOf()))))
 		{
-			return std::unexpected("Failed to create D3D12 command list.");
+			return std::unexpected("D3D12 명령 리스트 생성에 실패했습니다.");
 		}
 
 		if (FAILED(d3dCommandList->Close()))
 		{
-			return std::unexpected("Failed to close initial D3D12 command list.");
+			return std::unexpected("초기 D3D12 명령 리스트 닫기에 실패했습니다.");
 		}
 
 		return GPUCommandBuffer(device, std::move(d3dCommandList), std::move(d3dCommandAllocator));
@@ -87,11 +89,11 @@ namespace TUK::Framework
 	{
 		if (FAILED(d3dCommandAllocator->Reset()))
 		{
-			return std::unexpected("Failed to reset D3D12 command allocator.");
+			return std::unexpected("D3D12 명령 할당자 초기화에 실패했습니다.");
 		}
 		if (FAILED(d3dCommandList->Reset(d3dCommandAllocator.Get(), nullptr)))
 		{
-			return std::unexpected("Failed to reset D3D12 command list.");
+			return std::unexpected("D3D12 명령 리스트 초기화에 실패했습니다.");
 		}
 
 		constantBufferPageIndex = 0;
@@ -106,7 +108,7 @@ namespace TUK::Framework
 	{
 		if (FAILED(d3dCommandList->Close()))
 		{
-			return std::unexpected("D3D12 Command List Close failed.");
+			return std::unexpected("D3D12 명령 리스트 닫기에 실패했습니다.");
 		}
 		ID3D12CommandList* commandLists[] = { d3dCommandList.Get() };
 		device->GetD3DCommandQueue().ExecuteCommandLists(1, commandLists);
@@ -115,9 +117,10 @@ namespace TUK::Framework
 
 	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity* entity)
 	{
+		ASSERT_FMT(entity, "설정할 엔티티가 nullptr입니다.");
 		if (!entity)
 		{
-			return std::unexpected("Entity is null.");
+			return std::unexpected("엔티티가 nullptr입니다.");
 		}
 
 		const Transform* transform = entity->GetComponent<Transform>();
@@ -126,14 +129,15 @@ namespace TUK::Framework
 
 	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera* camera)
 	{
+		ASSERT_FMT(camera, "설정할 카메라가 nullptr입니다.");
 		cameraPrepared = false;
 		if (!camera)
 		{
-			return std::unexpected("Camera is null.");
+			return std::unexpected("카메라가 nullptr입니다.");
 		}
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("A render target must be set before applying a camera.");
+			return std::unexpected("카메라를 적용하기 전에 렌더 타깃을 설정해야 합니다.");
 		}
 
 		CameraConstants constants{};
@@ -156,18 +160,19 @@ namespace TUK::Framework
 		const GPUGraphicsPipelineState& pipelineState,
 		DXGI_FORMAT targetFormat)
 	{
+		ASSERT_FMT(material, "설정할 머티리얼이 nullptr입니다.");
 		if (!material)
 		{
-			return std::unexpected("Material is null.");
+			return std::unexpected("머티리얼이 nullptr입니다.");
 		}
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("A render target must be set before applying a material.");
+			return std::unexpected("머티리얼을 적용하기 전에 렌더 타깃을 설정해야 합니다.");
 		}
 
 		if (targetFormat != activeTargetFormat)
 		{
-			return std::unexpected("Material pipeline format does not match the render target format.");
+			return std::unexpected("머티리얼 파이프라인 형식이 렌더 타깃 형식과 일치하지 않습니다.");
 		}
 		const ColorRGBA<f32>& baseColor = material->GetBaseColor();
 		const ColorRGBA<f32>& emissiveColor = material->GetEmissiveColor();
@@ -190,7 +195,7 @@ namespace TUK::Framework
 	{
 		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
-			return std::unexpected("A camera and render target must be set before applying an object transform.");
+			return std::unexpected("오브젝트 변환을 적용하기 전에 카메라와 렌더 타깃을 설정해야 합니다.");
 		}
 
 		ObjectConstants constants{};
@@ -340,7 +345,7 @@ namespace TUK::Framework
 		constexpr u64 ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
 		if (!device || bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
 		{
-			return std::unexpected("Invalid GPU device or constant buffer data.");
+			return std::unexpected("GPU 디바이스 또는 상수 버퍼 데이터가 유효하지 않습니다.");
 		}
 
 		const u64 alignedSize = (bytes.size() + ALIGNMENT - 1) / ALIGNMENT * ALIGNMENT;

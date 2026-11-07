@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
 #include <iostream>
@@ -19,7 +19,7 @@ namespace TUK::Framework
 		auto newDevice = GPUDevice::Create();
 		if (!newDevice)
 		{
-			Logger::LogError("{}{}", "RenderSubsystem startup failed: ", newDevice.error());
+			LOG_CRITICAL("GPU 디바이스 생성에 실패했습니다: {}", newDevice.error());
 			return SystemStatus::FAILURE;
 		}
 		device = std::move(*newDevice);
@@ -27,7 +27,7 @@ namespace TUK::Framework
 		auto newCommandBuffer = GPUCommandBuffer::Create(*device);
 		if (!newCommandBuffer)
 		{
-			Logger::LogError("{}{}", "RenderSubsystem startup failed: ", newCommandBuffer.error());
+			LOG_ERROR("GPU 명령 버퍼 생성에 실패했습니다: {}", newCommandBuffer.error());
 			return SystemStatus::FAILURE;
 		}
 		commandBuffer = std::move(*newCommandBuffer);
@@ -35,7 +35,7 @@ namespace TUK::Framework
 		auto newFence = GPUFence::Create(*device);
 		if (!newFence)
 		{
-			Logger::LogError("{}{}", "RenderSubsystem startup failed: ", newFence.error());
+			LOG_ERROR("GPU 펜스 생성에 실패했습니다: {}", newFence.error());
 			return SystemStatus::FAILURE;
 		}
 		fence = std::move(*newFence);
@@ -57,7 +57,7 @@ namespace TUK::Framework
 	{
 		if (auto result = commandBuffer->Reset(); !result)
 		{
-			Logger::LogError("{}", result.error());
+			LOG_ERROR("{}", result.error());
 			return SystemStatus::FAILURE;
 		}
 
@@ -65,6 +65,7 @@ namespace TUK::Framework
 		{
 			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
 			const GPUTexture2D& backBuffer = target.GetTexture();
+
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			commandBuffer->ClearGPUTarget(target, ColorRGBA<f32>::GetBlack());
 			commandBuffer->SetGPUTarget(target);
@@ -79,7 +80,7 @@ namespace TUK::Framework
 
 		if (auto result = commandBuffer->Submit(); !result)
 		{
-			Logger::LogError("{}", result.error());
+			LOG_CRITICAL("GPU 명령 버퍼 제출에 실패했습니다: {}", result.error());
 			return SystemStatus::FAILURE;
 		}
 
@@ -123,7 +124,7 @@ namespace TUK::Framework
 		auto result = GPUSwapChain::Create(*device, display, description);
 		if (!result)
 		{
-			Logger::LogError("{}{}", "RenderSubsystem display registration failed: ", result.error());
+			LOG_ERROR("GPU 스왑체인 생성에 실패했습니다: {}", result.error());
 			return;
 		}
 

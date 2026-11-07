@@ -27,27 +27,27 @@ namespace TUK::Framework
 	{
 		if (path.extension() != ".bin")
 		{
-			return std::unexpected("MeshAssetLoader requires a .bin mesh file.");
+			return std::unexpected("메시 로더에는 .bin 메시 파일이 필요합니다.");
 		}
 
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
-			return std::unexpected("Cannot open mesh: " + path.generic_string());
+			return std::unexpected("메시 파일을 열지 못했습니다: " + path.generic_string());
 		}
 
 		const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 		auto mesh = std::make_unique<MeshAsset>();
 		if (file.bad() || !mesh->Deserialize(bytes))
 		{
-			return std::unexpected("Cannot deserialize mesh: " + path.generic_string());
+			return std::unexpected("메시 역직렬화에 실패했습니다: " + path.generic_string());
 		}
 
 		auto vertices = GPUBuffer::CreateUpload(device, std::as_bytes(mesh->GetVertices()));
 		auto indices = GPUBuffer::CreateUpload(device, std::as_bytes(mesh->GetIndices()));
 		if (!vertices || !indices)
 		{
-			return std::unexpected("Cannot create GPU buffers for mesh: " + path.generic_string());
+			return std::unexpected("메시의 GPU 버퍼 생성에 실패했습니다: " + path.generic_string());
 		}
 
 		auto gpuMesh = GPUMesh::Create(

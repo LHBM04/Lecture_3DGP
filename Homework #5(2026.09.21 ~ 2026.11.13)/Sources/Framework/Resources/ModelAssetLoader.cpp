@@ -17,7 +17,7 @@ namespace TUK::Framework
 		std::ifstream file(path, std::ios::binary);
 		if (not file)
 		{
-			return std::unexpected("Cannot open model: " + path.generic_string());
+			return std::unexpected("모델 파일을 열지 못했습니다: " + path.generic_string());
 		}
 
 		const std::string bytes{ std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
@@ -25,7 +25,7 @@ namespace TUK::Framework
 		std::unique_ptr<ModelAsset> model = std::make_unique<ModelAsset>();
 		if (!model->Deserialize(bytes))
 		{
-			return std::unexpected("Cannot deserialize model: " + path.generic_string());
+			return std::unexpected("모델 역직렬화에 실패했습니다: " + path.generic_string());
 		}
 
 		return model;

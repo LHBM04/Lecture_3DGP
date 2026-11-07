@@ -1,44 +1,100 @@
 ﻿#include "Precompiled.hpp"
 #include "Logger.hpp"
 
-namespace TUK::Framework
+namespace TUK::Framework::Logger
 {
 	namespace
 	{
-		[[nodiscard]] std::string_view GetCategoryName(Logger::Category level) noexcept
+		[[nodiscard]] constexpr std::string_view GetCategoryName(Category level) noexcept
 		{
 			switch (level)
 			{
-			case Logger::Category::TRACE:
-				return "TRACE";
-			case Logger::Category::INFO:
-				return "INFO";
-			case Logger::Category::WARNING:
-				return "WARNING";
-			case Logger::Category::ERROR:
-				return "ERROR";
-			case Logger::Category::CRITICAL:
-				return "CRITICAL";
-			default:
-				return "UNKNOWN";
+				case Category::TRACE:    return "TRACE";
+				case Category::INFO:     return "INFO";
+				case Category::WARNING:  return "WARNING";
+				case Category::ERROR:    return "ERROR";
+				case Category::CRITICAL: return "CRITICAL";
+				default:				 break;
 			}
+
+			std::unreachable();
+		}
+
+		[[nodiscard]] std::wstring AsciiToWide(std::string_view utf8)
+		{
+			if (utf8.empty())
+			{
+				return {};
+			}
+
+			const int size = static_cast<int>(utf8.size());
+			const int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8.data(), size, nullptr, 0);
+			if (length <= 0)
+			{
+				return {};
+			}
+
+			std::wstring wide(static_cast<std::size_t>(length), L'\0');
+			MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8.data(), size, wide.data(), length);
+			return wide;
+		}
+
+		[[nodiscard]] std::string WideToAscii(std::wstring_view wide)
+		{
+			if (wide.empty())
+			{
+				return {};
+			}
+
+			const int size = static_cast<int>(wide.size());
+			const int length = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wide.data(), size, nullptr, 0, nullptr, nullptr);
+			if (length <= 0)
+			{
+				return {};
+			}
+
+			std::string utf8(static_cast<std::size_t>(length), '\0');
+			WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wide.data(), size, utf8.data(), length, nullptr, nullptr);
+			return utf8;
 		}
 	}
 
-	namespace Logger
+	void Log(Category level, std::string_view message, const std::source_location& location)
 	{
-		void Log(Category level, std::string_view message, std::source_location location)
-		{
-			const std::string line = std::format(
-				"[{}] {} ({}:{})\n",
-				GetCategoryName(level),
-				message,
-				location.file_name(),
-				location.line()
-			);
+		const std::string line = std::format(
+			"[{}] {} ({}:{})\n",
+			GetCategoryName(level),
+			message,
+			location.file_name(),
+			location.line()
+		);
 
-			std::osyncstream(std::clog) << line << std::flush;
-			OutputDebugStringA(line.c_str());
+		std::osyncstream(std::clog) << line << std::flush;
+
+		const std::wstring wideLine = AsciiToWide(line);
+		if (!wideLine.empty())
+		{
+			OutputDebugStringW(wideLine.c_str());
+		}
+	}
+
+	void Log(Category level, std::wstring_view message, const std::source_location& location)
+	{
+		const std::string utf8Message = WideToAscii(message);
+		const std::string line = std::format(
+			"[{}] {} ({}:{})\n",
+			GetCategoryName(level),
+			utf8Message,
+			location.file_name(),
+			location.line()
+		);
+
+		std::osyncstream(std::clog) << line << std::flush;
+
+		const std::wstring wideLine = AsciiToWide(line);
+		if (!wideLine.empty())
+		{
+			OutputDebugStringW(wideLine.c_str());
 		}
 	}
 }

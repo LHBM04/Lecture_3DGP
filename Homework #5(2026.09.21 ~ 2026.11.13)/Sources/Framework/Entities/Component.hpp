@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "../Core/Common.hpp"
+
+#include "../Utilities/Logger.hpp"
 
 namespace TUK::Framework
 {
@@ -58,6 +60,7 @@ namespace TUK::Framework
 	inline Component::Component(Entity* owner) noexcept
 		: owner(owner)
 	{
+		ASSERT_FMT(owner, "而댄룷?뚰듃 ?뚯쑀?먭? nullptr?낅땲??");
 	}
 
 	inline void Component::OnAwake()

@@ -26,13 +26,13 @@ namespace TUK::Framework
 
 		if (auto result = commandBuffer.SetMaterial(material, *pipeline, material->GetTargetFormat()); !result)
 		{
-			Logger::LogError("{}{}", "MeshRenderer failed to apply material: ", result.error());
+			LOG_ERROR("메시 렌더러의 머티리얼 적용에 실패했습니다: {}", result.error());
 			return;
 		}
 
 		if (auto result = commandBuffer.SetEntity(GetOwner()); !result)
 		{
-			Logger::LogError("{}{}", "MeshRenderer failed to apply object transform: ", result.error());
+			LOG_ERROR("메시 렌더러의 오브젝트 변환 적용에 실패했습니다: {}", result.error());
 			return;
 		}
 

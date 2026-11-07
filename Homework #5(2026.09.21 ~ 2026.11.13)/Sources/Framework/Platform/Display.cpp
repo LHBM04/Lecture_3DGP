@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "Display.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	Display::Display(HWND hWnd) noexcept
@@ -22,6 +24,7 @@ namespace TUK::Framework
 
 	HWND Display::GetHWND() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
 		return hWnd;
 	}
 
@@ -32,6 +35,8 @@ namespace TUK::Framework
 
 	LPCTSTR Display::GetCaption() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		static std::array<TCHAR, 256> caption;
 		std::ranges::fill(caption, TCHAR{});
 
@@ -41,18 +46,24 @@ namespace TUK::Framework
 
 	void Display::SetCaption(LPCTSTR value) noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
 		SetWindowText(hWnd, value);
 	}
 
 	Vector2D<i32> Display::GetPosition() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
+		
 		return { rect.left, rect.top };
 	}
 
 	void Display::SetPosition(const Vector2D<i32>& position) noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		SetWindowPos(
 			hWnd,
 			nullptr,
@@ -65,13 +76,18 @@ namespace TUK::Framework
 
 	Vector2D<i32> Display::GetSize() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
+		
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
 	void Display::SetSize(const Vector2D<i32>& size) noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		SetWindowPos(
 			hWnd,
 			nullptr,
@@ -84,13 +100,18 @@ namespace TUK::Framework
 
 	Vector2D<i32> Display::GetClientSize() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		RECT rect;
 		GetClientRect(hWnd, &rect);
+		
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
 	void Display::SetClientSize(const Vector2D<i32>& size) noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		RECT rect{};
 		rect.right = size.GetX();
 		rect.bottom = size.GetY();
@@ -122,21 +143,25 @@ namespace TUK::Framework
 
 	DWORD Display::GetStyle() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
 		return static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
 	}
 
 	void Display::SetStyle(DWORD value) noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
 		SetWindowLongPtr(hWnd, GWL_STYLE, value);
 	}
 
 	DWORD Display::GetStyleEx() const noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
 		return static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_EXSTYLE));
 	}
 
 	void Display::SetStyleEx(DWORD value) noexcept
 	{
+		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
 		SetWindowLongPtr(hWnd, GWL_EXSTYLE, value);
 	}
 }

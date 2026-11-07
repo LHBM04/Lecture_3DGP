@@ -17,12 +17,13 @@ INT APIENTRY _tWinMain(
 {
 #ifdef _DEBUG
 	AllocConsole();
+	SetConsoleOutputCP(CP_UTF8);
 	
 	FILE* pFile{ nullptr };
 	freopen_s(&pFile, "CONOUT$", "w", stdout);
 	freopen_s(&pFile, "CONOUT$", "w", stderr);
 
-	Logger::LogInfo("Debug console enabled.");
+	LOG_INFO("디버그 콘솔이 활성화되었습니다.");
 #endif
 
 	UNREFERENCED_PARAMETER(hInstance);
