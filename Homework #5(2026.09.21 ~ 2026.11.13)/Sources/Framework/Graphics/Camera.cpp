@@ -42,8 +42,8 @@ namespace TUK::Framework
 
 	Matrix4x4<f32> Camera::GetProjectionMatrix() const noexcept
 	{
-		ASSERT_FMT(viewport.Width > 0.0f, "검증 실패: {}", "viewport.Width > 0.0f");
-		ASSERT_FMT(viewport.Height > 0.0f, "검증 실패: {}", "viewport.Height > 0.0f");
+		ASSERT_FMT(viewport.Width > 0.0f, "viewport.Width가 0보다 커야 합니다.");
+		ASSERT_FMT(viewport.Height > 0.0f, "viewport.Height가 0보다 커야 합니다.");
 
 		const f32 aspectRatio = viewport.Width / viewport.Height;
 

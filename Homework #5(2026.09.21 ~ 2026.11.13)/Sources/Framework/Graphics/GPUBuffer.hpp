@@ -48,14 +48,16 @@ namespace TUK::Framework
 			std::span<const std::byte> data);
 
 	private:
-		GPUBuffer(ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept;
+		GPUBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept;
 
-		ComPtr<ID3D12Resource> d3dResource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource;
 		D3D12_HEAP_TYPE heapType;
 	};
 
 	inline u64 GPUBuffer::GetSizeInBytes() const noexcept
 	{
+		ASSERT_FMT(d3dResource.Get(), "d3dResource가 nullptr입니다.");
+
 		return d3dResource->GetDesc().Width;
 	}
 
@@ -66,18 +68,22 @@ namespace TUK::Framework
 
 	inline D3D12_GPU_VIRTUAL_ADDRESS GPUBuffer::GetGPUVirtualAddress() const noexcept
 	{
+		ASSERT_FMT(d3dResource.Get(), "d3dResource가 nullptr입니다.");
+
 		return d3dResource->GetGPUVirtualAddress();
 	}
 
 	inline ID3D12Resource& GPUBuffer::GetD3DResource() const noexcept
 	{
+		ASSERT_FMT(d3dResource.Get(), "d3dResource가 nullptr입니다.");
+
 		return *d3dResource.Get();
 	}
 
-	inline GPUBuffer::GPUBuffer(ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept
+	inline GPUBuffer::GPUBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept
 		: d3dResource(std::move(d3dResource))
 		, heapType(heapType)
 	{
-		ASSERT_FMT(this->d3dResource.Get(), "검증 실패: {}", "this->d3dResource.Get()");
+		ASSERT_FMT(this->d3dResource.Get(), "d3dResource가 nullptr입니다.");
 	}
 }

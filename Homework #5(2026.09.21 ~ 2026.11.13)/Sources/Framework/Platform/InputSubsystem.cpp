@@ -142,7 +142,7 @@ namespace TUK::Framework
 
 	void InputSubsystem::PollKeyboard(InputProvider& provider) noexcept
 	{
-		ComPtr<IGameInputReading> reading;
+		Microsoft::WRL::ComPtr<IGameInputReading> reading;
 		if (FAILED(gameInput->GetCurrentReading(GameInputKindKeyboard, nullptr, &reading)))
 		{
 			return;
@@ -184,7 +184,7 @@ namespace TUK::Framework
 			provider.SetMousePosition({ cursorPos.x, cursorPos.y });
 		}
 
-		ComPtr<IGameInputReading> reading;
+		Microsoft::WRL::ComPtr<IGameInputReading> reading;
 		if (FAILED(gameInput->GetCurrentReading(GameInputKindMouse, nullptr, &reading)))
 		{
 			hasMouseHistory = false;

@@ -175,8 +175,8 @@ namespace TUK::Framework
 
 	void World::UpdateEntities(WorldCallback worldCallback, EntityCallback entityCallback)
 	{
-		ASSERT_FMT(worldCallback, "검증 실패: {}", "worldCallback");
-		ASSERT_FMT(entityCallback, "검증 실패: {}", "entityCallback");
+		ASSERT_FMT(worldCallback, "worldCallback이 nullptr입니다.");
+		ASSERT_FMT(entityCallback, "entityCallback이 nullptr입니다.");
 
 		if (!isEntered)
 		{
@@ -200,7 +200,7 @@ namespace TUK::Framework
 
 	void World::RenderEntities(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
-		ASSERT_FMT(callback, "검증 실패: {}", "callback");
+		ASSERT_FMT(callback, "callback이 비어 있습니다.");
 
 		ForEachEntity([callback, &commandBuffer](Entity& entity)
 		{

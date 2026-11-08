@@ -15,7 +15,7 @@ namespace TUK::Framework
 	class GPUTexture2D
 	{
 	public:
-		explicit GPUTexture2D(ComPtr<ID3D12Resource> d3dResource) noexcept;
+		explicit GPUTexture2D(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource) noexcept;
 
 		GPUTexture2D(const GPUTexture2D&) = delete;
 		GPUTexture2D& operator=(const GPUTexture2D&) = delete;
@@ -26,17 +26,19 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12Resource& GetD3DResource() const noexcept;
 
 	private:
-		ComPtr<ID3D12Resource> d3dResource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource;
 	};
 
-	inline GPUTexture2D::GPUTexture2D(ComPtr<ID3D12Resource> d3dResource) noexcept
+	inline GPUTexture2D::GPUTexture2D(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource) noexcept
 		: d3dResource(std::move(d3dResource))
 	{
-		ASSERT_FMT(this->d3dResource.Get(), "검증 실패: {}", "this->d3dResource.Get()");
+		ASSERT_FMT(this->d3dResource.Get(), "d3dResource가 nullptr입니다.");
 	}
 
 	inline ID3D12Resource& GPUTexture2D::GetD3DResource() const noexcept
 	{
+		ASSERT_FMT(d3dResource.Get(), "d3dResource가 nullptr입니다.");
+
 		return *d3dResource.Get();
 	}
 }

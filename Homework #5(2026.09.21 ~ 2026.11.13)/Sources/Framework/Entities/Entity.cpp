@@ -47,7 +47,7 @@ namespace TUK::Framework
 
 	void Entity::UpdateComponents(ComponentCallback callback)
 	{
-		ASSERT_FMT(callback, "검증 실패: {}", "callback");
+		ASSERT_FMT(callback, "callback이 비어 있습니다.");
 
 		if (!world || !world->IsEntered() || isDestroyed)
 		{
@@ -83,7 +83,7 @@ namespace TUK::Framework
 
 	void Entity::RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
-		ASSERT_FMT(callback, "검증 실패: {}", "callback");
+		ASSERT_FMT(callback, "callback이 비어 있습니다.");
 
 		const usize count = components.size();
 		for (usize index = 0; index < count && world->IsEntered() && isEnabled && !isDestroyed; ++index)

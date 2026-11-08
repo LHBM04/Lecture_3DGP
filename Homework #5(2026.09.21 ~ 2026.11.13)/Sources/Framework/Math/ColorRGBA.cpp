@@ -31,7 +31,7 @@ namespace TUK::Framework
 	ColorRGBA<TScalar>::ColorRGBA(const TScalar* values) noexcept
 		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
 	{
-		ASSERT_FMT(values, "검증 실패: {}", "values");
+		ASSERT_FMT(values, "values가 nullptr입니다.");
 
 		value = decltype(value)(values);
 	}
@@ -163,13 +163,13 @@ namespace TUK::Framework
 	{
 		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			ASSERT_FMT(scalar != TScalar{}, "검증 실패: {}", "scalar != TScalar{}");
+			ASSERT_FMT(scalar != TScalar{}, "scalar가 0입니다.");
 
 			return ColorRGBA<TScalar>(value.x / scalar, value.y / scalar, value.z / scalar, value.w / scalar);
 		}
 		else
 		{
-			ASSERT_FMT(scalar != 0.0f, "검증 실패: {}", "scalar != 0.0f");
+			ASSERT_FMT(scalar != 0.0f, "scalar가 0입니다.");
 
 			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));

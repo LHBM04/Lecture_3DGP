@@ -21,6 +21,7 @@ namespace TUK::Framework
 	class GPUShader
 	{
 	public:
+		explicit GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept;
 
 		GPUShader(const GPUShader&) = delete;
 		GPUShader& operator=(const GPUShader&) = delete;
@@ -35,28 +36,26 @@ namespace TUK::Framework
 			const std::filesystem::path& path);
 
 	private:
-		explicit GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept;
-
-		ComPtr<IDxcBlob> dxcBlob;
+		Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob;
 	};
 
 	inline IDxcBlob& GPUShader::GetDXCBlob() const noexcept
 	{
-		ASSERT_FMT(dxcBlob, "검증 실패: {}", "dxcBlob");
+		ASSERT_FMT(dxcBlob.Get(), "dxcBlob이 nullptr입니다.");
 
 		return *dxcBlob.Get();
 	}
 
 	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
 	{
-		ASSERT_FMT(dxcBlob, "검증 실패: {}", "dxcBlob");
+		ASSERT_FMT(dxcBlob.Get(), "dxcBlob이 nullptr입니다.");
 
 		return CD3DX12_SHADER_BYTECODE(dxcBlob->GetBufferPointer(), dxcBlob->GetBufferSize());
 	}
 
-	inline GPUShader::GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept
+	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept
 		: dxcBlob(std::move(dxcBlob))
 	{
-		ASSERT_FMT(this->dxcBlob.Get(), "검증 실패: {}", "this->dxcBlob.Get()");
+		ASSERT_FMT(this->dxcBlob.Get(), "dxcBlob이 nullptr입니다.");
 	}
 }

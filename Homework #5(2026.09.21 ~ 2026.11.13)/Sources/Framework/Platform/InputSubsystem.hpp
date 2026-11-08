@@ -49,7 +49,7 @@ namespace TUK::Framework
 		void PollKeyboard(InputProvider& provider) noexcept;
 		void PollMouse(InputProvider& provider) noexcept;
 
-		ComPtr<GameInput::v3::IGameInput> gameInput;
+		Microsoft::WRL::ComPtr<GameInput::v3::IGameInput> gameInput;
 
 		const Display* activeDisplay;
 		

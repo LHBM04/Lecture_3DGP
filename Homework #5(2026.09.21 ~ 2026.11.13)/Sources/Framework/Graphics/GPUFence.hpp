@@ -34,16 +34,16 @@ namespace TUK::Framework
 		[[nodiscard]] static std::expected<GPUFence, std::string> Create(const GPUDevice& device);
 
 	private:
-		explicit GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept;
+		explicit GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept;
 
-		ComPtr<ID3D12Fence> d3dFence;
+		Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence;
 		u64 fenceValue;
 	};
 
-	inline GPUFence::GPUFence(ComPtr<ID3D12Fence> d3dFence) noexcept
+	inline GPUFence::GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept
 		: d3dFence(std::move(d3dFence))
 		, fenceValue(0)
 	{
-		ASSERT_FMT(this->d3dFence.Get(), "검증 실패: {}", "this->d3dFence.Get()");
+		ASSERT_FMT(this->d3dFence.Get(), "d3dFence가 nullptr입니다.");
 	}
 }

@@ -13,7 +13,7 @@ namespace TUK::Framework
 		UINT factoryFlags = 0;
 
 #ifdef _DEBUG
-		ComPtr<ID3D12Debug> debugController;
+		Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
 		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
 		{
 			debugController->EnableDebugLayer();
@@ -21,7 +21,7 @@ namespace TUK::Framework
 		}
 #endif
 
-		ComPtr<IDXGIFactory6> dxgiFactory;
+		Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory;
 		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf()))))
 		{
 			return std::unexpected("DXGI 팩토리 생성에 실패했습니다.");
@@ -29,7 +29,7 @@ namespace TUK::Framework
 
 		for (UINT adapterIndex = 0; ; ++adapterIndex)
 		{
-			ComPtr<IDXGIAdapter1> adapter;
+			Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
 			if (FAILED(dxgiFactory->EnumAdapters1(adapterIndex, adapter.GetAddressOf())))
 			{
 				break;
@@ -42,7 +42,7 @@ namespace TUK::Framework
 				continue;
 			}
 
-			ComPtr<ID3D12Device> d3dDevice;
+			Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
 			if (FAILED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(d3dDevice.GetAddressOf()))))
 			{
 				continue;
@@ -54,7 +54,7 @@ namespace TUK::Framework
 			queueDescription.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 			queueDescription.NodeMask = 0;
 
-			ComPtr<ID3D12CommandQueue> d3dCommandQueue;
+			Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue;
 			if (FAILED(d3dDevice->CreateCommandQueue(&queueDescription, IID_PPV_ARGS(d3dCommandQueue.GetAddressOf()))))
 			{
 				return std::unexpected("D3D12 명령 큐 생성에 실패했습니다.");
@@ -84,8 +84,8 @@ namespace TUK::Framework
 				samplers.data(),
 				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-			ComPtr<ID3DBlob> serializedBlob;
-			ComPtr<ID3DBlob> errorBlob;
+			Microsoft::WRL::ComPtr<ID3DBlob> serializedBlob;
+			Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
 			const HRESULT serializeResult = D3DX12SerializeVersionedRootSignature(
 				&rootSignatureDescription,
 				D3D_ROOT_SIGNATURE_VERSION_1_1,
@@ -112,7 +112,7 @@ namespace TUK::Framework
 				return std::unexpected(std::move(message));
 			}
 
-			ComPtr<ID3D12RootSignature> d3dRootSignature;
+			Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature;
 			const HRESULT createResult = d3dDevice->CreateRootSignature(
 				0,
 				serializedBlob->GetBufferPointer(),

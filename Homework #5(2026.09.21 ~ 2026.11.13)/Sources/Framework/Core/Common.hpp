@@ -6,8 +6,6 @@
 #include <cstdint>
 #include <cstdlib>
 
-#include <wrl/client.h>
-
 #ifndef ABORT
 	#define ABORT() \
 		do \
@@ -27,8 +25,6 @@
 				} \
 			} while (0)
 #endif
-
-using namespace Microsoft::WRL;
 
 namespace TUK::Framework
 {

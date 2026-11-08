@@ -13,12 +13,12 @@ namespace TUK::Framework
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		ASSERT_FMT(hWnd, "검증 실패: {}", "hWnd");
+		ASSERT_FMT(hWnd, "hWnd가 nullptr입니다.");
 
 		if (message == WM_NCCREATE)
 		{
 			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
-			ASSERT_FMT(creation, "검증 실패: {}", "creation");
+			ASSERT_FMT(creation, "creation이 nullptr입니다.");
 
 			Display* display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <expected>
 #include <string>
@@ -25,6 +25,13 @@ namespace TUK::Framework
 	class GPUSwapChain
 	{
 	public:
+		explicit GPUSwapChain(
+			Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
+			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
+			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap,
+			Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil,
+			std::vector<GPUTexture2D>&& backBuffers,
+			u32 rtvDescriptorSize) noexcept;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
 		GPUSwapChain& operator=(const GPUSwapChain&) = delete;
@@ -43,32 +50,22 @@ namespace TUK::Framework
 			const DXGI_SWAP_CHAIN_DESC1& description);
 
 	private:
-		GPUSwapChain(
-			ComPtr<IDXGISwapChain4> dxgiSwapChain,
-			ComPtr<ID3D12DescriptorHeap> rtvHeap,
-			ComPtr<ID3D12DescriptorHeap> dsvHeap,
-			ComPtr<ID3D12Resource> depthStencil,
-			std::vector<GPUTexture2D>&& backBuffers,
-			u32 rtvDescriptorSize) noexcept;
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;
 
-		ComPtr<IDXGISwapChain4> dxgiSwapChain;
-		ComPtr<ID3D12DescriptorHeap> rtvHeap;
-		ComPtr<ID3D12DescriptorHeap> dsvHeap;
-		ComPtr<ID3D12Resource> depthStencil;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		UINT rtvDescriptorSize;
+
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
+		
 		std::vector<GPUTexture2D> backBuffers;
-		u32 rtvDescriptorSize;
 	};
 
-	inline IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
-	{
-		return *dxgiSwapChain.Get();
-	}
-
 	inline GPUSwapChain::GPUSwapChain(
-		ComPtr<IDXGISwapChain4> dxgiSwapChain,
-		ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		ComPtr<ID3D12DescriptorHeap> dsvHeap,
-		ComPtr<ID3D12Resource> depthStencil,
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap,
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil,
 		std::vector<GPUTexture2D>&& backBuffers,
 		u32 rtvDescriptorSize) noexcept
 		: dxgiSwapChain(std::move(dxgiSwapChain))
@@ -78,9 +75,15 @@ namespace TUK::Framework
 		, backBuffers(std::move(backBuffers))
 		, rtvDescriptorSize(rtvDescriptorSize)
 	{
-		ASSERT_FMT(this->dxgiSwapChain.Get(), "검증 실패: {}", "this->dxgiSwapChain.Get()");
-		ASSERT_FMT(this->rtvHeap.Get(), "검증 실패: {}", "this->rtvHeap.Get()");
-		ASSERT_FMT(this->dsvHeap.Get(), "검증 실패: {}", "this->dsvHeap.Get()");
-		ASSERT_FMT(this->depthStencil.Get(), "검증 실패: {}", "this->depthStencil.Get()");
+		ASSERT_FMT(this->dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+		ASSERT_FMT(this->rtvHeap.Get(), "rtvHeap이 nullptr입니다.");
+		ASSERT_FMT(this->dsvHeap.Get(), "dsvHeap이 nullptr입니다.");
+		ASSERT_FMT(this->depthStencil.Get(), "depthStencil이 nullptr입니다.");
+	}
+
+	inline IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
+	{
+		ASSERT_FMT(dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+		return *dxgiSwapChain.Get();
 	}
 }

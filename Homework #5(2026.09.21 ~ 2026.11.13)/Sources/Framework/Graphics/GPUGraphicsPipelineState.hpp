@@ -42,19 +42,21 @@ namespace TUK::Framework
 			DXGI_FORMAT targetFormat);
 
 	private:
-		explicit GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;
+		explicit GPUGraphicsPipelineState(Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;
 
-		ComPtr<ID3D12PipelineState> d3dPipelineState;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState;
 	};
 
 	inline ID3D12PipelineState& GPUGraphicsPipelineState::GetD3DPipelineState() const noexcept
 	{
+		ASSERT_FMT(d3dPipelineState.Get(), "d3dPipelineState가 nullptr입니다.");
+
 		return *d3dPipelineState.Get();
 	}
 
-	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
+	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
 		: d3dPipelineState(std::move(d3dPipelineState))
 	{
-		ASSERT_FMT(this->d3dPipelineState.Get(), "검증 실패: {}", "this->d3dPipelineState.Get()");
+		ASSERT_FMT(this->d3dPipelineState.Get(), "d3dPipelineState가 nullptr입니다.");
 	}
 }

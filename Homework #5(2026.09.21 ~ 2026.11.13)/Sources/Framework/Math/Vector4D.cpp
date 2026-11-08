@@ -58,7 +58,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar Vector4D<TScalar>::operator[](std::size_t index) const noexcept
 	{
-		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+		ASSERT_FMT(index < 4, "index가 유효 범위(0~3)를 벗어났습니다.");
 
 		switch (index)
 		{
@@ -76,7 +76,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar& Vector4D<TScalar>::operator[](std::size_t index) noexcept
 	{
-		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+		ASSERT_FMT(index < 4, "index가 유효 범위(0~3)를 벗어났습니다.");
 
 		switch (index)
 		{
@@ -172,7 +172,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector4D<TScalar> Vector4D<TScalar>::operator/(TScalar scalar) const noexcept
 	{
-		ASSERT_FMT(scalar != TScalar{}, "검증 실패: {}", "scalar != TScalar{}");
+		ASSERT_FMT(scalar != TScalar{}, "scalar가 0입니다.");
 
 		if constexpr (std::same_as<TScalar, float>)
 		{
@@ -318,7 +318,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	bool Vector4D<TScalar>::IsZero(float epsilon) const noexcept
 	{
-		ASSERT_FMT(epsilon >= 0.0f, "검증 실패: {}", "epsilon >= 0.0f");
+		ASSERT_FMT(epsilon >= 0.0f, "epsilon이 0 이상이어야 합니다.");
 
 		return std::abs(static_cast<double>(GetX())) <= epsilon && std::abs(static_cast<double>(GetY())) <= epsilon && std::abs(static_cast<double>(GetZ())) <= epsilon && std::abs(static_cast<double>(GetW())) <= epsilon;
 	}

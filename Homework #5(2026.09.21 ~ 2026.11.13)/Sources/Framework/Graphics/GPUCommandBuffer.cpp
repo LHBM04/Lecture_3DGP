@@ -58,7 +58,7 @@ namespace TUK::Framework
 	{
 		ID3D12Device& d3dDevice = device.GetD3DDevice();
 
-		ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
 		if (FAILED(d3dDevice.CreateCommandAllocator(
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(d3dCommandAllocator.GetAddressOf()))))
@@ -66,7 +66,7 @@ namespace TUK::Framework
 			return std::unexpected("D3D12 명령 할당자 생성에 실패했습니다.");
 		}
 
-		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
 		if (FAILED(d3dDevice.CreateCommandList(
 			0,
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -87,6 +87,9 @@ namespace TUK::Framework
 
 	std::expected<void, std::string> GPUCommandBuffer::Reset()
 	{
+		ASSERT_FMT(d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		if (FAILED(d3dCommandAllocator->Reset()))
 		{
 			return std::unexpected("D3D12 명령 할당자 초기화에 실패했습니다.");
@@ -106,6 +109,8 @@ namespace TUK::Framework
 
 	std::expected<void, std::string> GPUCommandBuffer::Submit()
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		if (FAILED(d3dCommandList->Close()))
 		{
 			return std::unexpected("D3D12 명령 리스트 닫기에 실패했습니다.");
@@ -204,6 +209,8 @@ namespace TUK::Framework
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		if (stateBefore == stateAfter)
 		{
 			return;
@@ -218,12 +225,13 @@ namespace TUK::Framework
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
 	{
+		ASSERT_FMT(buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT, "buffer는 DEFAULT 힙에 있어야 합니다.");
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		if (stateBefore == stateAfter)
 		{
 			return;
 		}
-
-		ASSERT_FMT(buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT, "검증 실패: {}", "buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT");
 
 		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(&buffer.GetD3DResource(), stateBefore, stateAfter);
 		d3dCommandList->ResourceBarrier(1, &barrier);
@@ -236,18 +244,20 @@ namespace TUK::Framework
 		u64 sourceOffset,
 		u64 sizeInBytes)
 	{
-		ASSERT_FMT(&destination.GetD3DResource() != &source.GetD3DResource(), "검증 실패: {}", "&destination.GetD3DResource() != &source.GetD3DResource()");
-		ASSERT_FMT(destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD, "검증 실패: {}", "destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD");
-		ASSERT_FMT(source.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK, "검증 실패: {}", "source.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK");
-		ASSERT_FMT(destinationOffset <= destination.GetSizeInBytes(), "검증 실패: {}", "destinationOffset <= destination.GetSizeInBytes()");
-		ASSERT_FMT(sizeInBytes <= destination.GetSizeInBytes() - destinationOffset, "검증 실패: {}", "sizeInBytes <= destination.GetSizeInBytes() - destinationOffset");
-		ASSERT_FMT(sourceOffset <= source.GetSizeInBytes(), "검증 실패: {}", "sourceOffset <= source.GetSizeInBytes()");
-		ASSERT_FMT(sizeInBytes <= source.GetSizeInBytes() - sourceOffset, "검증 실패: {}", "sizeInBytes <= source.GetSizeInBytes() - sourceOffset");
+		ASSERT_FMT(&destination.GetD3DResource() != &source.GetD3DResource(), "destination과 source가 같은 리소스를 가리킵니다.");
+		ASSERT_FMT(destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD, "destination은 UPLOAD 힙에 있을 수 없습니다.");
+		ASSERT_FMT(source.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK, "source는 READBACK 힙에 있을 수 없습니다.");
+		ASSERT_FMT(destinationOffset <= destination.GetSizeInBytes(), "destinationOffset이 destination 크기를 초과합니다.");
+		ASSERT_FMT(sizeInBytes <= destination.GetSizeInBytes() - destinationOffset, "sizeInBytes가 destination의 남은 범위를 초과합니다.");
+		ASSERT_FMT(sourceOffset <= source.GetSizeInBytes(), "sourceOffset이 source 크기를 초과합니다.");
+		ASSERT_FMT(sizeInBytes <= source.GetSizeInBytes() - sourceOffset, "sizeInBytes가 source의 남은 범위를 초과합니다.");
 
 		if (sizeInBytes == 0)
 		{
 			return;
 		}
+
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 
 		d3dCommandList->CopyBufferRegion(
 			&destination.GetD3DResource(), destinationOffset,
@@ -256,39 +266,50 @@ namespace TUK::Framework
 
 	void GPUCommandBuffer::SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
 	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::CAMERA), address);
 	}
 
 	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::OBJECT), address);
 	}
 
 	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
 		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::MATERIAL), address);
 	}
 
 	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		d3dCommandList->RSSetViewports(1, &viewport);
 	}
 
 	void GPUCommandBuffer::SetScissorRect(const D3D12_RECT& scissorRect) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		d3dCommandList->RSSetScissorRects(1, &scissorRect);
 	}
 
 	void GPUCommandBuffer::SetGPUMesh(const GPUMesh& mesh) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		const D3D12_VERTEX_BUFFER_VIEW vertexView = mesh.GetD3DVertexBufferView();
 		const D3D12_INDEX_BUFFER_VIEW indexView = mesh.GetD3DIndexBufferView();
 
@@ -299,16 +320,20 @@ namespace TUK::Framework
 
 	void GPUCommandBuffer::Draw(u32 vertexCount, u32 firstVertex)
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		d3dCommandList->DrawInstanced(vertexCount, 1, firstVertex, 0);
 	}
 
 	void GPUCommandBuffer::DrawIndexed(u32 indexCount, u32 firstIndex, i32 baseVertex)
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
 	}
 
 	void GPUCommandBuffer::ClearGPUTarget(const GPUTarget& target, const ColorRGBA<f32>& clearColor)
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		const FLOAT color[] =
 		{
 			clearColor.GetR(),
@@ -329,6 +354,8 @@ namespace TUK::Framework
 
 	void GPUCommandBuffer::SetGPUTarget(const GPUTarget& target) noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		activeTargetFormat = target.GetTexture().GetD3DResource().GetDesc().Format;
 		cameraPrepared = false;
 		const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = target.GetD3DRTVHandle();
@@ -339,6 +366,8 @@ namespace TUK::Framework
 	std::expected<std::pair<const GPUBuffer*, u64>, std::string> GPUCommandBuffer::UploadConstants(
 		std::span<const std::byte> bytes)
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+
 		constexpr u64 CONSTANT_BUFFER_PAGE_SIZE = 64 * 1024;
 		constexpr u64 ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
 		if (!device || bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)

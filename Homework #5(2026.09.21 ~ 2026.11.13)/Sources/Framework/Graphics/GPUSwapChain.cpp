@@ -20,7 +20,7 @@ namespace TUK::Framework
 		ID3D12Device& d3dDevice = device.GetD3DDevice();
 		ID3D12CommandQueue& d3dCommandQueue = device.GetD3DCommandQueue();
 
-		ComPtr<IDXGISwapChain1> swapChain1;
+		Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain1;
 		if (FAILED(dxgiFactory.CreateSwapChainForHwnd(
 			&d3dCommandQueue,
 			display->GetHWND(),
@@ -32,7 +32,7 @@ namespace TUK::Framework
 			return std::unexpected("DXGI 스왑체인 생성에 실패했습니다.");
 		}
 
-		ComPtr<IDXGISwapChain4> swapChain4;
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain4;
 		if (FAILED(swapChain1.As(&swapChain4)))
 		{
 			return std::unexpected("IDXGISwapChain4 인터페이스 조회에 실패했습니다.");
@@ -44,13 +44,13 @@ namespace TUK::Framework
 		heapDescription.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		heapDescription.NodeMask = 0;
 
-		ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
 		if (FAILED(d3dDevice.CreateDescriptorHeap(&heapDescription, IID_PPV_ARGS(rtvHeap.GetAddressOf()))))
 		{
 			return std::unexpected("RTV 디스크립터 힙 생성에 실패했습니다.");
 		}
 
-		const u32 descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		const UINT descriptorSize = d3dDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
 		std::vector<GPUTexture2D> backBuffers;
@@ -58,7 +58,7 @@ namespace TUK::Framework
 
 		for (u32 index = 0; index < description.BufferCount; ++index)
 		{
-			ComPtr<ID3D12Resource> backBuffer;
+			Microsoft::WRL::ComPtr<ID3D12Resource> backBuffer;
 			if (FAILED(swapChain4->GetBuffer(index, IID_PPV_ARGS(backBuffer.GetAddressOf()))))
 			{
 				return std::unexpected("D3D12 백 버퍼 조회에 실패했습니다.");
@@ -74,7 +74,7 @@ namespace TUK::Framework
 		dsvHeapDescription.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		dsvHeapDescription.NumDescriptors = 1;
 
-		ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
 		if (FAILED(d3dDevice.CreateDescriptorHeap(&dsvHeapDescription, IID_PPV_ARGS(dsvHeap.GetAddressOf()))))
 		{
 			return std::unexpected("DSV 디스크립터 힙 생성에 실패했습니다.");
@@ -96,7 +96,7 @@ namespace TUK::Framework
 		depthClearValue.Format = GPUTarget::DEPTH_FORMAT;
 		depthClearValue.DepthStencil.Depth = GPUTarget::DEPTH_CLEAR_VALUE;
 
-		ComPtr<ID3D12Resource> depthStencil;
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
 		if (FAILED(d3dDevice.CreateCommittedResource(
 			&depthHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
@@ -121,11 +121,17 @@ namespace TUK::Framework
 
 	void GPUSwapChain::Present() const
 	{
+		ASSERT_FMT(dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+
 		dxgiSwapChain->Present(1, 0);
 	}
 
 	GPUTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
 	{
+		ASSERT_FMT(dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+		ASSERT_FMT(rtvHeap.Get(), "rtvHeap이 nullptr입니다.");
+		ASSERT_FMT(dsvHeap.Get(), "dsvHeap이 nullptr입니다.");
+
 		const u32 index = dxgiSwapChain->GetCurrentBackBufferIndex();
 		const CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(
 			rtvHeap->GetCPUDescriptorHandleForHeapStart(),

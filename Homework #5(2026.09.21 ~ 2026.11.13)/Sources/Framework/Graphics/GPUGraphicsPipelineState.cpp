@@ -21,7 +21,7 @@ namespace TUK::Framework
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDescription = description;
 		pipelineDescription.pRootSignature = &device.GetD3DRootSignature();
 
-		ComPtr<ID3D12PipelineState> d3dPipelineState;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState;
 		const HRESULT result = device.GetD3DDevice().CreateGraphicsPipelineState(
 			&pipelineDescription,
 			IID_PPV_ARGS(d3dPipelineState.GetAddressOf()));

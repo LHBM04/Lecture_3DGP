@@ -30,7 +30,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar Quaternion<TScalar>::operator[](size_t index) const noexcept
 	{
-		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+		ASSERT_FMT(index < 4, "index가 유효 범위(0~3)를 벗어났습니다.");
 
 		switch (index)
 		{
@@ -48,7 +48,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar& Quaternion<TScalar>::operator[](size_t index) noexcept
 	{
-		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+		ASSERT_FMT(index < 4, "index가 유효 범위(0~3)를 벗어났습니다.");
 
 		switch (index)
 		{
@@ -169,13 +169,13 @@ namespace TUK::Framework
 	{
 		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			ASSERT_FMT(_scalar != TScalar{}, "검증 실패: {}", "_scalar != TScalar{}");
+			ASSERT_FMT(_scalar != TScalar{}, "_scalar가 0입니다.");
 
 			return Quaternion<TScalar>(value.x / _scalar, value.y / _scalar, value.z / _scalar, value.w / _scalar);
 		}
 		else
 		{
-			ASSERT_FMT(_scalar != 0.0f, "검증 실패: {}", "_scalar != 0.0f");
+			ASSERT_FMT(_scalar != 0.0f, "_scalar가 0입니다.");
 
 			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMVectorDivide(Load(*this), DirectX::XMVectorReplicate(_scalar)));

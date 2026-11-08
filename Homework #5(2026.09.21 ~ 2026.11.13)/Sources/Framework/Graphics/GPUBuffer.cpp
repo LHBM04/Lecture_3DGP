@@ -23,7 +23,7 @@ namespace TUK::Framework
 		const CD3DX12_HEAP_PROPERTIES heapProperties(heapType);
 		const auto description = CD3DX12_RESOURCE_DESC::Buffer(sizeInBytes, flags);
 
-		ComPtr<ID3D12Resource> resource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		if (FAILED(device.GetD3DDevice().CreateCommittedResource(
 			&heapProperties,
 			D3D12_HEAP_FLAG_NONE,
@@ -60,7 +60,7 @@ namespace TUK::Framework
 	{
 		if (!d3dResource || heapType != D3D12_HEAP_TYPE_UPLOAD)
 		{
-			return std::unexpected("쓰기에는 유효한 UPLOAD 버퍼가 필요합니다.");
+			return std::unexpected("쓰기에 유효한 UPLOAD 버퍼가 필요합니다.");
 		}
 
 		const u64 size = GetSizeInBytes();
@@ -74,18 +74,20 @@ namespace TUK::Framework
 			return {};
 		}
 
+		const u64 begin = offset;
 		void* mappedData = nullptr;
+
 		const CD3DX12_RANGE readRange{ 0, 0 };
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
 			return std::unexpected("쓰기를 위한 GPU 버퍼 매핑에 실패했습니다.");
 		}
 
-		const auto begin = static_cast<usize>(offset);
 		std::memcpy(static_cast<u8*>(mappedData) + begin, data.data(), data.size());
 
 		const CD3DX12_RANGE writtenRange{ begin, begin + data.size() };
 		d3dResource->Unmap(0, &writtenRange);
+
 		return {};
 	}
 
@@ -93,7 +95,7 @@ namespace TUK::Framework
 	{
 		if (!d3dResource || heapType != D3D12_HEAP_TYPE_READBACK)
 		{
-			return std::unexpected("읽기에는 유효한 READBACK 버퍼가 필요합니다.");
+			return std::unexpected("읽기에 유효한 READBACK 버퍼가 필요합니다.");
 		}
 
 		const u64 size = GetSizeInBytes();
@@ -107,9 +109,10 @@ namespace TUK::Framework
 			return {};
 		}
 
-		const auto begin = static_cast<usize>(offset);
-		const CD3DX12_RANGE readRange{ begin, begin + data.size() };
+		const u64 begin = offset;
 		void* mappedData = nullptr;
+
+		const CD3DX12_RANGE readRange{ begin, begin + data.size() };
 		if (FAILED(d3dResource->Map(0, &readRange, &mappedData)))
 		{
 			return std::unexpected("읽기를 위한 GPU 버퍼 매핑에 실패했습니다.");
@@ -119,6 +122,7 @@ namespace TUK::Framework
 
 		const CD3DX12_RANGE writtenRange{ 0, 0 };
 		d3dResource->Unmap(0, &writtenRange);
+
 		return {};
 	}
 }

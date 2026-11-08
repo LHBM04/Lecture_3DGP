@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstddef>
 #include <expected>
@@ -34,6 +34,10 @@ namespace TUK::Framework
 	class GPUCommandBuffer
 	{
 	public:
+		explicit GPUCommandBuffer(
+			const GPUDevice& device,
+			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
+			Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
 		GPUCommandBuffer& operator=(const GPUCommandBuffer&) = delete;
@@ -88,47 +92,44 @@ namespace TUK::Framework
 		[[nodiscard]] static std::expected<GPUCommandBuffer, std::string> Create(const GPUDevice& device);
 
 	private:
-		explicit GPUCommandBuffer(
-			const GPUDevice& device,
-			ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-			ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
-
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 
 		const GPUDevice* device;
-		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
-		ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+		
 		std::vector<GPUBuffer> constantBufferPages;
 		usize constantBufferPageIndex = 0;
 		u64 constantBufferOffset = 0;
+		
 		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
+		
 		bool cameraPrepared = false;
 	};
 
+	inline GPUCommandBuffer::GPUCommandBuffer(
+		const GPUDevice& device,
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
+		: device(&device)
+		, d3dCommandList(std::move(d3dCommandList))
+		, d3dCommandAllocator(std::move(d3dCommandAllocator))
+	{
+		ASSERT_FMT(this->d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		ASSERT_FMT(this->d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
+	}
+
 	inline ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept
 	{
-		ASSERT_FMT(d3dCommandList.Get(), "GPU 명령 리스트가 nullptr입니다.");
-
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		return *d3dCommandList.Get();
 	}
 
 	inline ID3D12CommandAllocator& GPUCommandBuffer::GetD3DCommandAllocator() const noexcept
 	{
-		ASSERT_FMT(d3dCommandAllocator.Get(), "GPU 명령 할당자가 nullptr입니다.");
-
+		ASSERT_FMT(d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
 		return *d3dCommandAllocator.Get();
-	}
-
-	inline GPUCommandBuffer::GPUCommandBuffer(
-		const GPUDevice& device,
-		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-		ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
-		: device(&device)
-		, d3dCommandList(std::move(d3dCommandList))
-		, d3dCommandAllocator(std::move(d3dCommandAllocator))
-	{
-		ASSERT_FMT(this->d3dCommandList.Get(), "검증 실패: {}", "this->d3dCommandList.Get()");
-		ASSERT_FMT(this->d3dCommandAllocator.Get(), "검증 실패: {}", "this->d3dCommandAllocator.Get()");
 	}
 }

@@ -14,8 +14,8 @@ namespace TUK::Framework
 
 	World* WorldSubsystem::AddWorld(std::unique_ptr<World> world)
 	{
-		ASSERT_FMT(world, "검증 실패: {}", "world");
-		ASSERT_FMT(!currentWorld, "검증 실패: {}", "!currentWorld");
+		ASSERT_FMT(world, "world가 nullptr입니다.");
+		ASSERT_FMT(!currentWorld, "currentWorld가 이미 설정되어 있습니다.");
 
 		World* result = world.get();
 		worlds.push_back(std::move(world));

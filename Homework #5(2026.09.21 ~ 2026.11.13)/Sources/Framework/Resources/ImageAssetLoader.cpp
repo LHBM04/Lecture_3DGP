@@ -29,7 +29,7 @@ namespace TUK::Framework
 		}
 
 		auto& d3dDevice = device.GetD3DDevice();
-		ComPtr<ID3D12Resource> resource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		std::unique_ptr<uint8_t[]> pixels;
 		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 		bool isCubeMap = false;
@@ -78,18 +78,18 @@ namespace TUK::Framework
 			return std::unexpected(upload.error());
 		}
 
-		ComPtr<ID3D12CommandAllocator> allocator;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> allocator;
 		if (FAILED(d3dDevice.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(allocator.GetAddressOf()))))
 		{
 			return std::unexpected("이미지 업로드 명령 할당자 생성에 실패했습니다.");
 		}
-		ComPtr<ID3D12GraphicsCommandList> commands;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commands;
 		if (FAILED(d3dDevice.CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, allocator.Get(), nullptr,
 			IID_PPV_ARGS(commands.GetAddressOf()))))
 		{
 			return std::unexpected("이미지 업로드 명령 리스트 생성에 실패했습니다.");
 		}
-		ComPtr<ID3D12Fence> fence;
+		Microsoft::WRL::ComPtr<ID3D12Fence> fence;
 		if (FAILED(d3dDevice.CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf()))))
 		{
 			return std::unexpected("이미지 업로드 펜스 생성에 실패했습니다.");
