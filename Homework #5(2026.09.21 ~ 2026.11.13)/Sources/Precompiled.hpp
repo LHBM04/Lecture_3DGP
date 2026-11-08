@@ -118,4 +118,6 @@
 #include <xaudio2redist/xaudio2Redist.h>
 #include <xaudio2redist/xaudio2fxRedist.h>
 
+#include <nlohmann/json.hpp>
+
 #include "Resource.hpp"
