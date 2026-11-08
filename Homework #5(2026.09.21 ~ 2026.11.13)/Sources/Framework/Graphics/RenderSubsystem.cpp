@@ -267,11 +267,12 @@ namespace TUK::Framework
 					static_cast<u32>(createResult)));
 			}
 
-			return GPUDevice(
-				std::move(dxgiFactory),
-				std::move(d3dDevice),
-				std::move(d3dCommandQueue),
-				std::move(d3dRootSignature));
+			return GPUDevice(GPUDeviceCreateInfo{
+				.dxgiFactory = std::move(dxgiFactory),
+				.d3dDevice = std::move(d3dDevice),
+				.d3dCommandQueue = std::move(d3dCommandQueue),
+				.d3dRootSignature = std::move(d3dRootSignature)
+			});
 		}
 
 		return std::unexpected("GPU 디바이스 생성에 실패했습니다.");

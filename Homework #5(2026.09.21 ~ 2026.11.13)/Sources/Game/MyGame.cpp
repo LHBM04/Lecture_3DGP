@@ -82,10 +82,10 @@ namespace TUK::Game
 		worldSubsystem->AddExitListener(assetSubsystem, &AssetSubsystem::OnWorldExited);
 
 		auto& device = renderSubsystem->GetDevice();
-		assetSubsystem->AddLoader<ModelAssetLoader>(assetSubsystem);
+		assetSubsystem->AddLoader<ModelAssetLoader>();
 		assetSubsystem->AddLoader<MeshAssetLoader>(device);
 		assetSubsystem->AddLoader<ImageAssetLoader>(device);
-		assetSubsystem->AddLoader<MaterialAssetLoader>(assetSubsystem, device, DXGI_FORMAT_R8G8B8A8_UNORM);
+		assetSubsystem->AddLoader<MaterialAssetLoader>(device);
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
 
 		return App::Startup();

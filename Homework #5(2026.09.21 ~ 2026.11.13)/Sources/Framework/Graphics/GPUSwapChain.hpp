@@ -17,16 +17,20 @@
 
 namespace TUK::Framework
 {
+	struct GPUSwapChainCreateInfo final
+	{
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
+		std::vector<GPUTexture2D> backBuffers;
+		u32 rtvDescriptorSize = 0;
+	};
+
 	class GPUSwapChain
 	{
 	public:
-		explicit GPUSwapChain(
-			Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
-			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
-			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap,
-			Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil,
-			std::vector<GPUTexture2D>&& backBuffers,
-			u32 rtvDescriptorSize) noexcept;
+		explicit GPUSwapChain(GPUSwapChainCreateInfo&& createInfo) noexcept;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
 		GPUSwapChain& operator=(const GPUSwapChain&) = delete;
@@ -51,19 +55,13 @@ namespace TUK::Framework
 		std::vector<GPUTexture2D> backBuffers;
 	};
 
-	inline GPUSwapChain::GPUSwapChain(
-		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain,
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap,
-		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil,
-		std::vector<GPUTexture2D>&& backBuffers,
-		u32 rtvDescriptorSize) noexcept
-		: dxgiSwapChain(std::move(dxgiSwapChain))
-		, rtvHeap(std::move(rtvHeap))
-		, dsvHeap(std::move(dsvHeap))
-		, depthStencil(std::move(depthStencil))
-		, backBuffers(std::move(backBuffers))
-		, rtvDescriptorSize(rtvDescriptorSize)
+	inline GPUSwapChain::GPUSwapChain(GPUSwapChainCreateInfo&& createInfo) noexcept
+		: dxgiSwapChain(std::move(createInfo.dxgiSwapChain))
+		, rtvHeap(std::move(createInfo.rtvHeap))
+		, dsvHeap(std::move(createInfo.dsvHeap))
+		, depthStencil(std::move(createInfo.depthStencil))
+		, backBuffers(std::move(createInfo.backBuffers))
+		, rtvDescriptorSize(createInfo.rtvDescriptorSize)
 	{
 		ASSERT_FMT(this->dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
 		ASSERT_FMT(this->rtvHeap.Get(), "rtvHeap이 nullptr입니다.");

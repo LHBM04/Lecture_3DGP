@@ -46,7 +46,10 @@ namespace TUK::Framework
 			return std::unexpected("GPU 버퍼 리소스 생성에 실패했습니다.");
 		}
 
-		return GPUBuffer(std::move(resource), heapType);
+		return GPUBuffer(GPUBufferCreateInfo{
+			.d3dResource = std::move(resource),
+			.heapType = heapType
+		});
 	}
 
 	std::expected<GPUBuffer, std::string> GPUDevice::CreateUploadBuffer(
@@ -94,7 +97,11 @@ namespace TUK::Framework
 			return std::unexpected("초기 D3D12 명령 리스트 닫기에 실패했습니다.");
 		}
 
-		return GPUCommandBuffer(*this, std::move(d3dCommandList), std::move(d3dCommandAllocator));
+		return GPUCommandBuffer(GPUCommandBufferCreateInfo{
+			.device = this,
+			.d3dCommandList = std::move(d3dCommandList),
+			.d3dCommandAllocator = std::move(d3dCommandAllocator)
+		});
 	}
 
 	std::expected<GPUFence, std::string> GPUDevice::CreateFence() const
@@ -208,13 +215,14 @@ namespace TUK::Framework
 
 		device.CreateDepthStencilView(depthStencil.Get(), nullptr, dsvHeap->GetCPUDescriptorHandleForHeapStart());
 
-		return GPUSwapChain(
-			std::move(swapChain4),
-			std::move(rtvHeap),
-			std::move(dsvHeap),
-			std::move(depthStencil),
-			std::move(backBuffers),
-			descriptorSize);
+		return GPUSwapChain(GPUSwapChainCreateInfo{
+			.dxgiSwapChain = std::move(swapChain4),
+			.rtvHeap = std::move(rtvHeap),
+			.dsvHeap = std::move(dsvHeap),
+			.depthStencil = std::move(depthStencil),
+			.backBuffers = std::move(backBuffers),
+			.rtvDescriptorSize = descriptorSize
+		});
 	}
 
 	std::expected<GPUGraphicsPipelineState, std::string> GPUDevice::CreateGraphicsPipelineState(
@@ -274,12 +282,13 @@ namespace TUK::Framework
 		indexBufferView.SizeInBytes = static_cast<UINT>(indexBuffer.GetSizeInBytes());
 		indexBufferView.Format = indexFormat;
 
-		return GPUMesh(
-			std::move(vertexBuffer),
-			vertexBufferView,
-			std::move(indexBuffer),
-			indexBufferView,
-			topology);
+		return GPUMesh(GPUMeshCreateInfo{
+			.vertexBuffer = std::move(vertexBuffer),
+			.vertexBufferView = vertexBufferView,
+			.indexBuffer = std::move(indexBuffer),
+			.indexBufferView = indexBufferView,
+			.topology = topology
+		});
 	}
 
 	std::expected<GPUMesh, std::string> GPUDevice::CreateMesh(

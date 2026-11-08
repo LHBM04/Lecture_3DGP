@@ -1,9 +1,8 @@
 #pragma once
 
-#include <optional>
+#include <filesystem>
 #include <span>
 #include <string>
-#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -21,13 +20,25 @@
 
 namespace TUK::Framework
 {
+	struct MeshAssetData final
+	{
+		Vector3D<f32> boundsCenter{};
+		Vector3D<f32> boundsExtents{};
+		std::vector<Vector3D<f32>> positions;
+		std::vector<ColorRGBA<f32>> colors;
+		std::vector<Vector3D<f32>> normals;
+		std::vector<Vector2D<f32>> textureCoords;
+		std::vector<DirectX::VertexPositionNormalColor> vertices;
+		std::vector<u32> indices;
+		GPUMesh gpuMesh;
+	};
+
 	class MeshAsset final : public Asset
 	{
 	public:
-		using Asset::Asset;
-
-		[[nodiscard]] std::string Serialize() const override;
-		[[nodiscard]] bool Deserialize(std::string_view text) override;
+		explicit MeshAsset(
+			std::filesystem::path path,
+			MeshAssetData&& data) noexcept;
 
 		[[nodiscard]] const Vector3D<f32>& GetBoundsCenter() const noexcept;
 		[[nodiscard]] const Vector3D<f32>& GetBoundsExtents() const noexcept;
@@ -39,9 +50,7 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<const DirectX::VertexPositionNormalColor> GetVertices() const noexcept;
 		[[nodiscard]] std::span<const u32> GetIndices() const noexcept;
 
-		[[nodiscard]] bool HasGPUMesh() const noexcept;
-		[[nodiscard]] const GPUMesh* GetGPUMesh() const noexcept;
-		void SetGPUMesh(GPUMesh value) noexcept;
+		[[nodiscard]] const GPUMesh& GetGPUMesh() const noexcept;
 
 	private:
 		Vector3D<f32> boundsCenter{};
@@ -52,8 +61,24 @@ namespace TUK::Framework
 		std::vector<Vector2D<f32>> textureCoords;
 		std::vector<DirectX::VertexPositionNormalColor> vertices;
 		std::vector<u32> indices;
-		std::optional<GPUMesh> gpuMesh;
+		GPUMesh gpuMesh;
 	};
+
+	inline MeshAsset::MeshAsset(
+		std::filesystem::path path,
+		MeshAssetData&& data) noexcept
+		: Asset(std::move(path))
+		, boundsCenter(data.boundsCenter)
+		, boundsExtents(data.boundsExtents)
+		, positions(std::move(data.positions))
+		, colors(std::move(data.colors))
+		, normals(std::move(data.normals))
+		, textureCoords(std::move(data.textureCoords))
+		, vertices(std::move(data.vertices))
+		, indices(std::move(data.indices))
+		, gpuMesh(std::move(data.gpuMesh))
+	{
+	}
 
 	inline const Vector3D<f32>& MeshAsset::GetBoundsCenter() const noexcept
 	{
@@ -95,18 +120,8 @@ namespace TUK::Framework
 		return indices;
 	}
 
-	inline bool MeshAsset::HasGPUMesh() const noexcept
+	inline const GPUMesh& MeshAsset::GetGPUMesh() const noexcept
 	{
-		return gpuMesh.has_value();
-	}
-
-	inline const GPUMesh* MeshAsset::GetGPUMesh() const noexcept
-	{
-		return gpuMesh ? &*gpuMesh : nullptr;
-	}
-
-	inline void MeshAsset::SetGPUMesh(GPUMesh value) noexcept
-	{
-		gpuMesh = std::move(value);
+		return gpuMesh;
 	}
 }

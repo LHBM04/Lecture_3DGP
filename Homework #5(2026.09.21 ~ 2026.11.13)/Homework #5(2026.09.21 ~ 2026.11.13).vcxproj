@@ -350,17 +350,12 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\Standard.hlsl">
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Resources\Shaders\CompileShader.ps1" -Source "%(FullPath)" -OutputDirectory "$(OutDir)Resources\Shaders" -IntermediateDirectory "$(IntDir)Shaders" -Compiler "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe"</Command>
-      <Message>Compiling Standard.hlsl</Message>
-      <AdditionalInputs>$(ProjectDir)Resources\Shaders\CompileShader.ps1;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs>$(OutDir)Resources\Shaders\Standard.vert.cso;$(OutDir)Resources\Shaders\Standard.frag.cso</Outputs>
+    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
       <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Message>Compiling %(Filename)%(Extension)</Message>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+    </CustomBuild>
     <None Include="Resources\Models\Apache.bin" />
     <None Include="Resources\Models\Gunship.bin" />
     <None Include="Resources\Models\Hummer.bin" />

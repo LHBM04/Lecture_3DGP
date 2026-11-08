@@ -2,9 +2,19 @@
 
 #include <directx/d3d12.h>
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUTexture2D;
+
+	struct GPUTargetCreateInfo final
+	{
+		const GPUTexture2D* texture = nullptr;
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle{};
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle{};
+		DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+	};
 
 	class GPUTarget
 	{
@@ -12,11 +22,7 @@ namespace TUK::Framework
 		static constexpr DXGI_FORMAT DEPTH_FORMAT = DXGI_FORMAT_D32_FLOAT;
 		static constexpr float DEPTH_CLEAR_VALUE = 1.0f;
 
-		GPUTarget(
-			const GPUTexture2D& texture,
-			D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle,
-			D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle,
-			DXGI_FORMAT format) noexcept;
+		explicit GPUTarget(const GPUTargetCreateInfo& createInfo) noexcept;
 
 		GPUTarget(const GPUTarget&) = delete;
 		GPUTarget& operator=(const GPUTarget&) = delete;
@@ -36,16 +42,13 @@ namespace TUK::Framework
 		DXGI_FORMAT format;
 	};
 
-	inline GPUTarget::GPUTarget(
-		const GPUTexture2D& texture,
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle,
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle,
-		DXGI_FORMAT format) noexcept
-		: texture(&texture)
-		, rtvHandle(rtvHandle)
-		, dsvHandle(dsvHandle)
-		, format(format)
+	inline GPUTarget::GPUTarget(const GPUTargetCreateInfo& createInfo) noexcept
+		: texture(createInfo.texture)
+		, rtvHandle(createInfo.rtvHandle)
+		, dsvHandle(createInfo.dsvHandle)
+		, format(createInfo.format)
 	{
+		ASSERT_FMT(this->texture, "texture가 nullptr입니다.");
 	}
 
 	inline const GPUTexture2D& GPUTarget::GetTexture() const noexcept

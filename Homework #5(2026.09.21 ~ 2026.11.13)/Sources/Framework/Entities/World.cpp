@@ -1,15 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "World.hpp"
 
-#include "../Core/App.hpp"
-
 #include "../Graphics/Camera.hpp"
 #include "../Graphics/GPUCommandBuffer.hpp"
 #include "../Graphics/MeshRenderer.hpp"
 
-#include "../Resources/AssetSubsystem.hpp"
-#include "../Resources/MaterialAsset.hpp"
-#include "../Resources/MeshAsset.hpp"
 #include "../Resources/ModelAsset.hpp"
 
 #include "../Utilities/Logger.hpp"
@@ -299,55 +294,15 @@ namespace TUK::Framework
 			return nullptr;
 		}
 
-		AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
-		if (!assets)
+		for (const Submodel& submodel : submodels)
 		{
-			LOG_ERROR("모델에 사용할 에셋 서브시스템이 없습니다: {}", model.GetName());
-			return nullptr;
-		}
-		struct PreparedRenderer
-		{
-			const MeshAsset* mesh;
-			const MaterialAsset* material;
-		};
-
-		const auto resourcePath = [&model](std::string_view directory, std::string_view name)
-		{
-			std::filesystem::path path(std::u8string(name.begin(), name.end()));
-			if (!path.has_parent_path())
-			{
-				path = model.GetPath().parent_path().parent_path() / directory / path;
-			}
-			if (path.extension() != ".bin")
-			{
-				path += ".bin";
-			}
-			return path.lexically_normal();
-		};
-		std::vector<std::vector<PreparedRenderer>> prepared(submodels.size());
-		for (usize index = 0; index < submodels.size(); ++index)
-		{
-			const Submodel& submodel = submodels[index];
 			for (const Submodel::RenderPart& part : submodel.renderParts)
 			{
-				const auto meshPath = resourcePath("Meshes", part.meshName);
-				const auto materialPath = resourcePath("Materials", part.materialName);
-
-				const MeshAsset* mesh = assets->LoadAsset<MeshAsset>(meshPath);
-				if (!mesh)
+				if (!part.mesh || !part.material)
 				{
-					LOG_ERROR("메시가 로드되지 않았습니다: {} (모델: {})", meshPath.generic_string(), model.GetName());
+					LOG_ERROR("모델의 렌더 파트가 유효하지 않습니다: {}", model.GetName());
 					return nullptr;
 				}
-
-				const MaterialAsset* material = assets->LoadAsset<MaterialAsset>(materialPath);
-				if (!material || !material->GetGraphicsPipelineState())
-				{
-					LOG_ERROR("머티리얼이 준비되지 않았습니다: {} (모델: {})", materialPath.generic_string(), model.GetName());
-					return nullptr;
-				}
-
-				prepared[index].push_back(PreparedRenderer{ mesh, material });
 			}
 		}
 
@@ -374,12 +329,12 @@ namespace TUK::Framework
 			transform->SetLocalRotation(node.localRotation);
 			transform->SetLocalScale(node.localScale);
 
-			for (const PreparedRenderer& reference : prepared[index])
+			for (const Submodel::RenderPart& part : node.renderParts)
 			{
-				Entity* part = Instantiate(transform);
-				MeshRenderer* renderer = part->AddComponent<MeshRenderer>();
-				renderer->SetMesh(reference.mesh);
-				renderer->SetMaterial(reference.material);
+				Entity* partEntity = Instantiate(transform);
+				MeshRenderer* renderer = partEntity->AddComponent<MeshRenderer>();
+				renderer->SetMesh(part.mesh);
+				renderer->SetMaterial(part.material);
 			}
 
 			nodeEntities[index] = entity;

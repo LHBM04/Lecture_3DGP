@@ -33,6 +33,6 @@ namespace TUK::Framework
 			return std::unexpected("셰이더 파일 로드에 실패했습니다.");
 		}
 
-		return std::make_unique<ShaderAsset>(GPUShader(std::move(dxcBlob)), path);
+		return std::make_unique<ShaderAsset>(path, GPUShader(std::move(dxcBlob)));
 	}
 }

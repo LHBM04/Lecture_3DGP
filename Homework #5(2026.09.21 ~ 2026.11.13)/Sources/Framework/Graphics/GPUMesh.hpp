@@ -10,15 +10,19 @@
 
 namespace TUK::Framework
 {
+	struct GPUMeshCreateInfo final
+	{
+		GPUBuffer vertexBuffer;
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+		GPUBuffer indexBuffer;
+		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+		D3D12_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+	};
+
 	class GPUMesh
 	{
 	public:
-		explicit GPUMesh(
-			GPUBuffer&& vertexBuffer,
-			const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView,
-			GPUBuffer&& indexBuffer,
-			const D3D12_INDEX_BUFFER_VIEW& indexBufferView,
-			D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
+		explicit GPUMesh(GPUMeshCreateInfo&& createInfo) noexcept;
 
 		GPUMesh(const GPUMesh&) = delete;
 		GPUMesh& operator=(const GPUMesh&) = delete;
@@ -46,17 +50,12 @@ namespace TUK::Framework
 		D3D12_PRIMITIVE_TOPOLOGY topology;
 	};
 
-	inline GPUMesh::GPUMesh(
-		GPUBuffer&& vertexBuffer,
-		const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView,
-		GPUBuffer&& indexBuffer,
-		const D3D12_INDEX_BUFFER_VIEW& indexBufferView,
-		D3D12_PRIMITIVE_TOPOLOGY topology) noexcept
-		: vertexBuffer(std::move(vertexBuffer))
-		, vertexBufferView(vertexBufferView)
-		, indexBuffer(std::move(indexBuffer))
-		, indexBufferView(indexBufferView)
-		, topology(topology)
+	inline GPUMesh::GPUMesh(GPUMeshCreateInfo&& createInfo) noexcept
+		: vertexBuffer(std::move(createInfo.vertexBuffer))
+		, vertexBufferView(createInfo.vertexBufferView)
+		, indexBuffer(std::move(createInfo.indexBuffer))
+		, indexBufferView(createInfo.indexBufferView)
+		, topology(createInfo.topology)
 	{
 	}
 }

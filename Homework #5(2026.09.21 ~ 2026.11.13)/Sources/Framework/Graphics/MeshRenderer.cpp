@@ -17,14 +17,10 @@ namespace TUK::Framework
 			return;
 		}
 
-		const GPUMesh* gpuMesh = mesh->GetGPUMesh();
-		const GPUGraphicsPipelineState* pipeline = material->GetGraphicsPipelineState();
-		if (!gpuMesh || !pipeline)
-		{
-			return;
-		}
+		const GPUMesh& gpuMesh = mesh->GetGPUMesh();
+		const GPUGraphicsPipelineState& pipeline = material->GetGraphicsPipelineState();
 
-		if (auto result = commandBuffer.SetMaterial(material, *pipeline, material->GetTargetFormat()); !result)
+		if (auto result = commandBuffer.SetMaterial(material, pipeline, material->GetTargetFormat()); !result)
 		{
 			LOG_ERROR("메시 렌더러의 머티리얼 적용에 실패했습니다: {}", result.error());
 			return;
@@ -36,7 +32,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		commandBuffer.SetGPUMesh(*gpuMesh);
-		commandBuffer.DrawIndexed(gpuMesh->GetIndexCount());
+		commandBuffer.SetGPUMesh(gpuMesh);
+		commandBuffer.DrawIndexed(gpuMesh.GetIndexCount());
 	}
 }

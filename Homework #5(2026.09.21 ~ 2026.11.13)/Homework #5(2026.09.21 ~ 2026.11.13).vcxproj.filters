@@ -2139,8 +2139,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\Standard.hlsl">
+    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
       <Filter>Resources\Shaders</Filter>
-    </FxCompile>
+    </CustomBuild>
   </ItemGroup>
 </Project>

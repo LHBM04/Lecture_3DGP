@@ -36,10 +36,7 @@ namespace TUK::Framework
 		[[nodiscard]] const TAsset* FindLoadedAsset(const std::filesystem::path& path) const noexcept;
 
 		template <std::derived_from<Asset> TAsset>
-		TAsset* LoadAsset(const std::filesystem::path& path);
-
-		template <std::derived_from<Asset> TAsset, class... TArgs>
-		TAsset* CreateAsset(TArgs&&... args);
+		[[nodiscard]] const TAsset* LoadAsset(const std::filesystem::path& path);
 
 		void UnloadAsset(const std::filesystem::path& path);
 		void UnloadAllAssets() noexcept;
@@ -59,7 +56,7 @@ namespace TUK::Framework
 		using AssetLoaderDict = std::unordered_map<std::type_index, AssetLoader<>*>;
 
 		using AssetList = std::vector<std::unique_ptr<Asset>>;
-		using AssetDict = std::unordered_map<std::filesystem::path, Asset*>;
+		using AssetDict = std::unordered_map<std::filesystem::path, const Asset*>;
 
 		AssetLoaderList assetLoaders;
 		AssetLoaderDict assetLoadersByType;
@@ -88,7 +85,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		auto loader = std::make_unique<TAssetLoader>(std::forward<TArgs>(args)...);
+		auto loader = std::make_unique<TAssetLoader>(this, std::forward<TArgs>(args)...);
 		AssetLoader<>* pointer = loader.get();
 		assetLoaders.emplace_back(std::move(loader));
 		assetLoadersByType.emplace(assetType, pointer);
@@ -106,12 +103,12 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Asset> TAsset>
-	TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
+	const TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
 	{
 		const std::filesystem::path normalizedPath = path.lexically_normal();
 		if (const auto cached = assetsByPath.find(normalizedPath); cached != assetsByPath.end())
 		{
-			return dynamic_cast<TAsset*>(cached->second);
+			return dynamic_cast<const TAsset*>(cached->second);
 		}
 
 		const auto assetLoader = assetLoadersByType.find(std::type_index(typeid(TAsset)));
@@ -128,7 +125,7 @@ namespace TUK::Framework
 			return nullptr;
 		}
 
-		TAsset* result = asset->get();
+		const TAsset* result = asset->get();
 		if (!result)
 		{
 			return nullptr;
@@ -136,15 +133,6 @@ namespace TUK::Framework
 
 		assets.emplace_back(std::move(*asset));
 		assetsByPath.emplace(normalizedPath, result);
-		return result;
-	}
-
-	template <std::derived_from<Asset> TAsset, class... TArgs>
-	TAsset* AssetSubsystem::CreateAsset(TArgs&&... args)
-	{
-		auto asset = std::make_unique<TAsset>(std::forward<TArgs>(args)...);
-		TAsset* result = asset.get();
-		assets.emplace_back(std::move(asset));
 		return result;
 	}
 }

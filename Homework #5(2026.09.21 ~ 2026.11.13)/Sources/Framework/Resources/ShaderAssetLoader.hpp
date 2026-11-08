@@ -12,6 +12,8 @@ namespace TUK::Framework
 	class ShaderAssetLoader final : public AssetLoader<ShaderAsset>
 	{
 	public:
+		using AssetLoader<ShaderAsset>::AssetLoader;
+
 		[[nodiscard]] std::expected<std::unique_ptr<ShaderAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 	};

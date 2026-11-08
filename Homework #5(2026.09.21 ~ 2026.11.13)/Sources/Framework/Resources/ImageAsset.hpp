@@ -1,8 +1,6 @@
 #pragma once
 
-#include <optional>
-#include <string>
-#include <string_view>
+#include <filesystem>
 #include <utility>
 
 #include "../Graphics/GPUTexture2D.hpp"
@@ -14,31 +12,22 @@ namespace TUK::Framework
 	class ImageAsset final : public Asset
 	{
 	public:
-		using Asset::Asset;
+		explicit ImageAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept;
 
-		[[nodiscard]] std::string Serialize() const override;
-		[[nodiscard]] bool Deserialize(std::string_view text) override;
-
-		[[nodiscard]] bool HasTexture() const noexcept;
-		[[nodiscard]] const GPUTexture2D* GetTexture() const noexcept;
-		void SetTexture(GPUTexture2D value) noexcept;
+		[[nodiscard]] const GPUTexture2D& GetTexture() const noexcept;
 
 	private:
-		std::optional<GPUTexture2D> texture;
+		GPUTexture2D texture;
 	};
 
-	inline bool ImageAsset::HasTexture() const noexcept
+	inline ImageAsset::ImageAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept
+		: Asset(std::move(path))
+		, texture(std::move(texture))
 	{
-		return texture.has_value();
 	}
 
-	inline const GPUTexture2D* ImageAsset::GetTexture() const noexcept
+	inline const GPUTexture2D& ImageAsset::GetTexture() const noexcept
 	{
-		return texture ? &*texture : nullptr;
-	}
-
-	inline void ImageAsset::SetTexture(GPUTexture2D value) noexcept
-	{
-		texture = std::move(value);
+		return texture;
 	}
 }

@@ -31,13 +31,17 @@ namespace TUK::Framework
 	class GPUTexture2D;
 	class MaterialAsset;
 
+	struct GPUCommandBufferCreateInfo final
+	{
+		const GPUDevice* device = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+	};
+
 	class GPUCommandBuffer
 	{
 	public:
-		explicit GPUCommandBuffer(
-			const GPUDevice& device,
-			Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-			Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
+		explicit GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
 		GPUCommandBuffer& operator=(const GPUCommandBuffer&) = delete;
@@ -107,14 +111,12 @@ namespace TUK::Framework
 		bool cameraPrepared = false;
 	};
 
-	inline GPUCommandBuffer::GPUCommandBuffer(
-		const GPUDevice& device,
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
-		: device(&device)
-		, d3dCommandList(std::move(d3dCommandList))
-		, d3dCommandAllocator(std::move(d3dCommandAllocator))
+	inline GPUCommandBuffer::GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept
+		: device(createInfo.device)
+		, d3dCommandList(std::move(createInfo.d3dCommandList))
+		, d3dCommandAllocator(std::move(createInfo.d3dCommandAllocator))
 	{
+		ASSERT_FMT(this->device, "device가 nullptr입니다.");
 		ASSERT_FMT(this->d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		ASSERT_FMT(this->d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
 	}

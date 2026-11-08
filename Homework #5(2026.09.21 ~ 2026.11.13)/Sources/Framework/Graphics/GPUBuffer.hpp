@@ -16,10 +16,16 @@
 
 namespace TUK::Framework
 {
+	struct GPUBufferCreateInfo final
+	{
+		Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource;
+		D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_DEFAULT;
+	};
+
 	class GPUBuffer
 	{
 	public:
-		explicit GPUBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept;
+		explicit GPUBuffer(GPUBufferCreateInfo&& createInfo) noexcept;
 
 		GPUBuffer(const GPUBuffer&) = delete;
 		GPUBuffer& operator=(const GPUBuffer&) = delete;
@@ -40,9 +46,9 @@ namespace TUK::Framework
 		D3D12_HEAP_TYPE heapType;
 	};
 
-	inline GPUBuffer::GPUBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> d3dResource, D3D12_HEAP_TYPE heapType) noexcept
-		: d3dResource(std::move(d3dResource))
-		, heapType(heapType)
+	inline GPUBuffer::GPUBuffer(GPUBufferCreateInfo&& createInfo) noexcept
+		: d3dResource(std::move(createInfo.d3dResource))
+		, heapType(createInfo.heapType)
 	{
 		ASSERT_FMT(this->d3dResource.Get(), "d3dResource가 nullptr입니다.");
 	}

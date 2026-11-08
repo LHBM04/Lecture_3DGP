@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
+#include <filesystem>
 #include <span>
 #include <string>
-#include <string_view>
+#include <utility>
 #include <vector>
 
 #include "../Core/Common.hpp"
@@ -14,12 +15,15 @@
 
 namespace TUK::Framework
 {
+	class MaterialAsset;
+	class MeshAsset;
+
 	struct Submodel final
 	{
 		struct RenderPart final
 		{
-			std::string meshName;
-			std::string materialName;
+			const MeshAsset* mesh = nullptr;
+			const MaterialAsset* material = nullptr;
 		};
 
 		i32 parentIndex = -1;
@@ -35,21 +39,22 @@ namespace TUK::Framework
 	class ModelAsset final : public Asset
 	{
 	public:
-		using Asset::Asset;
+		explicit ModelAsset(
+			std::filesystem::path path,
+			std::vector<Submodel>&& submodels) noexcept;
 
-		[[nodiscard]] std::string Serialize() const override;
-		[[nodiscard]] bool Deserialize(std::string_view text) override;
-
-		[[nodiscard]] std::span<Submodel> GetSubmodels() noexcept;
 		[[nodiscard]] std::span<const Submodel> GetSubmodels() const noexcept;
 
 	private:
 		std::vector<Submodel> submodels;
 	};
 
-	inline std::span<Submodel> ModelAsset::GetSubmodels() noexcept
+	inline ModelAsset::ModelAsset(
+		std::filesystem::path path,
+		std::vector<Submodel>&& submodels) noexcept
+		: Asset(std::move(path))
+		, submodels(std::move(submodels))
 	{
-		return submodels;
 	}
 
 	inline std::span<const Submodel> ModelAsset::GetSubmodels() const noexcept

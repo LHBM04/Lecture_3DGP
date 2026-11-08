@@ -1,7 +1,6 @@
 #pragma once
 
 #include <filesystem>
-#include <optional>
 #include <utility>
 
 #include "../Core/Common.hpp"
@@ -12,43 +11,25 @@
 
 namespace TUK::Framework
 {
-	class ShaderAsset : public Asset
+	class ShaderAsset final : public Asset
 	{
 	public:
-		using Asset::Asset;
+		explicit ShaderAsset(std::filesystem::path path, GPUShader&& shader) noexcept;
 
-		ShaderAsset() noexcept = default;
-		ShaderAsset(GPUShader shader, std::filesystem::path sourcePath = {}) noexcept;
-
-		[[nodiscard]] std::string Serialize() const override;
-		[[nodiscard]] bool Deserialize(std::string_view text) override;
-
-		[[nodiscard]] bool HasShader() const noexcept;
-		[[nodiscard]] const GPUShader* GetShader() const noexcept;
-		[[nodiscard]] const std::filesystem::path& GetSourcePath() const noexcept;
+		[[nodiscard]] const GPUShader& GetShader() const noexcept;
 
 	private:
-		std::optional<GPUShader> shader;
+		GPUShader shader;
 	};
 
-	inline ShaderAsset::ShaderAsset(GPUShader shader, std::filesystem::path sourcePath) noexcept
-		: Asset(std::move(sourcePath))
+	inline ShaderAsset::ShaderAsset(std::filesystem::path path, GPUShader&& shader) noexcept
+		: Asset(std::move(path))
 		, shader(std::move(shader))
 	{
 	}
 
-	inline bool ShaderAsset::HasShader() const noexcept
+	inline const GPUShader& ShaderAsset::GetShader() const noexcept
 	{
-		return shader.has_value();
-	}
-
-	inline const GPUShader* ShaderAsset::GetShader() const noexcept
-	{
-		return shader ? &*shader : nullptr;
-	}
-
-	inline const std::filesystem::path& ShaderAsset::GetSourcePath() const noexcept
-	{
-		return GetPath();
+		return shader;
 	}
 }

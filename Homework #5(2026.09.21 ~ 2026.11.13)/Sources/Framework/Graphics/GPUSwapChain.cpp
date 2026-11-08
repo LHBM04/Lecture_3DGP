@@ -25,10 +25,11 @@ namespace TUK::Framework
 			rtvDescriptorSize);
 
 		const GPUTexture2D& texture = backBuffers[index];
-		return GPUTarget(
-			texture,
-			rtvHandle,
-			dsvHeap->GetCPUDescriptorHandleForHeapStart(),
-			texture.GetD3DResource().GetDesc().Format);
+		return GPUTarget(GPUTargetCreateInfo{
+			.texture = &texture,
+			.rtvHandle = rtvHandle,
+			.dsvHandle = dsvHeap->GetCPUDescriptorHandleForHeapStart(),
+			.format = texture.GetD3DResource().GetDesc().Format
+		});
 	}
 }

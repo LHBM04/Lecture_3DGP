@@ -25,14 +25,18 @@ namespace TUK::Framework
 	class GPUMesh;
 	class GPUSwapChain;
 
+	struct GPUDeviceCreateInfo final
+	{
+		Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory;
+		Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature;
+	};
+
 	class GPUDevice
 	{
 	public:
-		explicit GPUDevice(
-			Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory,
-			Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice,
-			Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue,
-			Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature) noexcept;
+		explicit GPUDevice(GPUDeviceCreateInfo&& createInfo) noexcept;
 
 		GPUDevice(const GPUDevice&) = delete;
 		GPUDevice& operator=(const GPUDevice&) = delete;
@@ -80,15 +84,11 @@ namespace TUK::Framework
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature;
 	};
 
-	inline GPUDevice::GPUDevice(
-		Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory,
-		Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice,
-		Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue,
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature) noexcept
-		: dxgiFactory(std::move(dxgiFactory))
-		, d3dDevice(std::move(d3dDevice))
-		, d3dCommandQueue(std::move(d3dCommandQueue))
-		, d3dRootSignature(std::move(d3dRootSignature))
+	inline GPUDevice::GPUDevice(GPUDeviceCreateInfo&& createInfo) noexcept
+		: dxgiFactory(std::move(createInfo.dxgiFactory))
+		, d3dDevice(std::move(createInfo.d3dDevice))
+		, d3dCommandQueue(std::move(createInfo.d3dCommandQueue))
+		, d3dRootSignature(std::move(createInfo.d3dRootSignature))
 	{
 		ASSERT_FMT(this->dxgiFactory.Get(), "dxgiFactory가 nullptr입니다.");
 		ASSERT_FMT(this->d3dDevice.Get(), "d3dDevice가 nullptr입니다.");
