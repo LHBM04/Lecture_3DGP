@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <expected>
 #include <filesystem>
@@ -12,11 +12,17 @@
 
 namespace TUK::Framework
 {
+	class AssetSubsystem;
+
 	class ModelAssetLoader final : public AssetLoader<ModelAsset>
 	{
 	public:
+		explicit ModelAssetLoader(AssetSubsystem* assets) noexcept;
+
 		[[nodiscard]] std::expected<std::unique_ptr<ModelAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
+	private:
+		AssetSubsystem* assets = nullptr;
 	};
 }

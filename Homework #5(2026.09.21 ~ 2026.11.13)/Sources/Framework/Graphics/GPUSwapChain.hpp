@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <expected>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -19,9 +17,6 @@
 
 namespace TUK::Framework
 {
-	class Display;
-	class GPUDevice;
-
 	class GPUSwapChain
 	{
 	public:
@@ -43,11 +38,6 @@ namespace TUK::Framework
 
 		[[nodiscard]] GPUTarget GetCurrentBackBufferTarget() const noexcept;
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
-
-		[[nodiscard]] static std::expected<GPUSwapChain, std::string> Create(
-			const GPUDevice& device,
-			const Display* display,
-			const DXGI_SWAP_CHAIN_DESC1& description);
 
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;

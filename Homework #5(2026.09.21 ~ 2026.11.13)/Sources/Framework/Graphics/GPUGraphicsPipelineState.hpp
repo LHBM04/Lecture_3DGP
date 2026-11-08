@@ -1,7 +1,5 @@
-#pragma once
+﻿#pragma once
 
-#include <expected>
-#include <string>
 #include <utility>
 
 #include <wrl/client.h>
@@ -14,13 +12,10 @@
 
 namespace TUK::Framework
 {
-	class GPUDevice;
-	class MaterialAsset;
-	class ShaderAsset;
-
 	class GPUGraphicsPipelineState
 	{
 	public:
+		explicit GPUGraphicsPipelineState(Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;
 
 		GPUGraphicsPipelineState(const GPUGraphicsPipelineState&) = delete;
 		GPUGraphicsPipelineState& operator=(const GPUGraphicsPipelineState&) = delete;
@@ -30,33 +25,20 @@ namespace TUK::Framework
 
 		[[nodiscard]] ID3D12PipelineState& GetD3DPipelineState() const noexcept;
 
-		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> Create(
-			const GPUDevice& device,
-			const D3D12_GRAPHICS_PIPELINE_STATE_DESC& description);
-
-		[[nodiscard]] static std::expected<GPUGraphicsPipelineState, std::string> CreateForMaterial(
-			const GPUDevice& device,
-			const MaterialAsset* material,
-			const ShaderAsset* vertexShader,
-			const ShaderAsset* pixelShader,
-			DXGI_FORMAT targetFormat);
-
 	private:
-		explicit GPUGraphicsPipelineState(Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept;
-
 		Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState;
 	};
+
+	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
+		: d3dPipelineState(std::move(d3dPipelineState))
+	{
+		ASSERT_FMT(this->d3dPipelineState.Get(), "d3dPipelineState가 nullptr입니다.");
+	}
 
 	inline ID3D12PipelineState& GPUGraphicsPipelineState::GetD3DPipelineState() const noexcept
 	{
 		ASSERT_FMT(d3dPipelineState.Get(), "d3dPipelineState가 nullptr입니다.");
 
 		return *d3dPipelineState.Get();
-	}
-
-	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(Microsoft::WRL::ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
-		: d3dPipelineState(std::move(d3dPipelineState))
-	{
-		ASSERT_FMT(this->d3dPipelineState.Get(), "d3dPipelineState가 nullptr입니다.");
 	}
 }

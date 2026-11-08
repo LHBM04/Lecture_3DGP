@@ -22,6 +22,8 @@
 
 namespace TUK::Framework
 {
+	class World;
+
 	class AssetSubsystem : public AppSubsystem
 	{
 	public:
@@ -38,6 +40,12 @@ namespace TUK::Framework
 
 		template <std::derived_from<Asset> TAsset, class... TArgs>
 		TAsset* CreateAsset(TArgs&&... args);
+
+		void UnloadAsset(const std::filesystem::path& path);
+		void UnloadAllAssets() noexcept;
+
+		void OnWorldEntered(const World* world);
+		void OnWorldExited(const World* world);
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;

@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "MeshAssetLoader.hpp"
 
 #include <filesystem>
@@ -48,17 +48,10 @@ namespace TUK::Framework
 			mesh->SetName(path.stem().string());
 		}
 
-		auto vertices = GPUBuffer::CreateUpload(device, std::as_bytes(mesh->GetVertices()));
-		auto indices = GPUBuffer::CreateUpload(device, std::as_bytes(mesh->GetIndices()));
-		if (!vertices || !indices)
-		{
-			return std::unexpected("메시의 GPU 버퍼 생성에 실패했습니다: " + path.generic_string());
-		}
-
-		auto gpuMesh = GPUMesh::Create(
-			std::move(*vertices),
+		auto gpuMesh = device.CreateMesh(
+			std::as_bytes(mesh->GetVertices()),
 			sizeof(DirectX::VertexPositionNormalColor),
-			std::move(*indices),
+			std::as_bytes(mesh->GetIndices()),
 			DXGI_FORMAT_R32_UINT,
 			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		if (!gpuMesh)

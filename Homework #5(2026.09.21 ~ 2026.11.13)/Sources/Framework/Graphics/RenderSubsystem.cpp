@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
+#include <array>
+#include <format>
 #include <iostream>
 #include <ranges>
 #include <utility>
@@ -10,13 +12,14 @@
 
 #include "../Utilities/Logger.hpp"
 
+#include "GPUSampler.hpp"
 #include "GPUTexture2D.hpp"
 
 namespace TUK::Framework
 {
 	SystemStatus RenderSubsystem::OnStartup()
 	{
-		auto newDevice = GPUDevice::Create();
+		auto newDevice = CreateDevice();
 		if (!newDevice)
 		{
 			LOG_CRITICAL("GPU 디바이스 생성에 실패했습니다: {}", newDevice.error());
@@ -24,7 +27,7 @@ namespace TUK::Framework
 		}
 		device = std::move(*newDevice);
 
-		auto newCommandBuffer = GPUCommandBuffer::Create(*device);
+		auto newCommandBuffer = device->CreateCommandBuffer();
 		if (!newCommandBuffer)
 		{
 			LOG_ERROR("GPU 명령 버퍼 생성에 실패했습니다: {}", newCommandBuffer.error());
@@ -32,7 +35,7 @@ namespace TUK::Framework
 		}
 		commandBuffer = std::move(*newCommandBuffer);
 
-		auto newFence = GPUFence::Create(*device);
+		auto newFence = device->CreateFence();
 		if (!newFence)
 		{
 			LOG_ERROR("GPU 펜스 생성에 실패했습니다: {}", newFence.error());
@@ -121,7 +124,7 @@ namespace TUK::Framework
 		description.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		description.SampleDesc.Count = 1;
 
-		auto result = GPUSwapChain::Create(*device, display, description);
+		auto result = device->CreateSwapChain(display, description);
 		if (!result)
 		{
 			LOG_ERROR("GPU 스왑체인 생성에 실패했습니다: {}", result.error());
@@ -144,6 +147,134 @@ namespace TUK::Framework
 		{
 			swapChains.erase(result);
 		}
+	}
+
+	std::expected<GPUDevice, std::string> RenderSubsystem::CreateDevice() const
+	{
+		UINT factoryFlags = 0;
+
+	#ifdef _DEBUG
+		Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
+		{
+			debugController->EnableDebugLayer();
+			factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+		}
+	#endif
+
+		Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory;
+		if (FAILED(CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf()))))
+		{
+			return std::unexpected("DXGI 팩토리 생성에 실패했습니다.");
+		}
+
+		for (UINT adapterIndex = 0; ; ++adapterIndex)
+		{
+			Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
+			if (FAILED(dxgiFactory->EnumAdapters1(adapterIndex, adapter.GetAddressOf())))
+			{
+				break;
+			}
+
+			DXGI_ADAPTER_DESC1 adapterDescription{};
+			adapter->GetDesc1(&adapterDescription);
+			if (adapterDescription.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+			{
+				continue;
+			}
+
+			Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
+			if (FAILED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(d3dDevice.GetAddressOf()))))
+			{
+				continue;
+			}
+
+			D3D12_COMMAND_QUEUE_DESC queueDescription{};
+			queueDescription.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+			queueDescription.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+			queueDescription.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+			queueDescription.NodeMask = 0;
+
+			Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3dCommandQueue;
+			if (FAILED(d3dDevice->CreateCommandQueue(&queueDescription, IID_PPV_ARGS(d3dCommandQueue.GetAddressOf()))))
+			{
+				return std::unexpected("D3D12 명령 큐 생성에 실패했습니다.");
+			}
+
+			constexpr u32 CONSTANT_BUFFER_SLOT_COUNT = 3;
+			std::array<CD3DX12_ROOT_PARAMETER1, CONSTANT_BUFFER_SLOT_COUNT> parameters{};
+			for (u32 index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
+			{
+				parameters[index].InitAsConstantBufferView(
+					index,
+					0,
+					D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE);
+			}
+
+			const std::array samplers =
+			{
+				GPUSampler::LinearWrap().ToStaticDescription(0),
+				GPUSampler::LinearClamp().ToStaticDescription(1),
+				GPUSampler::PointClamp().ToStaticDescription(2)
+			};
+
+			CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription{};
+			rootSignatureDescription.Init_1_1(
+				CONSTANT_BUFFER_SLOT_COUNT,
+				parameters.data(),
+				static_cast<u32>(samplers.size()),
+				samplers.data(),
+				D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+			Microsoft::WRL::ComPtr<ID3DBlob> serializedBlob;
+			Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+			const HRESULT serializeResult = D3DX12SerializeVersionedRootSignature(
+				&rootSignatureDescription,
+				D3D_ROOT_SIGNATURE_VERSION_1_1,
+				serializedBlob.GetAddressOf(),
+				errorBlob.GetAddressOf());
+			if (FAILED(serializeResult))
+			{
+				std::string message = std::format(
+					"공유 루트 시그니처 직렬화에 실패했습니다. HRESULT: 0x{:08X}",
+					static_cast<u32>(serializeResult));
+				if (errorBlob && errorBlob->GetBufferSize() > 0)
+				{
+					const char* text = static_cast<const char*>(errorBlob->GetBufferPointer());
+					usize length = errorBlob->GetBufferSize();
+					if (text[length - 1] == '\0')
+					{
+						--length;
+					}
+
+					message += '\n';
+					message.append(text, length);
+				}
+
+				return std::unexpected(std::move(message));
+			}
+
+			Microsoft::WRL::ComPtr<ID3D12RootSignature> d3dRootSignature;
+			const HRESULT createResult = d3dDevice->CreateRootSignature(
+				0,
+				serializedBlob->GetBufferPointer(),
+				serializedBlob->GetBufferSize(),
+				IID_PPV_ARGS(d3dRootSignature.GetAddressOf()));
+			if (FAILED(createResult))
+			{
+				return std::unexpected(std::format(
+					"공유 루트 시그니처 생성에 실패했습니다. HRESULT: 0x{:08X}",
+					static_cast<u32>(createResult)));
+			}
+
+			return GPUDevice(
+				std::move(dxgiFactory),
+				std::move(d3dDevice),
+				std::move(d3dCommandQueue),
+				std::move(d3dRootSignature));
+		}
+
+		return std::unexpected("GPU 디바이스 생성에 실패했습니다.");
 	}
 
 	void RenderSubsystem::AddListener(RenderCallback callback)

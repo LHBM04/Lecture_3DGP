@@ -1,7 +1,9 @@
-#pragma once
+﻿#pragma once
 
+#include <expected>
 #include <functional>
 #include <optional>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -49,6 +51,7 @@ namespace TUK::Framework
 		[[nodiscard]] const GPUDevice& GetDevice() const noexcept;
 
 	private:
+		[[nodiscard]] std::expected<GPUDevice, std::string> CreateDevice() const;
 		void AddListener(RenderCallback callback);
 
 		std::optional<GPUDevice> device;

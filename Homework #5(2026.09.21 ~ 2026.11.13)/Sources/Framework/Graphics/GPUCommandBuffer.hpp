@@ -89,8 +89,6 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
-		[[nodiscard]] static std::expected<GPUCommandBuffer, std::string> Create(const GPUDevice& device);
-
 	private:
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);

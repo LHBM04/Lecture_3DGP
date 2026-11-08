@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <expected>
-#include <string>
 #include <utility>
 
 #include <wrl/client.h>
@@ -19,6 +17,7 @@ namespace TUK::Framework
 	class GPUFence
 	{
 	public:
+		explicit GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept;
 
 		GPUFence(const GPUFence&) = delete;
 		GPUFence& operator=(const GPUFence&) = delete;
@@ -31,11 +30,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] bool IsCompleted() const noexcept;
 
-		[[nodiscard]] static std::expected<GPUFence, std::string> Create(const GPUDevice& device);
-
 	private:
-		explicit GPUFence(Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence) noexcept;
-
 		Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence;
 		u64 fenceValue;
 	};

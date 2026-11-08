@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "ImageAssetLoader.hpp"
 
 #include "../Graphics/GPUBuffer.hpp"
@@ -67,12 +67,12 @@ namespace TUK::Framework
 		}
 		if (subresources.empty())
 		{
-			return std::unexpected("이미지에 텍스처 하위 리소스가 없습니다.");
+			return std::unexpected("이미지에 텍스처 서브리소스가 없습니다.");
 		}
 
 		const UINT subresourceCount = static_cast<UINT>(subresources.size());
 		const UINT64 uploadSize = GetRequiredIntermediateSize(resource.Get(), 0, subresourceCount);
-		auto upload = GPUBuffer::Create(device, D3D12_HEAP_TYPE_UPLOAD, uploadSize, D3D12_RESOURCE_STATE_GENERIC_READ);
+		auto upload = device.CreateBuffer(D3D12_HEAP_TYPE_UPLOAD, uploadSize, D3D12_RESOURCE_STATE_GENERIC_READ);
 		if (!upload)
 		{
 			return std::unexpected(upload.error());

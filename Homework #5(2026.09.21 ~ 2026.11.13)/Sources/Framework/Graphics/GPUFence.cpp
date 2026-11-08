@@ -7,17 +7,6 @@
 
 namespace TUK::Framework
 {
-	std::expected<GPUFence, std::string> GPUFence::Create(const GPUDevice& device)
-	{
-		Microsoft::WRL::ComPtr<ID3D12Fence> d3dFence;
-		if (FAILED(device.GetD3DDevice().CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(d3dFence.GetAddressOf()))))
-		{
-			return std::unexpected("D3D12 펜스 생성에 실패했습니다.");
-		}
-
-		return GPUFence(std::move(d3dFence));
-	}
-
 	void GPUFence::Wait() const
 	{
 		ASSERT_FMT(d3dFence.Get(), "d3dFence가 nullptr입니다.");

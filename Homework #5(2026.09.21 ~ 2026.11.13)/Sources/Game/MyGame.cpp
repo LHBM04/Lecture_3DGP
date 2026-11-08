@@ -78,8 +78,11 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
+		worldSubsystem->AddEnterListener(assetSubsystem, &AssetSubsystem::OnWorldEntered);
+		worldSubsystem->AddExitListener(assetSubsystem, &AssetSubsystem::OnWorldExited);
+
 		auto& device = renderSubsystem->GetDevice();
-		assetSubsystem->AddLoader<ModelAssetLoader>();
+		assetSubsystem->AddLoader<ModelAssetLoader>(assetSubsystem);
 		assetSubsystem->AddLoader<MeshAssetLoader>(device);
 		assetSubsystem->AddLoader<ImageAssetLoader>(device);
 		assetSubsystem->AddLoader<MaterialAssetLoader>(assetSubsystem, device, DXGI_FORMAT_R8G8B8A8_UNORM);

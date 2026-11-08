@@ -299,7 +299,7 @@ namespace TUK::Framework
 			return nullptr;
 		}
 
-		const AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
+		AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		if (!assets)
 		{
 			LOG_ERROR("모델에 사용할 에셋 서브시스템이 없습니다: {}", model.GetName());
@@ -333,14 +333,14 @@ namespace TUK::Framework
 				const auto meshPath = resourcePath("Meshes", part.meshName);
 				const auto materialPath = resourcePath("Materials", part.materialName);
 
-				const MeshAsset* mesh = assets->FindLoadedAsset<MeshAsset>(meshPath);
+				const MeshAsset* mesh = assets->LoadAsset<MeshAsset>(meshPath);
 				if (!mesh)
 				{
 					LOG_ERROR("메시가 로드되지 않았습니다: {} (모델: {})", meshPath.generic_string(), model.GetName());
 					return nullptr;
 				}
 
-				const MaterialAsset* material = assets->FindLoadedAsset<MaterialAsset>(materialPath);
+				const MaterialAsset* material = assets->LoadAsset<MaterialAsset>(materialPath);
 				if (!material || !material->GetGraphicsPipelineState())
 				{
 					LOG_ERROR("머티리얼이 준비되지 않았습니다: {} (모델: {})", materialPath.generic_string(), model.GetName());

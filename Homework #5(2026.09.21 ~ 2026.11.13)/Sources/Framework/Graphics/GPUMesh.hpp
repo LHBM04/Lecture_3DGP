@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <expected>
-#include <string>
 #include <utility>
 
 #include <directx/d3d12.h>
@@ -15,6 +13,12 @@ namespace TUK::Framework
 	class GPUMesh
 	{
 	public:
+		explicit GPUMesh(
+			GPUBuffer&& vertexBuffer,
+			const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView,
+			GPUBuffer&& indexBuffer,
+			const D3D12_INDEX_BUFFER_VIEW& indexBufferView,
+			D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
 
 		GPUMesh(const GPUMesh&) = delete;
 		GPUMesh& operator=(const GPUMesh&) = delete;
@@ -32,21 +36,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] D3D12_PRIMITIVE_TOPOLOGY GetD3DTopology() const noexcept;
 
-		[[nodiscard]] static std::expected<GPUMesh, std::string> Create(
-			GPUBuffer vertexBuffer,
-			u32 vertexStride,
-			GPUBuffer indexBuffer,
-			DXGI_FORMAT indexFormat,
-			D3D12_PRIMITIVE_TOPOLOGY topology);
-
 	private:
-		explicit GPUMesh(
-			GPUBuffer&& vertexBuffer,
-			const D3D12_VERTEX_BUFFER_VIEW& vertexBufferView,
-			GPUBuffer&& indexBuffer,
-			const D3D12_INDEX_BUFFER_VIEW& indexBufferView,
-			D3D12_PRIMITIVE_TOPOLOGY topology) noexcept;
-
 		GPUBuffer vertexBuffer;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 

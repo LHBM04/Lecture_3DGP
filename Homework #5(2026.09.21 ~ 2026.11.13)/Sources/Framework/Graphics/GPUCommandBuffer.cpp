@@ -54,37 +54,6 @@ namespace TUK::Framework
 		};
 	}
 
-	std::expected<GPUCommandBuffer, std::string> GPUCommandBuffer::Create(const GPUDevice& device)
-	{
-		ID3D12Device& d3dDevice = device.GetD3DDevice();
-
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
-		if (FAILED(d3dDevice.CreateCommandAllocator(
-			D3D12_COMMAND_LIST_TYPE_DIRECT,
-			IID_PPV_ARGS(d3dCommandAllocator.GetAddressOf()))))
-		{
-			return std::unexpected("D3D12 명령 할당자 생성에 실패했습니다.");
-		}
-
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
-		if (FAILED(d3dDevice.CreateCommandList(
-			0,
-			D3D12_COMMAND_LIST_TYPE_DIRECT,
-			d3dCommandAllocator.Get(),
-			nullptr,
-			IID_PPV_ARGS(d3dCommandList.GetAddressOf()))))
-		{
-			return std::unexpected("D3D12 명령 리스트 생성에 실패했습니다.");
-		}
-
-		if (FAILED(d3dCommandList->Close()))
-		{
-			return std::unexpected("초기 D3D12 명령 리스트 닫기에 실패했습니다.");
-		}
-
-		return GPUCommandBuffer(device, std::move(d3dCommandList), std::move(d3dCommandAllocator));
-	}
-
 	std::expected<void, std::string> GPUCommandBuffer::Reset()
 	{
 		ASSERT_FMT(d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
@@ -384,8 +353,7 @@ namespace TUK::Framework
 
 		if (constantBufferPageIndex == constantBufferPages.size())
 		{
-			auto page = GPUBuffer::Create(
-				*device,
+			auto page = device->CreateBuffer(
 				D3D12_HEAP_TYPE_UPLOAD,
 				CONSTANT_BUFFER_PAGE_SIZE,
 				D3D12_RESOURCE_STATE_GENERIC_READ);

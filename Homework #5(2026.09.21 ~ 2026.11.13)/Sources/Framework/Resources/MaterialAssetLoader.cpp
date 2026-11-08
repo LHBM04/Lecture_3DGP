@@ -1,13 +1,17 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "MaterialAssetLoader.hpp"
 
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <iterator>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <utility>
+
+#include "../Graphics/GPUDevice.hpp"
+#include "../Graphics/GPUTarget.hpp"
 
 #include "../Utilities/Logger.hpp"
 
@@ -17,7 +21,7 @@
 namespace TUK::Framework
 {
 	MaterialAssetLoader::MaterialAssetLoader(
-		const AssetSubsystem* assets,
+		AssetSubsystem* assets,
 		const GPUDevice& device,
 		DXGI_FORMAT targetFormat) noexcept
 		: assets(assets)
@@ -70,19 +74,51 @@ namespace TUK::Framework
 
 		const auto vertexPath = shaderPath(material->GetVertexShaderPath());
 		const auto pixelPath = shaderPath(material->GetPixelShaderPath());
-		const ShaderAsset* vertex = assets->FindLoadedAsset<ShaderAsset>(vertexPath);
+		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(vertexPath);
 		if (!vertex)
 		{
-			return std::unexpected(std::format("정점 셰이더가 미리 로드되지 않았습니다: {}", vertexPath.generic_string()));
+			return std::unexpected(std::format("정점 셰이더를 로드하지 못했습니다: {}", vertexPath.generic_string()));
 		}
 
-		const ShaderAsset* pixel = assets->FindLoadedAsset<ShaderAsset>(pixelPath);
+		const ShaderAsset* pixel = assets->LoadAsset<ShaderAsset>(pixelPath);
 		if (!pixel)
 		{
-			return std::unexpected(std::format("픽셀 셰이더가 미리 로드되지 않았습니다: {}", pixelPath.generic_string()));
+			return std::unexpected(std::format("픽셀 셰이더를 로드하지 못했습니다: {}", pixelPath.generic_string()));
 		}
 
-		auto pipeline = GPUGraphicsPipelineState::CreateForMaterial(device, material.get(), vertex, pixel, targetFormat);
+		const GPUShader* vertexShader = vertex->GetShader();
+		const GPUShader* pixelShader = pixel->GetShader();
+		if (!vertexShader || !pixelShader)
+		{
+			return std::unexpected("셰이더 바이트코드가 로드되지 않았습니다.");
+		}
+
+		// 이걸 고정시켜야 쉐이더를 추가하기 수월해짐
+		// 안 그러면 쉐이더 만들 때마다 레이아웃을 추가로 넣어야 함
+		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+		};
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
+		description.VS = vertexShader->GetD3DBytecode();
+		description.PS = pixelShader->GetD3DBytecode();
+		description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
+		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		description.NumRenderTargets = 1;
+		description.RTVFormats[0] = targetFormat;
+		description.SampleMask = UINT_MAX;
+		description.SampleDesc = { 1, 0 };
+		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		description.RasterizerState.FillMode = material->GetFillMode();
+		description.RasterizerState.CullMode = material->GetCullMode();
+		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
+
+		auto pipeline = device.CreateGraphicsPipelineState(description);
 		if (!pipeline)
 		{
 			return std::unexpected(std::format("그래픽스 파이프라인 상태 생성에 실패했습니다: {}", pipeline.error()));

@@ -1,55 +1,42 @@
 ﻿#include "Precompiled.hpp"
 #include "AssetSubsystem.hpp"
 
-#include "MaterialAsset.hpp"
-#include "MeshAsset.hpp"
-#include "ShaderAsset.hpp"
-#include "ModelAsset.hpp"
-
 namespace TUK::Framework
 {
+	void AssetSubsystem::UnloadAsset(const std::filesystem::path& path)
+	{
+		const std::filesystem::path normalizedPath = path.lexically_normal();
+		const auto cached = assetsByPath.find(normalizedPath);
+		if (cached == assetsByPath.end())
+		{
+			return;
+		}
+
+		const Asset* target = cached->second;
+		assetsByPath.erase(cached);
+		std::erase_if(assets, [target](const std::unique_ptr<Asset>& asset)
+		{
+			return asset.get() == target;
+		});
+	}
+
+	void AssetSubsystem::UnloadAllAssets() noexcept
+	{
+		assetsByPath.clear();
+		assets.clear();
+	}
+
+	void AssetSubsystem::OnWorldEntered([[maybe_unused]] const World* world)
+	{
+	}
+
+	void AssetSubsystem::OnWorldExited([[maybe_unused]] const World* world)
+	{
+		UnloadAllAssets();
+	}
+
 	SystemStatus AssetSubsystem::OnStartup()
 	{
-		std::filesystem::path shadersAssetsPath = "Resources/Shaders";
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(shadersAssetsPath))
-		{
-			if (entry.path().extension() == ".cso")
-			{	
-				LoadAsset<ShaderAsset>(entry.path());
-				LOG_TRACE("에셋 로드: {}", entry.path().generic_string());
-			}
-		}
-
-		std::filesystem::path materialsAssetsPath = "Resources/Materials";
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(materialsAssetsPath))
-		{
-			if (entry.path().extension() == ".bin")
-			{	
-				LoadAsset<MaterialAsset>(entry.path());
-				LOG_TRACE("{}", entry.path().generic_string());
-			}
-		}
-
-		std::filesystem::path meshesAssetsPath = "Resources/Meshes";
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(meshesAssetsPath))
-		{
-			if (entry.path().extension() == ".bin")
-			{	
-				LoadAsset<MeshAsset>(entry.path());
-				LOG_TRACE("{}", entry.path().generic_string());
-			}
-		}
-
-		std::filesystem::path modelsAssetsPath = "Resources/Models";
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(modelsAssetsPath))
-		{
-			if (entry.path().extension() == ".bin")
-			{	
-				LoadAsset<ModelAsset>(entry.path());
-				LOG_TRACE("{}", entry.path().generic_string());
-			}
-		}
-
 		return SystemStatus::CONTINUE;
 	}
 
@@ -75,8 +62,7 @@ namespace TUK::Framework
 
 	void AssetSubsystem::OnShutdown()
 	{
-		assetsByPath.clear();
-		assets.clear();
+		UnloadAllAssets();
 		assetLoadersByType.clear();
 		assetLoaders.clear();
 	}

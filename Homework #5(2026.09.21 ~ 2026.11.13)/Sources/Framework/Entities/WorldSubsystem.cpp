@@ -32,7 +32,11 @@ namespace TUK::Framework
 		World* exitingWorld = currentWorld;
 		currentWorld = nullptr;
 
-		exitingWorld->Exit();
+		if (exitingWorld->IsEntered())
+		{
+			exitingWorld->Exit();
+			NotifyWorldExited(exitingWorld);
+		}
 	}
 
 	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
@@ -77,11 +81,35 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		currentWorld->Enter();
+		if (!currentWorld->IsEntered())
+		{
+			World* enteringWorld = currentWorld;
+			enteringWorld->Enter();
+			NotifyWorldEntered(enteringWorld);
+
+			if (!enteringWorld->IsEntered())
+			{
+				NotifyWorldExited(enteringWorld);
+				if (currentWorld == enteringWorld)
+				{
+					currentWorld = nullptr;
+				}
+				return SystemStatus::CONTINUE;
+			}
+		}
 
 		if (currentWorld)
 		{
-			currentWorld->EarlyUpdate();
+			World* updatingWorld = currentWorld;
+			updatingWorld->EarlyUpdate();
+			if (!updatingWorld->IsEntered())
+			{
+				NotifyWorldExited(updatingWorld);
+				if (currentWorld == updatingWorld)
+				{
+					currentWorld = nullptr;
+				}
+			}
 		}
 		return SystemStatus::CONTINUE;
 	}
@@ -90,7 +118,16 @@ namespace TUK::Framework
 	{
 		if (currentWorld)
 		{
-			currentWorld->FixedUpdate();
+			World* updatingWorld = currentWorld;
+			updatingWorld->FixedUpdate();
+			if (!updatingWorld->IsEntered())
+			{
+				NotifyWorldExited(updatingWorld);
+				if (currentWorld == updatingWorld)
+				{
+					currentWorld = nullptr;
+				}
+			}
 		}
 		return SystemStatus::CONTINUE;
 	}
@@ -99,7 +136,16 @@ namespace TUK::Framework
 	{
 		if (currentWorld)
 		{
-			currentWorld->Update();
+			World* updatingWorld = currentWorld;
+			updatingWorld->Update();
+			if (!updatingWorld->IsEntered())
+			{
+				NotifyWorldExited(updatingWorld);
+				if (currentWorld == updatingWorld)
+				{
+					currentWorld = nullptr;
+				}
+			}
 		}
 		return SystemStatus::CONTINUE;
 	}
@@ -108,7 +154,16 @@ namespace TUK::Framework
 	{
 		if (currentWorld)
 		{
-			currentWorld->LateUpdate();
+			World* updatingWorld = currentWorld;
+			updatingWorld->LateUpdate();
+			if (!updatingWorld->IsEntered())
+			{
+				NotifyWorldExited(updatingWorld);
+				if (currentWorld == updatingWorld)
+				{
+					currentWorld = nullptr;
+				}
+			}
 		}
 		return currentWorld ? SystemStatus::CONTINUE : SystemStatus::SUCCESS;
 	}
@@ -116,6 +171,34 @@ namespace TUK::Framework
 	void WorldSubsystem::OnShutdown()
 	{
 		ExitWorld();
+		enterListeners.clear();
+		exitListeners.clear();
 		worlds.clear();
+	}
+
+	void WorldSubsystem::AddEnterListener(WorldCallback callback)
+	{
+		enterListeners.push_back(std::move(callback));
+	}
+
+	void WorldSubsystem::AddExitListener(WorldCallback callback)
+	{
+		exitListeners.push_back(std::move(callback));
+	}
+
+	void WorldSubsystem::NotifyWorldEntered(World* world)
+	{
+		for (const WorldCallback& listener : enterListeners)
+		{
+			listener(world);
+		}
+	}
+
+	void WorldSubsystem::NotifyWorldExited(World* world)
+	{
+		for (const WorldCallback& listener : exitListeners)
+		{
+			listener(world);
+		}
 	}
 }
