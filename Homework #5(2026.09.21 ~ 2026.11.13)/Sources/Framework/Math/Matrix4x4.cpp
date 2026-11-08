@@ -5,6 +5,8 @@
 
 #include "Quaternion.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	template <Scalarable TScalar>
@@ -31,7 +33,8 @@ namespace TUK::Framework
 	Matrix4x4<TScalar>::Matrix4x4(const TScalar values[16]) noexcept
 		: value{}
 	{
-		ASSERT(values);
+		ASSERT_FMT(values, "검증 실패: {}", "values");
+
 		for (std::size_t index = 0; index < 16; ++index)
 		{
 			(*this)[index] = values[index];
@@ -69,7 +72,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar Matrix4x4<TScalar>::operator[](size_t index) const noexcept
 	{
-		assert(index < 16);
+		ASSERT_FMT(index < 16, "검증 실패: {}", "index < 16");
+
 		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
 			return value[index];
@@ -83,7 +87,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar& Matrix4x4<TScalar>::operator[](size_t index) noexcept
 	{
-		assert(index < 16);
+		ASSERT_FMT(index < 16, "검증 실패: {}", "index < 16");
+
 		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
 			return value[index];
@@ -153,7 +158,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector4D<TScalar> Matrix4x4<TScalar>::GetRow(std::size_t index) const noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		const auto base = index * 4;
 		return Vector4D<TScalar>((*this)[base], (*this)[base + 1], (*this)[base + 2], (*this)[base + 3]);
 	}
@@ -161,7 +167,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	void Matrix4x4<TScalar>::SetRow(std::size_t index, const Vector4D<TScalar>& row) noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		for (std::size_t column = 0; column < 4; ++column)
 		{
 			(*this)[index * 4 + column] = row[column];
@@ -171,14 +178,16 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector4D<TScalar> Matrix4x4<TScalar>::GetColumn(std::size_t index) const noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		return Vector4D<TScalar>((*this)[index], (*this)[index + 4], (*this)[index + 8], (*this)[index + 12]);
 	}
 
 	template <Scalarable TScalar>
 	void Matrix4x4<TScalar>::SetColumn(std::size_t index, const Vector4D<TScalar>& column) noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		for (std::size_t row = 0; row < 4; ++row)
 		{
 			(*this)[row * 4 + index] = column[row];
@@ -220,7 +229,9 @@ namespace TUK::Framework
 		DirectX::XMVECTOR determinant;
 		const auto inverse = DirectX::XMMatrixInverse(&determinant, Load(*this));
 		const float scalar = DirectX::XMVectorGetX(determinant);
-		assert(std::isfinite(scalar) && scalar != 0.0f);
+		ASSERT_FMT(std::isfinite(scalar), "검증 실패: {}", "std::isfinite(scalar)");
+		ASSERT_FMT(scalar != 0.0f, "검증 실패: {}", "scalar != 0.0f");
+
 		return Matrix4x4<TScalar>(inverse);
 	}
 
@@ -451,7 +462,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	bool Matrix4x4<TScalar>::IsApproximately(const Matrix4x4<TScalar>& lhs, const Matrix4x4<TScalar>& rhs, float epsilon) noexcept
 	{
-		assert(epsilon >= 0.0f);
+		ASSERT_FMT(epsilon >= 0.0f, "검증 실패: {}", "epsilon >= 0.0f");
+
 		for (std::size_t index = 0; index < 16; ++index)
 		{
 			if (!(std::abs(static_cast<double>(lhs[index]) - static_cast<double>(rhs[index])) <= epsilon))

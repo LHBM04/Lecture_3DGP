@@ -67,7 +67,9 @@ namespace TUK::Framework
 	template <class TInstance>
 	void RenderSubsystem::AddListener(TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&))
 	{
-		ASSERT_FMT(listener && callback, "렌더 이벤트 수신 객체 또는 콜백이 nullptr입니다.");
+		ASSERT_FMT(listener, "렌더 이벤트 수신 객체가 nullptr입니다.");
+		ASSERT_FMT(callback, "렌더 이벤트 콜백이 nullptr입니다.");
+
 		AddListener(
 			[listener, callback](GPUCommandBuffer& commandBuffer)
 			{
@@ -78,7 +80,9 @@ namespace TUK::Framework
 	template <class TInstance>
 	void RenderSubsystem::AddListener(const TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&) const)
 	{
-		ASSERT_FMT(listener && callback, "렌더 이벤트 수신 객체 또는 콜백이 nullptr입니다.");
+		ASSERT_FMT(listener, "렌더 이벤트 수신 객체가 nullptr입니다.");
+		ASSERT_FMT(callback, "렌더 이벤트 콜백이 nullptr입니다.");
+
 		AddListener(
 			[listener, callback](GPUCommandBuffer& commandBuffer)
 			{

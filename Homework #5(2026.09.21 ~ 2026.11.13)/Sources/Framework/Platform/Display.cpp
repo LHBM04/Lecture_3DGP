@@ -25,6 +25,7 @@ namespace TUK::Framework
 	HWND Display::GetHWND() const noexcept
 	{
 		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		return hWnd;
 	}
 
@@ -47,6 +48,7 @@ namespace TUK::Framework
 	void Display::SetCaption(LPCTSTR value) noexcept
 	{
 		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		SetWindowText(hWnd, value);
 	}
 
@@ -144,24 +146,28 @@ namespace TUK::Framework
 	DWORD Display::GetStyle() const noexcept
 	{
 		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		return static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
 	}
 
 	void Display::SetStyle(DWORD value) noexcept
 	{
 		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		SetWindowLongPtr(hWnd, GWL_STYLE, value);
 	}
 
 	DWORD Display::GetStyleEx() const noexcept
 	{
 		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		return static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_EXSTYLE));
 	}
 
 	void Display::SetStyleEx(DWORD value) noexcept
 	{
 		ASSERT_FMT(hWnd, "해당 Display 내 HWND가 nullptr입니다.");
+
 		SetWindowLongPtr(hWnd, GWL_EXSTYLE, value);
 	}
 }

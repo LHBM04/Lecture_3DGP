@@ -118,10 +118,6 @@ namespace TUK::Framework
 	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity* entity)
 	{
 		ASSERT_FMT(entity, "설정할 엔티티가 nullptr입니다.");
-		if (!entity)
-		{
-			return std::unexpected("엔티티가 nullptr입니다.");
-		}
 
 		const Transform* transform = entity->GetComponent<Transform>();
 		return SetObjectTransform(transform ? transform->GetWorldMatrix() : Matrix4x4<f32>::GetIdentity());
@@ -130,11 +126,8 @@ namespace TUK::Framework
 	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera* camera)
 	{
 		ASSERT_FMT(camera, "설정할 카메라가 nullptr입니다.");
+
 		cameraPrepared = false;
-		if (!camera)
-		{
-			return std::unexpected("카메라가 nullptr입니다.");
-		}
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
 			return std::unexpected("카메라를 적용하기 전에 렌더 타깃을 설정해야 합니다.");
@@ -161,10 +154,7 @@ namespace TUK::Framework
 		DXGI_FORMAT targetFormat)
 	{
 		ASSERT_FMT(material, "설정할 머티리얼이 nullptr입니다.");
-		if (!material)
-		{
-			return std::unexpected("머티리얼이 nullptr입니다.");
-		}
+
 		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
 		{
 			return std::unexpected("머티리얼을 적용하기 전에 렌더 타깃을 설정해야 합니다.");
@@ -233,7 +223,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		assert(buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT);
+		ASSERT_FMT(buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT, "검증 실패: {}", "buffer.GetD3DHeapType() == D3D12_HEAP_TYPE_DEFAULT");
 
 		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(&buffer.GetD3DResource(), stateBefore, stateAfter);
 		d3dCommandList->ResourceBarrier(1, &barrier);
@@ -246,13 +236,13 @@ namespace TUK::Framework
 		u64 sourceOffset,
 		u64 sizeInBytes)
 	{
-		assert(&destination.GetD3DResource() != &source.GetD3DResource());
-		assert(destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD);
-		assert(source.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK);
-		assert(destinationOffset <= destination.GetSizeInBytes());
-		assert(sizeInBytes <= destination.GetSizeInBytes() - destinationOffset);
-		assert(sourceOffset <= source.GetSizeInBytes());
-		assert(sizeInBytes <= source.GetSizeInBytes() - sourceOffset);
+		ASSERT_FMT(&destination.GetD3DResource() != &source.GetD3DResource(), "검증 실패: {}", "&destination.GetD3DResource() != &source.GetD3DResource()");
+		ASSERT_FMT(destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD, "검증 실패: {}", "destination.GetD3DHeapType() != D3D12_HEAP_TYPE_UPLOAD");
+		ASSERT_FMT(source.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK, "검증 실패: {}", "source.GetD3DHeapType() != D3D12_HEAP_TYPE_READBACK");
+		ASSERT_FMT(destinationOffset <= destination.GetSizeInBytes(), "검증 실패: {}", "destinationOffset <= destination.GetSizeInBytes()");
+		ASSERT_FMT(sizeInBytes <= destination.GetSizeInBytes() - destinationOffset, "검증 실패: {}", "sizeInBytes <= destination.GetSizeInBytes() - destinationOffset");
+		ASSERT_FMT(sourceOffset <= source.GetSizeInBytes(), "검증 실패: {}", "sourceOffset <= source.GetSizeInBytes()");
+		ASSERT_FMT(sizeInBytes <= source.GetSizeInBytes() - sourceOffset, "검증 실패: {}", "sizeInBytes <= source.GetSizeInBytes() - sourceOffset");
 
 		if (sizeInBytes == 0)
 		{

@@ -15,10 +15,6 @@ namespace TUK::Framework
 		const DXGI_SWAP_CHAIN_DESC1& description)
 	{
 		ASSERT_FMT(display, "스왑체인을 생성할 디스플레이가 nullptr입니다.");
-		if (!display)
-		{
-			return std::unexpected("디스플레이가 nullptr입니다.");
-		}
 
 		IDXGIFactory6& dxgiFactory = device.GetDXGIFactory();
 		ID3D12Device& d3dDevice = device.GetD3DDevice();

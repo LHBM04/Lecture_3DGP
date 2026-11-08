@@ -10,6 +10,8 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUDevice;
@@ -53,6 +55,6 @@ namespace TUK::Framework
 	inline GPUGraphicsPipelineState::GPUGraphicsPipelineState(ComPtr<ID3D12PipelineState> d3dPipelineState) noexcept
 		: d3dPipelineState(std::move(d3dPipelineState))
 	{
-		ASSERT(this->d3dPipelineState.Get());
+		ASSERT_FMT(this->d3dPipelineState.Get(), "검증 실패: {}", "this->d3dPipelineState.Get()");
 	}
 }

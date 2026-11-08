@@ -15,6 +15,8 @@
 #include "GPUTarget.hpp"
 #include "GPUTexture2D.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class Display;
@@ -76,7 +78,9 @@ namespace TUK::Framework
 		, backBuffers(std::move(backBuffers))
 		, rtvDescriptorSize(rtvDescriptorSize)
 	{
-		ASSERT(this->dxgiSwapChain.Get() && this->rtvHeap.Get() &&
-			this->dsvHeap.Get() && this->depthStencil.Get());
+		ASSERT_FMT(this->dxgiSwapChain.Get(), "검증 실패: {}", "this->dxgiSwapChain.Get()");
+		ASSERT_FMT(this->rtvHeap.Get(), "검증 실패: {}", "this->rtvHeap.Get()");
+		ASSERT_FMT(this->dsvHeap.Get(), "검증 실패: {}", "this->dsvHeap.Get()");
+		ASSERT_FMT(this->depthStencil.Get(), "검증 실패: {}", "this->depthStencil.Get()");
 	}
 }

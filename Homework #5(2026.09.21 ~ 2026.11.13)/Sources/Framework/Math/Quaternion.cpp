@@ -5,6 +5,8 @@
 
 #include "Matrix4x4.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	template <Scalarable TScalar>
@@ -28,7 +30,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar Quaternion<TScalar>::operator[](size_t index) const noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		switch (index)
 		{
 		case 0:
@@ -45,7 +48,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar& Quaternion<TScalar>::operator[](size_t index) noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		switch (index)
 		{
 		case 0:
@@ -165,12 +169,14 @@ namespace TUK::Framework
 	{
 		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			assert(_scalar != TScalar{});
+			ASSERT_FMT(_scalar != TScalar{}, "검증 실패: {}", "_scalar != TScalar{}");
+
 			return Quaternion<TScalar>(value.x / _scalar, value.y / _scalar, value.z / _scalar, value.w / _scalar);
 		}
 		else
 		{
-			assert(_scalar != 0.0f);
+			ASSERT_FMT(_scalar != 0.0f, "검증 실패: {}", "_scalar != 0.0f");
+
 			Quaternion<TScalar> result{};
 			Store(result, DirectX::XMVectorDivide(Load(*this), DirectX::XMVectorReplicate(_scalar)));
 			return result;

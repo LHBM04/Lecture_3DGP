@@ -14,6 +14,8 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUShader
@@ -40,19 +42,21 @@ namespace TUK::Framework
 
 	inline IDxcBlob& GPUShader::GetDXCBlob() const noexcept
 	{
-		assert(dxcBlob);
+		ASSERT_FMT(dxcBlob, "검증 실패: {}", "dxcBlob");
+
 		return *dxcBlob.Get();
 	}
 
 	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
 	{
-		assert(dxcBlob);
+		ASSERT_FMT(dxcBlob, "검증 실패: {}", "dxcBlob");
+
 		return CD3DX12_SHADER_BYTECODE(dxcBlob->GetBufferPointer(), dxcBlob->GetBufferSize());
 	}
 
 	inline GPUShader::GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept
 		: dxcBlob(std::move(dxcBlob))
 	{
-		ASSERT(this->dxcBlob.Get());
+		ASSERT_FMT(this->dxcBlob.Get(), "검증 실패: {}", "this->dxcBlob.Get()");
 	}
 }

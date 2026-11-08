@@ -8,6 +8,7 @@ namespace TUK::Framework
 	i32 Engine::Run(App* target)
 	{
 		ASSERT_FMT(target, "실행할 App이 nullptr입니다.");
+
 		app = target;
 
 		if (const SystemStatus status = Startup(); status != SystemStatus::CONTINUE)

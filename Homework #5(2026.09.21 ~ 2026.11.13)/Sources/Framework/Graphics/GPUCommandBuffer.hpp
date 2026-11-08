@@ -109,12 +109,14 @@ namespace TUK::Framework
 	inline ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "GPU 명령 리스트가 nullptr입니다.");
+
 		return *d3dCommandList.Get();
 	}
 
 	inline ID3D12CommandAllocator& GPUCommandBuffer::GetD3DCommandAllocator() const noexcept
 	{
 		ASSERT_FMT(d3dCommandAllocator.Get(), "GPU 명령 할당자가 nullptr입니다.");
+
 		return *d3dCommandAllocator.Get();
 	}
 
@@ -126,6 +128,7 @@ namespace TUK::Framework
 		, d3dCommandList(std::move(d3dCommandList))
 		, d3dCommandAllocator(std::move(d3dCommandAllocator))
 	{
-		ASSERT(this->d3dCommandList.Get() && this->d3dCommandAllocator.Get());
+		ASSERT_FMT(this->d3dCommandList.Get(), "검증 실패: {}", "this->d3dCommandList.Get()");
+		ASSERT_FMT(this->d3dCommandAllocator.Get(), "검증 실패: {}", "this->d3dCommandAllocator.Get()");
 	}
 }

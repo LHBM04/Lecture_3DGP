@@ -10,6 +10,8 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUDevice;
@@ -42,6 +44,6 @@ namespace TUK::Framework
 		: d3dFence(std::move(d3dFence))
 		, fenceValue(0)
 	{
-		ASSERT(this->d3dFence.Get());
+		ASSERT_FMT(this->d3dFence.Get(), "검증 실패: {}", "this->d3dFence.Get()");
 	}
 }

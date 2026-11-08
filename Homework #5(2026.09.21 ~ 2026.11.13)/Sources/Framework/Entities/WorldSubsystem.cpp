@@ -3,6 +3,8 @@
 
 #include "World.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	WorldSubsystem::~WorldSubsystem() noexcept
@@ -12,7 +14,8 @@ namespace TUK::Framework
 
 	World* WorldSubsystem::AddWorld(std::unique_ptr<World> world)
 	{
-		ASSERT(world && !currentWorld);
+		ASSERT_FMT(world, "검증 실패: {}", "world");
+		ASSERT_FMT(!currentWorld, "검증 실패: {}", "!currentWorld");
 
 		World* result = world.get();
 		worlds.push_back(std::move(world));

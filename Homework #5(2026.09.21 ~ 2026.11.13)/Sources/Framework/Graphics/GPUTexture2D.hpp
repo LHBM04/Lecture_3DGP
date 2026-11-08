@@ -8,6 +8,8 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUTexture2D
@@ -30,7 +32,7 @@ namespace TUK::Framework
 	inline GPUTexture2D::GPUTexture2D(ComPtr<ID3D12Resource> d3dResource) noexcept
 		: d3dResource(std::move(d3dResource))
 	{
-		ASSERT(this->d3dResource.Get());
+		ASSERT_FMT(this->d3dResource.Get(), "검증 실패: {}", "this->d3dResource.Get()");
 	}
 
 	inline ID3D12Resource& GPUTexture2D::GetD3DResource() const noexcept

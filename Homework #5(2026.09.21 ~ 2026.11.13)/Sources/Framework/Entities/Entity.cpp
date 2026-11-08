@@ -6,6 +6,8 @@
 
 #include "World.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	Entity::~Entity() noexcept
@@ -45,7 +47,8 @@ namespace TUK::Framework
 
 	void Entity::UpdateComponents(ComponentCallback callback)
 	{
-		ASSERT(callback);
+		ASSERT_FMT(callback, "검증 실패: {}", "callback");
+
 		if (!world || !world->IsEntered() || isDestroyed)
 		{
 			return;
@@ -80,7 +83,8 @@ namespace TUK::Framework
 
 	void Entity::RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
-		ASSERT(callback);
+		ASSERT_FMT(callback, "검증 실패: {}", "callback");
+
 		const usize count = components.size();
 		for (usize index = 0; index < count && world->IsEntered() && isEnabled && !isDestroyed; ++index)
 		{

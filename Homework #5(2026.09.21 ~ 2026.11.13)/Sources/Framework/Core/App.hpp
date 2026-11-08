@@ -58,6 +58,7 @@ namespace TUK::Framework
 	inline App& App::GetInstance() noexcept
 	{
 		ASSERT_FMT(instance, "App 인스턴스가 초기화되지 않았습니다.");
+
 		return *instance;
 	}
 }

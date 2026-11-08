@@ -13,11 +13,12 @@ namespace TUK::Framework
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		ASSERT(hWnd);
+		ASSERT_FMT(hWnd, "검증 실패: {}", "hWnd");
+
 		if (message == WM_NCCREATE)
 		{
 			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
-			ASSERT(creation);
+			ASSERT_FMT(creation, "검증 실패: {}", "creation");
 
 			Display* display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)
@@ -205,10 +206,6 @@ namespace TUK::Framework
 	void DisplaySubsystem::DestroyDisplay(Display* display) noexcept
 	{
 		ASSERT_FMT(display, "삭제할 디스플레이가 nullptr입니다.");
-		if (!display)
-		{
-			return;
-		}
 
 		std::erase_if(displays, [display](const std::unique_ptr<Display>& item)
 			{

@@ -11,6 +11,8 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUDevice
@@ -73,7 +75,9 @@ namespace TUK::Framework
 		, d3dCommandQueue(std::move(d3dCommandQueue))
 		, d3dRootSignature(std::move(d3dRootSignature))
 	{
-		ASSERT(this->dxgiFactory.Get() && this->d3dDevice.Get() &&
-			this->d3dCommandQueue.Get() && this->d3dRootSignature.Get());
+		ASSERT_FMT(this->dxgiFactory.Get(), "검증 실패: {}", "this->dxgiFactory.Get()");
+		ASSERT_FMT(this->d3dDevice.Get(), "검증 실패: {}", "this->d3dDevice.Get()");
+		ASSERT_FMT(this->d3dCommandQueue.Get(), "검증 실패: {}", "this->d3dCommandQueue.Get()");
+		ASSERT_FMT(this->d3dRootSignature.Get(), "검증 실패: {}", "this->d3dRootSignature.Get()");
 	}
 }

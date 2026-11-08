@@ -7,6 +7,8 @@
 #include "Vector2D.hpp"
 #include "Vector3D.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	template <Scalarable TScalar>
@@ -56,7 +58,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar Vector4D<TScalar>::operator[](std::size_t index) const noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		switch (index)
 		{
 		case 0:
@@ -73,7 +76,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	TScalar& Vector4D<TScalar>::operator[](std::size_t index) noexcept
 	{
-		assert(index < 4);
+		ASSERT_FMT(index < 4, "검증 실패: {}", "index < 4");
+
 		switch (index)
 		{
 		case 0:
@@ -168,7 +172,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector4D<TScalar> Vector4D<TScalar>::operator/(TScalar scalar) const noexcept
 	{
-		assert(scalar != TScalar{});
+		ASSERT_FMT(scalar != TScalar{}, "검증 실패: {}", "scalar != TScalar{}");
+
 		if constexpr (std::same_as<TScalar, float>)
 		{
 			Vector4D result;
@@ -313,7 +318,8 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	bool Vector4D<TScalar>::IsZero(float epsilon) const noexcept
 	{
-		assert(epsilon >= 0.0f);
+		ASSERT_FMT(epsilon >= 0.0f, "검증 실패: {}", "epsilon >= 0.0f");
+
 		return std::abs(static_cast<double>(GetX())) <= epsilon && std::abs(static_cast<double>(GetY())) <= epsilon && std::abs(static_cast<double>(GetZ())) <= epsilon && std::abs(static_cast<double>(GetW())) <= epsilon;
 	}
 

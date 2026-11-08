@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Camera.hpp"
 
 #include "../Entities/Entity.hpp"
@@ -7,6 +7,8 @@
 
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"
+
+#include "../Utilities/Logger.hpp"
 
 namespace TUK::Framework
 {
@@ -40,7 +42,9 @@ namespace TUK::Framework
 
 	Matrix4x4<f32> Camera::GetProjectionMatrix() const noexcept
 	{
-		assert(viewport.Width > 0.0f && viewport.Height > 0.0f);
+		ASSERT_FMT(viewport.Width > 0.0f, "검증 실패: {}", "viewport.Width > 0.0f");
+		ASSERT_FMT(viewport.Height > 0.0f, "검증 실패: {}", "viewport.Height > 0.0f");
+
 		const f32 aspectRatio = viewport.Width / viewport.Height;
 
 		switch (projectionType)

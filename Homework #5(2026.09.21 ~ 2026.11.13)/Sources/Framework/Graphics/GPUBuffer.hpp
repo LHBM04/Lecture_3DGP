@@ -12,6 +12,8 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	class GPUDevice;
@@ -76,6 +78,6 @@ namespace TUK::Framework
 		: d3dResource(std::move(d3dResource))
 		, heapType(heapType)
 	{
-		ASSERT(this->d3dResource.Get());
+		ASSERT_FMT(this->d3dResource.Get(), "검증 실패: {}", "this->d3dResource.Get()");
 	}
 }

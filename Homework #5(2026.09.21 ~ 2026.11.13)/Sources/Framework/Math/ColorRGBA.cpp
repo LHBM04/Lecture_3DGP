@@ -5,6 +5,8 @@
 
 #include "ColorRGB.hpp"
 
+#include "../Utilities/Logger.hpp"
+
 namespace TUK::Framework
 {
 	template <Scalarable TScalar>
@@ -29,7 +31,8 @@ namespace TUK::Framework
 	ColorRGBA<TScalar>::ColorRGBA(const TScalar* values) noexcept
 		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
 	{
-		ASSERT(values);
+		ASSERT_FMT(values, "검증 실패: {}", "values");
+
 		value = decltype(value)(values);
 	}
 
@@ -160,12 +163,14 @@ namespace TUK::Framework
 	{
 		if constexpr (std::same_as<TScalar, std::int32_t>)
 		{
-			assert(scalar != TScalar{});
+			ASSERT_FMT(scalar != TScalar{}, "검증 실패: {}", "scalar != TScalar{}");
+
 			return ColorRGBA<TScalar>(value.x / scalar, value.y / scalar, value.z / scalar, value.w / scalar);
 		}
 		else
 		{
-			assert(scalar != 0.0f);
+			ASSERT_FMT(scalar != 0.0f, "검증 실패: {}", "scalar != 0.0f");
+
 			ColorRGBA<TScalar> result{};
 			Store(result, DirectX::XMVectorScale(Load(*this), 1.0f / scalar));
 			return result;
