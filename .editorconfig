@@ -1,0 +1,10 @@
+# root = true는 상위 디렉터리 검색 중단을 의미합니다.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{cpp,h,hpp,cxx}]
+charset = utf-8-bom
