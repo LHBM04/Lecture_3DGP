@@ -5,11 +5,10 @@
 #include <concepts>
 #include <cstddef>
 #include <limits>
-#include <string>
-#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
@@ -108,8 +107,8 @@ namespace TUK::Framework
 
 		static bool TryInverse3DAffine(const Matrix4x4& input, Matrix4x4& result) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] std::string Serialize() const;
-		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, std::array<i32, 16>, DirectX::XMFLOAT4X4> value;

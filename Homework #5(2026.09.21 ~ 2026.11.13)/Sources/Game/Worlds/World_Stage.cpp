@@ -39,7 +39,7 @@ namespace TUK::Game
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
 		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 
-		const std::filesystem::path MODEL_PATH = "Resources/Models/Target.bin";
+		const std::filesystem::path MODEL_PATH = "Resources/Models/Model.json";
 		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>(MODEL_PATH))
 		{
 			if (!Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f)))

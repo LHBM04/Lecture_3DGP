@@ -1,7 +1,7 @@
 #include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
-#include <cstring>
+#include "../Utilities/JsonUtility.hpp"
 
 #include "ColorRGB.hpp"
 
@@ -439,22 +439,22 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	std::string ColorRGBA<TScalar>::Serialize() const
+	nlohmann::json ColorRGBA<TScalar>::Serialize() const
 	{
 		const TScalar components[]{ GetR(), GetG(), GetB(), GetA() };
-		return std::string(reinterpret_cast<const char*>(components), sizeof(components));
+
+		return JsonUtility::SerializeComponents(components);
 	}
 
 	template <Scalarable TScalar>
-	bool ColorRGBA<TScalar>::Deserialize(std::string_view text) noexcept
+	bool ColorRGBA<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
 		TScalar components[4]{};
-		if (text.size() != sizeof(components))
+		if (!JsonUtility::DeserializeComponents(value, components))
 		{
 			return false;
 		}
 
-		std::memcpy(components, text.data(), sizeof(components));
 		*this = ColorRGBA<TScalar>{ components[0], components[1], components[2], components[3] };
 		return true;
 	}

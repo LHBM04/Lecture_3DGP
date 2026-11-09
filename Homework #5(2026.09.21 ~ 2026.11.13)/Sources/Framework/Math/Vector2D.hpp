@@ -4,11 +4,10 @@
 #include <concepts>
 #include <cstddef>
 #include <limits>
-#include <string>
-#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"
 
@@ -139,8 +138,8 @@ namespace TUK::Framework
 			f32 maxSpeed,
 			f32 deltaTime) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] std::string Serialize() const;
-		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT2, DirectX::XMFLOAT2> value;

@@ -1,17 +1,16 @@
 ﻿#pragma once
 
 #include <concepts>
-#include <limits>
-#include <string>
-#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
-
-#include "Vector3D.hpp"
-#include "Vector4D.hpp"
+#include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"
+
+#include "Mathf.hpp"
+#include "Vector3D.hpp"
+#include "Vector4D.hpp"
 
 namespace TUK::Framework
 {
@@ -80,7 +79,7 @@ namespace TUK::Framework
 		[[nodiscard]] static DirectX::XMVECTOR Load(const ColorRGB& color) noexcept requires std::same_as<TScalar, f32>;
 		static void Store(ColorRGB& destination, DirectX::XMVECTOR source) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] static bool IsApproximately(const ColorRGB& lhs, const ColorRGB& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] static bool IsApproximately(const ColorRGB& lhs, const ColorRGB& rhs, f32 epsilon = Mathf::Epsilon) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static f32 LinearToGammaSpace(f32 value) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static f32 GammaToLinearSpace(f32 value) noexcept requires std::same_as<TScalar, f32>;
@@ -92,8 +91,8 @@ namespace TUK::Framework
 		[[nodiscard]] static ColorRGB Lerp(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static ColorRGB LerpUnclamped(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] std::string Serialize() const;
-		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;

@@ -1,7 +1,7 @@
 #include "Precompiled.hpp"
 #include "Matrix4x4.hpp"
 
-#include <cstring>
+#include "../Utilities/JsonUtility.hpp"
 
 #include "Quaternion.hpp"
 
@@ -570,7 +570,7 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	std::string Matrix4x4<TScalar>::Serialize() const
+	nlohmann::json Matrix4x4<TScalar>::Serialize() const
 	{
 		TScalar components[16]{};
 		for (usize index = 0; index < 16; ++index)
@@ -578,19 +578,18 @@ namespace TUK::Framework
 			components[index] = (*this)[index];
 		}
 
-		return std::string(reinterpret_cast<const char*>(components), sizeof(components));
+		return JsonUtility::SerializeComponents(components);
 	}
 
 	template <Scalarable TScalar>
-	bool Matrix4x4<TScalar>::Deserialize(std::string_view text) noexcept
+	bool Matrix4x4<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
 		TScalar components[16]{};
-		if (text.size() != sizeof(components))
+		if (!JsonUtility::DeserializeComponents(value, components))
 		{
 			return false;
 		}
 
-		std::memcpy(components, text.data(), sizeof(components));
 		*this = Matrix4x4<TScalar>{ components };
 		return true;
 	}

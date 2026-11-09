@@ -1,7 +1,7 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Quaternion.hpp"
 
-#include <cstring>
+#include "../Utilities/JsonUtility.hpp"
 
 #include "Matrix4x4.hpp"
 
@@ -613,22 +613,22 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	std::string Quaternion<TScalar>::Serialize() const
+	nlohmann::json Quaternion<TScalar>::Serialize() const
 	{
 		const TScalar components[]{ GetX(), GetY(), GetZ(), GetW() };
-		return std::string(reinterpret_cast<const char*>(components), sizeof(components));
+
+		return JsonUtility::SerializeComponents(components);
 	}
 
 	template <Scalarable TScalar>
-	bool Quaternion<TScalar>::Deserialize(std::string_view text) noexcept
+	bool Quaternion<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
 		TScalar components[4]{};
-		if (text.size() != sizeof(components))
+		if (!JsonUtility::DeserializeComponents(value, components))
 		{
 			return false;
 		}
 
-		std::memcpy(components, text.data(), sizeof(components));
 		*this = Quaternion<TScalar>{ components[0], components[1], components[2], components[3] };
 		return true;
 	}

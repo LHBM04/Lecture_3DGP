@@ -1,12 +1,11 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "Vector4D.hpp"
-
-#include <cstring>
 
 #include "Mathf.hpp"
 #include "Vector2D.hpp"
 #include "Vector3D.hpp"
 
+#include "../Utilities/JsonUtility.hpp"
 #include "../Utilities/Logger.hpp"
 
 namespace TUK::Framework
@@ -569,22 +568,22 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	std::string Vector4D<TScalar>::Serialize() const
+	nlohmann::json Vector4D<TScalar>::Serialize() const
 	{
 		const TScalar components[]{ GetX(), GetY(), GetZ(), GetW() };
-		return std::string(reinterpret_cast<const char*>(components), sizeof(components));
+
+		return JsonUtility::SerializeComponents(components);
 	}
 
 	template <Scalarable TScalar>
-	bool Vector4D<TScalar>::Deserialize(std::string_view text) noexcept
+	bool Vector4D<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
 		TScalar components[4]{};
-		if (text.size() != sizeof(components))
+		if (!JsonUtility::DeserializeComponents(value, components))
 		{
 			return false;
 		}
 
-		std::memcpy(components, text.data(), sizeof(components));
 		*this = Vector4D<TScalar>{ components[0], components[1], components[2], components[3] };
 		return true;
 	}

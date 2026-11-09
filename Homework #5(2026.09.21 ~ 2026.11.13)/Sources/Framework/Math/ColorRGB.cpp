@@ -1,7 +1,7 @@
-#include "Precompiled.hpp"
+﻿#include "Precompiled.hpp"
 #include "ColorRGB.hpp"
 
-#include <cstring>
+#include "../Utilities/JsonUtility.hpp"
 
 #include "ColorRGBA.hpp"
 #include "Mathf.hpp"
@@ -265,7 +265,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetMagenta() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(255, 0, 255);
 		}
@@ -278,7 +278,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetGray() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(128, 128, 128);
 		}
@@ -386,14 +386,14 @@ namespace TUK::Framework
 
 		v = maxV;
 
-		if (delta <= std::numeric_limits<float>::epsilon())
+		if (delta <= Mathf::Epsilon)
 		{
 			h = 0.0f;
 			s = 0.0f;
 			return;
 		}
 
-		s = (maxV <= std::numeric_limits<float>::epsilon()) ? 0.0f : (delta / maxV);
+		s = (maxV <= Mathf::Epsilon) ? 0.0f : (delta / maxV);
 
 		if (r >= maxV)
 		{
@@ -416,14 +416,14 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	ColorRGB<TScalar> ColorRGB<TScalar>::Lerp(const ColorRGB<TScalar>& a, const ColorRGB<TScalar>& b, float t) noexcept
+	ColorRGB<TScalar> ColorRGB<TScalar>::Lerp(const ColorRGB<TScalar>& a, const ColorRGB<TScalar>& b, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return LerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
 	template <Scalarable TScalar>
-	ColorRGB<TScalar> ColorRGB<TScalar>::LerpUnclamped(const ColorRGB<TScalar>& a, const ColorRGB<TScalar>& b, float t) noexcept
+	ColorRGB<TScalar> ColorRGB<TScalar>::LerpUnclamped(const ColorRGB<TScalar>& a, const ColorRGB<TScalar>& b, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return ColorRGB<TScalar>(
@@ -433,26 +433,26 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	std::string ColorRGB<TScalar>::Serialize() const
+	nlohmann::json ColorRGB<TScalar>::Serialize() const
 	{
 		const TScalar components[]{ GetR(), GetG(), GetB() };
-		return std::string(reinterpret_cast<const char*>(components), sizeof(components));
+
+		return JsonUtility::SerializeComponents(components);
 	}
 
 	template <Scalarable TScalar>
-	bool ColorRGB<TScalar>::Deserialize(std::string_view text) noexcept
+	bool ColorRGB<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
 		TScalar components[3]{};
-		if (text.size() != sizeof(components))
+		if (!JsonUtility::DeserializeComponents(value, components))
 		{
 			return false;
 		}
 
-		std::memcpy(components, text.data(), sizeof(components));
 		*this = ColorRGB<TScalar>{ components[0], components[1], components[2] };
 		return true;
 	}
 
-	template class ColorRGB<std::int32_t>;
-	template class ColorRGB<float>;
+	template class ColorRGB<i32>;
+	template class ColorRGB<f32>;
 }

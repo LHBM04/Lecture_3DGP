@@ -256,7 +256,7 @@
     <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Utilities.hpp" />
-    <ClInclude Include="Sources\Framework\Utilities\BinaryUtility.hpp" />
+    <ClInclude Include="Sources\Framework\Utilities\JsonUtility.hpp" />
     <ClInclude Include="Sources\Framework\Utilities\Logger.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
@@ -341,7 +341,7 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <RuntimeResource Include="Resources\Models\**\*;Resources\Meshes\**\*;Resources\Materials\**\*;Resources\Images\**\*" />
+    <RuntimeResource Include="Resources\Models\**\*.json;Resources\Meshes\**\*.json;Resources\Materials\**\*.json;Resources\Images\**\*" />
   </ItemGroup>
   <Target Name="CopyRuntimeResources" AfterTargets="Build">
     <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />

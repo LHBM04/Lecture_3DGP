@@ -4,11 +4,10 @@
 #include <concepts>
 #include <cstddef>
 #include <limits>
-#include <string>
-#include <string_view>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "Vector3D.hpp"
 
@@ -116,8 +115,8 @@ namespace TUK::Framework
 		[[nodiscard]] static Quaternion LookRotation(const Vector3D<f32>& forward, const Vector3D<f32>& up) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion RotateTowards(const Quaternion& from, const Quaternion& to, f32 maxDegreesDelta) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] std::string Serialize() const;
-		[[nodiscard]] bool Deserialize(std::string_view text) noexcept;
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

@@ -249,14 +249,14 @@
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Utilities\BinaryUtility.hpp">
-      <Filter>Sources\Framework\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Framework\Utilities\Logger.hpp">
       <Filter>Sources\Framework\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Utilities.hpp">
       <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Utilities\JsonUtility.hpp">
+      <Filter>Sources\Framework\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -267,9 +267,6 @@
       <Filter>Sources\Framework\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Engine.cpp">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\Core\System.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp">
