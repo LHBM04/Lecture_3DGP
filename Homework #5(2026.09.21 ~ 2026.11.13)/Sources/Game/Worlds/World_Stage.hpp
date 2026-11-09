@@ -4,6 +4,8 @@
 #include "Framework/Resources.hpp"
 #include "Framework/Platform.hpp"
 
+using namespace TUK::Framework;
+
 namespace TUK::Game
 {
 	class World_Stage : public Framework::World
@@ -15,7 +17,9 @@ namespace TUK::Game
 		void OnUpdate() override;
 
 	private:
-		Framework::AssetSubsystem* assets = nullptr;
-		Framework::InputSubsystem* input = nullptr;
+		AssetSubsystem* assets = nullptr;
+		InputSubsystem* input = nullptr;
+
+		Entity* tank = nullptr;
 	};
 }

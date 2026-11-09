@@ -17,6 +17,7 @@
 #include "../Math/Mathf.hpp"
 
 #include "AssetSubsystem.hpp"
+#include "ImageAsset.hpp"
 #include "ShaderAsset.hpp"
 
 namespace TUK::Framework
@@ -89,6 +90,38 @@ namespace TUK::Framework
 		};
 		const auto materialDir = path.parent_path();
 		const auto assetRoot = materialDir.parent_path();
+		const ImageAsset* baseColorTexture = nullptr;
+		if (const auto field = json.find("baseColorTexture"); field != json.end())
+		{
+			if (!field->is_string())
+			{
+				return parseError;
+			}
+
+			const auto& name = field->get_ref<const std::string&>();
+			if (!name.empty())
+			{
+				if (name.find('\0') != std::string::npos)
+				{
+					return parseError;
+				}
+
+				const auto imagePath = std::filesystem::path(
+					std::u8string(name.begin(), name.end())).lexically_normal();
+				if (imagePath.empty() || imagePath.has_root_path() || *imagePath.begin() == "..")
+				{
+					return parseError;
+				}
+
+				const auto texturePath = assetRoot / imagePath;
+				baseColorTexture = assets->LoadAsset<ImageAsset>(texturePath);
+				if (!baseColorTexture)
+				{
+					return std::unexpected(std::format("베이스 컬러 텍스처를 로드하지 못했습니다: {}", texturePath.generic_string()));
+				}
+			}
+		}
+
 		for (const auto& [key, shaderPath] : shaderFields)
 		{
 			const auto field = json.find(key);
@@ -140,7 +173,8 @@ namespace TUK::Framework
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 		};
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
@@ -175,6 +209,7 @@ namespace TUK::Framework
 				.specularColor = parsedSpecularColor,
 				.metallic = parsedMetallic,
 				.roughness = parsedRoughness,
+				.baseColorTexture = baseColorTexture,
 				.vertexShader = vertex,
 				.pixelShader = pixel,
 				.pipelineState = std::move(*pipeline),

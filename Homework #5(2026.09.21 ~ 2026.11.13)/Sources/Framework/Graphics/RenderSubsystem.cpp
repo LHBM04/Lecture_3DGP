@@ -202,7 +202,7 @@ namespace TUK::Framework
 			}
 
 			constexpr u32 CONSTANT_BUFFER_SLOT_COUNT = 3;
-			std::array<CD3DX12_ROOT_PARAMETER1, CONSTANT_BUFFER_SLOT_COUNT> parameters{};
+			std::array<CD3DX12_ROOT_PARAMETER1, CONSTANT_BUFFER_SLOT_COUNT + 1> parameters{};
 			for (u32 index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
 			{
 				parameters[index].InitAsConstantBufferView(
@@ -210,6 +210,10 @@ namespace TUK::Framework
 					0,
 					D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE);
 			}
+
+			CD3DX12_DESCRIPTOR_RANGE1 baseColorTextureRange{};
+			baseColorTextureRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+			parameters.back().InitAsDescriptorTable(1, &baseColorTextureRange, D3D12_SHADER_VISIBILITY_PIXEL);
 
 			const std::array samplers =
 			{
@@ -220,7 +224,7 @@ namespace TUK::Framework
 
 			CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription{};
 			rootSignatureDescription.Init_1_1(
-				CONSTANT_BUFFER_SLOT_COUNT,
+				static_cast<u32>(parameters.size()),
 				parameters.data(),
 				static_cast<u32>(samplers.size()),
 				samplers.data(),

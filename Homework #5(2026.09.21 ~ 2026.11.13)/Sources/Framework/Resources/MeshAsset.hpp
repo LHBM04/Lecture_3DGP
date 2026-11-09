@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include <directxtk12/VertexTypes.h>
+#include <directxmath/DirectXMath.h>
 
 #include "../Core/Common.hpp"
 
@@ -20,6 +20,14 @@
 
 namespace TUK::Framework
 {
+	struct MeshVertex final
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT3 normal;
+		DirectX::XMFLOAT4 color;
+		DirectX::XMFLOAT2 uv0;
+	};
+
 	struct MeshAssetData final
 	{
 		Vector3D<f32> boundsCenter{};
@@ -28,7 +36,7 @@ namespace TUK::Framework
 		std::vector<ColorRGBA<f32>> colors;
 		std::vector<Vector3D<f32>> normals;
 		std::vector<Vector2D<f32>> textureCoords;
-		std::vector<DirectX::VertexPositionNormalColor> vertices;
+		std::vector<MeshVertex> vertices;
 		std::vector<u32> indices;
 		GPUMesh gpuMesh;
 	};
@@ -47,7 +55,7 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<const ColorRGBA<f32>> GetColors() const noexcept;
 		[[nodiscard]] std::span<const Vector3D<f32>> GetNormals() const noexcept;
 		[[nodiscard]] std::span<const Vector2D<f32>> GetTextureCoords() const noexcept;
-		[[nodiscard]] std::span<const DirectX::VertexPositionNormalColor> GetVertices() const noexcept;
+		[[nodiscard]] std::span<const MeshVertex> GetVertices() const noexcept;
 		[[nodiscard]] std::span<const u32> GetIndices() const noexcept;
 
 		[[nodiscard]] const GPUMesh& GetGPUMesh() const noexcept;
@@ -59,7 +67,7 @@ namespace TUK::Framework
 		std::vector<ColorRGBA<f32>> colors;
 		std::vector<Vector3D<f32>> normals;
 		std::vector<Vector2D<f32>> textureCoords;
-		std::vector<DirectX::VertexPositionNormalColor> vertices;
+		std::vector<MeshVertex> vertices;
 		std::vector<u32> indices;
 		GPUMesh gpuMesh;
 	};
@@ -110,7 +118,7 @@ namespace TUK::Framework
 		return textureCoords;
 	}
 
-	inline std::span<const DirectX::VertexPositionNormalColor> MeshAsset::GetVertices() const noexcept
+	inline std::span<const MeshVertex> MeshAsset::GetVertices() const noexcept
 	{
 		return vertices;
 	}

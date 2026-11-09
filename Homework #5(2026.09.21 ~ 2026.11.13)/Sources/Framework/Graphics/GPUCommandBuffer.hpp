@@ -95,6 +95,8 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 
+		[[nodiscard]] std::expected<void, std::string> BindBaseColorTexture(const GPUTexture2D* texture);
+
 		const GPUDevice* device;
 
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
@@ -103,6 +105,9 @@ namespace TUK::Framework
 		std::vector<GPUBuffer> constantBufferPages;
 		usize constantBufferPageIndex = 0;
 		u64 constantBufferOffset = 0;
+
+		std::vector<Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>> textureDescriptorPages;
+		usize textureDescriptorCount = 0;
 		
 		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
 		

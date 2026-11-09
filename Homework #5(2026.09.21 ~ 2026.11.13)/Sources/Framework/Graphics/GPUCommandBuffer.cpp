@@ -9,6 +9,7 @@
 #include "../Entities/Entity.hpp"
 #include "../Entities/Transform.hpp"
 
+#include "../Resources/ImageAsset.hpp"
 #include "../Resources/MaterialAsset.hpp"
 
 #include "../Core/Common.hpp"
@@ -42,15 +43,16 @@ namespace TUK::Framework
 			DirectX::XMFLOAT4 emissiveColor;
 			f32 metallic;
 			f32 roughness;
-			f32 padding[2]{};
+			u32 hasBaseColorTexture;
+			f32 padding{};
 		};
 
-		enum class GPUConstantBufferSlot : u32
+		enum class GPURootSlot : u32
 		{
 			CAMERA = 0,
 			OBJECT = 1,
 			MATERIAL = 2,
-			COUNT = 3
+			BASE_COLOR_TEXTURE = 3
 		};
 	}
 
@@ -70,6 +72,7 @@ namespace TUK::Framework
 
 		constantBufferPageIndex = 0;
 		constantBufferOffset = 0;
+		textureDescriptorCount = 0;
 		activeTargetFormat = DXGI_FORMAT_UNKNOWN;
 		cameraPrepared = false;
 		d3dCommandList->SetGraphicsRootSignature(&device->GetD3DRootSignature());
@@ -140,15 +143,21 @@ namespace TUK::Framework
 		}
 		const ColorRGBA<f32>& baseColor = material->GetBaseColor();
 		const ColorRGBA<f32>& emissiveColor = material->GetEmissiveColor();
+		const ImageAsset* baseColorTexture = material->GetBaseColorTexture();
 		MaterialConstants constants{};
 		constants.baseColor = { baseColor.GetR(), baseColor.GetG(), baseColor.GetB(), baseColor.GetA() };
 		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
 		constants.metallic = material->GetMetallic();
 		constants.roughness = material->GetRoughness();
+		constants.hasBaseColorTexture = baseColorTexture ? 1u : 0u;
 		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
 		if (!allocation)
 		{
 			return std::unexpected(allocation.error());
+		}
+		if (auto result = BindBaseColorTexture(baseColorTexture ? &baseColorTexture->GetTexture() : nullptr); !result)
+		{
+			return result;
 		}
 		SetGPUMaterialConstantBuffer(*allocation->first, allocation->second);
 		SetGPUGraphicsPipelineState(pipelineState);
@@ -244,7 +253,7 @@ namespace TUK::Framework
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::CAMERA), address);
+		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPURootSlot::CAMERA), address);
 	}
 
 	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
@@ -252,7 +261,7 @@ namespace TUK::Framework
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::OBJECT), address);
+		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPURootSlot::OBJECT), address);
 	}
 
 	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
@@ -260,7 +269,7 @@ namespace TUK::Framework
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 
 		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPUConstantBufferSlot::MATERIAL), address);
+		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPURootSlot::MATERIAL), address);
 	}
 
 	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport) noexcept
@@ -330,6 +339,55 @@ namespace TUK::Framework
 		const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = target.GetD3DRTVHandle();
 		const D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = target.GetD3DDSVHandle();
 		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+	}
+
+	std::expected<void, std::string> GPUCommandBuffer::BindBaseColorTexture(const GPUTexture2D* texture)
+	{
+		constexpr u32 DESCRIPTORS_PER_PAGE = 256;
+		constexpr auto HEAP_TYPE = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		const usize pageIndex = textureDescriptorCount / DESCRIPTORS_PER_PAGE;
+		const usize slot = textureDescriptorCount % DESCRIPTORS_PER_PAGE;
+		auto& d3dDevice = device->GetD3DDevice();
+		if (pageIndex == textureDescriptorPages.size())
+		{
+			D3D12_DESCRIPTOR_HEAP_DESC description{};
+			description.Type = HEAP_TYPE;
+			description.NumDescriptors = DESCRIPTORS_PER_PAGE;
+			description.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> heap;
+			if (FAILED(d3dDevice.CreateDescriptorHeap(&description, IID_PPV_ARGS(heap.GetAddressOf()))))
+			{
+				return std::unexpected("텍스처 디스크립터 힙 생성에 실패했습니다.");
+			}
+			textureDescriptorPages.push_back(std::move(heap));
+		}
+
+		ID3D12DescriptorHeap* heap = textureDescriptorPages[pageIndex].Get();
+		const usize offset = slot * d3dDevice.GetDescriptorHandleIncrementSize(HEAP_TYPE);
+		auto cpuHandle = heap->GetCPUDescriptorHandleForHeapStart();
+		cpuHandle.ptr += offset;
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC nullView{};
+		nullView.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		nullView.Texture2D.MipLevels = 1;
+		d3dDevice.CreateShaderResourceView(
+			texture ? &texture->GetD3DResource() : nullptr,
+			texture ? nullptr : &nullView,
+			cpuHandle);
+
+		if (slot == 0)
+		{
+			d3dCommandList->SetDescriptorHeaps(1, &heap);
+		}
+
+		auto gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
+		gpuHandle.ptr += offset;
+		d3dCommandList->SetGraphicsRootDescriptorTable(std::to_underlying(GPURootSlot::BASE_COLOR_TEXTURE), gpuHandle);
+		++textureDescriptorCount;
+		return {};
 	}
 
 	std::expected<std::pair<const GPUBuffer*, u64>, std::string> GPUCommandBuffer::UploadConstants(

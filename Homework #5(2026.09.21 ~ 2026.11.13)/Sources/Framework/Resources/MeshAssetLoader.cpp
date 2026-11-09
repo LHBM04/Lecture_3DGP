@@ -9,8 +9,6 @@
 #include <utility>
 #include <vector>
 
-#include <directxtk12/VertexTypes.h>
-
 #include <nlohmann/json.hpp>
 
 #include "../Graphics/GPUBuffer.hpp"
@@ -88,6 +86,37 @@ namespace TUK::Framework
 			}
 		}
 
+		std::vector<Vector2D<f32>> parsedUVs;
+		if (const auto uv0 = json.find("uv0"); uv0 != json.end())
+		{
+			if (!uv0->is_array() || (!uv0->empty() && uv0->size() != parsedPositions.size()))
+			{
+				return parseError;
+			}
+
+			parsedUVs.reserve(uv0->size());
+			for (const auto& value : *uv0)
+			{
+				Vector2D<f32> uv{};
+				if (value.is_object())
+				{
+					const auto x = value.find("x");
+					const auto y = value.find("y");
+					if (x == value.end() || y == value.end() || !x->is_number() || !y->is_number()
+						|| !Mathf::TryConvertScalar(x->get<f64>(), uv[0])
+						|| !Mathf::TryConvertScalar(y->get<f64>(), uv[1]))
+					{
+						return parseError;
+					}
+				}
+				else if (!uv.Deserialize(value))
+				{
+					return parseError;
+				}
+				parsedUVs.push_back(uv);
+			}
+		}
+
 		std::vector<u32> parsedIndices;
 		parsedIndices.reserve(indices->size());
 		for (const auto& value : *indices)
@@ -116,22 +145,28 @@ namespace TUK::Framework
 		const auto parsedBoundsExtents = boundsMax * 0.5f - boundsMin * 0.5f;
 		const usize vertexCount = parsedPositions.size();
 
-		std::vector<DirectX::VertexPositionNormalColor> builtVertices(vertexCount);
+		std::vector<MeshVertex> builtVertices(vertexCount);
 		for (usize i = 0; i < vertexCount; ++i)
 		{
 			const Vector3D<f32>& pos = parsedPositions[i];
 			const Vector3D<f32>& norm = parsedNormals[i];
 
-			builtVertices[i] = DirectX::VertexPositionNormalColor{
+			// Unity UVs start at the lower left. DDS sampling starts at the upper left.
+			const DirectX::XMFLOAT2 uv = parsedUVs.empty()
+				? DirectX::XMFLOAT2{ 0.0f, 0.0f }
+				: DirectX::XMFLOAT2{ parsedUVs[i].GetX(), 1.0f - parsedUVs[i].GetY() };
+
+			builtVertices[i] = MeshVertex{
 				DirectX::XMFLOAT3{ pos.GetX(), pos.GetY(), pos.GetZ() },
 				DirectX::XMFLOAT3{ norm.GetX(), norm.GetY(), norm.GetZ() },
-				DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f }
+				DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f },
+				uv
 			};
 		}
 
 		auto gpuMesh = device.CreateMesh(
-			std::as_bytes(std::span<const DirectX::VertexPositionNormalColor>(builtVertices)),
-			sizeof(DirectX::VertexPositionNormalColor),
+			std::as_bytes(std::span<const MeshVertex>(builtVertices)),
+			sizeof(MeshVertex),
 			std::as_bytes(std::span<const u32>(parsedIndices)),
 			DXGI_FORMAT_R32_UINT,
 			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -147,6 +182,7 @@ namespace TUK::Framework
 				.boundsExtents = parsedBoundsExtents,
 				.positions = std::move(parsedPositions),
 				.normals = std::move(parsedNormals),
+				.textureCoords = std::move(parsedUVs),
 				.vertices = std::move(builtVertices),
 				.indices = std::move(parsedIndices),
 				.gpuMesh = std::move(*gpuMesh)

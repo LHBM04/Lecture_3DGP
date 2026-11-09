@@ -15,6 +15,7 @@
 
 namespace TUK::Framework
 {
+	class ImageAsset;
 	class ShaderAsset;
 
 	struct MaterialAssetData final
@@ -29,6 +30,7 @@ namespace TUK::Framework
 		f32 metallic = 0.0f;
 		f32 roughness = 0.5f;
 
+		const ImageAsset* baseColorTexture = nullptr;
 		const ShaderAsset* vertexShader = nullptr;
 		const ShaderAsset* pixelShader = nullptr;
 
@@ -54,6 +56,7 @@ namespace TUK::Framework
 		[[nodiscard]] f32 GetRoughness() const noexcept;
 		[[nodiscard]] f32 GetSmoothness() const noexcept;
 
+		[[nodiscard]] const ImageAsset* GetBaseColorTexture() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetVertexShader() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetPixelShader() const noexcept;
 
@@ -71,6 +74,7 @@ namespace TUK::Framework
 		f32 metallic = 0.0f;
 		f32 roughness = 0.5f;
 
+		const ImageAsset* baseColorTexture = nullptr;
 		const ShaderAsset* vertexShader = nullptr;
 		const ShaderAsset* pixelShader = nullptr;
 
@@ -89,6 +93,7 @@ namespace TUK::Framework
 		, specularColor(data.specularColor)
 		, metallic(data.metallic)
 		, roughness(data.roughness)
+		, baseColorTexture(data.baseColorTexture)
 		, vertexShader(data.vertexShader)
 		, pixelShader(data.pixelShader)
 		, pipelineState(std::move(data.pipelineState))
@@ -136,6 +141,11 @@ namespace TUK::Framework
 	inline f32 MaterialAsset::GetSmoothness() const noexcept
 	{
 		return 1.0f - roughness;
+	}
+
+	inline const ImageAsset* MaterialAsset::GetBaseColorTexture() const noexcept
+	{
+		return baseColorTexture;
 	}
 
 	inline const ShaderAsset* MaterialAsset::GetVertexShader() const noexcept

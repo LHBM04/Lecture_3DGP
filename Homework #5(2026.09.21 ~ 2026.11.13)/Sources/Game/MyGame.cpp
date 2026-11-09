@@ -7,6 +7,7 @@
 #include "../Framework/Platform.hpp"
 
 #include "Worlds/World_Stage.hpp"
+#include "Input.hpp"
 
 namespace TUK::Game
 {
@@ -30,6 +31,14 @@ namespace TUK::Game
 		eventSubsystem->AddListener<DisplayCreateEvent>(inputSubsystem, &InputSubsystem::OnDisplayCreate);
 		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnDisplayClose);
 		eventSubsystem->AddListener<DisplayFocusEvent>(inputSubsystem, &InputSubsystem::OnDisplayFocus);
+
+		eventSubsystem->AddListener<DisplayCreateEvent>([this](const DisplayCreateEvent& event) {
+			const InputProvider* provider = inputSubsystem->GetProvider(event.display);
+			Input::Initialize(provider);
+		});
+		eventSubsystem->AddListener<DisplayCloseEvent>([](const DisplayCloseEvent& event) {
+			Input::Release();
+		});
 
 		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)

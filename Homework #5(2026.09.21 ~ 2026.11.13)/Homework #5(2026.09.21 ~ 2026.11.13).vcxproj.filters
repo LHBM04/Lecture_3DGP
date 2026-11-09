@@ -407,6 +407,9 @@
     <Filter Include="Resources\Meshes">
       <UniqueIdentifier>{87D33B37-9373-4C0E-A340-AFA17229B5CB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\Textures">
+      <UniqueIdentifier>{FC6E692A-CA4E-4C51-B9B4-787CD8685414}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resources\Models">
       <UniqueIdentifier>{D4F3F1E9-E764-4AF9-84DC-AD1F66BA7DD2}</UniqueIdentifier>
     </Filter>
@@ -433,7 +436,100 @@
     <None Include="Resources\Meshes\Cone.json">
       <Filter>Resources\Meshes</Filter>
     </None>
+    <None Include="Resources\Meshes\Mesh_0000.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0001.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0002.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0003.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0004.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0005.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0006.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0007.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0008.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0009.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0010.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0011.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0012.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0013.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0014.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0015.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0016.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0017.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0018.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0019.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0020.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0021.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0022.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Mesh_0023.json">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Textures\Test.png">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Texture_0000.dds">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Texture_0000.png">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Texture_0001.dds">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Texture_0001.png">
+      <Filter>Resources\Textures</Filter>
+    </None>
     <None Include="Resources\Materials\Primitive.json">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Material_0000.json">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Material_0001.json">
       <Filter>Resources\Materials</Filter>
     </None>
   </ItemGroup>

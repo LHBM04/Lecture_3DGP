@@ -1,7 +1,4 @@
 ﻿#include "Precompiled.hpp"
-
-#include <filesystem>
-#include <iostream>
 #include "World_Stage.hpp"
 
 #include "Framework/Core.hpp"
@@ -9,6 +6,9 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 #include "Framework/Platform/InputSubsystem.hpp"
+
+#include "../Input.hpp"
+#include "../Time.hpp"
 
 using namespace TUK::Framework;
 
@@ -33,7 +33,7 @@ namespace TUK::Game
 		Entity* cameraEntity = Instantiate();
 		cameraEntity->SetName("Camera");
 		cameraEntity->SetTag("Main Camera");
-		cameraEntity->AddComponent<Transform>()->SetLocalPosition(Vector3D<f32>(0.0f, 10.0f, -100.0f));
+		cameraEntity->AddComponent<Transform>()->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -10.0f));
 
 		Camera* camera = cameraEntity->AddComponent<Camera>();
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
@@ -41,15 +41,30 @@ namespace TUK::Game
 
 		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources/Models/Model.json"))
 		{
-			if (!Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f)))
-			{
-				return;
-			}
+			tank = Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f));
 		}
 	}
 
 	void World_Stage::OnUpdate()
 	{
-		
+		Transform* transform = tank->GetComponent<Transform>();
+		if (!transform)
+		{
+			Logger::LogError("유효한 Transform 컴포넌트를 찾을 수 없습니다.");
+		}
+
+		const Quaternion<f32> currentRotation = transform->GetLocalRotation();
+		Quaternion<f32> nextRotation = currentRotation;
+
+		if (Input::IsKeyHeld(KeyCode::LEFT))
+		{
+			nextRotation *= Quaternion<f32>::Euler(0.0f, -0.1f, 0.0f) * 10.0f * Time::GetDeltaTime();
+		}
+		if (Input::IsKeyHeld(KeyCode::RIGHT))
+		{
+			nextRotation *= Quaternion<f32>::Euler(0.0f, 0.1f, 0.0f) * 10.0f * Time::GetDeltaTime();
+		}
+
+		transform->SetLocalRotation(nextRotation);
 	}
 }

@@ -17,8 +17,7 @@ namespace TUK::Framework
 			return static_cast<char>(std::tolower(character));
 		});
 
-		const bool isDDS = extension == ".dds";
-		if (!isDDS && extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".bmp")
+		if (extension != ".dds")
 		{
 			return std::unexpected("지원하지 않는 이미지 파일 확장자입니다: " + extension);
 		}
@@ -28,28 +27,8 @@ namespace TUK::Framework
 		std::unique_ptr<uint8_t[]> pixels;
 		std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 		bool isCubeMap = false;
-		HRESULT result;
-		if (isDDS)
-		{
-			result = DirectX::LoadDDSTextureFromFile(&d3dDevice, path.c_str(),
-				resource.GetAddressOf(), pixels, subresources, 0, nullptr, &isCubeMap);
-		}
-		else
-		{
-			const HRESULT initialization = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-			if (FAILED(initialization) && initialization != RPC_E_CHANGED_MODE)
-			{
-				return std::unexpected("이미지 디코딩을 위한 COM 초기화에 실패했습니다.");
-			}
-			D3D12_SUBRESOURCE_DATA subresource{};
-			result = DirectX::LoadWICTextureFromFile(&d3dDevice, path.c_str(),
-				resource.GetAddressOf(), pixels, subresource);
-			if (SUCCEEDED(initialization))
-			{
-				CoUninitialize();
-			}
-			subresources.push_back(subresource);
-		}
+		const HRESULT result = DirectX::LoadDDSTextureFromFile(&d3dDevice, path.c_str(),
+			resource.GetAddressOf(), pixels, subresources, 0, nullptr, &isCubeMap);
 		if (FAILED(result))
 		{
 			return std::unexpected("이미지 디코딩에 실패했습니다: " + path.generic_string());

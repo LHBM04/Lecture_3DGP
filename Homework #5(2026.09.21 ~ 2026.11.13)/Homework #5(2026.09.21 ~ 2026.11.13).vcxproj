@@ -255,8 +255,10 @@
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
+    <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
+    <ClInclude Include="Sources\Game\Time.hpp" />
     <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp" />
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AssetLoader.hpp" />
@@ -314,9 +316,11 @@
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp" />
+    <ClCompile Include="Sources\Game\Input.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Game\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\MyGame.cpp" />
+    <ClCompile Include="Sources\Game\Time.cpp" />
     <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -338,7 +342,7 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <RuntimeResource Include="Resources\Models\**\*.json;Resources\Meshes\**\*.json;Resources\Materials\**\*.json;Resources\Images\**\*" />
+    <RuntimeResource Include="Resources\Models\**\*.json;Resources\Meshes\**\*.json;Resources\Materials\**\*.json;Resources\Textures\**\*" />
   </ItemGroup>
   <Target Name="CopyRuntimeResources" AfterTargets="Build">
     <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />
@@ -360,6 +364,37 @@
     <None Include="Resources\Meshes\Cube.json" />
     <None Include="Resources\Meshes\Sphere.json" />
     <None Include="Resources\Meshes\Cone.json" />
+    <None Include="Resources\Meshes\Mesh_0000.json" />
+    <None Include="Resources\Meshes\Mesh_0001.json" />
+    <None Include="Resources\Meshes\Mesh_0002.json" />
+    <None Include="Resources\Meshes\Mesh_0003.json" />
+    <None Include="Resources\Meshes\Mesh_0004.json" />
+    <None Include="Resources\Meshes\Mesh_0005.json" />
+    <None Include="Resources\Meshes\Mesh_0006.json" />
+    <None Include="Resources\Meshes\Mesh_0007.json" />
+    <None Include="Resources\Meshes\Mesh_0008.json" />
+    <None Include="Resources\Meshes\Mesh_0009.json" />
+    <None Include="Resources\Meshes\Mesh_0010.json" />
+    <None Include="Resources\Meshes\Mesh_0011.json" />
+    <None Include="Resources\Meshes\Mesh_0012.json" />
+    <None Include="Resources\Meshes\Mesh_0013.json" />
+    <None Include="Resources\Meshes\Mesh_0014.json" />
+    <None Include="Resources\Meshes\Mesh_0015.json" />
+    <None Include="Resources\Meshes\Mesh_0016.json" />
+    <None Include="Resources\Meshes\Mesh_0017.json" />
+    <None Include="Resources\Meshes\Mesh_0018.json" />
+    <None Include="Resources\Meshes\Mesh_0019.json" />
+    <None Include="Resources\Meshes\Mesh_0020.json" />
+    <None Include="Resources\Meshes\Mesh_0021.json" />
+    <None Include="Resources\Meshes\Mesh_0022.json" />
+    <None Include="Resources\Meshes\Mesh_0023.json" />
     <None Include="Resources\Materials\Primitive.json" />
+    <None Include="Resources\Materials\Material_0000.json" />
+    <None Include="Resources\Materials\Material_0001.json" />
+    <None Include="Resources\Textures\Test.png" />
+    <None Include="Resources\Textures\Texture_0000.dds" />
+    <None Include="Resources\Textures\Texture_0000.png" />
+    <None Include="Resources\Textures\Texture_0001.dds" />
+    <None Include="Resources\Textures\Texture_0001.png" />
   </ItemGroup>
 </Project>
