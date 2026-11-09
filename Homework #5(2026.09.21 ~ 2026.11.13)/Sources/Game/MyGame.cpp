@@ -33,14 +33,6 @@ namespace TUK::Game
 		eventSubsystem->AddListener<DisplayCloseEvent>(inputSubsystem, &InputSubsystem::OnDisplayClose);
 		eventSubsystem->AddListener<DisplayFocusEvent>(inputSubsystem, &InputSubsystem::OnDisplayFocus);
 
-		eventSubsystem->AddListener<DisplayCreateEvent>([this](const DisplayCreateEvent& event) {
-			const InputProvider* provider = inputSubsystem->GetProvider(event.display);
-			Input::Initialize(provider);
-		});
-		eventSubsystem->AddListener<DisplayCloseEvent>([](const DisplayCloseEvent& event) {
-			Input::Release();
-		});
-
 		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{
@@ -96,6 +88,14 @@ namespace TUK::Game
 		assetSubsystem->AddLoader<ImageAssetLoader>(device);
 		assetSubsystem->AddLoader<MaterialAssetLoader>(device);
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
+
+		eventSubsystem->AddListener<DisplayCreateEvent>([this](const DisplayCreateEvent& event) {
+			const InputProvider* provider = inputSubsystem->GetProvider(event.display);
+			Input::Initialize(provider);
+			});
+		eventSubsystem->AddListener<DisplayCloseEvent>([](const DisplayCloseEvent& event) {
+			Input::Release();
+			});
 
 		Time::Initialize(Engine::GetInstance().GetSubsystem<TimeSubsystem>());
 		return App::Startup();

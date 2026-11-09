@@ -18,8 +18,8 @@
         0.19999995827674866,
         1.0
     ],
-    "metallic": 0.0,
-    "roughness": 0.0,
+    "metallic": 1.0,
+    "roughness": 1.0,
     "baseColorTexture": "Textures/Texture_0001.dds",
     "vertexShader": "Shaders/Standard.vert.cso",
     "pixelShader": "Shaders/Standard.frag.cso"

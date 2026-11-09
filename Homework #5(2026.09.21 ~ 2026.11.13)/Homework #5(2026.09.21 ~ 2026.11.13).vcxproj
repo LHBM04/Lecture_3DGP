@@ -256,6 +256,7 @@
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
+    <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
@@ -318,6 +319,7 @@
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp" />
+    <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
     <ClCompile Include="Sources\Game\Input.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
     <ClCompile Include="Sources\Game\MyEngine.cpp" />

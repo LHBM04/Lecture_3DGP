@@ -7,8 +7,8 @@
 #include "Framework/Resources.hpp"
 #include "Framework/Platform/InputSubsystem.hpp"
 
+#include "../Components/PlayerController.hpp"
 #include "../Input.hpp"
-#include "../Time.hpp"
 
 using namespace TUK::Framework;
 
@@ -42,34 +42,15 @@ namespace TUK::Game
 		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources/Models/Model.json"))
 		{
 			tank = Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f));
+			tank->AddComponent<PlayerController>();
 		}
 	}
 
 	void World_Stage::OnUpdate()
 	{
-		Transform* transform = tank->GetComponent<Transform>();
-		if (!transform)
+		if (Input::IsKeyPressed(KeyCode::ESCAPE))
 		{
-			Logger::LogError("유효한 Transform 컴포넌트를 찾을 수 없습니다.");
-			return;
+			App::GetInstance().GetSubsystem<WorldSubsystem>()->ExitWorld();
 		}
-
-		constexpr f32 ROTATION_SPEED_DEGREES_PER_SECOND = 50.0f;
-
-		const Quaternion<f32> currentRotation = transform->GetLocalRotation();
-		const f32 stepAngle = ROTATION_SPEED_DEGREES_PER_SECOND * Time::GetDeltaTime();
-
-		Quaternion<f32> nextRotation = currentRotation;
-
-		if (Input::IsKeyHeld(KeyCode::LEFT))
-		{
-			nextRotation *= Quaternion<f32>::Euler(stepAngle, 0.0f, 0.0f);
-		}
-		if (Input::IsKeyHeld(KeyCode::RIGHT))
-		{
-			nextRotation *= Quaternion<f32>::Euler(0.0f, stepAngle, 0.0f);
-		}
-
-		transform->SetLocalRotation(nextRotation);
 	}
 }
