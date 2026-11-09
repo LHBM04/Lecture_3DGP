@@ -1,6 +1,10 @@
 #include "Precompiled.hpp"
 #include "App.hpp"
 
+#include "Engine.hpp"
+
+#include "../Platform/TimeSubsystem.hpp"
+
 namespace TUK::Framework
 {
 	SystemStatus App::Startup()
@@ -16,7 +20,17 @@ namespace TUK::Framework
 			return status;
 		}
 
-		if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
+		if (TimeSubsystem* timeSubsystem = Engine::GetInstance().GetSubsystem<TimeSubsystem>())
+		{
+			while (timeSubsystem->ShouldFixedStep())
+			{
+				if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
+				{
+					return status;
+				}
+			}
+		}
+		else if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
 		{
 			return status;
 		}

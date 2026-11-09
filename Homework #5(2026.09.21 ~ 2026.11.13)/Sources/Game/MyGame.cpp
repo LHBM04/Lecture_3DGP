@@ -7,6 +7,7 @@
 #include "../Framework/Platform.hpp"
 
 #include "Worlds/World_Stage.hpp"
+#include "Time.hpp"
 #include "Input.hpp"
 
 namespace TUK::Game
@@ -96,6 +97,13 @@ namespace TUK::Game
 		assetSubsystem->AddLoader<MaterialAssetLoader>(device);
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
 
+		Time::Initialize(Engine::GetInstance().GetSubsystem<TimeSubsystem>());
 		return App::Startup();
+	}
+
+	void MyGame::Shutdown()
+	{
+		App::Shutdown();
+		Time::Release();
 	}
 }

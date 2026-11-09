@@ -9,6 +9,8 @@ namespace TUK::Game
 {
 	SystemStatus MyEngine::Startup()
 	{
+		AddSubsystem<TimeSubsystem>();
+
 		displaySubsystem = AddSubsystem<DisplaySubsystem>();
 		if (!displaySubsystem)
 		{

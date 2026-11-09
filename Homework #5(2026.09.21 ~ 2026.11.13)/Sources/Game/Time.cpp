@@ -7,40 +7,41 @@ namespace TUK::Game
 {
 	namespace
 	{
-		// TimeSubsystem* timeSubsystem = nullptr;
+		const TimeSubsystem* timeSubsystem = nullptr;
 	}
 
-	void Time::Initialize()
+	void Time::Initialize(TimeSubsystem* subsystem)
 	{
-		// timeSubsystem = Engine::GetInstance().GetSubsystem<TimeSubsystem>();
+		timeSubsystem = subsystem;
 	}
 
 	void Time::Release()
 	{
+		timeSubsystem = nullptr;
 	}
 
 	f32 Time::GetTimeScale()
 	{
-		return 1.0f;
+		return timeSubsystem->GetTimeScale();
 	}
 
 	f32 Time::GetDeltaTime()
 	{
-		return 1.0f * GetTimeScale();
+		return timeSubsystem->GetDeltaTime();
 	}
 
 	f32 Time::GetUnscaledDeltaTime()
 	{
-		return 1.0f;
+		return timeSubsystem->GetUnscaledDeltaTime();
 	}
 
 	f32 Time::GetFixedDeltaTime()
 	{
-		return 1.0f * GetTimeScale();
+		return timeSubsystem->GetFixedDeltaTime();
 	}
 
 	f32 Time::GetUnscaledFixedDeltaTime()
 	{
-		return 1.0f;
+		return timeSubsystem->GetUnscaledFixedDeltaTime();
 	}
 }

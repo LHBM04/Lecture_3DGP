@@ -253,6 +253,7 @@
     <ClInclude Include="Sources\Framework\Platform\InputEvents.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
@@ -307,6 +308,7 @@
     <ClCompile Include="Sources\Framework\Platform\DisplaySubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Platform\EventSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\AssetSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\MaterialAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp" />

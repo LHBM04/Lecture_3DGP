@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Framework/Core.hpp"
+#include "Framework/Platform.hpp"
 
 using namespace TUK::Framework;
 
@@ -8,7 +9,7 @@ namespace TUK::Game
 {
 	namespace Time
 	{
-		void Initialize();
+		void Initialize(TimeSubsystem* subsystem);
 		void Release();
 
 		[[nodiscard]] f32 GetTimeScale();

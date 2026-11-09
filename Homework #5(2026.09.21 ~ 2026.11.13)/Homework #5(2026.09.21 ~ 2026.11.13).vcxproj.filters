@@ -195,6 +195,9 @@
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Game\MyGame.hpp">
       <Filter>Sources\Game</Filter>
     </ClInclude>
@@ -357,6 +360,9 @@
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp">

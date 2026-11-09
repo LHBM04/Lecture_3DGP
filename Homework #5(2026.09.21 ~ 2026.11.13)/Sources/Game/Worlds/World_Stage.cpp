@@ -51,18 +51,23 @@ namespace TUK::Game
 		if (!transform)
 		{
 			Logger::LogError("유효한 Transform 컴포넌트를 찾을 수 없습니다.");
+			return;
 		}
 
+		constexpr f32 ROTATION_SPEED_DEGREES_PER_SECOND = 50.0f;
+
 		const Quaternion<f32> currentRotation = transform->GetLocalRotation();
+		const f32 stepAngle = ROTATION_SPEED_DEGREES_PER_SECOND * Time::GetDeltaTime();
+
 		Quaternion<f32> nextRotation = currentRotation;
 
 		if (Input::IsKeyHeld(KeyCode::LEFT))
 		{
-			nextRotation *= Quaternion<f32>::Euler(0.0f, -0.1f, 0.0f) * 10.0f * Time::GetDeltaTime();
+			nextRotation *= Quaternion<f32>::Euler(stepAngle, 0.0f, 0.0f);
 		}
 		if (Input::IsKeyHeld(KeyCode::RIGHT))
 		{
-			nextRotation *= Quaternion<f32>::Euler(0.0f, 0.1f, 0.0f) * 10.0f * Time::GetDeltaTime();
+			nextRotation *= Quaternion<f32>::Euler(0.0f, stepAngle, 0.0f);
 		}
 
 		transform->SetLocalRotation(nextRotation);

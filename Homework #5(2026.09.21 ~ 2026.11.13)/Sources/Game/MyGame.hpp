@@ -16,6 +16,7 @@ namespace TUK::Game
 
 	public:
 		SystemStatus Startup() override;
+		void Shutdown() override;
 
 	private:
 		DisplaySubsystem* displaySubsystem{ nullptr };
