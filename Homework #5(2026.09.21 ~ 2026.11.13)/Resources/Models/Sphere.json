@@ -1,0 +1,26 @@
+{
+  "name": "Sphere",
+  "localPosition": [
+    0,
+    0,
+    0
+  ],
+  "localRotation": [
+    0,
+    0,
+    0,
+    1
+  ],
+  "localScale": [
+    1,
+    1,
+    1
+  ],
+  "renderParts": [
+    {
+      "mesh": "Meshes/Sphere.json",
+      "material": "Materials/Primitive.json"
+    }
+  ],
+  "children": []
+}

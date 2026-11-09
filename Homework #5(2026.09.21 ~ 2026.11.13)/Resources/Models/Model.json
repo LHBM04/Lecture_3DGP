@@ -1,0 +1,100 @@
+{
+  "name": "Primitives",
+  "localPosition": [
+    0,
+    0,
+    0
+  ],
+  "localRotation": [
+    0,
+    0,
+    0,
+    1
+  ],
+  "localScale": [
+    1,
+    1,
+    1
+  ],
+  "renderParts": [],
+  "children": [
+    {
+      "name": "Cube",
+      "localPosition": [
+        -24,
+        0,
+        0
+      ],
+      "localRotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "localScale": [
+        8,
+        8,
+        8
+      ],
+      "renderParts": [
+        {
+          "mesh": "Meshes/Cube.json",
+          "material": "Materials/Primitive.json"
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "Sphere",
+      "localPosition": [
+        0,
+        0,
+        0
+      ],
+      "localRotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "localScale": [
+        8,
+        8,
+        8
+      ],
+      "renderParts": [
+        {
+          "mesh": "Meshes/Sphere.json",
+          "material": "Materials/Primitive.json"
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "Cone",
+      "localPosition": [
+        24,
+        0,
+        0
+      ],
+      "localRotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "localScale": [
+        8,
+        8,
+        8
+      ],
+      "renderParts": [
+        {
+          "mesh": "Meshes/Cone.json",
+          "material": "Materials/Primitive.json"
+        }
+      ],
+      "children": []
+    }
+  ]
+}

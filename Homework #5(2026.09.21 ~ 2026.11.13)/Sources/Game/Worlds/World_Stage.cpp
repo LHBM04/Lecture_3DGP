@@ -19,14 +19,14 @@ namespace TUK::Game
 		assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		if (!assets)
 		{
-			std::cerr << "World_Stage: AssetSubsystem is not available." << std::endl;
+			Logger::LogCritical("에셋 서브시스템을 사용할 수 없습니다.");
 			return;
 		}
 
 		input = App::GetInstance().GetSubsystem<InputSubsystem>();
 		if (!input)
 		{
-			std::cerr << "World_Stage: InputSubsystem is not available." << std::endl;
+			Logger::LogCritical("입력 서브시스템을 사용할 수 없습니다.");
 			return;
 		}
 
@@ -39,8 +39,7 @@ namespace TUK::Game
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
 		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 
-		const std::filesystem::path MODEL_PATH = "Resources/Models/Model.json";
-		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>(MODEL_PATH))
+		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources/Models/Model.json"))
 		{
 			if (!Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f)))
 			{
