@@ -1,7 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUCommandBuffer.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <span>
 #include <utility>
@@ -9,8 +11,9 @@
 #include "../Entities/Entity.hpp"
 #include "../Entities/Transform.hpp"
 
-#include "../Resources/ImageAsset.hpp"
+#include "../Resources/Cubemap.hpp"
 #include "../Resources/MaterialAsset.hpp"
+#include "../Resources/TextureAsset.hpp"
 
 #include "../Core/Common.hpp"
 
@@ -52,7 +55,7 @@ namespace TUK::Framework
 			CAMERA = 0,
 			OBJECT = 1,
 			MATERIAL = 2,
-			BASE_COLOR_TEXTURE = 3
+			TEXTURE = 3
 		};
 	}
 
@@ -143,7 +146,11 @@ namespace TUK::Framework
 		}
 		const ColorRGBA<f32>& baseColor = material->GetBaseColor();
 		const ColorRGBA<f32>& emissiveColor = material->GetEmissiveColor();
-		const ImageAsset* baseColorTexture = material->GetBaseColorTexture();
+		const TextureAsset* baseColorTexture = material->GetBaseColorTexture();
+		if (material->IsSkybox())
+		{
+			return std::unexpected("메시에는 일반 2D 텍스처를 사용하는 머티리얼이 필요합니다.");
+		}
 		MaterialConstants constants{};
 		constants.baseColor = { baseColor.GetR(), baseColor.GetG(), baseColor.GetB(), baseColor.GetA() };
 		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
@@ -155,7 +162,13 @@ namespace TUK::Framework
 		{
 			return std::unexpected(allocation.error());
 		}
-		if (auto result = BindBaseColorTexture(baseColorTexture ? &baseColorTexture->GetTexture() : nullptr); !result)
+		D3D12_SHADER_RESOURCE_VIEW_DESC nullView{};
+		nullView.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		nullView.Texture2D.MipLevels = 1;
+		if (auto result = BindTexture(baseColorTexture ? &baseColorTexture->GetTexture() : nullptr,
+			baseColorTexture ? nullptr : &nullView); !result)
 		{
 			return result;
 		}
@@ -296,6 +309,40 @@ namespace TUK::Framework
 		d3dCommandList->IASetIndexBuffer(&indexView);
 	}
 
+	std::expected<void, std::string> GPUCommandBuffer::DrawSkybox(
+		const MaterialAsset* material, const Cubemap* cubemap)
+	{
+		ASSERT_FMT(material, "설정할 스카이박스 머티리얼이 nullptr입니다.");
+
+		if (!cameraPrepared || activeTargetFormat != material->GetTargetFormat())
+		{
+			return std::unexpected("스카이박스를 그리려면 카메라와 호환되는 렌더 타깃이 필요합니다.");
+		}
+
+		if (!material->IsSkybox() || !cubemap)
+		{
+			return std::unexpected("스카이박스 머티리얼과 큐브맵이 필요합니다.");
+		}
+
+		const GPUTexture2D& texture = cubemap->GetTexture();
+		const auto description = texture.GetD3DResource().GetDesc();
+		D3D12_SHADER_RESOURCE_VIEW_DESC view{};
+		view.Format = description.Format;
+		view.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		view.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		view.TextureCube.MipLevels = description.MipLevels;
+		if (auto result = BindTexture(&texture, &view); !result)
+		{
+			return result;
+		}
+
+		SetGPUGraphicsPipelineState(material->GetGraphicsPipelineState());
+		d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		constexpr u32 FULLSCREEN_VERTEX_COUNT = 3;
+		Draw(FULLSCREEN_VERTEX_COUNT);
+		return {};
+	}
+
 	void GPUCommandBuffer::Draw(u32 vertexCount, u32 firstVertex)
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
@@ -308,40 +355,51 @@ namespace TUK::Framework
 		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
 	}
 
-	void GPUCommandBuffer::ClearGPUTarget(const GPUTarget& target, const ColorRGBA<f32>& clearColor)
+	bool GPUCommandBuffer::ClearCameraBuffers(const Camera* camera, bool clearColor)
 	{
-		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		ASSERT_FMT(camera, "설정할 카메라가 nullptr입니다.");
+		ASSERT_FMT(cameraPrepared, "클리어 전에 카메라를 설정해야 합니다.");
 
-		const FLOAT color[] =
-		{
-			clearColor.GetR(),
-			clearColor.GetG(),
-			clearColor.GetB(),
-			clearColor.GetA()
+		const D3D12_VIEWPORT& viewport = camera->GetViewport();
+		const D3D12_RECT& scissor = camera->GetScissorRect();
+		const f32 targetWidth = static_cast<f32>(activeTargetBounds.right);
+		const f32 targetHeight = static_cast<f32>(activeTargetBounds.bottom);
+		const D3D12_RECT rect{
+			std::max(scissor.left, static_cast<LONG>(std::floor(std::clamp(viewport.TopLeftX, 0.0f, targetWidth)))),
+			std::max(scissor.top, static_cast<LONG>(std::floor(std::clamp(viewport.TopLeftY, 0.0f, targetHeight)))),
+			std::min(scissor.right, static_cast<LONG>(std::ceil(std::clamp(viewport.TopLeftX + viewport.Width, 0.0f, targetWidth)))),
+			std::min(scissor.bottom, static_cast<LONG>(std::ceil(std::clamp(viewport.TopLeftY + viewport.Height, 0.0f, targetHeight))))
 		};
+		if (rect.left >= rect.right || rect.top >= rect.bottom)
+		{
+			return false;
+		}
 
-		d3dCommandList->ClearRenderTargetView(target.GetD3DRTVHandle(), color, 0, nullptr);
-		d3dCommandList->ClearDepthStencilView(
-			target.GetD3DDSVHandle(),
-			D3D12_CLEAR_FLAG_DEPTH,
-			GPUTarget::DEPTH_CLEAR_VALUE,
-			0,
-			0,
-			nullptr);
+		if (clearColor)
+		{
+			const ColorRGBA<f32>& background = camera->GetBackgroundColor();
+			const FLOAT color[] = { background.GetR(), background.GetG(), background.GetB(), background.GetA() };
+			d3dCommandList->ClearRenderTargetView(activeRTV, color, 1, &rect);
+		}
+		d3dCommandList->ClearDepthStencilView(activeDSV, D3D12_CLEAR_FLAG_DEPTH, GPUTarget::DEPTH_CLEAR_VALUE, 0, 1, &rect);
+		return true;
 	}
 
 	void GPUCommandBuffer::SetGPUTarget(const GPUTarget& target) noexcept
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 
-		activeTargetFormat = target.GetTexture().GetD3DResource().GetDesc().Format;
+		const auto description = target.GetTexture().GetD3DResource().GetDesc();
+		activeTargetFormat = description.Format;
+		activeRTV = target.GetD3DRTVHandle();
+		activeDSV = target.GetD3DDSVHandle();
+		activeTargetBounds = { 0, 0, static_cast<LONG>(description.Width), static_cast<LONG>(description.Height) };
 		cameraPrepared = false;
-		const D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = target.GetD3DRTVHandle();
-		const D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = target.GetD3DDSVHandle();
-		d3dCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+		d3dCommandList->OMSetRenderTargets(1, &activeRTV, FALSE, &activeDSV);
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::BindBaseColorTexture(const GPUTexture2D* texture)
+	std::expected<void, std::string> GPUCommandBuffer::BindTexture(
+		const GPUTexture2D* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* view)
 	{
 		constexpr u32 DESCRIPTORS_PER_PAGE = 256;
 		constexpr auto HEAP_TYPE = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -368,15 +426,7 @@ namespace TUK::Framework
 		auto cpuHandle = heap->GetCPUDescriptorHandleForHeapStart();
 		cpuHandle.ptr += offset;
 
-		D3D12_SHADER_RESOURCE_VIEW_DESC nullView{};
-		nullView.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		nullView.Texture2D.MipLevels = 1;
-		d3dDevice.CreateShaderResourceView(
-			texture ? &texture->GetD3DResource() : nullptr,
-			texture ? nullptr : &nullView,
-			cpuHandle);
+		d3dDevice.CreateShaderResourceView(texture ? &texture->GetD3DResource() : nullptr, view, cpuHandle);
 
 		if (slot == 0)
 		{
@@ -385,7 +435,7 @@ namespace TUK::Framework
 
 		auto gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
 		gpuHandle.ptr += offset;
-		d3dCommandList->SetGraphicsRootDescriptorTable(std::to_underlying(GPURootSlot::BASE_COLOR_TEXTURE), gpuHandle);
+		d3dCommandList->SetGraphicsRootDescriptorTable(std::to_underlying(GPURootSlot::TEXTURE), gpuHandle);
 		++textureDescriptorCount;
 		return {};
 	}

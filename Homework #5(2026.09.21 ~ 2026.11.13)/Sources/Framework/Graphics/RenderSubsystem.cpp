@@ -70,7 +70,6 @@ namespace TUK::Framework
 			const GPUTexture2D& backBuffer = target.GetTexture();
 
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-			commandBuffer->ClearGPUTarget(target, ColorRGBA<f32>::GetBlack());
 			commandBuffer->SetGPUTarget(target);
 
 			for (const RenderCallback& listener : listeners)

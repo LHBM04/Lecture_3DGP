@@ -131,7 +131,14 @@ namespace TUK::Framework
 					continue;
 				}
 
+				const Camera::BackgroundPass background = camera->PrepareBackground(commandBuffer, skyboxMaterial);
+
 				RenderEntities(&Entity::Render, commandBuffer);
+
+				if (isEntered)
+				{
+					camera->RenderBackground(commandBuffer, background);
+				}
 			}
 		});
 	}
@@ -155,6 +162,7 @@ namespace TUK::Framework
 			{
 				isEntered = false;
 				OnExit();
+				skyboxMaterial = nullptr;
 			}
 		};
 

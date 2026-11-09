@@ -12,26 +12,26 @@
 namespace TUK::Framework
 {
 	class GPUDevice;
-	class ImageAsset;
+	class TextureAsset;
 
 	class SpriteRenderer : public Component
 	{
 	public:
 		using Component::Component;
 
-		[[nodiscard]] const ImageAsset* GetImage() const noexcept;
-		void SetImage(const ImageAsset* value) noexcept;
+		[[nodiscard]] const TextureAsset* GetImage() const noexcept;
+		void SetImage(const TextureAsset* value) noexcept;
 
 	private:
-		const ImageAsset* image = nullptr;
+		const TextureAsset* image = nullptr;
 	};
 
-	inline const ImageAsset* SpriteRenderer::GetImage() const noexcept
+	inline const TextureAsset* SpriteRenderer::GetImage() const noexcept
 	{
 		return image;
 	}
 
-	inline void SpriteRenderer::SetImage(const ImageAsset* value) noexcept
+	inline void SpriteRenderer::SetImage(const TextureAsset* value) noexcept
 	{
 		image = value;
 	}

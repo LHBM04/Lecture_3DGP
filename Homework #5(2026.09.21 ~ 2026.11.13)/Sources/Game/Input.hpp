@@ -19,5 +19,7 @@ namespace TUK::Game
 		bool IsMouseButtonPressed(ButtonCode button);
 		bool IsMouseButtonHeld(ButtonCode button);
 		bool IsMouseButtonReleased(ButtonCode button);
+
+		[[nodiscard]] Vector2D<i32> GetMousePositionDelta() noexcept;
 	}
 }

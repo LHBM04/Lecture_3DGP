@@ -1,15 +1,24 @@
 ﻿#include "Precompiled.hpp"
-#include "ImageAssetLoader.hpp"
+#include "TextureAssetLoader.hpp"
+
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
+#include <limits>
+#include <utility>
+#include <vector>
+
+#include "../Core/Common.hpp"
 
 #include "../Graphics/GPUBuffer.hpp"
 #include "../Graphics/GPUDevice.hpp"
 
-#include "../Core/Common.hpp"
+#include "CubemapLoader.hpp"
 
 namespace TUK::Framework
 {
-	std::expected<std::unique_ptr<ImageAsset>, std::string> ImageAssetLoader::Load(
-		const std::filesystem::path& path) const
+	[[nodiscard]] static std::expected<GPUTexture2D, std::string> LoadDDSTexture(
+		const std::filesystem::path& path, const GPUDevice& device, bool expectsCubemap)
 	{
 		std::string extension = path.extension().string();
 		std::ranges::transform(extension, extension.begin(), [](unsigned char character)
@@ -35,9 +44,13 @@ namespace TUK::Framework
 		}
 
 		const auto description = resource->GetDesc();
-		if (isCubeMap || description.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D || description.DepthOrArraySize != 1)
+		const UINT expectedArraySize = expectsCubemap ? 6u : 1u;
+		if (isCubeMap != expectsCubemap || description.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D ||
+			description.DepthOrArraySize != expectedArraySize || (expectsCubemap && description.Width != description.Height))
 		{
-			return std::unexpected("이미지 로더는 배열이 아닌 2D 텍스처만 지원합니다.");
+			return std::unexpected(expectsCubemap
+				? "DDS 파일에 단일 큐브맵이 필요합니다."
+				: "DDS 파일에 일반 2D 텍스처가 필요합니다.");
 		}
 		if (subresources.empty())
 		{
@@ -104,6 +117,28 @@ namespace TUK::Framework
 			return std::unexpected("이미지 업로드 중 디바이스가 제거되었습니다.");
 		}
 
-		return std::make_unique<ImageAsset>(path, GPUTexture2D(std::move(resource)));
+		return GPUTexture2D(std::move(resource));
+	}
+
+	std::expected<std::unique_ptr<TextureAsset>, std::string> TextureAssetLoader::Load(
+		const std::filesystem::path& path) const
+	{
+		auto texture = LoadDDSTexture(path, device, false);
+		if (!texture)
+		{
+			return std::unexpected(texture.error());
+		}
+		return std::make_unique<TextureAsset>(path, std::move(*texture));
+	}
+
+	std::expected<std::unique_ptr<Cubemap>, std::string> CubemapLoader::Load(
+		const std::filesystem::path& path) const
+	{
+		auto texture = LoadDDSTexture(path, device, true);
+		if (!texture)
+		{
+			return std::unexpected(texture.error());
+		}
+		return std::make_unique<Cubemap>(path, std::move(*texture));
 	}
 }

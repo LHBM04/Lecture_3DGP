@@ -9,10 +9,10 @@
 
 namespace TUK::Framework
 {
-	class ImageAsset final : public Asset
+	class TextureAsset final : public Asset
 	{
 	public:
-		explicit ImageAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept;
+		explicit TextureAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept;
 
 		[[nodiscard]] const GPUTexture2D& GetTexture() const noexcept;
 
@@ -20,13 +20,13 @@ namespace TUK::Framework
 		GPUTexture2D texture;
 	};
 
-	inline ImageAsset::ImageAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept
+	inline TextureAsset::TextureAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept
 		: Asset(std::move(path))
 		, texture(std::move(texture))
 	{
 	}
 
-	inline const GPUTexture2D& ImageAsset::GetTexture() const noexcept
+	inline const GPUTexture2D& TextureAsset::GetTexture() const noexcept
 	{
 		return texture;
 	}

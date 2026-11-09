@@ -153,10 +153,16 @@
     <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp">
+    <ClInclude Include="Sources\Framework\Resources\Cubemap.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\CubemapLoader.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\TextureAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\TextureAssetLoader.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp">
@@ -249,6 +255,9 @@
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
+    <ClInclude Include="Sources\Game\Input.hpp" />
+    <ClInclude Include="Sources\Game\Time.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
@@ -338,10 +347,10 @@
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\ImageAsset.cpp">
+    <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\ImageAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\TextureAssetLoader.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp">
@@ -392,6 +401,9 @@
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
+    <ClCompile Include="Sources\Game\Input.cpp" />
+    <ClCompile Include="Sources\Game\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\Homework #5(2026.09.21 ~ 2026.11.13).rc">
@@ -532,6 +544,9 @@
     <None Include="Resources\Materials\Primitive.json">
       <Filter>Resources\Materials</Filter>
     </None>
+    <None Include="Resources\Materials\Skybox.json">
+      <Filter>Resources\Materials</Filter>
+    </None>
     <None Include="Resources\Materials\Material_0000.json">
       <Filter>Resources\Materials</Filter>
     </None>
@@ -541,6 +556,11 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\Shaders\Skybox.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

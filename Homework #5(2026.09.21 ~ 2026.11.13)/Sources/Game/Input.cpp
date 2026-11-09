@@ -47,4 +47,9 @@ namespace TUK::Game
 	{
 		return provider && provider->IsMouseButtonReleased(button);
 	}
+
+	Vector2D<i32> Input::GetMousePositionDelta() noexcept
+	{
+		return provider ? provider->GetMousePositionDelta() : Vector2D<i32>{};
+	}
 }

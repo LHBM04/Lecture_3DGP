@@ -22,6 +22,7 @@
 namespace TUK::Framework
 {
 	class Camera;
+	class Cubemap;
 	class Entity;
 	class GPUDevice;
 	class GPUMesh;
@@ -82,12 +83,15 @@ namespace TUK::Framework
 
 		void SetGPUMesh(const GPUMesh& mesh) noexcept;
 
+		[[nodiscard]] std::expected<void, std::string> DrawSkybox(const MaterialAsset* material, const Cubemap* cubemap);
+
 		void Draw(u32 vertexCount, u32 firstVertex = 0);
 		void DrawIndexed(u32 indexCount, u32 firstIndex = 0, i32 baseVertex = 0);
 
-		void ClearGPUTarget(const GPUTarget& target, const ColorRGBA<f32>& clearColor);
+		bool ClearCameraBuffers(const Camera* camera, bool clearColor);
 		void SetGPUTarget(const GPUTarget& target) noexcept;
 
+		[[nodiscard]] DXGI_FORMAT GetActiveTargetFormat() const noexcept;
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
@@ -95,7 +99,8 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 
-		[[nodiscard]] std::expected<void, std::string> BindBaseColorTexture(const GPUTexture2D* texture);
+		[[nodiscard]] std::expected<void, std::string> BindTexture(
+			const GPUTexture2D* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* view);
 
 		const GPUDevice* device;
 
@@ -110,6 +115,9 @@ namespace TUK::Framework
 		usize textureDescriptorCount = 0;
 		
 		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
+		D3D12_CPU_DESCRIPTOR_HANDLE activeRTV{};
+		D3D12_CPU_DESCRIPTOR_HANDLE activeDSV{};
+		D3D12_RECT activeTargetBounds{};
 		
 		bool cameraPrepared = false;
 	};
@@ -122,6 +130,11 @@ namespace TUK::Framework
 		ASSERT_FMT(this->device, "device가 nullptr입니다.");
 		ASSERT_FMT(this->d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		ASSERT_FMT(this->d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
+	}
+
+	inline DXGI_FORMAT GPUCommandBuffer::GetActiveTargetFormat() const noexcept
+	{
+		return activeTargetFormat;
 	}
 
 	inline ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept

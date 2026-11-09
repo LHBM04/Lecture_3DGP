@@ -21,21 +21,21 @@ namespace TUK::Game
 		}
 
 		Vector3D<f32> movement = transform->GetWorldPosition();
-		if (Input::IsKeyHeld(KeyCode::W))
+		if (Input::IsKeyHeld(KeyCode::UP))
 		{
 			movement += Vector3D<f32>::GetForward() * moveSpeed * Time::GetDeltaTime();
 		}
-		if (Input::IsKeyHeld(KeyCode::S))
+		if (Input::IsKeyHeld(KeyCode::DOWN))
 		{
 			movement -= Vector3D<f32>::GetForward() * moveSpeed * Time::GetDeltaTime();
 		}
 
 		Quaternion<f32> rotation = transform->GetWorldRotation();
-		if (Input::IsKeyHeld(KeyCode::A))
+		if (Input::IsKeyHeld(KeyCode::LEFT))
 		{
 			rotation *= Quaternion<f32>::Euler(Vector3D<f32>::GetUp()) * rotationSpeed * Time::GetDeltaTime();
 		}
-		if (Input::IsKeyHeld(KeyCode::D))
+		if (Input::IsKeyHeld(KeyCode::RIGHT))
 		{
 			rotation *= Quaternion<f32>::Euler(Vector3D<f32>::GetDown()) * rotationSpeed * Time::GetDeltaTime();
 		}

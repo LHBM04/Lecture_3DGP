@@ -1,14 +1,17 @@
 ﻿#include "Precompiled.hpp"
 #include "World_Stage.hpp"
 
+#include <algorithm>
+#include <cmath>
+
 #include "Framework/Core.hpp"
 #include "Framework/Entities.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
-#include "Framework/Platform/InputSubsystem.hpp"
 
 #include "../Components/PlayerController.hpp"
 #include "../Input.hpp"
+#include "../Time.hpp"
 
 using namespace TUK::Framework;
 
@@ -16,6 +19,10 @@ namespace TUK::Game
 {
 	void World_Stage::OnEnter()
 	{
+		cameraTransform = nullptr;
+		cameraYaw = 0.0f;
+		cameraPitch = 0.0f;
+
 		assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		if (!assets)
 		{
@@ -23,17 +30,12 @@ namespace TUK::Game
 			return;
 		}
 
-		input = App::GetInstance().GetSubsystem<InputSubsystem>();
-		if (!input)
-		{
-			Logger::LogCritical("입력 서브시스템을 사용할 수 없습니다.");
-			return;
-		}
-
 		Entity* cameraEntity = Instantiate();
 		cameraEntity->SetName("Camera");
 		cameraEntity->SetTag("Main Camera");
-		cameraEntity->AddComponent<Transform>()->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -10.0f));
+		cameraTransform = cameraEntity->AddComponent<Transform>();
+		cameraTransform->SetLocalRotation(Quaternion<f32>{});
+		cameraTransform->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -10.0f));
 
 		Camera* camera = cameraEntity->AddComponent<Camera>();
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
@@ -44,6 +46,10 @@ namespace TUK::Game
 			tank = Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f));
 			tank->AddComponent<PlayerController>();
 		}
+
+		camera->SetClearFlags(CameraClearFlags::Skybox);
+		camera->SetCubemap(assets->LoadAsset<Cubemap>("Resources/Textures/Polyverse Skies - Blue Sky.dds"));
+		SetSkyboxMaterial(assets->LoadAsset<MaterialAsset>("Resources/Materials/Skybox.json"));
 	}
 
 	void World_Stage::OnUpdate()
@@ -51,6 +57,40 @@ namespace TUK::Game
 		if (Input::IsKeyPressed(KeyCode::ESCAPE))
 		{
 			App::GetInstance().GetSubsystem<WorldSubsystem>()->ExitWorld();
+			return;
 		}
+
+		if (!cameraTransform)
+		{
+			return;
+		}
+
+		constexpr f32 CAMERA_MOVE_SPEED = 8.0f;
+		constexpr f32 MOUSE_SENSITIVITY = 0.12f;
+		constexpr f32 MAX_PITCH = 89.0f;
+		constexpr f32 FULL_TURN = 360.0f;
+
+		const Vector2D<i32> mouseDelta = Input::GetMousePositionDelta();
+		if (Input::IsMouseButtonHeld(ButtonCode::LEFT) && (mouseDelta.GetX() != 0 || mouseDelta.GetY() != 0))
+		{
+			cameraYaw = std::remainder(cameraYaw + static_cast<f32>(mouseDelta.GetX()) * MOUSE_SENSITIVITY, FULL_TURN);
+			cameraPitch = std::clamp(cameraPitch + static_cast<f32>(mouseDelta.GetY()) * MOUSE_SENSITIVITY,
+				-MAX_PITCH, MAX_PITCH);
+			cameraTransform->SetLocalRotation(Quaternion<f32>::Euler(cameraPitch, cameraYaw, 0.0f));
+		}
+
+		const f32 forwardInput = static_cast<f32>(Input::IsKeyHeld(KeyCode::W)) -
+			static_cast<f32>(Input::IsKeyHeld(KeyCode::S));
+		const f32 rightInput = static_cast<f32>(Input::IsKeyHeld(KeyCode::D)) -
+			static_cast<f32>(Input::IsKeyHeld(KeyCode::A));
+		if (forwardInput == 0.0f && rightInput == 0.0f)
+		{
+			return;
+		}
+
+		const Matrix4x4<f32>& cameraMatrix = cameraTransform->GetWorldMatrix();
+		const Vector3D<f32> direction = cameraMatrix.GetForward() * forwardInput + cameraMatrix.GetRight() * rightInput;
+		const Vector3D<f32> displacement = direction.GetNormalized() * (CAMERA_MOVE_SPEED * Time::GetDeltaTime());
+		cameraTransform->SetWorldPosition(cameraTransform->GetWorldPosition() + displacement);
 	}
 }

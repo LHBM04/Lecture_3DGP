@@ -17,8 +17,8 @@
 #include "../Math/Mathf.hpp"
 
 #include "AssetSubsystem.hpp"
-#include "ImageAsset.hpp"
 #include "ShaderAsset.hpp"
+#include "TextureAsset.hpp"
 
 namespace TUK::Framework
 {
@@ -90,7 +90,17 @@ namespace TUK::Framework
 		};
 		const auto materialDir = path.parent_path();
 		const auto assetRoot = materialDir.parent_path();
-		const ImageAsset* baseColorTexture = nullptr;
+		bool isSkybox = false;
+		if (const auto pass = json.find("pass"); pass != json.end())
+		{
+			if (*pass != "skybox" && *pass != "surface")
+			{
+				return parseError;
+			}
+			isSkybox = *pass == "skybox";
+		}
+
+		const TextureAsset* texture = nullptr;
 		if (const auto field = json.find("baseColorTexture"); field != json.end())
 		{
 			if (!field->is_string())
@@ -101,7 +111,7 @@ namespace TUK::Framework
 			const auto& name = field->get_ref<const std::string&>();
 			if (!name.empty())
 			{
-				if (name.find('\0') != std::string::npos)
+				if (isSkybox || name.find('\0') != std::string::npos)
 				{
 					return parseError;
 				}
@@ -114,10 +124,10 @@ namespace TUK::Framework
 				}
 
 				const auto texturePath = assetRoot / imagePath;
-				baseColorTexture = assets->LoadAsset<ImageAsset>(texturePath);
-				if (!baseColorTexture)
+				texture = assets->LoadAsset<TextureAsset>(texturePath);
+				if (!texture)
 				{
-					return std::unexpected(std::format("베이스 컬러 텍스처를 로드하지 못했습니다: {}", texturePath.generic_string()));
+					return std::unexpected(std::format("머티리얼 텍스처를 로드하지 못했습니다: {}", texturePath.generic_string()));
 				}
 			}
 		}
@@ -180,7 +190,10 @@ namespace TUK::Framework
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
 		description.VS = vertex->GetShader().GetD3DBytecode();
 		description.PS = pixel->GetShader().GetD3DBytecode();
-		description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
+		if (!isSkybox)
+		{
+			description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
+		}
 		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		description.NumRenderTargets = 1;
 		description.RTVFormats[0] = targetFormat;
@@ -188,10 +201,15 @@ namespace TUK::Framework
 		description.SampleDesc = { 1, 0 };
 		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		description.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		description.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+		description.RasterizerState.CullMode = isSkybox ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
 		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
+		if (isSkybox)
+		{
+			description.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+			description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		}
 
 		auto pipeline = device.CreateGraphicsPipelineState(description);
 		if (!pipeline)
@@ -202,18 +220,19 @@ namespace TUK::Framework
 		return std::make_unique<MaterialAsset>(
 			path,
 			MaterialAssetData{
-				.cullMode = D3D12_CULL_MODE_BACK,
+				.cullMode = description.RasterizerState.CullMode,
 				.fillMode = D3D12_FILL_MODE_SOLID,
 				.baseColor = parsedBaseColor,
 				.emissiveColor = parsedEmissiveColor,
 				.specularColor = parsedSpecularColor,
 				.metallic = parsedMetallic,
 				.roughness = parsedRoughness,
-				.baseColorTexture = baseColorTexture,
+				.baseColorTexture = texture,
 				.vertexShader = vertex,
 				.pixelShader = pixel,
 				.pipelineState = std::move(*pipeline),
-				.targetFormat = targetFormat
+				.targetFormat = targetFormat,
+				.isSkybox = isSkybox
 			});
 	}
 }

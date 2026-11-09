@@ -15,7 +15,7 @@
 
 namespace TUK::Framework
 {
-	class ImageAsset;
+	class TextureAsset;
 	class ShaderAsset;
 
 	struct MaterialAssetData final
@@ -30,12 +30,13 @@ namespace TUK::Framework
 		f32 metallic = 0.0f;
 		f32 roughness = 0.5f;
 
-		const ImageAsset* baseColorTexture = nullptr;
+		const TextureAsset* baseColorTexture = nullptr;
 		const ShaderAsset* vertexShader = nullptr;
 		const ShaderAsset* pixelShader = nullptr;
 
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
+		bool isSkybox = false;
 	};
 
 	class MaterialAsset final : public Asset
@@ -56,7 +57,8 @@ namespace TUK::Framework
 		[[nodiscard]] f32 GetRoughness() const noexcept;
 		[[nodiscard]] f32 GetSmoothness() const noexcept;
 
-		[[nodiscard]] const ImageAsset* GetBaseColorTexture() const noexcept;
+		[[nodiscard]] const TextureAsset* GetBaseColorTexture() const noexcept;
+		[[nodiscard]] bool IsSkybox() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetVertexShader() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetPixelShader() const noexcept;
 
@@ -74,12 +76,13 @@ namespace TUK::Framework
 		f32 metallic = 0.0f;
 		f32 roughness = 0.5f;
 
-		const ImageAsset* baseColorTexture = nullptr;
+		const TextureAsset* baseColorTexture = nullptr;
 		const ShaderAsset* vertexShader = nullptr;
 		const ShaderAsset* pixelShader = nullptr;
 
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
+		bool isSkybox = false;
 	};
 
 	inline MaterialAsset::MaterialAsset(
@@ -98,6 +101,7 @@ namespace TUK::Framework
 		, pixelShader(data.pixelShader)
 		, pipelineState(std::move(data.pipelineState))
 		, targetFormat(data.targetFormat)
+		, isSkybox(data.isSkybox)
 	{
 		ASSERT_FMT(vertexShader, "머티리얼의 정점 셰이더 에셋이 nullptr입니다.");
 		ASSERT_FMT(pixelShader, "머티리얼의 픽셀 셰이더 에셋이 nullptr입니다.");
@@ -143,9 +147,14 @@ namespace TUK::Framework
 		return 1.0f - roughness;
 	}
 
-	inline const ImageAsset* MaterialAsset::GetBaseColorTexture() const noexcept
+	inline const TextureAsset* MaterialAsset::GetBaseColorTexture() const noexcept
 	{
 		return baseColorTexture;
+	}
+
+	inline bool MaterialAsset::IsSkybox() const noexcept
+	{
+		return isSkybox;
 	}
 
 	inline const ShaderAsset* MaterialAsset::GetVertexShader() const noexcept

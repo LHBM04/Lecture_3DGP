@@ -85,7 +85,8 @@ namespace TUK::Game
 		auto& device = renderSubsystem->GetDevice();
 		assetSubsystem->AddLoader<ModelAssetLoader>();
 		assetSubsystem->AddLoader<MeshAssetLoader>(device);
-		assetSubsystem->AddLoader<ImageAssetLoader>(device);
+		assetSubsystem->AddLoader<TextureAssetLoader>(device);
+		assetSubsystem->AddLoader<CubemapLoader>(device);
 		assetSubsystem->AddLoader<MaterialAssetLoader>(device);
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
 

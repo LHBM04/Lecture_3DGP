@@ -18,6 +18,7 @@ namespace TUK::Framework
 	class Camera;
 	class Entity;
 	class GPUCommandBuffer;
+	class MaterialAsset;
 	class ModelAsset;
 	class Transform;
 
@@ -88,6 +89,8 @@ namespace TUK::Framework
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
 
+		void SetSkyboxMaterial(const MaterialAsset* value) noexcept;
+
 	private:
 		using WorldCallback = void (World::*)();
 		using EntityCallback = void (Entity::*)();
@@ -109,7 +112,13 @@ namespace TUK::Framework
 
 		std::vector<std::unique_ptr<Entity>> entities{};
 		std::vector<Camera*> cameras{};
+		const MaterialAsset* skyboxMaterial = nullptr;
 	};
+
+	inline void World::SetSkyboxMaterial(const MaterialAsset* value) noexcept
+	{
+		skyboxMaterial = value;
+	}
 
 	inline bool World::IsEntered() const noexcept
 	{

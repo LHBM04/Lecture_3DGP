@@ -254,8 +254,10 @@
     <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp" />
-    <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
-    <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\Cubemap.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\CubemapLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\TextureAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\TextureAssetLoader.hpp" />
     <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
@@ -278,8 +280,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
-    <ClCompile Include="Sources\Framework\Resources\ImageAsset.cpp" />
-    <ClCompile Include="Sources\Framework\Resources\ImageAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\TextureAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Core\Common.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp" />
@@ -393,6 +395,7 @@
     <None Include="Resources\Meshes\Mesh_0022.json" />
     <None Include="Resources\Meshes\Mesh_0023.json" />
     <None Include="Resources\Materials\Primitive.json" />
+    <None Include="Resources\Materials\Skybox.json" />
     <None Include="Resources\Materials\Material_0000.json" />
     <None Include="Resources\Materials\Material_0001.json" />
     <None Include="Resources\Textures\Test.png" />
@@ -400,5 +403,13 @@
     <None Include="Resources\Textures\Texture_0000.png" />
     <None Include="Resources\Textures\Texture_0001.dds" />
     <None Include="Resources\Textures\Texture_0001.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\Shaders\Skybox.hlsl">
+      <FileType>Document</FileType>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Message>Compiling %(Filename)%(Extension)</Message>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+    </CustomBuild>
   </ItemGroup>
 </Project>

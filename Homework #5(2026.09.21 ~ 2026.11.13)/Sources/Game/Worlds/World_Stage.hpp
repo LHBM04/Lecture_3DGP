@@ -20,6 +20,10 @@ namespace TUK::Game
 		AssetSubsystem* assets = nullptr;
 		InputSubsystem* input = nullptr;
 
+		Transform* cameraTransform = nullptr;
+		f32 cameraYaw = 0.0f;
+		f32 cameraPitch = 0.0f;
+
 		Entity* tank = nullptr;
 	};
 }
