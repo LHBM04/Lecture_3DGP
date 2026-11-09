@@ -4,7 +4,7 @@
 #include "../Resources/MaterialAsset.hpp"
 #include "../Resources/MeshAsset.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 #include "GPUCommandBuffer.hpp"
 

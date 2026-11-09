@@ -1,11 +1,15 @@
 #include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
-#include "../Utilities/JsonUtility.hpp"
+#include <cmath>
+
+#include <nlohmann/json.hpp>
+
+#include "Mathf.hpp"
 
 #include "ColorRGB.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -443,16 +447,35 @@ namespace TUK::Framework
 	{
 		const TScalar components[]{ GetR(), GetG(), GetB(), GetA() };
 
-		return JsonUtility::SerializeComponents(components);
+		for (const TScalar component : components)
+		{
+			if (!std::isfinite(component))
+			{
+				return nlohmann::json::value_t::discarded;
+			}
+		}
+
+		return nlohmann::json(components);
 	}
 
 	template <Scalarable TScalar>
 	bool ColorRGBA<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
-		TScalar components[4]{};
-		if (!JsonUtility::DeserializeComponents(value, components))
+		constexpr usize COMPONENT_COUNT = 4;
+		if (!value.is_array() || value.size() != COMPONENT_COUNT)
 		{
 			return false;
+		}
+
+		TScalar components[COMPONENT_COUNT]{};
+		for (usize index = 0; index < COMPONENT_COUNT; ++index)
+		{
+			const auto& component = value[index];
+			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
+			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
+			{
+				return false;
+			}
 		}
 
 		*this = ColorRGBA<TScalar>{ components[0], components[1], components[2], components[3] };

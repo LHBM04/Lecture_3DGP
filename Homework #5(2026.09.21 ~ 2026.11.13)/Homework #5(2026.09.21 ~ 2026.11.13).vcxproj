@@ -255,9 +255,6 @@
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ImageAssetLoader.hpp" />
-    <ClInclude Include="Sources\Framework\Utilities.hpp" />
-    <ClInclude Include="Sources\Framework\Utilities\JsonUtility.hpp" />
-    <ClInclude Include="Sources\Framework\Utilities\Logger.hpp" />
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
     <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp" />
@@ -279,7 +276,7 @@
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ImageAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ImageAssetLoader.cpp" />
-    <ClCompile Include="Sources\Framework\Utilities\Logger.cpp" />
+    <ClCompile Include="Sources\Framework\Core\Common.cpp" />
     <ClCompile Include="Sources\Framework\Core\Engine.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp" />

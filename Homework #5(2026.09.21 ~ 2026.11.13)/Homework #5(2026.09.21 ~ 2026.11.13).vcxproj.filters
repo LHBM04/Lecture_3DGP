@@ -37,9 +37,6 @@
     <Filter Include="Sources\Framework\Graphics">
       <UniqueIdentifier>{1464633f-6db7-442e-968e-67c77d2bcbb2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Framework\Utilities">
-      <UniqueIdentifier>{90b86734-710b-46f5-afed-69aea4ebe428}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
@@ -249,22 +246,13 @@
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Utilities\Logger.hpp">
-      <Filter>Sources\Framework\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Utilities.hpp">
-      <Filter>Sources\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Utilities\JsonUtility.hpp">
-      <Filter>Sources\Framework\Utilities</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Utilities\Logger.cpp">
-      <Filter>Sources\Framework\Utilities</Filter>
+    <ClCompile Include="Sources\Framework\Core\Common.cpp">
+      <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Engine.cpp">
       <Filter>Sources\Framework\Core</Filter>

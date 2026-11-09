@@ -6,7 +6,7 @@
 
 #include "World.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

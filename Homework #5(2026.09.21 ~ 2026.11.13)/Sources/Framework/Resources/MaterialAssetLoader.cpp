@@ -9,10 +9,12 @@
 #include <string>
 #include <utility>
 
+#include <nlohmann/json.hpp>
+
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUTarget.hpp"
 
-#include "../Utilities/JsonUtility.hpp"
+#include "../Math/Mathf.hpp"
 
 #include "AssetSubsystem.hpp"
 #include "ShaderAsset.hpp"
@@ -71,7 +73,8 @@ namespace TUK::Framework
 		};
 		for (const auto& [key, number] : numberFields)
 		{
-			if (const auto field = json.find(key); field != json.end() && !JsonUtility::DeserializeNumber(*field, number))
+			const auto field = json.find(key);
+			if (field != json.end() && (!field->is_number() || !Mathf::TryConvertScalar(field->get<f64>(), number)))
 			{
 				return parseError;
 			}
@@ -119,8 +122,6 @@ namespace TUK::Framework
 			shaderPath = shader.lexically_normal();
 		}
 
-		constexpr D3D12_CULL_MODE CULL_MODE = D3D12_CULL_MODE_BACK;
-		constexpr D3D12_FILL_MODE FILL_MODE = D3D12_FILL_MODE_SOLID;
 		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(vertexPath);
 		if (!vertex)
 		{
@@ -152,8 +153,8 @@ namespace TUK::Framework
 		description.SampleMask = UINT_MAX;
 		description.SampleDesc = { 1, 0 };
 		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		description.RasterizerState.FillMode = FILL_MODE;
-		description.RasterizerState.CullMode = CULL_MODE;
+		description.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		description.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
@@ -167,8 +168,8 @@ namespace TUK::Framework
 		return std::make_unique<MaterialAsset>(
 			path,
 			MaterialAssetData{
-				.cullMode = CULL_MODE,
-				.fillMode = FILL_MODE,
+				.cullMode = D3D12_CULL_MODE_BACK,
+				.fillMode = D3D12_FILL_MODE_SOLID,
 				.baseColor = parsedBaseColor,
 				.emissiveColor = parsedEmissiveColor,
 				.specularColor = parsedSpecularColor,

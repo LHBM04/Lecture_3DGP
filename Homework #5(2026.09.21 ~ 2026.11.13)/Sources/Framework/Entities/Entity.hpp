@@ -13,8 +13,6 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "Component.hpp"
 
 namespace TUK::Framework

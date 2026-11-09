@@ -13,8 +13,6 @@
 #include "GPUTarget.hpp"
 #include "GPUTexture2D.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 namespace TUK::Framework
 {
 	struct GPUSwapChainCreateInfo final

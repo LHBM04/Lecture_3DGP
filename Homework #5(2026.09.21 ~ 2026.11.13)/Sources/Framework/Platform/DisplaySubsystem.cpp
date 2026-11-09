@@ -3,7 +3,7 @@
 
 #include "../Core/Engine.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 #include "DisplayEvents.hpp"
 #include "EventSubsystem.hpp"

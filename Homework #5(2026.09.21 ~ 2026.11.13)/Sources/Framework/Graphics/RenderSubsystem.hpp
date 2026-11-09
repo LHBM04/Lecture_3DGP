@@ -13,8 +13,6 @@
 
 #include "../Platform/Display.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "GPUCommandBuffer.hpp"
 #include "GPUDevice.hpp"
 #include "GPUFence.hpp"

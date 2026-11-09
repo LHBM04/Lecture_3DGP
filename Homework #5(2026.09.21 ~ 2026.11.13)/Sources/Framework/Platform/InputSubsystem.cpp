@@ -1,7 +1,7 @@
 #include "Precompiled.hpp"
 #include "InputSubsystem.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 #include "Display.hpp"
 

@@ -16,8 +16,6 @@
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Matrix4x4.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "GPUBuffer.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 

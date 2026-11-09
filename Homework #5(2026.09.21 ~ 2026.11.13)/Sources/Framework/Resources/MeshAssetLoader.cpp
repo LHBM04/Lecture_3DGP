@@ -11,11 +11,13 @@
 
 #include <directxtk12/VertexTypes.h>
 
+#include <nlohmann/json.hpp>
+
 #include "../Graphics/GPUBuffer.hpp"
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUMesh.hpp"
 
-#include "../Utilities/JsonUtility.hpp"
+#include "../Math/Mathf.hpp"
 
 namespace TUK::Framework
 {
@@ -71,7 +73,8 @@ namespace TUK::Framework
 					for (usize axis = 0; axis < 3; ++axis)
 					{
 						const auto component = value.find(AXIS_NAMES[axis]);
-						if (component == value.end() || !JsonUtility::DeserializeNumber(*component, vector[axis]))
+						if (component == value.end() || !component->is_number()
+							|| !Mathf::TryConvertScalar(component->get<f64>(), vector[axis]))
 						{
 							return parseError;
 						}

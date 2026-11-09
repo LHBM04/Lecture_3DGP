@@ -7,7 +7,7 @@
 
 #include "../Resources/ModelAsset.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 #include "Entity.hpp"
 #include "Transform.hpp"

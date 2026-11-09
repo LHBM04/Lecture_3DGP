@@ -11,8 +11,6 @@
 
 #include "../Math/ColorRGBA.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "Asset.hpp"
 
 namespace TUK::Framework

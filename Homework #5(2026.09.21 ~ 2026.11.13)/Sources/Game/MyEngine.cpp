@@ -3,7 +3,7 @@
 
 #include "Framework/Platform.hpp"
 #include "Framework/Graphics.hpp"
-#include "Framework/Utilities.hpp"
+#include "Framework/Core/Common.hpp"
 
 namespace TUK::Game
 {

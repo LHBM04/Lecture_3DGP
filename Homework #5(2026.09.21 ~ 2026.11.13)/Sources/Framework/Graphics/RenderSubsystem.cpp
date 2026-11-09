@@ -10,7 +10,7 @@
 #include "../Platform/Display.hpp"
 #include "../Platform/DisplayEvents.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 #include "GPUSampler.hpp"
 #include "GPUTexture2D.hpp"

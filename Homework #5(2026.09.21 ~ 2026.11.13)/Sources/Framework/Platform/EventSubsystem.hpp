@@ -12,8 +12,6 @@
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "Event.hpp"
 
 namespace TUK::Framework

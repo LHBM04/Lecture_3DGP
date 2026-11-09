@@ -4,7 +4,7 @@
 #include "../Graphics/GPUBuffer.hpp"
 #include "../Graphics/GPUDevice.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

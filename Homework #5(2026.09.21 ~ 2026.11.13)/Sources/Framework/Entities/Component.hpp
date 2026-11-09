@@ -2,8 +2,6 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 namespace TUK::Framework
 {
 	class Entity;

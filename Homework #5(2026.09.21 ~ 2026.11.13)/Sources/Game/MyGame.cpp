@@ -5,7 +5,6 @@
 #include "../Framework/Entities/WorldSubsystem.hpp"
 #include "../Framework/Graphics.hpp"
 #include "../Framework/Platform.hpp"
-#include "../Framework/Utilities/Logger.hpp"
 
 #include "Worlds/World_Stage.hpp"
 

@@ -1,7 +1,6 @@
 ﻿#include "Precompiled.hpp"
 
 #include "Framework/Core.hpp"
-#include "Framework/Utilities.hpp"
 
 #include "MyEngine.hpp"
 #include "MyGame.hpp"

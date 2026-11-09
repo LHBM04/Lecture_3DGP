@@ -2,7 +2,7 @@
 
 #include <concepts>
 
-#include "../Utilities/Logger.hpp"
+#include "Common.hpp"
 
 #include "AppSubsystem.hpp"
 #include "System.hpp"

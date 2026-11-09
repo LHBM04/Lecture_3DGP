@@ -1,5 +1,9 @@
 ﻿#include "Precompiled.hpp"
-#include "Logger.hpp"
+#include "Common.hpp"
+
+#include <iostream>
+#include <string>
+#include <syncstream>
 
 namespace TUK::Framework::Logger
 {
@@ -12,7 +16,7 @@ namespace TUK::Framework::Logger
 				case Category::TRACE:    return "TRACE";
 				case Category::INFO:     return "INFO";
 				case Category::WARNING:  return "WARNING";
-				case Category::ERROR:    return "ERROR";
+				case Category::ERROR_LEVEL:    return "ERROR";
 				case Category::CRITICAL: return "CRITICAL";
 				default:				 break;
 			}

@@ -11,7 +11,7 @@
 
 #include "../Resources/MaterialAsset.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 #include "Camera.hpp"
 #include "GPUBuffer.hpp"

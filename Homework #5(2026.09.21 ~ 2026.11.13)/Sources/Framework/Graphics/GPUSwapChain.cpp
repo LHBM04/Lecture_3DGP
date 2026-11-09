@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUSwapChain.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

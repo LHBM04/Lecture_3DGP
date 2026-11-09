@@ -8,8 +8,6 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "Asset.hpp"
 
 namespace TUK::Framework

@@ -1,11 +1,15 @@
 #include "Precompiled.hpp"
 #include "Matrix4x4.hpp"
 
-#include "../Utilities/JsonUtility.hpp"
+#include <cmath>
+
+#include <nlohmann/json.hpp>
+
+#include "Mathf.hpp"
 
 #include "Quaternion.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -578,16 +582,35 @@ namespace TUK::Framework
 			components[index] = (*this)[index];
 		}
 
-		return JsonUtility::SerializeComponents(components);
+		for (const TScalar component : components)
+		{
+			if (!std::isfinite(component))
+			{
+				return nlohmann::json::value_t::discarded;
+			}
+		}
+
+		return nlohmann::json(components);
 	}
 
 	template <Scalarable TScalar>
 	bool Matrix4x4<TScalar>::Deserialize(const nlohmann::json& value) noexcept
 	{
-		TScalar components[16]{};
-		if (!JsonUtility::DeserializeComponents(value, components))
+		constexpr usize COMPONENT_COUNT = 16;
+		if (!value.is_array() || value.size() != COMPONENT_COUNT)
 		{
 			return false;
+		}
+
+		TScalar components[COMPONENT_COUNT]{};
+		for (usize index = 0; index < COMPONENT_COUNT; ++index)
+		{
+			const auto& component = value[index];
+			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
+			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
+			{
+				return false;
+			}
 		}
 
 		*this = Matrix4x4<TScalar>{ components };

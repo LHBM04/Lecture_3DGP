@@ -8,7 +8,7 @@
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"
 
-#include "../Utilities/Logger.hpp"
+#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

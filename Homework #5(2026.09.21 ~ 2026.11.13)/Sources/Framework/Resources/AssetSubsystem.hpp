@@ -15,8 +15,6 @@
 #include "../Core/AppSubsystem.hpp"
 #include "../Core/Common.hpp"
 
-#include "../Utilities/Logger.hpp"
-
 #include "Asset.hpp"
 #include "AssetLoader.hpp"
 
