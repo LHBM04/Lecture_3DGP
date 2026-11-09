@@ -10,8 +10,8 @@ using UnityEngine.Rendering;
 
 public static class TUKEntityExporter
 {
-    private const string VERTEX_SHADER = "Shaders/Standard.vert.cso";
-    private const string PIXEL_SHADER = "Shaders/Standard.frag.cso";
+    private const string VERTEX_SHADER = "../../Shaders/Standard.vert.cso";
+    private const string PIXEL_SHADER = "../../Shaders/Standard.frag.cso";
     private static readonly UTF8Encoding UTF8 = new UTF8Encoding(false, true);
 
     [Serializable]
@@ -40,7 +40,16 @@ public static class TUKEntityExporter
         public float[] emissiveColor;
         public float metallic;
         public float roughness;
+        [NonSerialized] public string path;
         public string baseColorTexture;
+        public string normalTexture;
+        public string metallicTexture;
+        public string roughnessTexture;
+        public string occlusionTexture;
+        public string emissiveTexture;
+        public string heightTexture;
+        public string specularTexture;
+        public string maskTexture;
         public string vertexShader;
         public string pixelShader;
     }
@@ -51,6 +60,7 @@ public static class TUKEntityExporter
         [NonSerialized] public string path;
         public Vector3[] positions;
         public Vector3[] normals;
+        public Vector2[] uv0;
         public int[] indices;
     }
 
@@ -58,17 +68,17 @@ public static class TUKEntityExporter
     {
         public List<MeshData> meshes = new List<MeshData>();
         public List<MaterialData> materials = new List<MaterialData>();
-        public Dictionary<Mesh, string[]> meshPaths =
-            new Dictionary<Mesh, string[]>();
-        public Dictionary<Material, string> materialPaths =
-            new Dictionary<Material, string>();
+        public HashSet<string> partNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<Texture, string> texturePaths = new Dictionary<Texture, string>();
+        public Dictionary<string, string> textureSources =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
 
-    [MenuItem("Tools/TUK Model Exporter")]
-    private static void ExportSelectedModel()
+    [MenuItem("Tools/TUK/Export Model")]
+    private static void ExportSelectedModels()
     {
-        GameObject selected = Selection.activeGameObject;
-        if (selected == null)
+        GameObject[] selection = Selection.gameObjects;
+        if (selection.Length == 0)
         {
             Debug.LogError("Hierarchy에서 내보낼 루트 오브젝트를 선택하세요.");
             return;
@@ -81,6 +91,33 @@ public static class TUKEntityExporter
             return;
         }
 
+        var selectedObjects = new HashSet<GameObject>(selection);
+        foreach (GameObject selected in selection)
+        {
+            if (HasSelectedAncestor(selected.transform, selectedObjects))
+            {
+                continue;
+            }
+
+            ExportModel(selected, parentFolder);
+        }
+    }
+
+    private static bool HasSelectedAncestor(Transform target, HashSet<GameObject> selectedObjects)
+    {
+        for (Transform parent = target.parent; parent != null; parent = parent.parent)
+        {
+            if (selectedObjects.Contains(parent.gameObject))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void ExportModel(GameObject selected, string parentFolder)
+    {
         try
         {
             var export = new ExportData();
@@ -88,20 +125,20 @@ public static class TUKEntityExporter
 
             if (export.meshes.Count == 0)
             {
-                Debug.LogError("선택한 계층에 내보낼 정적 메시가 없습니다.");
+                Debug.LogError($"'{selected.name}' 계층에 내보낼 정적 메시가 없습니다.");
                 return;
             }
 
-            string folderName = "TUKExport-" + Guid.NewGuid().ToString("N");
-            string output = Path.Combine(parentFolder, folderName);
-            WriteExport(output, root, export);
+            string assetName = GetSafeName(root.name);
+            string output = GetAvailableFolder(parentFolder, assetName);
+            WriteExport(output, assetName, root, export);
             Debug.Log($"TUK 모델 내보내기 완료: {output}");
         }
         catch (Exception exception) when (
             exception is IOException || exception is UnauthorizedAccessException ||
             exception is InvalidOperationException)
         {
-            Debug.LogError($"TUK 모델 내보내기 실패: {exception.Message}");
+            Debug.LogError($"TUK 모델 '{selected.name}' 내보내기 실패: {exception.Message}");
         }
     }
 
@@ -156,7 +193,15 @@ public static class TUKEntityExporter
                 $"'{target.name}'의 서브메시 수와 머티리얼 슬롯 수가 다릅니다.");
         }
 
-        string[] meshPaths = CollectMeshes(mesh, export);
+        string objectName = GetSafeName(target.name);
+        var partNames = new string[materials.Length];
+        for (int slot = 0; slot < partNames.Length; slot++)
+        {
+            string partName = partNames.Length == 1 ? objectName : $"{objectName}_{slot + 1}";
+            partNames[slot] = ReserveName(export.partNames, partName);
+        }
+
+        string[] meshPaths = CollectMeshes(mesh, partNames, export);
         for (int slot = 0; slot < meshPaths.Length; slot++)
         {
             Material material = materials[slot];
@@ -169,18 +214,13 @@ public static class TUKEntityExporter
             node.renderParts.Add(new RenderPartData
             {
                 mesh = meshPaths[slot],
-                material = CollectMaterial(material, export)
+                material = CollectMaterial(material, partNames[slot], export)
             });
         }
     }
 
-    private static string[] CollectMeshes(Mesh mesh, ExportData export)
+    private static string[] CollectMeshes(Mesh mesh, string[] partNames, ExportData export)
     {
-        if (export.meshPaths.TryGetValue(mesh, out string[] existingPaths))
-        {
-            return existingPaths;
-        }
-
         using var snapshot = Mesh.AcquireReadOnlyMeshData(mesh);
         Mesh.MeshData data = snapshot[0];
         if (data.vertexCount == 0 || !data.HasVertexAttribute(VertexAttribute.Normal))
@@ -198,6 +238,14 @@ public static class TUKEntityExporter
         // 저장 단계까지 살아 있어야 하므로 관리 배열에 한 번만 복사합니다.
         Vector3[] positions = vertexBuffer.ToArray();
         Vector3[] normals = normalBuffer.ToArray();
+        Vector2[] uv0 = Array.Empty<Vector2>();
+        if (data.HasVertexAttribute(VertexAttribute.TexCoord0))
+        {
+            using var uvBuffer = new NativeArray<Vector2>(
+                data.vertexCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            data.GetUVs(0, uvBuffer);
+            uv0 = uvBuffer.ToArray();
+        }
 
         var paths = new string[data.subMeshCount];
         for (int slot = 0; slot < data.subMeshCount; slot++)
@@ -214,28 +262,23 @@ public static class TUKEntityExporter
                 subMesh.indexCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
             data.GetIndices(indexBuffer, slot, applyBaseVertex: true);
 
-            string path = $"Meshes/Mesh_{export.meshes.Count:D4}.json";
+            string path = $"Meshes/{partNames[slot]}.json";
             paths[slot] = path;
             export.meshes.Add(new MeshData
             {
                 path = path,
                 positions = positions,
                 normals = normals,
+                uv0 = uv0,
                 indices = indexBuffer.ToArray()
             });
         }
 
-        export.meshPaths.Add(mesh, paths);
         return paths;
     }
 
-    private static string CollectMaterial(Material material, ExportData export)
+    private static string CollectMaterial(Material material, string partName, ExportData export)
     {
-        if (export.materialPaths.TryGetValue(material, out string existingPath))
-        {
-            return existingPath;
-        }
-
         Color baseColor = Color.white;
         if (material.HasProperty("_BaseColor"))
         {
@@ -260,35 +303,118 @@ public static class TUKEntityExporter
             smoothness = material.GetFloat("_Glossiness");
         }
 
-        Texture texture = null;
-        if (material.HasProperty("_BaseMap"))
-        {
-            texture = material.GetTexture("_BaseMap");
-        }
-        else if (material.HasProperty("_MainTex"))
-        {
-            texture = material.GetTexture("_MainTex");
-        }
-
-        string path = GetMaterialPath(export.materials.Count);
+        string path = $"Materials/{partName}.json";
         export.materials.Add(new MaterialData
         {
-            name = material.name,
+            path = path,
+            name = partName,
             baseColor = ToRgba(baseColor),
             emissiveColor = ToRgba(emission),
             metallic = Mathf.Clamp01(metallic),
             roughness = 1f - Mathf.Clamp01(smoothness),
-            baseColorTexture = texture != null ? AssetDatabase.GetAssetPath(texture) : "",
+            baseColorTexture = CollectTexture(material, partName, "BaseColor", export, "_BaseMap", "_BaseColorMap", "_MainTex"),
+            normalTexture = CollectTexture(material, partName, "Normal", export, "_BumpMap", "_NormalMap"),
+            metallicTexture = CollectTexture(material, partName, "Metallic", export, "_MetallicGlossMap", "_MetallicMap"),
+            roughnessTexture = CollectTexture(material, partName, "Roughness", export, "_RoughnessMap"),
+            occlusionTexture = CollectTexture(material, partName, "Occlusion", export, "_OcclusionMap", "_AmbientOcclusionMap"),
+            emissiveTexture = CollectTexture(material, partName, "Emissive", export, "_EmissionMap", "_EmissiveColorMap"),
+            heightTexture = CollectTexture(material, partName, "Height", export, "_ParallaxMap", "_HeightMap"),
+            specularTexture = CollectTexture(material, partName, "Specular", export, "_SpecGlossMap", "_SpecularColorMap"),
+            maskTexture = CollectTexture(material, partName, "Mask", export, "_MaskMap"),
             vertexShader = VERTEX_SHADER,
             pixelShader = PIXEL_SHADER
         });
-        export.materialPaths.Add(material, path);
         return path;
     }
 
-    private static string GetMaterialPath(int index)
+    private static string CollectTexture(
+        Material material, string partName, string mapName, ExportData export, params string[] properties)
     {
-        return $"Materials/Material_{index:D4}.json";
+        foreach (string property in properties)
+        {
+            if (!material.HasProperty(property))
+            {
+                continue;
+            }
+
+            Texture texture = material.GetTexture(property);
+            if (texture == null)
+            {
+                continue;
+            }
+
+            if (export.texturePaths.TryGetValue(texture, out string existingPath))
+            {
+                return existingPath;
+            }
+
+            string assetPath = AssetDatabase.GetAssetPath(texture);
+            if (!(texture is Texture2D) || string.IsNullOrEmpty(assetPath) ||
+                !(AssetImporter.GetAtPath(assetPath) is TextureImporter))
+            {
+                throw new InvalidOperationException(
+                    $"'{material.name}'의 '{property}' 맵은 원본 이미지 파일로 추출한 뒤 내보내세요.");
+            }
+
+            var package = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(assetPath);
+            string source = package == null
+                ? Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath))
+                : Path.Combine(package.resolvedPath, assetPath.Substring(package.assetPath.Length).TrimStart('/'));
+            if (!File.Exists(source))
+            {
+                throw new FileNotFoundException($"'{material.name}'의 '{property}' 원본 파일을 찾지 못했습니다.", source);
+            }
+
+            string extension = Path.GetExtension(source);
+            string path = $"Textures/{partName}_{mapName}{extension}";
+            for (int suffix = 2; export.textureSources.ContainsKey(path); suffix++)
+            {
+                path = $"Textures/{partName}_{mapName}_{suffix}{extension}";
+            }
+
+            export.texturePaths.Add(texture, path);
+            export.textureSources.Add(path, source);
+            return path;
+        }
+
+        return "";
+    }
+
+    private static string GetSafeName(string value)
+    {
+        string name = string.Join("_", value.Split(Path.GetInvalidFileNameChars())).Trim().TrimEnd(' ', '.');
+        if (string.IsNullOrEmpty(name))
+        {
+            return "Unnamed";
+        }
+
+        string stem = name.Split('.')[0].TrimEnd().ToUpperInvariant();
+        bool numberedDevice = stem.Length == 4 &&
+            (stem.StartsWith("COM", StringComparison.Ordinal) || stem.StartsWith("LPT", StringComparison.Ordinal)) &&
+            stem[3] >= '0' && stem[3] <= '9';
+        return numberedDevice || stem == "CON" || stem == "PRN" || stem == "AUX" || stem == "NUL"
+            ? "_" + name
+            : name;
+    }
+
+    private static string ReserveName(HashSet<string> names, string baseName)
+    {
+        string name = baseName;
+        for (int suffix = 2; !names.Add(name); suffix++)
+        {
+            name = $"{baseName}_{suffix}";
+        }
+        return name;
+    }
+
+    private static string GetAvailableFolder(string parentFolder, string assetName)
+    {
+        string path = Path.Combine(parentFolder, assetName);
+        for (int suffix = 2; Directory.Exists(path) || File.Exists(path); suffix++)
+        {
+            path = Path.Combine(parentFolder, $"{assetName}_{suffix}");
+        }
+        return path;
     }
 
     private static float[] ToRgba(Color color)
@@ -297,23 +423,29 @@ public static class TUKEntityExporter
     }
 
     // 수집을 마친 뒤 의존 파일을 먼저 쓰고 모델 JSON을 마지막에 기록합니다.
-    private static void WriteExport(string output, NodeData root, ExportData export)
+    private static void WriteExport(string output, string assetName, NodeData root, ExportData export)
     {
         Directory.CreateDirectory(Path.Combine(output, "Meshes"));
         Directory.CreateDirectory(Path.Combine(output, "Materials"));
         Directory.CreateDirectory(Path.Combine(output, "Models"));
+        Directory.CreateDirectory(Path.Combine(output, "Textures"));
+
+        foreach (var texture in export.textureSources)
+        {
+            File.Copy(texture.Value, Path.Combine(output, texture.Key));
+        }
 
         foreach (MeshData mesh in export.meshes)
         {
             WriteJson(Path.Combine(output, mesh.path), mesh);
         }
 
-        for (int index = 0; index < export.materials.Count; index++)
+        foreach (MaterialData material in export.materials)
         {
-            WriteJson(Path.Combine(output, GetMaterialPath(index)), export.materials[index]);
+            WriteJson(Path.Combine(output, material.path), material);
         }
 
-        WriteModelJson(Path.Combine(output, "Models", "Model.json"), root);
+        WriteModelJson(Path.Combine(output, "Models", $"{assetName}.json"), root);
     }
 
     private static void WriteModelJson(string path, NodeData root)

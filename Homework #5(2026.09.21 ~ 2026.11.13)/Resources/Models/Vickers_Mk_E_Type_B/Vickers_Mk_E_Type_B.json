@@ -1,0 +1,995 @@
+{
+    "name": "Vickers_Mk_E_Type_B",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B.json",
+            "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "Vickers_Mk_E_Type_B_Exhaust",
+        "localPosition": [
+            0.610813558101654,
+            1.0981800556182861,
+            -2.2393898963928223
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Vickers_Mk_E_Type_B_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_L.json",
+                "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Vickers_Mk_E_Type_B_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_R.json",
+                "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Vickers_Mk_E_Type_B_Turret",
+        "localPosition": [
+            -0.1684044897556305,
+            1.517352819442749,
+            -0.026158029213547707
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Turret.json",
+                "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "Vickers_Mk_E_Type_B_Mantlet",
+            "localPosition": [
+                0.10934107005596161,
+                0.3353961706161499,
+                0.4939946234226227
+            ],
+            "localRotation": [
+                2.1763574276079112e-10,
+                -2.960349710407238e-17,
+                3.725290742551124e-9,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                0.9999998211860657,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Mantlet.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "Vickers_Mk_E_Type_B_Gun",
+                "localPosition": [
+                    -0.06112993136048317,
+                    -0.007059335708618164,
+                    0.3695218861103058
+                ],
+                "localRotation": [
+                    3.477264254314605e-9,
+                    1.84792190203377e-18,
+                    -1.8626450382086546e-9,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Gun.json",
+                        "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "Vickers_Mk_E_Type_B_Muzzle",
+                    "localPosition": [
+                        -7.450580596923828e-9,
+                        2.384185791015625e-7,
+                        0.190740168094635
+                    ],
+                    "localRotation": [
+                        3.4772651424930245e-9,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.0000001192092896,
+                        0.9999999403953552
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "Vickers_Mk_E_Type_B_Muzzle_MG",
+                "localPosition": [
+                    0.06198057532310486,
+                    -0.020630598068237305,
+                    0.3824392259120941
+                ],
+                "localRotation": [
+                    3.477264254314605e-9,
+                    1.847921488443464e-18,
+                    -1.8626449271863521e-9,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0000001192092896,
+                    0.9999999403953552
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+        "name": "Vickers_Mk_E_Type_B_Wheels_L",
+        "localPosition": [
+            -0.9812694191932678,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Vickers_Mk_E_Type_B_Idler_L",
+            "localPosition": [
+                0.02025073766708374,
+                0.5055817365646362,
+                -1.9287217855453491
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Idler_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller1_L",
+            "localPosition": [
+                7.152557373046875e-7,
+                0.9295647740364075,
+                1.14015793800354
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller1_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller2_L",
+            "localPosition": [
+                8.344650268554688e-7,
+                0.8592725992202759,
+                0.33571794629096985
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller2_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller3_L",
+            "localPosition": [
+                7.152557373046875e-7,
+                0.7946059703826904,
+                -0.4287339746952057
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller3_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller4_L",
+            "localPosition": [
+                7.152557373046875e-7,
+                0.7327503561973572,
+                -1.230049729347229
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller4_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Sprocket_L",
+            "localPosition": [
+                0.04269003868103027,
+                0.8206850290298462,
+                1.8224223852157593
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Sprocket_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel1_L",
+            "localPosition": [
+                8.344650268554688e-7,
+                0.2080092430114746,
+                1.40739107131958
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel1_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel2_L",
+            "localPosition": [
+                8.344650268554688e-7,
+                0.2080092430114746,
+                1.0006192922592163
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel2_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel3_L",
+            "localPosition": [
+                0.0000010132789611816406,
+                0.2080092430114746,
+                0.5892789959907532
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel3_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel4_L",
+            "localPosition": [
+                0.0000010132789611816406,
+                0.2080092430114746,
+                0.18250779807567596
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel4_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel5_L",
+            "localPosition": [
+                0.0000010132789611816406,
+                0.2080092430114746,
+                -0.1882183998823166
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel5_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel6_L",
+            "localPosition": [
+                8.344650268554688e-7,
+                0.2080092430114746,
+                -0.5949893593788147
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel6_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel6_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel7_L",
+            "localPosition": [
+                0.0000010132789611816406,
+                0.2080092430114746,
+                -1.0063246488571167
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel7_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel7_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel8_L",
+            "localPosition": [
+                7.152557373046875e-7,
+                0.208009272813797,
+                -1.4130957126617432
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel8_L.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel8_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "Vickers_Mk_E_Type_B_Wheels_R",
+        "localPosition": [
+            0.981268584728241,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Vickers_Mk_E_Type_B_Idler_R",
+            "localPosition": [
+                -0.020237505435943604,
+                0.5055817365646362,
+                -1.9287217855453491
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Idler_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller1_R",
+            "localPosition": [
+                0.000012636184692382813,
+                0.9295647740364075,
+                1.14015793800354
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller1_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller2_R",
+            "localPosition": [
+                0.000012516975402832031,
+                0.8592725992202759,
+                0.33571794629096985
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller2_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller3_R",
+            "localPosition": [
+                0.000012636184692382813,
+                0.7946059703826904,
+                -0.4287339746952057
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller3_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Roller4_R",
+            "localPosition": [
+                0.000012636184692382813,
+                0.7327503561973572,
+                -1.230049729347229
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller4_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Roller4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Sprocket_R",
+            "localPosition": [
+                -0.04267680644989014,
+                0.8206850290298462,
+                1.8224223852157593
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Sprocket_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel1_R",
+            "localPosition": [
+                0.000012516975402832031,
+                0.208009272813797,
+                1.40739107131958
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel1_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel2_R",
+            "localPosition": [
+                0.000012516975402832031,
+                0.208009272813797,
+                1.0006192922592163
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel2_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel3_R",
+            "localPosition": [
+                0.000012874603271484375,
+                0.2080092430114746,
+                0.5892789959907532
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel3_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel4_R",
+            "localPosition": [
+                0.000012874603271484375,
+                0.2080092430114746,
+                0.18250779807567596
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel4_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel5_R",
+            "localPosition": [
+                0.000012874603271484375,
+                0.2080092430114746,
+                -0.1882183998823166
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel5_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel6_R",
+            "localPosition": [
+                0.000012516975402832031,
+                0.208009272813797,
+                -0.5949893593788147
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel6_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel6_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel7_R",
+            "localPosition": [
+                0.000012874603271484375,
+                0.2080092430114746,
+                -1.0063246488571167
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel7_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel7_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Vickers_Mk_E_Type_B_Wheel8_R",
+            "localPosition": [
+                0.000012814998626708984,
+                0.208009272813797,
+                -1.4130957126617432
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel8_R.json",
+                    "material": "Materials/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Wheel8_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

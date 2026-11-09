@@ -2,6 +2,7 @@
 #include "GPUCommandBuffer.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -46,9 +47,12 @@ namespace TUK::Framework
 			DirectX::XMFLOAT4 emissiveColor;
 			f32 metallic;
 			f32 roughness;
-			u32 hasBaseColorTexture;
+			u32 textureMask;
 			f32 padding{};
+			DirectX::XMFLOAT4 specularColor;
 		};
+
+		static_assert(sizeof(MaterialConstants) == 64);
 
 		enum class GPURootSlot : u32
 		{
@@ -146,7 +150,7 @@ namespace TUK::Framework
 		}
 		const ColorRGBA<f32>& baseColor = material->GetBaseColor();
 		const ColorRGBA<f32>& emissiveColor = material->GetEmissiveColor();
-		const TextureAsset* baseColorTexture = material->GetBaseColorTexture();
+		const ColorRGBA<f32>& specularColor = material->GetSpecularColor();
 		if (material->IsSkybox())
 		{
 			return std::unexpected("메시에는 일반 2D 텍스처를 사용하는 머티리얼이 필요합니다.");
@@ -156,19 +160,25 @@ namespace TUK::Framework
 		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
 		constants.metallic = material->GetMetallic();
 		constants.roughness = material->GetRoughness();
-		constants.hasBaseColorTexture = baseColorTexture ? 1u : 0u;
+		constants.specularColor = { specularColor.GetR(), specularColor.GetG(), specularColor.GetB(), specularColor.GetA() };
+
+		static_assert(TEXTURE_SLOT_COUNT == static_cast<u32>(MaterialTextureSlot::COUNT));
+		std::array<const GPUTexture2D*, TEXTURE_SLOT_COUNT> textures{};
+		const MaterialTextures& materialTextures = material->GetTextures();
+		for (u32 index = 0; index < TEXTURE_SLOT_COUNT; ++index)
+		{
+			if (const TextureAsset* texture = materialTextures[index])
+			{
+				textures[index] = &texture->GetTexture();
+				constants.textureMask |= 1u << index;
+			}
+		}
 		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
 		if (!allocation)
 		{
 			return std::unexpected(allocation.error());
 		}
-		D3D12_SHADER_RESOURCE_VIEW_DESC nullView{};
-		nullView.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		nullView.Texture2D.MipLevels = 1;
-		if (auto result = BindTexture(baseColorTexture ? &baseColorTexture->GetTexture() : nullptr,
-			baseColorTexture ? nullptr : &nullView); !result)
+		if (auto result = BindTextures(textures); !result)
 		{
 			return result;
 		}
@@ -331,7 +341,8 @@ namespace TUK::Framework
 		view.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
 		view.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		view.TextureCube.MipLevels = description.MipLevels;
-		if (auto result = BindTexture(&texture, &view); !result)
+		const std::array<const GPUTexture2D*, TEXTURE_SLOT_COUNT> textures{ &texture };
+		if (auto result = BindTextures(textures, &view); !result)
 		{
 			return result;
 		}
@@ -398,10 +409,12 @@ namespace TUK::Framework
 		d3dCommandList->OMSetRenderTargets(1, &activeRTV, FALSE, &activeDSV);
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::BindTexture(
-		const GPUTexture2D* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* view)
+	std::expected<void, std::string> GPUCommandBuffer::BindTextures(
+		std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
+		const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView)
 	{
 		constexpr u32 DESCRIPTORS_PER_PAGE = 256;
+		static_assert(DESCRIPTORS_PER_PAGE % TEXTURE_SLOT_COUNT == 0);
 		constexpr auto HEAP_TYPE = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		const usize pageIndex = textureDescriptorCount / DESCRIPTORS_PER_PAGE;
 		const usize slot = textureDescriptorCount % DESCRIPTORS_PER_PAGE;
@@ -422,11 +435,27 @@ namespace TUK::Framework
 		}
 
 		ID3D12DescriptorHeap* heap = textureDescriptorPages[pageIndex].Get();
-		const usize offset = slot * d3dDevice.GetDescriptorHandleIncrementSize(HEAP_TYPE);
+		const UINT descriptorStride = d3dDevice.GetDescriptorHandleIncrementSize(HEAP_TYPE);
+		const usize offset = slot * descriptorStride;
 		auto cpuHandle = heap->GetCPUDescriptorHandleForHeapStart();
 		cpuHandle.ptr += offset;
 
-		d3dDevice.CreateShaderResourceView(texture ? &texture->GetD3DResource() : nullptr, view, cpuHandle);
+		D3D12_SHADER_RESOURCE_VIEW_DESC nullView{};
+		nullView.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		nullView.Texture2D.MipLevels = 1;
+		for (usize index = 0; index < textures.size(); ++index)
+		{
+			const GPUTexture2D* texture = textures[index];
+			const D3D12_SHADER_RESOURCE_VIEW_DESC* view = texture ? nullptr : &nullView;
+			if (index == 0 && firstView)
+			{
+				view = firstView;
+			}
+			d3dDevice.CreateShaderResourceView(texture ? &texture->GetD3DResource() : nullptr, view, cpuHandle);
+			cpuHandle.ptr += descriptorStride;
+		}
 
 		if (slot == 0)
 		{
@@ -436,7 +465,7 @@ namespace TUK::Framework
 		auto gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
 		gpuHandle.ptr += offset;
 		d3dCommandList->SetGraphicsRootDescriptorTable(std::to_underlying(GPURootSlot::TEXTURE), gpuHandle);
-		++textureDescriptorCount;
+		textureDescriptorCount += TEXTURE_SLOT_COUNT;
 		return {};
 	}
 

@@ -1,0 +1,902 @@
+{
+    "name": "KV_2(1940)",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/KV_2(1940)/KV_2(1940).json",
+            "material": "Materials/KV_2(1940)/KV_2(1940).json"
+        }
+    ],
+  "children": [
+    {
+        "name": "KV_2(1940)_Exhaust_L",
+        "localPosition": [
+            -0.5850894451141357,
+            1.6738595962524414,
+            -1.856641173362732
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "KV_2(1940)_Exhaust_R",
+        "localPosition": [
+            0.585090160369873,
+            1.6738595962524414,
+            -1.856641173362732
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "KV_2(1940)_Muzzle_MG3",
+        "localPosition": [
+            -0.43813657760620117,
+            1.4142299890518188,
+            2.477459669113159
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "KV_2(1940)_Track_L",
+        "localPosition": [
+            -2.842170943040401e-14,
+            0.0,
+            7.450580596923828e-9
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Track_L.json",
+                "material": "Materials/KV_2(1940)/KV_2(1940)_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "KV_2(1940)_Track_R",
+        "localPosition": [
+            -2.842170943040401e-14,
+            0.0,
+            7.450580596923828e-9
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Track_R.json",
+                "material": "Materials/KV_2(1940)/KV_2(1940)_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "KV_2(1940)_Turret",
+        "localPosition": [
+            3.3527612686157227e-7,
+            1.608203649520874,
+            0.35676974058151245
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Turret.json",
+                "material": "Materials/KV_2(1940)/KV_2(1940)_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "KV_2(1940)_Mantlet",
+            "localPosition": [
+                5.215407838932151e-8,
+                0.9470551013946533,
+                0.9239693284034729
+            ],
+            "localRotation": [
+                -2.4802471187967967e-10,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Mantlet.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "KV_2(1940)_Gun",
+                "localPosition": [
+                    -1.4062972297779197e-7,
+                    0.02490091323852539,
+                    0.9603757858276367
+                ],
+                "localRotation": [
+                    6.954532949521308e-9,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Gun.json",
+                        "material": "Materials/KV_2(1940)/KV_2(1940)_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "KV_2(1940)_Muzzle",
+                    "localPosition": [
+                        3.259630787511014e-9,
+                        -2.384185791015625e-7,
+                        1.4220635890960693
+                    ],
+                    "localRotation": [
+                        6.954532949521308e-9,
+                        -9.705877942853365e-24,
+                        -2.220446049250313e-16,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "KV_2(1940)_Muzzle_MG1",
+                "localPosition": [
+                    0.24768827855587006,
+                    0.20051908493041992,
+                    0.5029032230377197
+                ],
+                "localRotation": [
+                    6.954532949521308e-9,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        },
+        {
+            "name": "KV_2(1940)_Muzzle_MG2",
+            "localPosition": [
+                -0.5458595156669617,
+                1.1016387939453125,
+                -1.8336646556854248
+            ],
+            "localRotation": [
+                -2.4802471187967967e-10,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "KV_2(1940)_Wheels_L",
+        "localPosition": [
+            -1.2825596332550049,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "KV_2(1940)_Idler_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.8341748118400574,
+                2.7859771251678467
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Idler_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Roller1_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                1.0124011039733887,
+                1.5354055166244507
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Roller1_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Roller1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Roller2_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                1.0124009847640991,
+                -0.26223132014274597
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Roller2_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Roller2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Roller3_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                1.0124009847640991,
+                -1.986990213394165
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Roller3_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Roller3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Sprocket_L",
+            "localPosition": [
+                0.04555952548980713,
+                0.773725688457489,
+                -2.9239237308502197
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Sprocket_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel1_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.38431674242019653,
+                2.1533639430999756
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel1_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel2_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.38431671261787415,
+                1.2734423875808716
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel2_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel3_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.38431668281555176,
+                0.3354877531528473
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel3_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel4_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.3843165934085846,
+                -0.5754748582839966
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel4_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel5_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.3843165934085846,
+                -1.3885936737060547
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel5_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel6_L",
+            "localPosition": [
+                -0.000005364418029785156,
+                0.3843165636062622,
+                -2.1544764041900635
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel6_L.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel6_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "KV_2(1940)_Wheels_R",
+        "localPosition": [
+            1.282560110092163,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "KV_2(1940)_Idler_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.8341748118400574,
+                2.7859771251678467
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Idler_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Roller1_R",
+            "localPosition": [
+                0.000004887580871582031,
+                1.0124011039733887,
+                1.5354055166244507
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Roller1_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Roller1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Roller2_R",
+            "localPosition": [
+                0.000004887580871582031,
+                1.0124011039733887,
+                -0.26223132014274597
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Roller2_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Roller2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Roller3_R",
+            "localPosition": [
+                0.000004887580871582031,
+                1.0124009847640991,
+                -1.986990213394165
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Roller3_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Roller3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Sprocket_R",
+            "localPosition": [
+                -0.045560598373413086,
+                0.7737256288528442,
+                -2.923922300338745
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Sprocket_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel1_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.38431674242019653,
+                2.1533639430999756
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel1_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel2_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.38431671261787415,
+                1.2734423875808716
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel2_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel3_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.38431668281555176,
+                0.3354877531528473
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel3_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel4_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.3843165934085846,
+                -0.5754748582839966
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel4_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel5_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.3843165934085846,
+                -1.3885936737060547
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel5_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "KV_2(1940)_Wheel6_R",
+            "localPosition": [
+                0.000004887580871582031,
+                0.3843165636062622,
+                -2.1544764041900635
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/KV_2(1940)/KV_2(1940)_Wheel6_R.json",
+                    "material": "Materials/KV_2(1940)/KV_2(1940)_Wheel6_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

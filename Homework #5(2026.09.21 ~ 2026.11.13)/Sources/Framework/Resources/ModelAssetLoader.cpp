@@ -136,7 +136,12 @@ namespace TUK::Framework
 			return parseError;
 		}
 
-		const auto root = path.parent_path().parent_path();
+		const auto modelDir = path.parent_path();
+		auto root = modelDir.parent_path();
+		if (modelDir.filename() != "Models" && root.filename() == "Models")
+		{
+			root = root.parent_path();
+		}
 		for (const auto& part : renderParts)
 		{
 			const auto meshPath = root / part.meshPath;

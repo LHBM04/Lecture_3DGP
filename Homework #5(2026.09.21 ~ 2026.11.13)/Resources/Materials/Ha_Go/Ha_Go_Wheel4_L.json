@@ -1,0 +1,28 @@
+{
+    "name": "Ha_Go_Wheel4_L",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/Ha_Go/Ha_Go_BaseColor.dds",
+    "normalTexture": "Textures/Ha_Go/Ha_Go_Normal.dds",
+    "metallicTexture": "Textures/Ha_Go/Ha_Go_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/Ha_Go/Ha_Go_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

@@ -1,0 +1,839 @@
+{
+    "name": "Panzer_II_F",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/Panzer_II_F/Panzer_II_F.json",
+            "material": "Materials/Panzer_II_F/Panzer_II_F.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "Panzer_II_F_Exhaust",
+        "localPosition": [
+            0.5791271328926086,
+            1.1141777038574219,
+            -2.2033371925354004
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Panzer_II_F_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Track_L.json",
+                "material": "Materials/Panzer_II_F/Panzer_II_F_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Panzer_II_F_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Track_R.json",
+                "material": "Materials/Panzer_II_F/Panzer_II_F_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Panzer_II_F_Turret",
+        "localPosition": [
+            -0.13228817284107208,
+            1.4192354679107666,
+            0.23304328322410583
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Turret.json",
+                "material": "Materials/Panzer_II_F/Panzer_II_F_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "Panzer_II_F_Mantlet",
+            "localPosition": [
+                -2.9802322387695313e-8,
+                0.25572097301483154,
+                0.6500000953674316
+            ],
+            "localRotation": [
+                -2.480247673908309e-10,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                0.9999998211860657,
+                0.9999998807907104
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Mantlet.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "Panzer_II_F_Gun",
+                "localPosition": [
+                    -0.2518662214279175,
+                    -0.005952954292297363,
+                    0.054934799671173096
+                ],
+                "localRotation": [
+                    -3.973314122163174e-9,
+                    -5.5511144613812927e-17,
+                    1.8626450382086546e-9,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Gun.json",
+                        "material": "Materials/Panzer_II_F/Panzer_II_F_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "Panzer_II_F_Muzzle",
+                    "localPosition": [
+                        -2.980232238769531e-7,
+                        0.0,
+                        0.9226803779602051
+                    ],
+                    "localRotation": [
+                        -3.973313678073964e-9,
+                        -5.920698759069985e-17,
+                        5.587934559514451e-9,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.0000001192092896,
+                        1.0000001192092896
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "Panzer_II_F_Muzzle_MG1",
+                "localPosition": [
+                    0.32105302810668945,
+                    -0.050748348236083984,
+                    0.43754392862319946
+                ],
+                "localRotation": [
+                    -3.973313678073964e-9,
+                    -5.5511144613812927e-17,
+                    1.8626449271863521e-9,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0000001192092896,
+                    1.0000001192092896
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+        "name": "Panzer_II_F_Wheels_L",
+        "localPosition": [
+            -0.8987646698951721,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Panzer_II_F_Idler_L",
+            "localPosition": [
+                -0.054816365242004395,
+                0.573642373085022,
+                -1.9226353168487549
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Idler_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller1_L",
+            "localPosition": [
+                0.0018314123153686523,
+                0.8854104280471802,
+                1.0641801357269287
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller1_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller2_L",
+            "localPosition": [
+                0.0018314123153686523,
+                0.8758148550987244,
+                0.2554979920387268
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller2_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller3_L",
+            "localPosition": [
+                0.0018314123153686523,
+                0.8677239418029785,
+                -0.4230109453201294
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller3_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller4_L",
+            "localPosition": [
+                0.0018314123153686523,
+                0.8612515926361084,
+                -1.1031464338302612
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller4_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Sprocket_L",
+            "localPosition": [
+                -5.960464477539063e-8,
+                0.6465206146240234,
+                1.867031455039978
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Sprocket_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel1_L",
+            "localPosition": [
+                5.960464477539063e-8,
+                0.3135639429092407,
+                1.185230016708374
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel1_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel2_L",
+            "localPosition": [
+                5.960464477539063e-8,
+                0.3135639429092407,
+                0.579945981502533
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel2_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel3_L",
+            "localPosition": [
+                5.960464477539063e-8,
+                0.3135639429092407,
+                -0.023444008082151413
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel3_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel4_L",
+            "localPosition": [
+                5.960464477539063e-8,
+                0.3135639429092407,
+                -0.6245728731155396
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel4_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel5_L",
+            "localPosition": [
+                5.960464477539063e-8,
+                0.3135639429092407,
+                -1.2290923595428467
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel5_L.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "Panzer_II_F_Wheels_R",
+        "localPosition": [
+            0.8987653851509094,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Panzer_II_F_Idler_R",
+            "localPosition": [
+                0.05481594800949097,
+                0.573642373085022,
+                -1.9226353168487549
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Idler_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller1_R",
+            "localPosition": [
+                0.0,
+                0.8854104280471802,
+                1.0641801357269287
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller1_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller2_R",
+            "localPosition": [
+                0.0,
+                0.8758148550987244,
+                0.2554979920387268
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller2_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller3_R",
+            "localPosition": [
+                0.0,
+                0.8677239418029785,
+                -0.4230109453201294
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller3_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Roller4_R",
+            "localPosition": [
+                0.0,
+                0.8612515926361084,
+                -1.1031464338302612
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Roller4_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Roller4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Sprocket_R",
+            "localPosition": [
+                0.0,
+                0.6465206146240234,
+                1.867031455039978
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Sprocket_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel1_R",
+            "localPosition": [
+                0.0,
+                0.3135639429092407,
+                1.185230016708374
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel1_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel2_R",
+            "localPosition": [
+                0.0,
+                0.3135639429092407,
+                0.579945981502533
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel2_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel3_R",
+            "localPosition": [
+                0.0,
+                0.3135639429092407,
+                -0.023444008082151413
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel3_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel4_R",
+            "localPosition": [
+                0.0,
+                0.3135639429092407,
+                -0.6245728731155396
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel4_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_II_F_Wheel5_R",
+            "localPosition": [
+                0.0,
+                0.3135639429092407,
+                -1.2290923595428467
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_II_F/Panzer_II_F_Wheel5_R.json",
+                    "material": "Materials/Panzer_II_F/Panzer_II_F_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

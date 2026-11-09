@@ -1,0 +1,1341 @@
+{
+    "name": "T_28_85",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/T_28_85/T_28_85.json",
+            "material": "Materials/T_28_85/T_28_85.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "T_28_85_Aux_Turret_L",
+        "localPosition": [
+            -0.6863880157470703,
+            1.4295707941055298,
+            1.8422136306762695
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/T_28_85/T_28_85_Aux_Turret_L.json",
+                "material": "Materials/T_28_85/T_28_85_Aux_Turret_L.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "T_28_85_Muzzle_MG3",
+            "localPosition": [
+                0.06605148315429688,
+                0.2639213800430298,
+                0.9658075571060181
+            ],
+            "localRotation": [
+                1.0927850624398161e-8,
+                4.3233676527374975e-23,
+                7.4505797087454084e-9,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0000001192092896,
+                1.0000001192092896
+            ],
+            "renderParts": [],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "T_28_85_Aux_Turret_R",
+        "localPosition": [
+            0.679830014705658,
+            1.4295707941055298,
+            1.8422136306762695
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/T_28_85/T_28_85_Aux_Turret_R.json",
+                "material": "Materials/T_28_85/T_28_85_Aux_Turret_R.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "T_28_85_Muzzle_MG4",
+            "localPosition": [
+                0.0660514235496521,
+                0.2639213800430298,
+                0.9658075571060181
+            ],
+            "localRotation": [
+                1.0927850624398161e-8,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0000001192092896,
+                1.0000001192092896
+            ],
+            "renderParts": [],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "T_28_85_Exhaust_L",
+        "localPosition": [
+            -0.9828562140464783,
+            1.9801236391067505,
+            -1.9807928800582886
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "T_28_85_Exhaust_R",
+        "localPosition": [
+            0.9828571677207947,
+            1.9801236391067505,
+            -1.9807928800582886
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "T_28_85_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/T_28_85/T_28_85_Track_L.json",
+                "material": "Materials/T_28_85/T_28_85_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "T_28_85_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/T_28_85/T_28_85_Track_R.json",
+                "material": "Materials/T_28_85/T_28_85_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "T_28_85_Turret",
+        "localPosition": [
+            3.5762786865234375e-7,
+            1.866080641746521,
+            0.6905074715614319
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/T_28_85/T_28_85_Turret.json",
+                "material": "Materials/T_28_85/T_28_85_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "T_28_85_Mantlet",
+            "localPosition": [
+                -0.02432212233543396,
+                0.4001518487930298,
+                0.8384779095649719
+            ],
+            "localRotation": [
+                3.477266474760654e-9,
+                -1.5529404708565383e-22,
+                -7.105427357601002e-15,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Mantlet.json",
+                    "material": "Materials/T_28_85/T_28_85_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "T_28_85_Gun",
+                "localPosition": [
+                    -1.862645149230957e-8,
+                    0.05334281921386719,
+                    0.8721266984939575
+                ],
+                "localRotation": [
+                    6.954532949521308e-9,
+                    -1.4693679385278594e-39,
+                    -3.552713678800501e-15,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/T_28_85/T_28_85_Gun.json",
+                        "material": "Materials/T_28_85/T_28_85_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "T_28_85_Muzzle",
+                    "localPosition": [
+                        -1.862645149230957e-9,
+                        -2.384185791015625e-7,
+                        2.5574121475219727
+                    ],
+                    "localRotation": [
+                        1.0927852400755e-8,
+                        1.5529404708565383e-22,
+                        -7.595755141454243e-38,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+            "name": "T_28_85_Muzzle_MG1",
+            "localPosition": [
+                0.5548537969589233,
+                0.3293191194534302,
+                1.055149793624878
+            ],
+            "localRotation": [
+                3.477266474760654e-9,
+                -1.5529404708565383e-22,
+                -7.105427357601002e-15,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Muzzle_MG2",
+            "localPosition": [
+                1.5397893093904713e-7,
+                0.42555010318756104,
+                -1.8008406162261963
+            ],
+            "localRotation": [
+                3.477266474760654e-9,
+                -1.5529404708565383e-22,
+                -7.105427357601002e-15,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "T_28_85_Wheels_L",
+        "localPosition": [
+            -1.183459997177124,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "T_28_85_Idler_L",
+            "localPosition": [
+                -0.003200054168701172,
+                0.9257534742355347,
+                3.1410768032073975
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Idler_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller1_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                1.123404860496521,
+                2.0068912506103516
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller1_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller2_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                1.123404860496521,
+                0.7334862351417542
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller2_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller3_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                1.0869232416152954,
+                -0.7604090571403503
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller3_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller4_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                1.0480096340179443,
+                -2.58691143989563
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller4_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Sprocket_L",
+            "localPosition": [
+                8.344650268554688e-7,
+                0.8261486887931824,
+                -3.2997844219207764
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Sprocket_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel1_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.23624186217784882,
+                2.5204734802246094
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel1_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel2_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278412640094757,
+                2.033726453781128
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel2_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel3_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278412640094757,
+                1.5977330207824707
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel3_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel4_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278409659862518,
+                1.0910468101501465
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel4_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel5_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278409659862518,
+                0.695912778377533
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel5_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel6_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.2127840518951416,
+                0.18922702968120575
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel6_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel6_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel7_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278397738933563,
+                -0.2130288928747177
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel7_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel7_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel8_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278397738933563,
+                -0.7197149395942688
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel8_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel8_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel9_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278396248817444,
+                -1.1265262365341187
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel9_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel9_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel10_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278393268585205,
+                -1.6332124471664429
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel10_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel10_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel11_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.21278393268585205,
+                -2.038731813430786
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel11_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel11_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel12_L",
+            "localPosition": [
+                2.384185791015625e-7,
+                0.22333987057209015,
+                -2.5418994426727295
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel12_L.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel12_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "T_28_85_Wheels_R",
+        "localPosition": [
+            1.183459997177124,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "T_28_85_Idler_R",
+            "localPosition": [
+                0.003213047981262207,
+                0.9257534742355347,
+                3.1410768032073975
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Idler_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller1_R",
+            "localPosition": [
+                0.000011086463928222656,
+                1.123404860496521,
+                2.0068912506103516
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller1_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller2_R",
+            "localPosition": [
+                0.000011086463928222656,
+                1.123404860496521,
+                0.7334862351417542
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller2_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller3_R",
+            "localPosition": [
+                0.000011086463928222656,
+                1.0869232416152954,
+                -0.7604090571403503
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller3_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Roller4_R",
+            "localPosition": [
+                0.000011205673217773438,
+                1.0480096340179443,
+                -2.58691143989563
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Roller4_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Roller4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Sprocket_R",
+            "localPosition": [
+                0.000011801719665527344,
+                0.8261486887931824,
+                -3.2997844219207764
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Sprocket_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel1_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.23624186217784882,
+                2.5204734802246094
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel1_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel2_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278412640094757,
+                2.033726453781128
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel2_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel3_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278412640094757,
+                1.5977330207824707
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel3_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel4_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278409659862518,
+                1.0910468101501465
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel4_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel5_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.212784081697464,
+                0.695912778377533
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel5_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel6_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.2127840518951416,
+                0.18922702968120575
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel6_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel6_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel7_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278397738933563,
+                -0.2130288928747177
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel7_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel7_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel8_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278397738933563,
+                -0.7197149395942688
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel8_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel8_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel9_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278396248817444,
+                -1.1265262365341187
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel9_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel9_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel10_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278396248817444,
+                -1.6332124471664429
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel10_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel10_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel11_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.21278391778469086,
+                -2.038731813430786
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel11_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel11_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "T_28_85_Wheel12_R",
+            "localPosition": [
+                0.000011205673217773438,
+                0.22333987057209015,
+                -2.5418994426727295
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/T_28_85/T_28_85_Wheel12_R.json",
+                    "material": "Materials/T_28_85/T_28_85_Wheel12_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

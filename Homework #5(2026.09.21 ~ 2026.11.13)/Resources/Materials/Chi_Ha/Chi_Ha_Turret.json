@@ -1,0 +1,28 @@
+{
+    "name": "Chi_Ha_Turret",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/Chi_Ha/Chi_Ha_BaseColor.dds",
+    "normalTexture": "Textures/Chi_Ha/Chi_Ha_Normal.dds",
+    "metallicTexture": "Textures/Chi_Ha/Chi_Ha_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/Chi_Ha/Chi_Ha_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

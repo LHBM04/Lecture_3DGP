@@ -40,6 +40,8 @@ namespace TUK::Framework
 	class GPUCommandBuffer
 	{
 	public:
+		static constexpr u32 TEXTURE_SLOT_COUNT = 8;
+
 		explicit GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
@@ -99,8 +101,9 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 
-		[[nodiscard]] std::expected<void, std::string> BindTexture(
-			const GPUTexture2D* texture, const D3D12_SHADER_RESOURCE_VIEW_DESC* view);
+		[[nodiscard]] std::expected<void, std::string> BindTextures(
+			std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
+			const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView = nullptr);
 
 		const GPUDevice* device;
 

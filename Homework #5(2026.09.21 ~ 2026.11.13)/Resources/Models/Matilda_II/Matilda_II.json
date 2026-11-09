@@ -1,0 +1,964 @@
+{
+    "name": "Matilda_II",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/Matilda_II/Matilda_II.json",
+            "material": "Materials/Matilda_II/Matilda_II.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "Matilda_II_Exhaust_L",
+        "localPosition": [
+            -0.6319631934165955,
+            0.3719448745250702,
+            -2.3096916675567627
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Matilda_II_Exhaust_R",
+        "localPosition": [
+            0.6342736482620239,
+            0.5460260510444641,
+            -2.3809289932250977
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Matilda_II_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Matilda_II/Matilda_II_Track_L.json",
+                "material": "Materials/Matilda_II/Matilda_II_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Matilda_II_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Matilda_II/Matilda_II_Track_R.json",
+                "material": "Materials/Matilda_II/Matilda_II_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Matilda_II_Turret",
+        "localPosition": [
+            1.072883719643869e-7,
+            1.385313630104065,
+            0.4606561064720154
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Matilda_II/Matilda_II_Turret.json",
+                "material": "Materials/Matilda_II/Matilda_II_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "Matilda_II_Mantlet",
+            "localPosition": [
+                0.04055042192339897,
+                0.46295642852783203,
+                0.7202708721160889
+            ],
+            "localRotation": [
+                3.477266474760654e-9,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                0.9999999403953552,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Mantlet.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "Matilda_II_Gun",
+                "localPosition": [
+                    -0.010032521560788155,
+                    -2.384185791015625e-7,
+                    0.2932446002960205
+                ],
+                "localRotation": [
+                    3.675685533721662e-8,
+                    -7.703719777548943e-33,
+                    -4.656612873077393e-10,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    0.9999998807907104,
+                    1.0
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/Matilda_II/Matilda_II_Gun.json",
+                        "material": "Materials/Matilda_II/Matilda_II_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "Matilda_II_Muzzle",
+                    "localPosition": [
+                        1.862645149230957e-9,
+                        2.384185791015625e-7,
+                        1.3183835744857788
+                    ],
+                    "localRotation": [
+                        -2.2847785885460326e-8,
+                        2.0354702993972044e-17,
+                        4.6566123179658803e-10,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.000000238418579,
+                        0.9999998807907104
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "Matilda_II_Muzzle_MG",
+                "localPosition": [
+                    0.2768639028072357,
+                    -0.020487189292907715,
+                    0.5220153331756592
+                ],
+                "localRotation": [
+                    3.675685533721662e-8,
+                    -7.703719777548943e-33,
+                    -4.656612873077393e-10,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    0.9999999403953552
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+        "name": "Matilda_II_Wheels_L",
+        "localPosition": [
+            -1.0432699918746948,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Matilda_II_Idler_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.7089030146598816,
+                2.5599987506866455
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Idler_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Sprocket_L",
+            "localPosition": [
+                -0.0000010728836059570313,
+                0.5850871205329895,
+                -2.117473840713501
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Sprocket_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel1_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.3114681839942932,
+                2.1532962322235107
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel1_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel2_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964169919490814,
+                1.6590791940689087
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel2_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel3_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964166939258575,
+                1.2500900030136108
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel3_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel4_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964165449142456,
+                0.939691960811615
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel4_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel5_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964165449142456,
+                0.5307031273841858
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel5_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel6_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964165449142456,
+                0.21450865268707275
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel6_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel6_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel7_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964163959026337,
+                -0.19448024034500122
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel7_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel7_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel8_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964163959026337,
+                -0.522819459438324
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel8_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel8_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel9_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964163959026337,
+                -0.9318084120750427
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel9_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel9_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel10_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964163959026337,
+                -1.2480028867721558
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel10_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel10_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel11_L",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.18964162468910217,
+                -1.6569916009902954
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel11_L.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel11_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "Matilda_II_Wheels_R",
+        "localPosition": [
+            1.0432699918746948,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Matilda_II_Idler_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.7089030146598816,
+                2.5599987506866455
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Idler_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Sprocket_R",
+            "localPosition": [
+                0.0000010728836059570313,
+                0.5850871205329895,
+                -2.117473840713501
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Sprocket_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel1_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.3114681839942932,
+                2.1532962322235107
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel1_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel2_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964169919490814,
+                1.6590791940689087
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel2_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel3_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964166939258575,
+                1.2500900030136108
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel3_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel4_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964165449142456,
+                0.939691960811615
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel4_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel5_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964165449142456,
+                0.5307031273841858
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel5_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel6_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964165449142456,
+                0.21450865268707275
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel6_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel6_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel7_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964163959026337,
+                -0.19448025524616241
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel7_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel7_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel8_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964163959026337,
+                -0.5228195190429688
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel8_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel8_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel9_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964163959026337,
+                -0.9318084120750427
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel9_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel9_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel10_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964163959026337,
+                -1.2480028867721558
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel10_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel10_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Matilda_II_Wheel11_R",
+            "localPosition": [
+                0.000001430511474609375,
+                0.18964162468910217,
+                -1.6569916009902954
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Matilda_II/Matilda_II_Wheel11_R.json",
+                    "material": "Materials/Matilda_II/Matilda_II_Wheel11_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

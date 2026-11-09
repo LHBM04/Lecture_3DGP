@@ -1,0 +1,28 @@
+{
+    "name": "Panzer_VI_E_Gun",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/Panzer_VI_E/Panzer_VI_E_BaseColor.dds",
+    "normalTexture": "Textures/Panzer_VI_E/Panzer_VI_E_Normal.dds",
+    "metallicTexture": "Textures/Panzer_VI_E/Panzer_VI_E_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/Panzer_VI_E/Panzer_VI_E_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

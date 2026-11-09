@@ -1,0 +1,28 @@
+{
+    "name": "Cromwell_IV_Wheel1_R",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/Cromwell_IV/Cromwell_IV_BaseColor.dds",
+    "normalTexture": "Textures/Cromwell_IV/Cromwell_IV_Normal.dds",
+    "metallicTexture": "Textures/Cromwell_IV/Cromwell_IV_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/Cromwell_IV/Cromwell_IV_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

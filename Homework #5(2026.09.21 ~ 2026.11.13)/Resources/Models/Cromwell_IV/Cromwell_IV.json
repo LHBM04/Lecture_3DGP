@@ -1,0 +1,673 @@
+{
+    "name": "Cromwell_IV",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/Cromwell_IV/Cromwell_IV.json",
+            "material": "Materials/Cromwell_IV/Cromwell_IV.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "Cromwell_IV_Exhaust_L",
+        "localPosition": [
+            -0.279141902923584,
+            1.4668055772781372,
+            -2.883105516433716
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Cromwell_IV_Exhaust_R",
+        "localPosition": [
+            0.27914124727249146,
+            1.4668055772781372,
+            -2.883105516433716
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Cromwell_IV_Muzzle_MG2",
+        "localPosition": [
+            -0.25665226578712463,
+            1.2739766836166382,
+            2.597383737564087
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Cromwell_IV_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Track_L.json",
+                "material": "Materials/Cromwell_IV/Cromwell_IV_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Cromwell_IV_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Track_R.json",
+                "material": "Materials/Cromwell_IV/Cromwell_IV_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Cromwell_IV_Turret",
+        "localPosition": [
+            -2.8312206268310547e-7,
+            1.4613900184631348,
+            0.5104921460151672
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Turret.json",
+                "material": "Materials/Cromwell_IV/Cromwell_IV_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "Cromwell_IV_Mantlet",
+            "localPosition": [
+                -4.470347292340193e-8,
+                0.33179640769958496,
+                0.7667531371116638
+            ],
+            "localRotation": [
+                3.477266474760654e-9,
+                -2.6469779601696886e-23,
+                1.1570308140341478e-30,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Mantlet.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "Cromwell_IV_Gun",
+                "localPosition": [
+                    0.017671601846814156,
+                    7.152557373046875e-7,
+                    0.0931100845336914
+                ],
+                "localRotation": [
+                    3.3675089383677914e-8,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    0.9999998807907104
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Gun.json",
+                        "material": "Materials/Cromwell_IV/Cromwell_IV_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "Cromwell_IV_Muzzle",
+                    "localPosition": [
+                        9.313225746154785e-9,
+                        -4.76837158203125e-7,
+                        1.9109926223754883
+                    ],
+                    "localRotation": [
+                        7.351371067443324e-8,
+                        4.6566123179658803e-10,
+                        -7.216542039594327e-17,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        0.9999999403953552,
+                        1.000000238418579
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "Cromwell_IV_Muzzle_MG1",
+                "localPosition": [
+                    -0.1615462601184845,
+                    0.06219685077667236,
+                    0.4350016117095947
+                ],
+                "localRotation": [
+                    3.367509293639159e-8,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    0.9999999403953552,
+                    0.9999999403953552
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+        "name": "Cromwell_IV_Wheels_L",
+        "localPosition": [
+            -1.2107104063034058,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Cromwell_IV_Idler_L",
+            "localPosition": [
+                0.00000476837158203125,
+                0.6762813925743103,
+                2.685697555541992
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Idler_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Sprocket_L",
+            "localPosition": [
+                -0.001361250877380371,
+                0.6532837152481079,
+                -2.633967399597168
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Sprocket_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel1_L",
+            "localPosition": [
+                0.00000476837158203125,
+                0.45119068026542664,
+                1.8552906513214111
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel1_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel2_L",
+            "localPosition": [
+                0.00000476837158203125,
+                0.45119062066078186,
+                0.9508618712425232
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel2_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel3_L",
+            "localPosition": [
+                0.00000476837158203125,
+                0.45119062066078186,
+                0.010575485415756702
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel3_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel4_L",
+            "localPosition": [
+                0.00000476837158203125,
+                0.45119062066078186,
+                -0.9655696749687195
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel4_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel5_L",
+            "localPosition": [
+                0.00000476837158203125,
+                0.45119062066078186,
+                -1.8540600538253784
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel5_L.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "Cromwell_IV_Wheels_R",
+        "localPosition": [
+            1.2107096910476685,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Cromwell_IV_Idler_R",
+            "localPosition": [
+                -0.000008821487426757813,
+                0.6762813925743103,
+                2.685697555541992
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Idler_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Sprocket_R",
+            "localPosition": [
+                0.001359105110168457,
+                0.6532837152481079,
+                -2.633967399597168
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Sprocket_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel1_R",
+            "localPosition": [
+                -0.000008821487426757813,
+                0.45119068026542664,
+                1.8552906513214111
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel1_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel2_R",
+            "localPosition": [
+                -0.000008821487426757813,
+                0.45119062066078186,
+                0.9508618712425232
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel2_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel3_R",
+            "localPosition": [
+                -0.000008821487426757813,
+                0.45119062066078186,
+                0.010575485415756702
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel3_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel4_R",
+            "localPosition": [
+                -0.000008821487426757813,
+                0.45119062066078186,
+                -0.9655696749687195
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel4_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Cromwell_IV_Wheel5_R",
+            "localPosition": [
+                -0.000008821487426757813,
+                0.45119062066078186,
+                -1.8540600538253784
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Cromwell_IV/Cromwell_IV_Wheel5_R.json",
+                    "material": "Materials/Cromwell_IV/Cromwell_IV_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

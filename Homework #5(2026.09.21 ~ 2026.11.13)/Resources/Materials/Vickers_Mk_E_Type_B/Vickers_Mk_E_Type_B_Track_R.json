@@ -1,0 +1,28 @@
+{
+    "name": "Vickers_Mk_E_Type_B_Track_R",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_L_BaseColor.dds",
+    "normalTexture": "Textures/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_L_Normal.dds",
+    "metallicTexture": "Textures/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_L_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/Vickers_Mk_E_Type_B/Vickers_Mk_E_Type_B_Track_L_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

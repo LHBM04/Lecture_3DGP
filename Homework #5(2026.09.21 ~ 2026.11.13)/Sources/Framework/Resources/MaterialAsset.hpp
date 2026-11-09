@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <array>
 #include <filesystem>
 #include <utility>
 
@@ -18,6 +19,22 @@ namespace TUK::Framework
 	class TextureAsset;
 	class ShaderAsset;
 
+	// Slot order matches the SRV registers in Standard.hlsl.
+	enum class MaterialTextureSlot : u32
+	{
+		BASE_COLOR,
+		NORMAL,
+		METALLIC,
+		ROUGHNESS,
+		OCCLUSION,
+		EMISSIVE,
+		SPECULAR,
+		MASK,
+		COUNT
+	};
+
+	using MaterialTextures = std::array<const TextureAsset*, static_cast<usize>(MaterialTextureSlot::COUNT)>;
+
 	struct MaterialAssetData final
 	{
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
@@ -30,7 +47,7 @@ namespace TUK::Framework
 		f32 metallic = 0.0f;
 		f32 roughness = 0.5f;
 
-		const TextureAsset* baseColorTexture = nullptr;
+		MaterialTextures textures{};
 		const ShaderAsset* vertexShader = nullptr;
 		const ShaderAsset* pixelShader = nullptr;
 
@@ -57,7 +74,7 @@ namespace TUK::Framework
 		[[nodiscard]] f32 GetRoughness() const noexcept;
 		[[nodiscard]] f32 GetSmoothness() const noexcept;
 
-		[[nodiscard]] const TextureAsset* GetBaseColorTexture() const noexcept;
+		[[nodiscard]] const MaterialTextures& GetTextures() const noexcept;
 		[[nodiscard]] bool IsSkybox() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetVertexShader() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetPixelShader() const noexcept;
@@ -76,7 +93,7 @@ namespace TUK::Framework
 		f32 metallic = 0.0f;
 		f32 roughness = 0.5f;
 
-		const TextureAsset* baseColorTexture = nullptr;
+		MaterialTextures textures{};
 		const ShaderAsset* vertexShader = nullptr;
 		const ShaderAsset* pixelShader = nullptr;
 
@@ -96,7 +113,7 @@ namespace TUK::Framework
 		, specularColor(data.specularColor)
 		, metallic(data.metallic)
 		, roughness(data.roughness)
-		, baseColorTexture(data.baseColorTexture)
+		, textures(data.textures)
 		, vertexShader(data.vertexShader)
 		, pixelShader(data.pixelShader)
 		, pipelineState(std::move(data.pipelineState))
@@ -147,9 +164,9 @@ namespace TUK::Framework
 		return 1.0f - roughness;
 	}
 
-	inline const TextureAsset* MaterialAsset::GetBaseColorTexture() const noexcept
+	inline const MaterialTextures& MaterialAsset::GetTextures() const noexcept
 	{
-		return baseColorTexture;
+		return textures;
 	}
 
 	inline bool MaterialAsset::IsSkybox() const noexcept

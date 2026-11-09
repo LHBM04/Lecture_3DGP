@@ -210,9 +210,9 @@ namespace TUK::Framework
 					D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE);
 			}
 
-			CD3DX12_DESCRIPTOR_RANGE1 baseColorTextureRange{};
-			baseColorTextureRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-			parameters.back().InitAsDescriptorTable(1, &baseColorTextureRange, D3D12_SHADER_VISIBILITY_PIXEL);
+			CD3DX12_DESCRIPTOR_RANGE1 textureRange{};
+			textureRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, GPUCommandBuffer::TEXTURE_SLOT_COUNT, 0);
+			parameters.back().InitAsDescriptorTable(1, &textureRange, D3D12_SHADER_VISIBILITY_PIXEL);
 
 			const std::array samplers =
 			{

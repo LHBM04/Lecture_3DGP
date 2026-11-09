@@ -1,0 +1,28 @@
+{
+    "name": "SOMUA_S35_Wheel1_R",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/SOMUA_S35/SOMUA_S35_BaseColor.dds",
+    "normalTexture": "Textures/SOMUA_S35/SOMUA_S35_Normal.dds",
+    "metallicTexture": "Textures/SOMUA_S35/SOMUA_S35_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/SOMUA_S35/SOMUA_S35_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

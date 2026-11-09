@@ -1,0 +1,28 @@
+{
+    "name": "KV_2(1940)_Roller1_R",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/KV_2(1940)/KV_2(1940)_BaseColor.dds",
+    "normalTexture": "Textures/KV_2(1940)/KV_2(1940)_Normal.dds",
+    "metallicTexture": "Textures/KV_2(1940)/KV_2(1940)_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/KV_2(1940)/KV_2(1940)_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

@@ -1,0 +1,902 @@
+{
+    "name": "M4A3(75)_Sherman",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman.json",
+            "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "M4A3(75)_Sherman_Exhaust_L",
+        "localPosition": [
+            -0.28999996185302734,
+            0.882203221321106,
+            -2.975900650024414
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "M4A3(75)_Sherman_Exhaust_R",
+        "localPosition": [
+            0.28999996185302734,
+            0.882203221321106,
+            -2.975900650024414
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "M4A3(75)_Sherman_Muzzle_MG3",
+        "localPosition": [
+            0.5212152004241943,
+            1.408928632736206,
+            2.413616895675659
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "M4A3(75)_Sherman_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            -6.402842700481415e-9
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Track_L.json",
+                "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "M4A3(75)_Sherman_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            -6.402842700481415e-9
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Track_R.json",
+                "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "M4A3(75)_Sherman_Turret",
+        "localPosition": [
+            3.476937493473997e-8,
+            1.903030276298523,
+            0.006810224149376154
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Turret.json",
+                "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "M4A3(75)_Sherman_Mantlet",
+            "localPosition": [
+                -3.476937848745365e-8,
+                0.33126986026763916,
+                0.7353506088256836
+            ],
+            "localRotation": [
+                -1.5193180047390342e-11,
+                -1.3234889800848443e-23,
+                5.785154070170739e-31,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Mantlet.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "M4A3(75)_Sherman_Gun",
+                "localPosition": [
+                    -2.2817403078079224e-8,
+                    0.0,
+                    0.22918051481246948
+                ],
+                "localRotation": [
+                    3.477266474760654e-9,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Gun.json",
+                        "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "M4A3(75)_Sherman_Muzzle",
+                    "localPosition": [
+                        -9.313083637607633e-10,
+                        -4.76837158203125e-7,
+                        1.7417434453964233
+                    ],
+                    "localRotation": [
+                        3.477266474760654e-9,
+                        -1.3234889800848443e-23,
+                        5.785154070170739e-31,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "M4A3(75)_Sherman_Muzzle_MG1",
+                "localPosition": [
+                    -0.4274396300315857,
+                    -0.024613142013549805,
+                    0.2971729040145874
+                ],
+                "localRotation": [
+                    3.477266474760654e-9,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        },
+        {
+            "name": "M4A3(75)_Sherman_Muzzle_MG2",
+            "localPosition": [
+                0.39962100982666016,
+                1.13526451587677,
+                1.1051324605941772
+            ],
+            "localRotation": [
+                -1.5193180047390342e-11,
+                -1.3234889800848443e-23,
+                5.785154070170739e-31,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "M4A3(75)_Sherman_Wheels_L",
+        "localPosition": [
+            -1.0506198406219482,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "M4A3(75)_Sherman_Idler_L",
+            "localPosition": [
+                -0.000004172325134277344,
+                0.7531268000602722,
+                -2.5891709327697754
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Idler_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Roller1_L",
+            "localPosition": [
+                0.0000017881393432617188,
+                0.9219064712524414,
+                1.0168006420135498
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller1_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Roller2_L",
+            "localPosition": [
+                0.0000017881393432617188,
+                0.9219061732292175,
+                -0.4041472375392914
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller2_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Roller3_L",
+            "localPosition": [
+                0.0000017881393432617188,
+                0.9219061732292175,
+                -1.8105213642120361
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller3_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Sprocket_L",
+            "localPosition": [
+                -0.013522744178771973,
+                0.7484025359153748,
+                2.373745918273926
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Sprocket_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel1_L",
+            "localPosition": [
+                0.0000019073486328125,
+                0.3240242004394531,
+                1.8462923765182495
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel1_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel2_L",
+            "localPosition": [
+                -0.0000040531158447265625,
+                0.3240242004394531,
+                1.0128952264785767
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel2_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel3_L",
+            "localPosition": [
+                0.0000019073486328125,
+                0.32402411103248596,
+                0.4253440797328949
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel3_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel4_L",
+            "localPosition": [
+                -0.0000040531158447265625,
+                0.32402411103248596,
+                -0.4080525040626526
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel4_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel5_L",
+            "localPosition": [
+                0.0000019073486328125,
+                0.3240240812301636,
+                -0.9810299873352051
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel5_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel6_L",
+            "localPosition": [
+                -0.0000040531158447265625,
+                0.3240240812301636,
+                -1.8144267797470093
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel6_L.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel6_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "M4A3(75)_Sherman_Wheels_R",
+        "localPosition": [
+            1.0506198406219482,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "M4A3(75)_Sherman_Idler_R",
+            "localPosition": [
+                0.000004291534423828125,
+                0.7531268000602722,
+                -2.5891709327697754
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Idler_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Roller1_R",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.9219064712524414,
+                1.0168006420135498
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller1_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Roller2_R",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.9219061732292175,
+                -0.4041472375392914
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller2_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Roller3_R",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.9219061732292175,
+                -1.8105213642120361
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller3_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Roller3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Sprocket_R",
+            "localPosition": [
+                0.013522744178771973,
+                0.7484025359153748,
+                2.373745918273926
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Sprocket_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel1_R",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.3240242004394531,
+                1.8462923765182495
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel1_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel2_R",
+            "localPosition": [
+                0.000004172325134277344,
+                0.3240242004394531,
+                1.0128952264785767
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel2_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel3_R",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.32402411103248596,
+                0.4253440797328949
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel3_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel4_R",
+            "localPosition": [
+                0.000004172325134277344,
+                0.32402411103248596,
+                -0.4080525040626526
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel4_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel5_R",
+            "localPosition": [
+                -0.000001430511474609375,
+                0.3240240812301636,
+                -0.9810299873352051
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel5_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "M4A3(75)_Sherman_Wheel6_R",
+            "localPosition": [
+                0.000004172325134277344,
+                0.3240240812301636,
+                -1.8144267797470093
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel6_R.json",
+                    "material": "Materials/M4A3(75)_Sherman/M4A3(75)_Sherman_Wheel6_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

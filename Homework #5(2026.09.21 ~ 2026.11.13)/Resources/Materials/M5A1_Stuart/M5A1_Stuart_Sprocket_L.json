@@ -1,0 +1,28 @@
+{
+    "name": "M5A1_Stuart_Sprocket_L",
+    "baseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "emissiveColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "metallic": 0.0,
+    "roughness": 0.5,
+    "baseColorTexture": "Textures/M5A1_Stuart/M5A1_Stuart_BaseColor.dds",
+    "normalTexture": "Textures/M5A1_Stuart/M5A1_Stuart_Normal.dds",
+    "metallicTexture": "Textures/M5A1_Stuart/M5A1_Stuart_Metallic.dds",
+    "roughnessTexture": "",
+    "occlusionTexture": "Textures/M5A1_Stuart/M5A1_Stuart_Occlusion.dds",
+    "emissiveTexture": "",
+    "heightTexture": "",
+    "specularTexture": "",
+    "maskTexture": "",
+    "vertexShader": "Shaders/Standard.vert.cso",
+    "pixelShader": "Shaders/Standard.frag.cso"
+}

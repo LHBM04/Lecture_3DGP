@@ -1,0 +1,829 @@
+{
+    "name": "Panzer_VI_E",
+    "localPosition": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "localRotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "localScale": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "renderParts": [
+        {
+            "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E.json",
+            "material": "Materials/Panzer_VI_E/Panzer_VI_E.json"
+        }
+    ],
+  "children": [
+    {
+        "name": "Panzer_VI_E_Exhaust_L",
+        "localPosition": [
+            -0.38330021500587463,
+            1.68799889087677,
+            -3.058323621749878
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Panzer_VI_E_Exhaust_R",
+        "localPosition": [
+            0.3833010792732239,
+            1.68799889087677,
+            -3.058323621749878
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Panzer_VI_E_Muzzle_MG2",
+        "localPosition": [
+            0.5561791658401489,
+            1.5978206396102905,
+            2.572765350341797
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": []
+    },
+    {
+        "name": "Panzer_VI_E_Track_L",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Track_L.json",
+                "material": "Materials/Panzer_VI_E/Panzer_VI_E_Track_L.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Panzer_VI_E_Track_R",
+        "localPosition": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Track_R.json",
+                "material": "Materials/Panzer_VI_E/Panzer_VI_E_Track_R.json"
+            }
+        ],
+      "children": []
+    },
+    {
+        "name": "Panzer_VI_E_Turret",
+        "localPosition": [
+            9.56854364630999e-7,
+            1.7719401121139526,
+            -0.07275231182575226
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [
+            {
+                "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Turret.json",
+                "material": "Materials/Panzer_VI_E/Panzer_VI_E_Turret.json"
+            }
+        ],
+      "children": [
+        {
+            "name": "Panzer_VI_E_Mantlet",
+            "localPosition": [
+                -7.671130788367009e-7,
+                0.3806201219558716,
+                1.1863588094711304
+            ],
+            "localRotation": [
+                -2.4802382370125997e-10,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Mantlet.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Mantlet.json"
+                }
+            ],
+          "children": [
+            {
+                "name": "Panzer_VI_E_Gun",
+                "localPosition": [
+                    6.216269525793905e-7,
+                    0.00033164024353027344,
+                    1.1896483898162842
+                ],
+                "localRotation": [
+                    6.9545320613428885e-9,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    1.0,
+                    0.9999998807907104
+                ],
+                "renderParts": [
+                    {
+                        "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Gun.json",
+                        "material": "Materials/Panzer_VI_E/Panzer_VI_E_Gun.json"
+                    }
+                ],
+              "children": [
+                {
+                    "name": "Panzer_VI_E_Muzzle",
+                    "localPosition": [
+                        -0.0000016111880540847778,
+                        -4.76837158203125e-7,
+                        2.876488447189331
+                    ],
+                    "localRotation": [
+                        -3.9733154544308036e-9,
+                        6.731055942526013e-30,
+                        -4.2351642314005224e-22,
+                        1.0
+                    ],
+                    "localScale": [
+                        1.0,
+                        1.0,
+                        1.0000001192092896
+                    ],
+                    "renderParts": [],
+                  "children": []
+                }
+              ]
+            },
+            {
+                "name": "Panzer_VI_E_Muzzle_MG1",
+                "localPosition": [
+                    0.4714929461479187,
+                    0.08599090576171875,
+                    0.2602355480194092
+                ],
+                "localRotation": [
+                    6.954532505432098e-9,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "localScale": [
+                    1.0,
+                    0.9999999403953552,
+                    0.9999999403953552
+                ],
+                "renderParts": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+        "name": "Panzer_VI_E_Wheels_L",
+        "localPosition": [
+            -1.3775500059127808,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Panzer_VI_E_Idler_L",
+            "localPosition": [
+                -1.1920928955078125e-7,
+                0.5595281720161438,
+                -2.420351266860962
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Idler_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Idler_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Sprocket_L",
+            "localPosition": [
+                -2.384185791015625e-7,
+                0.7148932218551636,
+                2.570796489715576
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Sprocket_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Sprocket_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel1_L",
+            "localPosition": [
+                0.010694622993469238,
+                0.4877355694770813,
+                1.8867498636245728
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel1_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel1_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel2_L",
+            "localPosition": [
+                0.006240487098693848,
+                0.4877355098724365,
+                1.3638365268707275
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel2_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel2_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel3_L",
+            "localPosition": [
+                0.010694622993469238,
+                0.4877355396747589,
+                0.8482886552810669
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel3_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel3_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel4_L",
+            "localPosition": [
+                0.006240725517272949,
+                0.48773545026779175,
+                0.3253750205039978
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel4_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel4_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel5_L",
+            "localPosition": [
+                0.010694622993469238,
+                0.4877355396747589,
+                -0.19466759264469147
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel5_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel5_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel6_L",
+            "localPosition": [
+                0.006240248680114746,
+                0.48773548007011414,
+                -0.7175816893577576
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel6_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel6_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel7_L",
+            "localPosition": [
+                0.010694622993469238,
+                0.4877355098724365,
+                -1.2421200275421143
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel7_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel7_L.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel8_L",
+            "localPosition": [
+                0.006241202354431152,
+                0.48773548007011414,
+                -1.7650340795516968
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel8_L.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel8_L.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    },
+    {
+        "name": "Panzer_VI_E_Wheels_R",
+        "localPosition": [
+            1.3775500059127808,
+            0.0,
+            0.0
+        ],
+        "localRotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "localScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "renderParts": [],
+      "children": [
+        {
+            "name": "Panzer_VI_E_Idler_R",
+            "localPosition": [
+                0.0,
+                0.5595281720161438,
+                -2.420351266860962
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Idler_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Idler_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Sprocket_R",
+            "localPosition": [
+                0.0,
+                0.7148932218551636,
+                2.570796489715576
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Sprocket_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Sprocket_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel1_R",
+            "localPosition": [
+                -0.010689973831176758,
+                0.4877355694770813,
+                1.8867499828338623
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel1_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel1_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel2_R",
+            "localPosition": [
+                -0.0062400102615356445,
+                0.4877355098724365,
+                1.3638365268707275
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel2_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel2_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel3_R",
+            "localPosition": [
+                -0.010689973831176758,
+                0.4877355396747589,
+                0.8482886552810669
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel3_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel3_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel4_R",
+            "localPosition": [
+                -0.0062400102615356445,
+                0.48773545026779175,
+                0.3253750503063202
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel4_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel4_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel5_R",
+            "localPosition": [
+                -0.010689973831176758,
+                0.4877355396747589,
+                -0.19466759264469147
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel5_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel5_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel6_R",
+            "localPosition": [
+                -0.0062400102615356445,
+                0.48773548007011414,
+                -0.7175816893577576
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel6_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel6_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel7_R",
+            "localPosition": [
+                -0.010689973831176758,
+                0.4877355098724365,
+                -1.2421200275421143
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel7_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel7_R.json"
+                }
+            ],
+          "children": []
+        },
+        {
+            "name": "Panzer_VI_E_Wheel8_R",
+            "localPosition": [
+                -0.0062400102615356445,
+                0.48773548007011414,
+                -1.7650340795516968
+            ],
+            "localRotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localScale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "renderParts": [
+                {
+                    "mesh": "Meshes/Panzer_VI_E/Panzer_VI_E_Wheel8_R.json",
+                    "material": "Materials/Panzer_VI_E/Panzer_VI_E_Wheel8_R.json"
+                }
+            ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

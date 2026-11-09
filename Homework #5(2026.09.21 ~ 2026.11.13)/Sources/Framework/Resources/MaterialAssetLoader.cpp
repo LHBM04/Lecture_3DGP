@@ -89,7 +89,11 @@ namespace TUK::Framework
 			{ "pixelShader", pixelPath }
 		};
 		const auto materialDir = path.parent_path();
-		const auto assetRoot = materialDir.parent_path();
+		auto assetRoot = materialDir.parent_path();
+		if (materialDir.filename() != "Materials" && assetRoot.filename() == "Materials")
+		{
+			assetRoot = assetRoot.parent_path();
+		}
 		bool isSkybox = false;
 		if (const auto pass = json.find("pass"); pass != json.end())
 		{
@@ -100,36 +104,55 @@ namespace TUK::Framework
 			isSkybox = *pass == "skybox";
 		}
 
-		const TextureAsset* texture = nullptr;
-		if (const auto field = json.find("baseColorTexture"); field != json.end())
+		static constexpr std::pair<MaterialTextureSlot, const char*> TEXTURE_FIELDS[] =
 		{
+			{ MaterialTextureSlot::BASE_COLOR, "baseColorTexture" },
+			{ MaterialTextureSlot::NORMAL, "normalTexture" },
+			{ MaterialTextureSlot::METALLIC, "metallicTexture" },
+			{ MaterialTextureSlot::ROUGHNESS, "roughnessTexture" },
+			{ MaterialTextureSlot::OCCLUSION, "occlusionTexture" },
+			{ MaterialTextureSlot::EMISSIVE, "emissiveTexture" },
+			{ MaterialTextureSlot::SPECULAR, "specularTexture" },
+			{ MaterialTextureSlot::MASK, "maskTexture" }
+		};
+		MaterialTextures textures{};
+		for (const auto& [slot, key] : TEXTURE_FIELDS)
+		{
+			const auto field = json.find(key);
+			if (field == json.end())
+			{
+				continue;
+			}
 			if (!field->is_string())
 			{
 				return parseError;
 			}
 
 			const auto& name = field->get_ref<const std::string&>();
-			if (!name.empty())
+			if (name.empty())
 			{
-				if (isSkybox || name.find('\0') != std::string::npos)
-				{
-					return parseError;
-				}
-
-				const auto imagePath = std::filesystem::path(
-					std::u8string(name.begin(), name.end())).lexically_normal();
-				if (imagePath.empty() || imagePath.has_root_path() || *imagePath.begin() == "..")
-				{
-					return parseError;
-				}
-
-				const auto texturePath = assetRoot / imagePath;
-				texture = assets->LoadAsset<TextureAsset>(texturePath);
-				if (!texture)
-				{
-					return std::unexpected(std::format("머티리얼 텍스처를 로드하지 못했습니다: {}", texturePath.generic_string()));
-				}
+				continue;
 			}
+			if (isSkybox || name.find('\0') != std::string::npos)
+			{
+				return parseError;
+			}
+
+			const auto imagePath = std::filesystem::path(
+				std::u8string(name.begin(), name.end())).lexically_normal();
+			if (imagePath.empty() || imagePath.has_root_path() || *imagePath.begin() == "..")
+			{
+				return parseError;
+			}
+
+			const auto texturePath = assetRoot / imagePath;
+			const TextureAsset* texture = assets->LoadAsset<TextureAsset>(texturePath);
+			if (!texture)
+			{
+				return std::unexpected(std::format("머티리얼 텍스처를 로드하지 못했습니다: {} ({})",
+					texturePath.generic_string(), key));
+			}
+			textures[static_cast<usize>(slot)] = texture;
 		}
 
 		for (const auto& [key, shaderPath] : shaderFields)
@@ -227,7 +250,7 @@ namespace TUK::Framework
 				.specularColor = parsedSpecularColor,
 				.metallic = parsedMetallic,
 				.roughness = parsedRoughness,
-				.baseColorTexture = texture,
+				.textures = textures,
 				.vertexShader = vertex,
 				.pixelShader = pixel,
 				.pipelineState = std::move(*pipeline),
