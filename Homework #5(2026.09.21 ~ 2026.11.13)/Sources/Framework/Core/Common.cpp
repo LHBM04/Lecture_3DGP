@@ -5,11 +5,11 @@
 #include <string>
 #include <syncstream>
 
-namespace TUK::Framework::Logger
+namespace TUK::Framework
 {
 	namespace
 	{
-		[[nodiscard]] constexpr std::string_view GetCategoryName(Category level) noexcept
+		[[nodiscard]] constexpr std::string_view GetCategoryName(Logger::Category level) noexcept
 		{
 			switch (level)
 			{
@@ -63,7 +63,7 @@ namespace TUK::Framework::Logger
 		}
 	}
 
-	void Log(Category level, std::string_view message, const std::source_location& location)
+	void Logger::Log(Category level, std::string_view message, const std::source_location& location)
 	{
 		const std::string line = std::format(
 			"[{}] {} ({}:{})\n",
