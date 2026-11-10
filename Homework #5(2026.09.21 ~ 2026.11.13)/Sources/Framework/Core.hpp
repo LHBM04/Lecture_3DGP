@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Core/App.hpp"
 #include "Core/AppSubsystem.hpp"

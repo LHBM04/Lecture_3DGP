@@ -1,4 +1,4 @@
-#pragma vertex VSMain
+﻿#pragma vertex VSMain
 #pragma pixel PSMain
 
 #pragma pack_matrix(row_major)

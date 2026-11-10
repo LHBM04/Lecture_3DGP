@@ -447,4 +447,3692 @@
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources\Materials\Carro_Armato_L6_40">
+      <UniqueIdentifier>{26790560-D831-4127-91AB-21FED3B708E2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Carro_Armato_M13_40">
+      <UniqueIdentifier>{4621631A-9D64-44CE-8CA6-106755F93648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Chi_Ha">
+      <UniqueIdentifier>{C940E329-8D89-461A-A603-A3C9238F0C3F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Cromwell_IV">
+      <UniqueIdentifier>{7541036C-DF29-433F-A43E-43697C286165}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\E_50">
+      <UniqueIdentifier>{79E3475E-ED51-45C4-A5F1-8B99EEA86A0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Ha_Go">
+      <UniqueIdentifier>{7552DFC4-09B6-4FF0-B3EC-B232566C8EF0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Hotchkiss_H35">
+      <UniqueIdentifier>{0D26548D-F09F-4719-BADC-D2E675A00D4B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\KV_2(1940)">
+      <UniqueIdentifier>{14CC37DE-FA17-4A20-B8EB-37223DE1A3E5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\M4A3(75)_Sherman">
+      <UniqueIdentifier>{042D9AA5-1D50-4FAA-8BF4-6D540740DDF8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\M5A1_Stuart">
+      <UniqueIdentifier>{2423F892-DA6F-4D01-82F7-E08304EE1FFA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Matilda_II">
+      <UniqueIdentifier>{90452E59-4BA1-498D-BE24-67624F22C8BB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Panzer_II_F">
+      <UniqueIdentifier>{1F015B04-0C95-41B1-B762-F6151C333563}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Panzer_VI_E">
+      <UniqueIdentifier>{5F1BC0A7-A779-4F49-9BFF-8CFC4FFC674B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Renault_ZB">
+      <UniqueIdentifier>{1DEFBEA4-2B9B-45F6-908F-94CAC847C51A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\SOMUA_S35">
+      <UniqueIdentifier>{7334CD94-6E77-4ECA-880B-CFBD562A2493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\T_28_85">
+      <UniqueIdentifier>{D110C7B9-958E-4887-A534-A30AB00012CF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\T_34_76(1942)">
+      <UniqueIdentifier>{96227B78-ADEA-4DB6-966C-70A4279A4F53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials\Vickers_Mk_E_Type_B">
+      <UniqueIdentifier>{AF816F70-A9ED-4A04-84F9-B175473E02AF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Carro_Armato_L6_40">
+      <UniqueIdentifier>{C76EED0B-BE54-4608-85F0-1E1FCD5137F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Carro_Armato_M13_40">
+      <UniqueIdentifier>{1CD51CE9-81B4-49FE-A7E3-AADAB0E815BF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Chi_Ha">
+      <UniqueIdentifier>{A4165C30-E144-4057-BDD3-78E30BC2D183}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Cromwell_IV">
+      <UniqueIdentifier>{5F5CEA0C-4CDE-4E23-93DE-6E35CBB1F94B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\E_50">
+      <UniqueIdentifier>{6CCBC1FA-9310-41F9-928F-9667E8F4935D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Ha_Go">
+      <UniqueIdentifier>{75BD314A-CAD5-49ED-8D45-1A0CAFE5E7B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Hotchkiss_H35">
+      <UniqueIdentifier>{19CA4E4E-9508-4523-8573-DF01C5CCAAAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\KV_2(1940)">
+      <UniqueIdentifier>{052918D2-7945-4B64-8933-6E8E59A6DF05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\M4A3(75)_Sherman">
+      <UniqueIdentifier>{2C582CCC-5263-4DB4-A4A5-6F0ED16A78B9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\M5A1_Stuart">
+      <UniqueIdentifier>{FE290E67-6E8E-4592-A323-5B78754063AE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Matilda_II">
+      <UniqueIdentifier>{37CE1CC3-047E-48DA-B8E1-8D152D72C347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Panzer_II_F">
+      <UniqueIdentifier>{5AAEA3C7-2F56-41EE-B43F-D3E21C3CB6A6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Panzer_VI_E">
+      <UniqueIdentifier>{58D8EE06-C282-4967-BDF0-1C8F0082D862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Renault_ZB">
+      <UniqueIdentifier>{9B81BD5F-3873-4D5A-B0C0-CEBCBFB2A7BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\SOMUA_S35">
+      <UniqueIdentifier>{F39E30F3-3030-4A58-AF36-C837C19787C5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\T_28_85">
+      <UniqueIdentifier>{768D68FB-FE1A-4CBE-88ED-CD2F557CFB3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\T_34_76(1942)">
+      <UniqueIdentifier>{4AE455B5-0D03-4138-852E-DC0A0571DCB2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Vickers_Mk_E_Type_B">
+      <UniqueIdentifier>{E395227B-D09A-4DBE-BAB4-DD5B062DF800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Carro_Armato_L6_40">
+      <UniqueIdentifier>{F7F13B20-A55B-4FE9-8255-308250AD323B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Carro_Armato_M13_40">
+      <UniqueIdentifier>{80608B3E-DAF4-429B-B634-83CE8C60FED2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Chi_Ha">
+      <UniqueIdentifier>{E2732F9B-5DAC-4043-BF16-FB0A90413A9E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Cromwell_IV">
+      <UniqueIdentifier>{FB3D861A-21BA-4BA1-931F-DADB0477D478}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\E_50">
+      <UniqueIdentifier>{8A3F8176-C7E4-4232-AEE2-B5F9FA2E6D19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Ha_Go">
+      <UniqueIdentifier>{AA18B771-6810-4142-83D4-9A3A00D22EBE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Hotchkiss_H35">
+      <UniqueIdentifier>{0EDD9FE2-04EE-476F-85BE-F4D2ECD40307}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\KV_2(1940)">
+      <UniqueIdentifier>{54843AB9-FE8D-4554-B133-D8B8E74BED4A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\M4A3(75)_Sherman">
+      <UniqueIdentifier>{3093DDD7-7C3A-4120-B721-F63863B92207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\M5A1_Stuart">
+      <UniqueIdentifier>{8F3DD657-E12C-4443-945A-379FF8B98F60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Matilda_II">
+      <UniqueIdentifier>{A4EA3C71-FDEE-4927-BBDD-8B9CA4963849}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Panzer_II_F">
+      <UniqueIdentifier>{4EAB342C-CC01-48C2-AFD5-03F9B2115A94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Panzer_VI_E">
+      <UniqueIdentifier>{BD3FF919-017A-4A7A-899A-F8B9BF49EE01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Renault_ZB">
+      <UniqueIdentifier>{5C6F1625-A792-4519-9944-30CDCFF4876D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\SOMUA_S35">
+      <UniqueIdentifier>{9ECC577A-ABFA-446B-9977-E3A54883F31D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\T_28_85">
+      <UniqueIdentifier>{232FB3AA-C3CA-44CF-80AA-57D9A831FBB9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\T_34_76(1942)">
+      <UniqueIdentifier>{6D052C5F-6F94-4B20-865A-2DE10ABDC6C9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models\Vickers_Mk_E_Type_B">
+      <UniqueIdentifier>{4FA0B5F7-6FB8-4558-8CFA-37C1C52152B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Carro_Armato_L6_40">
+      <UniqueIdentifier>{3A646045-5AA9-4AD3-9A35-98D20073E11E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Carro_Armato_M13_40">
+      <UniqueIdentifier>{FBC4F7E2-2ABA-484F-B679-0BA7BDA946A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Chi_Ha">
+      <UniqueIdentifier>{B8EFCA6B-C80E-42EB-8A1E-14F4B491C3E0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Cromwell_IV">
+      <UniqueIdentifier>{0D7BBF06-6C16-439B-93B4-B0BBDA898388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\E_50">
+      <UniqueIdentifier>{33EAC430-6D3F-46A2-BEFF-D62839513533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Ha_Go">
+      <UniqueIdentifier>{33902402-78B6-4818-BCCD-86C94FCA0932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Hotchkiss_H35">
+      <UniqueIdentifier>{86F196D9-F9DE-40E6-A3B3-78BF88252CAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\KV_2(1940)">
+      <UniqueIdentifier>{3988F759-DE20-4EDF-9A18-4F831BB0B27E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\M4A3(75)_Sherman">
+      <UniqueIdentifier>{0693D4F1-8ED9-456A-A7AC-4DE3179E9C4F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\M5A1_Stuart">
+      <UniqueIdentifier>{90C8210D-411D-4930-AEF8-31ED66943DD2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Matilda_II">
+      <UniqueIdentifier>{B52F549B-EE20-432E-9944-5F4B3EAB8992}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Panzer_II_F">
+      <UniqueIdentifier>{6FE7006C-FD34-481F-9C4A-B6845CD31E4C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Panzer_VI_E">
+      <UniqueIdentifier>{CFDE6BEC-387A-473B-A8AA-D5B8CFA467B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Renault_ZB">
+      <UniqueIdentifier>{3942199C-C133-4A5E-A35A-186EB9D985CA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\SOMUA_S35">
+      <UniqueIdentifier>{166BA9B0-584C-493E-915E-BC4E44FED246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\T_28_85">
+      <UniqueIdentifier>{8D56FD8F-9554-445E-B732-B87E549B1C74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\T_34_76(1942)">
+      <UniqueIdentifier>{8941BC11-8C24-408F-A733-2A9D8EC59C9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Vickers_Mk_E_Type_B">
+      <UniqueIdentifier>{9EB4622A-448F-48A0-B42E-0A9BC3C5461C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Gun.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Idler_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Idler_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Mantlet.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller1_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller1_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller2_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller2_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller3_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller3_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Sprocket_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Sprocket_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Turret.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel1_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel1_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel2_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel2_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel3_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel3_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel4_L.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel4_R.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40\Carro_Armato_L6_40.json">
+      <Filter>Resources\Materials\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Gun.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Idler_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Idler_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Mantlet.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller1_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller1_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller2_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller2_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller3_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller3_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Sprocket_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Sprocket_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Turret.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel1_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel1_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel2_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel2_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel3_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel3_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel4_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel4_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel5_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel5_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel6_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel6_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel7_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel7_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel8_L.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel8_R.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40\Carro_Armato_M13_40.json">
+      <Filter>Resources\Materials\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Gun.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Idler_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Idler_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Mantlet.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Roller1_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Roller1_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Roller2_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Roller2_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Roller3_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Roller3_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Sprocket_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Sprocket_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Track_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Track_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Turret.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel1_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel1_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel2_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel2_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel3_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel3_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel4_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel4_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel5_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel5_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel6_L.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha_Wheel6_R.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha\Chi_Ha.json">
+      <Filter>Resources\Materials\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Gun.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Idler_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Idler_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Mantlet.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Sprocket_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Sprocket_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Track_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Track_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Turret.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel1_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel1_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel2_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel2_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel3_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel3_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel4_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel4_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel5_L.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV_Wheel5_R.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV\Cromwell_IV.json">
+      <Filter>Resources\Materials\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Gun.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Idler_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Idler_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Mantlet.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Sprocket_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Sprocket_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Track_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Track_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Turret.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel1_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel1_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel2_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel2_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel3_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel3_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel4_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel4_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel5_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel5_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel6_L.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50_Wheel6_R.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50\E_50.json">
+      <Filter>Resources\Materials\E_50</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Gun.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Idler_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Idler_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Mantlet.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Roller1_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Roller1_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Roller2_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Roller2_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Sprocket_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Sprocket_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Track_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Track_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Turret.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel1_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel1_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel2_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel2_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel3_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel3_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel4_L.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go_Wheel4_R.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go\Ha_Go.json">
+      <Filter>Resources\Materials\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Gun.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Idler_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Idler_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Mantlet.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Roller1_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Roller1_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Roller2_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Roller2_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Sprocket_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Sprocket_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Track_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Track_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Turret.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel1_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel1_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel2_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel2_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel3_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel3_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel4_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel4_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel5_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel5_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel6_L.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35_Wheel6_R.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35\Hotchkiss_H35.json">
+      <Filter>Resources\Materials\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Gun.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Idler_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Idler_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Mantlet.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Roller1_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Roller1_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Roller2_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Roller2_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Roller3_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Roller3_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Sprocket_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Sprocket_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Track_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Track_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Turret.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel1_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel1_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel2_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel2_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel3_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel3_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel4_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel4_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel5_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel5_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel6_L.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29_Wheel6_R.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2%281940%29\KV_2%281940%29.json">
+      <Filter>Resources\Materials\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Gun.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Idler_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Idler_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Mantlet.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller1_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller1_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller2_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller2_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller3_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller3_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Sprocket_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Sprocket_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Turret.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel1_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel1_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel2_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel2_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel3_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel3_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel4_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel4_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel5_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel5_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel6_L.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel6_R.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman.json">
+      <Filter>Resources\Materials\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Gun.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Idler_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Idler_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Mantlet.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Roller1_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Roller1_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Roller2_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Roller2_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Roller3_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Roller3_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Sprocket_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Sprocket_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Track_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Track_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Turret.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel1_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel1_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel2_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel2_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel3_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel3_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel4_L.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart_Wheel4_R.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart\M5A1_Stuart.json">
+      <Filter>Resources\Materials\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Gun.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Idler_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Idler_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Mantlet.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Sprocket_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Sprocket_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Track_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Track_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Turret.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel1_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel1_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel10_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel10_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel11_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel11_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel2_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel2_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel3_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel3_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel4_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel4_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel5_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel5_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel6_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel6_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel7_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel7_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel8_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel8_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel9_L.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II_Wheel9_R.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II\Matilda_II.json">
+      <Filter>Resources\Materials\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Gun.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Idler_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Idler_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Mantlet.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller1_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller1_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller2_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller2_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller3_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller3_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller4_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Roller4_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Sprocket_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Sprocket_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Track_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Track_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Turret.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel1_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel1_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel2_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel2_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel3_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel3_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel4_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel4_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel5_L.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F_Wheel5_R.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F\Panzer_II_F.json">
+      <Filter>Resources\Materials\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Gun.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Idler_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Idler_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Mantlet.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Sprocket_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Sprocket_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Track_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Track_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Turret.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel1_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel1_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel2_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel2_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel3_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel3_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel4_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel4_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel5_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel5_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel6_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel6_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel7_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel7_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel8_L.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E_Wheel8_R.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E\Panzer_VI_E.json">
+      <Filter>Resources\Materials\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Gun.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Idler_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Idler_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Mantlet.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Roller1_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Roller1_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Roller2_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Roller2_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Roller3_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Roller3_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Sprocket_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Sprocket_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Track_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Track_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Turret.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel1_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel1_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel2_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel2_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel3_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel3_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel4_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel4_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel5_L.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB_Wheel5_R.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB\Renault_ZB.json">
+      <Filter>Resources\Materials\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Gun.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Idler_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Idler_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Mantlet.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Roller1_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Roller1_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Roller2_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Roller2_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Sprocket_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Sprocket_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Track_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Track_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Turret.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel1_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel1_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel2_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel2_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel3_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel3_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel4_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel4_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel5_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel5_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel6_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel6_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel7_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel7_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel8_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel8_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel9_L.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35_Wheel9_R.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35\SOMUA_S35.json">
+      <Filter>Resources\Materials\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Aux_Turret_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Aux_Turret_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Gun.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Idler_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Idler_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Mantlet.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller1_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller1_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller2_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller2_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller3_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller3_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller4_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Roller4_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Sprocket_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Sprocket_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Track_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Track_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Turret.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel1_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel1_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel10_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel10_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel11_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel11_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel12_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel12_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel2_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel2_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel3_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel3_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel4_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel4_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel5_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel5_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel6_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel6_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel7_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel7_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel8_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel8_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel9_L.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85_Wheel9_R.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85\T_28_85.json">
+      <Filter>Resources\Materials\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Gun.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Idler_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Idler_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Mantlet.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Sprocket_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Sprocket_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Track_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Track_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Turret.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel1_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel1_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel2_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel2_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel3_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel3_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel4_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel4_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel5_L.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29_Wheel5_R.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76%281942%29\T_34_76%281942%29.json">
+      <Filter>Resources\Materials\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Gun.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Idler_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Idler_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Mantlet.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller1_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller1_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller2_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller2_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller3_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller3_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller4_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller4_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Sprocket_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Sprocket_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Turret.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel1_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel1_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel2_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel2_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel3_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel3_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel4_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel4_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel5_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel5_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel6_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel6_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel7_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel7_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel8_L.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel8_R.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B.json">
+      <Filter>Resources\Materials\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Gun.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Idler_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Idler_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Mantlet.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller1_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller1_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller2_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller2_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller3_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller3_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Sprocket_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Sprocket_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Turret.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel1_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel1_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel2_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel2_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel3_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel3_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel4_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel4_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40.json">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Gun.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Idler_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Idler_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Mantlet.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller1_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller1_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller2_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller2_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller3_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller3_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Sprocket_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Sprocket_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Turret.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel1_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel1_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel2_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel2_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel3_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel3_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel4_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel4_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel5_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel5_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel6_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel6_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel7_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel7_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel8_L.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel8_R.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40.json">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Gun.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Idler_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Idler_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Mantlet.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller1_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller1_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller2_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller2_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller3_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller3_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Sprocket_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Sprocket_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Track_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Track_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Turret.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel1_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel1_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel2_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel2_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel3_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel3_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel4_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel4_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel5_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel5_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel6_L.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel6_R.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha.json">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Gun.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Idler_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Idler_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Mantlet.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Sprocket_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Sprocket_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Track_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Track_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Turret.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel1_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel1_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel2_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel2_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel3_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel3_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel4_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel4_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel5_L.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel5_R.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV.json">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Gun.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Idler_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Idler_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Mantlet.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Sprocket_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Sprocket_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Track_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Track_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Turret.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel1_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel1_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel2_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel2_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel3_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel3_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel4_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel4_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel5_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel5_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel6_L.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel6_R.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50.json">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Gun.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Idler_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Idler_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Mantlet.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller1_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller1_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller2_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller2_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Sprocket_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Sprocket_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Track_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Track_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Turret.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel1_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel1_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel2_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel2_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel3_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel3_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel4_L.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel4_R.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go.json">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Gun.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Idler_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Idler_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Mantlet.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller1_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller1_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller2_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller2_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Sprocket_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Sprocket_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Track_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Track_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Turret.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel1_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel1_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel2_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel2_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel3_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel3_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel4_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel4_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel5_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel5_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel6_L.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel6_R.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35.json">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Gun.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Idler_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Idler_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Mantlet.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Roller1_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Roller1_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Roller2_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Roller2_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Roller3_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Roller3_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Sprocket_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Sprocket_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Track_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Track_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Turret.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel1_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel1_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel2_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel2_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel3_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel3_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel4_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel4_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel5_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel5_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel6_L.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29_Wheel6_R.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2%281940%29\KV_2%281940%29.json">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Gun.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Idler_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Idler_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Mantlet.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller1_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller1_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller2_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller2_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller3_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Roller3_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Sprocket_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Sprocket_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Turret.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel1_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel1_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel2_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel2_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel3_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel3_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel4_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel4_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel5_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel5_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel6_L.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Wheel6_R.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman.json">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Gun.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Idler_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Idler_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Mantlet.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller1_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller1_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller2_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller2_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller3_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller3_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Sprocket_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Sprocket_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Track_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Track_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Turret.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel1_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel1_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel2_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel2_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel3_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel3_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel4_L.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel4_R.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart.json">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Gun.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Idler_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Idler_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Mantlet.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Sprocket_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Sprocket_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Track_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Track_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Turret.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel1_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel1_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel10_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel10_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel11_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel11_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel2_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel2_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel3_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel3_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel4_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel4_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel5_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel5_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel6_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel6_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel7_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel7_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel8_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel8_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel9_L.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel9_R.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II.json">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Gun.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Idler_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Idler_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Mantlet.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller1_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller1_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller2_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller2_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller3_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller3_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller4_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller4_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Sprocket_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Sprocket_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Track_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Track_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Turret.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel1_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel1_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel2_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel2_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel3_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel3_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel4_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel4_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel5_L.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel5_R.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F.json">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Gun.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Idler_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Idler_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Mantlet.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Sprocket_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Sprocket_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Track_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Track_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Turret.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel1_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel1_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel2_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel2_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel3_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel3_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel4_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel4_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel5_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel5_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel6_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel6_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel7_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel7_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel8_L.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel8_R.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E.json">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Gun.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Idler_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Idler_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Mantlet.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller1_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller1_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller2_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller2_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller3_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller3_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Sprocket_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Sprocket_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Track_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Track_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Turret.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel1_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel1_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel2_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel2_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel3_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel3_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel4_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel4_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel5_L.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel5_R.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB.json">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Gun.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Idler_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Idler_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Mantlet.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller1_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller1_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller2_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller2_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Sprocket_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Sprocket_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Track_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Track_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Turret.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel1_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel1_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel2_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel2_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel3_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel3_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel4_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel4_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel5_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel5_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel6_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel6_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel7_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel7_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel8_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel8_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel9_L.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel9_R.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35.json">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Aux_Turret_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Aux_Turret_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Gun.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Idler_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Idler_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Mantlet.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller1_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller1_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller2_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller2_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller3_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller3_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller4_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller4_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Sprocket_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Sprocket_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Track_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Track_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Turret.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel1_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel1_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel10_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel10_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel11_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel11_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel12_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel12_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel2_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel2_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel3_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel3_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel4_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel4_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel5_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel5_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel6_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel6_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel7_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel7_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel8_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel8_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel9_L.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel9_R.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85.json">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Gun.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Idler_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Idler_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Mantlet.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Sprocket_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Sprocket_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Track_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Track_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Turret.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel1_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel1_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel2_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel2_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel3_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel3_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel4_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel4_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel5_L.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29_Wheel5_R.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76%281942%29\T_34_76%281942%29.json">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Gun.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Idler_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Idler_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Mantlet.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller1_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller1_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller2_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller2_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller3_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller3_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller4_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller4_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Sprocket_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Sprocket_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Turret.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel1_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel1_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel2_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel2_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel3_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel3_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel4_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel4_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel5_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel5_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel6_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel6_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel7_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel7_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel8_L.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel8_R.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B.json">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Models\Carro_Armato_L6_40\Carro_Armato_L6_40.json">
+      <Filter>Resources\Models\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Models\Carro_Armato_M13_40\Carro_Armato_M13_40.json">
+      <Filter>Resources\Models\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Models\Chi_Ha\Chi_Ha.json">
+      <Filter>Resources\Models\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Models\Cromwell_IV\Cromwell_IV.json">
+      <Filter>Resources\Models\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Models\E_50\E_50.json">
+      <Filter>Resources\Models\E_50</Filter>
+    </None>
+    <None Include="Resources\Models\Ha_Go\Ha_Go.json">
+      <Filter>Resources\Models\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Models\Hotchkiss_H35\Hotchkiss_H35.json">
+      <Filter>Resources\Models\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Models\KV_2%281940%29\KV_2%281940%29.json">
+      <Filter>Resources\Models\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Models\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman.json">
+      <Filter>Resources\Models\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Models\M5A1_Stuart\M5A1_Stuart.json">
+      <Filter>Resources\Models\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Models\Matilda_II\Matilda_II.json">
+      <Filter>Resources\Models\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Models\Panzer_II_F\Panzer_II_F.json">
+      <Filter>Resources\Models\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Models\Panzer_VI_E\Panzer_VI_E.json">
+      <Filter>Resources\Models\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Models\Renault_ZB\Renault_ZB.json">
+      <Filter>Resources\Models\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Models\SOMUA_S35\SOMUA_S35.json">
+      <Filter>Resources\Models\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Models\T_28_85\T_28_85.json">
+      <Filter>Resources\Models\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Models\T_34_76%281942%29\T_34_76%281942%29.json">
+      <Filter>Resources\Models\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Models\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B.json">
+      <Filter>Resources\Models\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_BaseColor.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Metallic.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Normal.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Occlusion.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_BaseColor.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Metallic.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Normal.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Occlusion.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_BaseColor.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Metallic.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Normal.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Occlusion.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_BaseColor.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Metallic.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Normal.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Occlusion.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_BaseColor.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Metallic.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Normal.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Occlusion.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Track_L_Normal.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_BaseColor.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Metallic.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Normal.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Occlusion.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_BaseColor.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Metallic.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Normal.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Occlusion.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_BaseColor.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Metallic.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Normal.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Occlusion.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Track_L_Normal.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2%281940%29\KV_2%281940%29_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_BaseColor.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Metallic.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Normal.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Occlusion.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_L_Normal.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3%2875%29_Sherman\M4A3%2875%29_Sherman_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_BaseColor.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Metallic.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Normal.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Occlusion.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Track_L_Normal.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_BaseColor.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Metallic.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Normal.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Occlusion.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_BaseColor.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Metallic.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Normal.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Occlusion.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_BaseColor.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Metallic.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Normal.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Occlusion.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Polyverse Skies - Blue Sky.dds">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Polyverse Skies - Night Sky.dds">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_BaseColor.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Metallic.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Normal.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Occlusion.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_BaseColor.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Metallic.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Normal.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Occlusion.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Track_L_Normal.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_BaseColor.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Metallic.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Normal.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Occlusion.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Track_L_Normal.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_BaseColor.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Metallic.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Normal.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Occlusion.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Track_L_Normal.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76%281942%29\T_34_76%281942%29_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_BaseColor.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Metallic.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Normal.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Occlusion.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L_BaseColor.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L_Metallic.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L_Normal.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L_Occlusion.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+  </ItemGroup>
 </Project>

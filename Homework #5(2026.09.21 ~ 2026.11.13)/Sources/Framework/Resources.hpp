@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Resources/Asset.hpp"
 #include "Resources/AssetLoader.hpp"
