@@ -4,7 +4,6 @@
 #include <expected>
 #include <span>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -14,23 +13,14 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Math/ColorRGBA.hpp"
-#include "../Math/Matrix4x4.hpp"
-
 #include "GPUBuffer.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 
 namespace TUK::Framework
 {
-	class Camera;
-	class Cubemap;
-	class Entity;
 	class GPUDevice;
-	class GPUMesh;
 	class GPUTarget;
 	class GPUTexture2D;
-	class MaterialAsset;
-	class TextureAsset;
 
 	struct GPUCommandBufferCreateInfo final
 	{
@@ -55,10 +45,11 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> Reset();
 		[[nodiscard]] std::expected<void, std::string> Submit();
 
-		[[nodiscard]] std::expected<void, std::string> SetEntity(const Entity* entity);
-		[[nodiscard]] std::expected<void, std::string> SetCamera(const Camera* camera);
-		[[nodiscard]] std::expected<void, std::string> SetMaterial(const MaterialAsset* material, const GPUGraphicsPipelineState& pipelineState, DXGI_FORMAT targetFormat);
-		[[nodiscard]] std::expected<void, std::string> SetObjectTransform(const Matrix4x4<f32>& worldMatrix);
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
+			u32 rootSlot, std::span<const std::byte> bytes);
+		[[nodiscard]] std::expected<void, std::string> BindTextures(
+			std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
+			const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView = nullptr);
 
 		void TransitionTexture(
 			const GPUTexture2D& texture,
@@ -79,37 +70,29 @@ namespace TUK::Framework
 
 		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
 
-		void SetGPUCameraConstantBuffer(const GPUBuffer& buffer, u64 offset = 0) noexcept;
-		void SetGPUObjectConstantBuffer(const GPUBuffer& buffer, u64 offset = 0) noexcept;
-		void SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, u64 offset = 0) noexcept;
+		void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) noexcept;
 		void SetViewport(const D3D12_VIEWPORT& viewport) noexcept;
 		void SetScissorRect(const D3D12_RECT& scissorRect) noexcept;
 
-		void SetGPUMesh(const GPUMesh& mesh) noexcept;
-
-		[[nodiscard]] std::expected<void, std::string> DrawSkybox(const MaterialAsset* material, const Cubemap* cubemap);
-
-		[[nodiscard]] std::expected<void, std::string> DrawImageUI(const Entity* entity, const TextureAsset* image);
+		void SetVertexBuffer(u32 slot, const D3D12_VERTEX_BUFFER_VIEW& view) noexcept;
+		void SetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& view) noexcept;
 
 		void Draw(u32 vertexCount, u32 firstVertex = 0);
 		void DrawIndexed(u32 indexCount, u32 firstIndex = 0, i32 baseVertex = 0);
 
-		bool ClearCameraBuffers(const Camera* camera, bool clearColor);
+		void ClearRenderTarget(const f32 (&color)[4], const D3D12_RECT& rect) noexcept;
+		void ClearDepth(f32 depth, const D3D12_RECT& rect) noexcept;
 		void SetGPUTarget(const GPUTarget& target) noexcept;
 
 		[[nodiscard]] DXGI_FORMAT GetActiveTargetFormat() const noexcept;
+		[[nodiscard]] const D3D12_RECT& GetActiveTargetBounds() const noexcept;
+		[[nodiscard]] const D3D12_VIEWPORT& GetActiveViewport() const noexcept;
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
 	private:
-		[[nodiscard]] std::expected<GPUGraphicsPipelineState, std::string> CreateImageUIPipeline() const;
-
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
-
-		[[nodiscard]] std::expected<void, std::string> BindTextures(
-			std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
-			const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView = nullptr);
 
 		const GPUDevice* device;
 
@@ -128,10 +111,6 @@ namespace TUK::Framework
 		D3D12_CPU_DESCRIPTOR_HANDLE activeDSV{};
 		D3D12_RECT activeTargetBounds{};
 		D3D12_VIEWPORT activeViewport{};
-
-		std::unordered_map<DXGI_FORMAT, GPUGraphicsPipelineState> imageUIPipelines;
-		
-		bool cameraPrepared = false;
 	};
 
 	inline GPUCommandBuffer::GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept
@@ -147,6 +126,16 @@ namespace TUK::Framework
 	inline DXGI_FORMAT GPUCommandBuffer::GetActiveTargetFormat() const noexcept
 	{
 		return activeTargetFormat;
+	}
+
+	inline const D3D12_RECT& GPUCommandBuffer::GetActiveTargetBounds() const noexcept
+	{
+		return activeTargetBounds;
+	}
+
+	inline const D3D12_VIEWPORT& GPUCommandBuffer::GetActiveViewport() const noexcept
+	{
+		return activeViewport;
 	}
 
 	inline ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept

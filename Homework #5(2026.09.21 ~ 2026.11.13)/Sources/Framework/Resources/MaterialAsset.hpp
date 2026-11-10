@@ -35,6 +35,13 @@ namespace TUK::Framework
 
 	using MaterialTextures = std::array<const TextureAsset*, static_cast<usize>(MaterialTextureSlot::COUNT)>;
 
+	enum class MaterialPass : u8
+	{
+		SURFACE,
+		SKYBOX,
+		IMAGE_UI
+	};
+
 	struct MaterialAssetData final
 	{
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
@@ -53,7 +60,7 @@ namespace TUK::Framework
 
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
-		bool isSkybox = false;
+		MaterialPass pass = MaterialPass::SURFACE;
 	};
 
 	class MaterialAsset final : public Asset
@@ -75,7 +82,7 @@ namespace TUK::Framework
 		[[nodiscard]] f32 GetSmoothness() const noexcept;
 
 		[[nodiscard]] const MaterialTextures& GetTextures() const noexcept;
-		[[nodiscard]] bool IsSkybox() const noexcept;
+		[[nodiscard]] MaterialPass GetPass() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetVertexShader() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetPixelShader() const noexcept;
 
@@ -99,7 +106,7 @@ namespace TUK::Framework
 
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
-		bool isSkybox = false;
+		MaterialPass pass = MaterialPass::SURFACE;
 	};
 
 	inline MaterialAsset::MaterialAsset(
@@ -118,7 +125,7 @@ namespace TUK::Framework
 		, pixelShader(data.pixelShader)
 		, pipelineState(std::move(data.pipelineState))
 		, targetFormat(data.targetFormat)
-		, isSkybox(data.isSkybox)
+		, pass(data.pass)
 	{
 		ASSERT_FMT(vertexShader, "머티리얼의 정점 셰이더 에셋이 nullptr입니다.");
 		ASSERT_FMT(pixelShader, "머티리얼의 픽셀 셰이더 에셋이 nullptr입니다.");
@@ -169,9 +176,9 @@ namespace TUK::Framework
 		return textures;
 	}
 
-	inline bool MaterialAsset::IsSkybox() const noexcept
+	inline MaterialPass MaterialAsset::GetPass() const noexcept
 	{
-		return isSkybox;
+		return pass;
 	}
 
 	inline const ShaderAsset* MaterialAsset::GetVertexShader() const noexcept

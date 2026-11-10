@@ -27,9 +27,9 @@ VSOutput VSMain(uint vertexID : SV_VertexID)
     VSOutput output;
     output.uv = float2(vertexID & 1u, vertexID >> 1u);
 
-    const float2 pixelPosition = mul(float4(output.uv, 0.0f, 1.0f), world).xy;
-    const float2 clipPosition =
-        pixelPosition / viewportSize * float2(2.0f, -2.0f) + float2(-1.0f, 1.0f);
+    const float2 localPosition = output.uv - float2(0.5f, 0.5f);
+    const float2 pixelPosition = mul(float4(localPosition, 0.0f, 1.0f), world).xy;
+    const float2 clipPosition = pixelPosition / viewportSize * float2(2.0f, -2.0f);
     output.position = float4(clipPosition, 0.0f, 1.0f);
 
     return output;

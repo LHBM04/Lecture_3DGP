@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <expected>
+#include <string>
+
 #include <directx/d3dx12.h>
 
 #include "../Core/Common.hpp"
@@ -43,6 +46,7 @@ namespace TUK::Framework
 		void OnEnable() override;
 		void OnDisable() override;
 
+		[[nodiscard]] std::expected<void, std::string> PrepareRender(GPUCommandBuffer& commandBuffer) const;
 		[[nodiscard]] BackgroundPass PrepareBackground(
 			GPUCommandBuffer& commandBuffer, const MaterialAsset* skyboxMaterial) const;
 		void RenderBackground(GPUCommandBuffer& commandBuffer, const BackgroundPass& pass) const;
@@ -81,6 +85,8 @@ namespace TUK::Framework
 		[[nodiscard]] Matrix4x4<f32> GetProjectionMatrix() const noexcept;
 
 	private:
+		bool ClearBuffers(GPUCommandBuffer& commandBuffer, bool clearColor) const;
+
 		CameraClearFlags clearFlags = CameraClearFlags::SolidColor;
 		ColorRGBA<f32> backgroundColor = ColorRGBA<f32>::GetBlack();
 		const Cubemap* cubemap = nullptr;

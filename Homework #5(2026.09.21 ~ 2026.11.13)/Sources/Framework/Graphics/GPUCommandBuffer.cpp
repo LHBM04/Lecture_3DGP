@@ -1,33 +1,15 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUCommandBuffer.hpp"
 
-#include <algorithm>
-#include <array>
-#include <cassert>
-#include <cmath>
 #include <cstddef>
-#include <filesystem>
 #include <span>
 #include <utility>
 
-#include "../Core/App.hpp"
-
-#include "../Entities/Entity.hpp"
-#include "../Entities/Transform.hpp"
-
-#include "../Resources/AssetSubsystem.hpp"
-#include "../Resources/Cubemap.hpp"
-#include "../Resources/MaterialAsset.hpp"
-#include "../Resources/ShaderAsset.hpp"
-#include "../Resources/TextureAsset.hpp"
-
 #include "../Core/Common.hpp"
 
-#include "Camera.hpp"
 #include "GPUBuffer.hpp"
 #include "GPUDevice.hpp"
 #include "GPUGraphicsPipelineState.hpp"
-#include "GPUMesh.hpp"
 #include "GPUTarget.hpp"
 #include "GPUTexture2D.hpp"
 
@@ -35,45 +17,7 @@ namespace TUK::Framework
 {
 	namespace
 	{
-		struct CameraConstants final
-		{
-			DirectX::XMFLOAT4X4 view;
-			DirectX::XMFLOAT4X4 projection;
-		};
-
-		struct ObjectConstants final
-		{
-			DirectX::XMFLOAT4X4 world;
-		};
-
-		struct MaterialConstants final
-		{
-			DirectX::XMFLOAT4 baseColor;
-			DirectX::XMFLOAT4 emissiveColor;
-			f32 metallic;
-			f32 roughness;
-			u32 textureMask;
-			f32 padding{};
-			DirectX::XMFLOAT4 specularColor;
-		};
-
-		static_assert(sizeof(MaterialConstants) == 64);
-
-		struct ImageUIConstants final
-		{
-			DirectX::XMFLOAT2 viewportSize;
-			DirectX::XMFLOAT2 padding{};
-		};
-
-		static_assert(sizeof(ImageUIConstants) == 16);
-
-		enum class GPURootSlot : u32
-		{
-			CAMERA = 0,
-			OBJECT = 1,
-			MATERIAL = 2,
-			TEXTURE = 3
-		};
+		constexpr u32 TEXTURE_ROOT_SLOT = 3;
 	}
 
 	std::expected<void, std::string> GPUCommandBuffer::Reset()
@@ -94,7 +38,10 @@ namespace TUK::Framework
 		constantBufferOffset = 0;
 		textureDescriptorCount = 0;
 		activeTargetFormat = DXGI_FORMAT_UNKNOWN;
-		cameraPrepared = false;
+		activeRTV = {};
+		activeDSV = {};
+		activeTargetBounds = {};
+		activeViewport = {};
 		d3dCommandList->SetGraphicsRootSignature(&device->GetD3DRootSignature());
 		return {};
 	}
@@ -112,109 +59,17 @@ namespace TUK::Framework
 		return {};
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetEntity(const Entity* entity)
+	std::expected<void, std::string> GPUCommandBuffer::SetGraphicsConstants(
+		u32 rootSlot, std::span<const std::byte> bytes)
 	{
-		ASSERT_FMT(entity, "설정할 엔티티가 nullptr입니다.");
-
-		const Transform* transform = entity->GetComponent<Transform>();
-		return SetObjectTransform(transform ? transform->GetWorldMatrix() : Matrix4x4<f32>::GetIdentity());
-	}
-
-	std::expected<void, std::string> GPUCommandBuffer::SetCamera(const Camera* camera)
-	{
-		ASSERT_FMT(camera, "설정할 카메라가 nullptr입니다.");
-
-		cameraPrepared = false;
-		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
-		{
-			return std::unexpected("카메라를 적용하기 전에 렌더 타깃을 설정해야 합니다.");
-		}
-
-		CameraConstants constants{};
-		DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(camera->GetViewMatrix()));
-		DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(camera->GetProjectionMatrix()));
-		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
+		auto allocation = UploadConstants(bytes);
 		if (!allocation)
 		{
 			return std::unexpected(allocation.error());
 		}
-		SetGPUCameraConstantBuffer(*allocation->first, allocation->second);
-		SetViewport(camera->GetViewport());
-		SetScissorRect(camera->GetScissorRect());
-		cameraPrepared = true;
-		return {};
-	}
 
-	std::expected<void, std::string> GPUCommandBuffer::SetMaterial(
-		const MaterialAsset* material,
-		const GPUGraphicsPipelineState& pipelineState,
-		DXGI_FORMAT targetFormat)
-	{
-		ASSERT_FMT(material, "설정할 머티리얼이 nullptr입니다.");
-
-		if (activeTargetFormat == DXGI_FORMAT_UNKNOWN)
-		{
-			return std::unexpected("머티리얼을 적용하기 전에 렌더 타깃을 설정해야 합니다.");
-		}
-
-		if (targetFormat != activeTargetFormat)
-		{
-			return std::unexpected("머티리얼 파이프라인 형식이 렌더 타깃 형식과 일치하지 않습니다.");
-		}
-		const ColorRGBA<f32>& baseColor = material->GetBaseColor();
-		const ColorRGBA<f32>& emissiveColor = material->GetEmissiveColor();
-		const ColorRGBA<f32>& specularColor = material->GetSpecularColor();
-		if (material->IsSkybox())
-		{
-			return std::unexpected("메시에는 일반 2D 텍스처를 사용하는 머티리얼이 필요합니다.");
-		}
-		MaterialConstants constants{};
-		constants.baseColor = { baseColor.GetR(), baseColor.GetG(), baseColor.GetB(), baseColor.GetA() };
-		constants.emissiveColor = { emissiveColor.GetR(), emissiveColor.GetG(), emissiveColor.GetB(), emissiveColor.GetA() };
-		constants.metallic = material->GetMetallic();
-		constants.roughness = material->GetRoughness();
-		constants.specularColor = { specularColor.GetR(), specularColor.GetG(), specularColor.GetB(), specularColor.GetA() };
-
-		static_assert(TEXTURE_SLOT_COUNT == static_cast<u32>(MaterialTextureSlot::COUNT));
-		std::array<const GPUTexture2D*, TEXTURE_SLOT_COUNT> textures{};
-		const MaterialTextures& materialTextures = material->GetTextures();
-		for (u32 index = 0; index < TEXTURE_SLOT_COUNT; ++index)
-		{
-			if (const TextureAsset* texture = materialTextures[index])
-			{
-				textures[index] = &texture->GetTexture();
-				constants.textureMask |= 1u << index;
-			}
-		}
-		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
-		if (!allocation)
-		{
-			return std::unexpected(allocation.error());
-		}
-		if (auto result = BindTextures(textures); !result)
-		{
-			return result;
-		}
-		SetGPUMaterialConstantBuffer(*allocation->first, allocation->second);
-		SetGPUGraphicsPipelineState(pipelineState);
-		return {};
-	}
-
-	std::expected<void, std::string> GPUCommandBuffer::SetObjectTransform(const Matrix4x4<f32>& worldMatrix)
-	{
-		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN)
-		{
-			return std::unexpected("오브젝트 변환을 적용하기 전에 카메라와 렌더 타깃을 설정해야 합니다.");
-		}
-
-		ObjectConstants constants{};
-		DirectX::XMStoreFloat4x4(&constants.world, Matrix4x4<f32>::Load(worldMatrix));
-		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
-		if (!allocation)
-		{
-			return std::unexpected(allocation.error());
-		}
-		SetGPUObjectConstantBuffer(*allocation->first, allocation->second);
+		const D3D12_GPU_VIRTUAL_ADDRESS address = allocation->first->GetGPUVirtualAddress() + allocation->second;
+		d3dCommandList->SetGraphicsRootConstantBufferView(rootSlot, address);
 		return {};
 	}
 
@@ -284,28 +139,10 @@ namespace TUK::Framework
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
-	void GPUCommandBuffer::SetGPUCameraConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
+	void GPUCommandBuffer::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) noexcept
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-
-		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPURootSlot::CAMERA), address);
-	}
-
-	void GPUCommandBuffer::SetGPUObjectConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
-	{
-		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-
-		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPURootSlot::OBJECT), address);
-	}
-
-	void GPUCommandBuffer::SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, u64 offset) noexcept
-	{
-		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-
-		const D3D12_GPU_VIRTUAL_ADDRESS address = buffer.GetGPUVirtualAddress() + offset;
-		d3dCommandList->SetGraphicsRootConstantBufferView(std::to_underlying(GPURootSlot::MATERIAL), address);
+		d3dCommandList->IASetPrimitiveTopology(topology);
 	}
 
 	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport) noexcept
@@ -321,104 +158,16 @@ namespace TUK::Framework
 		d3dCommandList->RSSetScissorRects(1, &scissorRect);
 	}
 
-	void GPUCommandBuffer::SetGPUMesh(const GPUMesh& mesh) noexcept
+	void GPUCommandBuffer::SetVertexBuffer(u32 slot, const D3D12_VERTEX_BUFFER_VIEW& view) noexcept
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-
-		const D3D12_VERTEX_BUFFER_VIEW vertexView = mesh.GetD3DVertexBufferView();
-		const D3D12_INDEX_BUFFER_VIEW indexView = mesh.GetD3DIndexBufferView();
-
-		d3dCommandList->IASetPrimitiveTopology(mesh.GetD3DTopology());
-		d3dCommandList->IASetVertexBuffers(0, 1, &vertexView);
-		d3dCommandList->IASetIndexBuffer(&indexView);
+		d3dCommandList->IASetVertexBuffers(slot, 1, &view);
 	}
 
-	std::expected<void, std::string> GPUCommandBuffer::DrawSkybox(
-		const MaterialAsset* material, const Cubemap* cubemap)
+	void GPUCommandBuffer::SetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& view) noexcept
 	{
-		ASSERT_FMT(material, "설정할 스카이박스 머티리얼이 nullptr입니다.");
-
-		if (!cameraPrepared || activeTargetFormat != material->GetTargetFormat())
-		{
-			return std::unexpected("스카이박스를 그리려면 카메라와 호환되는 렌더 타깃이 필요합니다.");
-		}
-
-		if (!material->IsSkybox() || !cubemap)
-		{
-			return std::unexpected("스카이박스 머티리얼과 큐브맵이 필요합니다.");
-		}
-
-		const GPUTexture2D& texture = cubemap->GetTexture();
-		const auto description = texture.GetD3DResource().GetDesc();
-		D3D12_SHADER_RESOURCE_VIEW_DESC view{};
-		view.Format = description.Format;
-		view.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
-		view.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		view.TextureCube.MipLevels = description.MipLevels;
-		const std::array<const GPUTexture2D*, TEXTURE_SLOT_COUNT> textures{ &texture };
-		if (auto result = BindTextures(textures, &view); !result)
-		{
-			return result;
-		}
-
-		SetGPUGraphicsPipelineState(material->GetGraphicsPipelineState());
-		d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		constexpr u32 FULLSCREEN_VERTEX_COUNT = 3;
-		Draw(FULLSCREEN_VERTEX_COUNT);
-		return {};
-	}
-
-	std::expected<void, std::string> GPUCommandBuffer::DrawImageUI(const Entity* entity, const TextureAsset* image)
-	{
-		ASSERT_FMT(entity, "UI 이미지 엔티티가 nullptr입니다.");
-		ASSERT_FMT(image, "UI 이미지 텍스처가 nullptr입니다.");
-
-		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN ||
-			activeViewport.Width <= 0.0f || activeViewport.Height <= 0.0f)
-		{
-			return std::unexpected("UI 이미지를 그리려면 카메라와 렌더 타깃이 필요합니다.");
-		}
-
-		if (!entity->GetComponent<Transform>())
-		{
-			return std::unexpected("UI 이미지 엔티티에 Transform 컴포넌트가 필요합니다.");
-		}
-
-		auto pipeline = imageUIPipelines.find(activeTargetFormat);
-		if (pipeline == imageUIPipelines.end())
-		{
-			auto created = CreateImageUIPipeline();
-			if (!created)
-			{
-				return std::unexpected(created.error());
-			}
-			pipeline = imageUIPipelines.try_emplace(activeTargetFormat, std::move(*created)).first;
-		}
-
-		if (auto result = SetEntity(entity); !result)
-		{
-			return result;
-		}
-
-		const ImageUIConstants constants{ { activeViewport.Width, activeViewport.Height } };
-		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
-		if (!allocation)
-		{
-			return std::unexpected(allocation.error());
-		}
-
-		const std::array<const GPUTexture2D*, TEXTURE_SLOT_COUNT> textures{ &image->GetTexture() };
-		if (auto result = BindTextures(textures); !result)
-		{
-			return result;
-		}
-
-		SetGPUMaterialConstantBuffer(*allocation->first, allocation->second);
-		SetGPUGraphicsPipelineState(pipeline->second);
-		d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		constexpr u32 IMAGE_VERTEX_COUNT = 4;
-		Draw(IMAGE_VERTEX_COUNT);
-		return {};
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		d3dCommandList->IASetIndexBuffer(&view);
 	}
 
 	void GPUCommandBuffer::Draw(u32 vertexCount, u32 firstVertex)
@@ -433,34 +182,16 @@ namespace TUK::Framework
 		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
 	}
 
-	bool GPUCommandBuffer::ClearCameraBuffers(const Camera* camera, bool clearColor)
+	void GPUCommandBuffer::ClearRenderTarget(const f32 (&color)[4], const D3D12_RECT& rect) noexcept
 	{
-		ASSERT_FMT(camera, "설정할 카메라가 nullptr입니다.");
-		ASSERT_FMT(cameraPrepared, "클리어 전에 카메라를 설정해야 합니다.");
+		ASSERT_FMT(activeRTV.ptr, "렌더 타깃이 설정되지 않았습니다.");
+		d3dCommandList->ClearRenderTargetView(activeRTV, color, 1, &rect);
+	}
 
-		const D3D12_VIEWPORT& viewport = camera->GetViewport();
-		const D3D12_RECT& scissor = camera->GetScissorRect();
-		const f32 targetWidth = static_cast<f32>(activeTargetBounds.right);
-		const f32 targetHeight = static_cast<f32>(activeTargetBounds.bottom);
-		const D3D12_RECT rect{
-			std::max(scissor.left, static_cast<LONG>(std::floor(std::clamp(viewport.TopLeftX, 0.0f, targetWidth)))),
-			std::max(scissor.top, static_cast<LONG>(std::floor(std::clamp(viewport.TopLeftY, 0.0f, targetHeight)))),
-			std::min(scissor.right, static_cast<LONG>(std::ceil(std::clamp(viewport.TopLeftX + viewport.Width, 0.0f, targetWidth)))),
-			std::min(scissor.bottom, static_cast<LONG>(std::ceil(std::clamp(viewport.TopLeftY + viewport.Height, 0.0f, targetHeight))))
-		};
-		if (rect.left >= rect.right || rect.top >= rect.bottom)
-		{
-			return false;
-		}
-
-		if (clearColor)
-		{
-			const ColorRGBA<f32>& background = camera->GetBackgroundColor();
-			const FLOAT color[] = { background.GetR(), background.GetG(), background.GetB(), background.GetA() };
-			d3dCommandList->ClearRenderTargetView(activeRTV, color, 1, &rect);
-		}
-		d3dCommandList->ClearDepthStencilView(activeDSV, D3D12_CLEAR_FLAG_DEPTH, GPUTarget::DEPTH_CLEAR_VALUE, 0, 1, &rect);
-		return true;
+	void GPUCommandBuffer::ClearDepth(f32 depth, const D3D12_RECT& rect) noexcept
+	{
+		ASSERT_FMT(activeDSV.ptr, "깊이 버퍼가 설정되지 않았습니다.");
+		d3dCommandList->ClearDepthStencilView(activeDSV, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 1, &rect);
 	}
 
 	void GPUCommandBuffer::SetGPUTarget(const GPUTarget& target) noexcept
@@ -472,58 +203,8 @@ namespace TUK::Framework
 		activeRTV = target.GetD3DRTVHandle();
 		activeDSV = target.GetD3DDSVHandle();
 		activeTargetBounds = { 0, 0, static_cast<LONG>(description.Width), static_cast<LONG>(description.Height) };
-		cameraPrepared = false;
+		activeViewport = {};
 		d3dCommandList->OMSetRenderTargets(1, &activeRTV, FALSE, &activeDSV);
-	}
-
-	std::expected<GPUGraphicsPipelineState, std::string> GPUCommandBuffer::CreateImageUIPipeline() const
-	{
-		AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
-		if (!assets)
-		{
-			return std::unexpected("에셋 서브시스템을 사용할 수 없습니다.");
-		}
-
-		constexpr DWORD EXECUTABLE_PATH_CAPACITY = 32768;
-		std::wstring executablePath(EXECUTABLE_PATH_CAPACITY, L'\0');
-		const DWORD length = GetModuleFileNameW(nullptr, executablePath.data(), EXECUTABLE_PATH_CAPACITY);
-		if (length == 0 || length >= EXECUTABLE_PATH_CAPACITY)
-		{
-			return std::unexpected("실행 파일의 경로를 확인하지 못했습니다.");
-		}
-		executablePath.resize(length);
-
-		const auto shaderDir = std::filesystem::path(executablePath).parent_path() / "Resources" / "Shaders";
-		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(shaderDir / "ImageUI.vert.cso");
-		const ShaderAsset* pixel = assets->LoadAsset<ShaderAsset>(shaderDir / "ImageUI.frag.cso");
-		if (!vertex || !pixel)
-		{
-			return std::unexpected("ImageUI 셰이더를 불러오지 못했습니다.");
-		}
-
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
-		description.VS = vertex->GetShader().GetD3DBytecode();
-		description.PS = pixel->GetShader().GetD3DBytecode();
-		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		description.NumRenderTargets = 1;
-		description.RTVFormats[0] = activeTargetFormat;
-		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
-		description.SampleMask = UINT_MAX;
-		description.SampleDesc = { 1, 0 };
-		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		description.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		description.DepthStencilState.DepthEnable = FALSE;
-		description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-
-		auto& blend = description.BlendState.RenderTarget[0];
-		blend.BlendEnable = TRUE;
-		blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-		blend.SrcBlendAlpha = D3D12_BLEND_ONE;
-		blend.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
-		return device->CreateGraphicsPipelineState(description);
 	}
 
 	std::expected<void, std::string> GPUCommandBuffer::BindTextures(
@@ -581,7 +262,7 @@ namespace TUK::Framework
 
 		auto gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
 		gpuHandle.ptr += offset;
-		d3dCommandList->SetGraphicsRootDescriptorTable(std::to_underlying(GPURootSlot::TEXTURE), gpuHandle);
+		d3dCommandList->SetGraphicsRootDescriptorTable(TEXTURE_ROOT_SLOT, gpuHandle);
 		textureDescriptorCount += TEXTURE_SLOT_COUNT;
 		return {};
 	}

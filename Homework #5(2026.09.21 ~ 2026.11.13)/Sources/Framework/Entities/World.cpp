@@ -125,7 +125,7 @@ namespace TUK::Framework
 					continue;
 				}
 
-				if (auto result = commandBuffer.SetCamera(camera); !result)
+				if (auto result = camera->PrepareRender(commandBuffer); !result)
 				{
 					LOG_ERROR("월드의 카메라 설정에 실패했습니다: {}", result.error());
 					continue;

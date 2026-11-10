@@ -94,14 +94,21 @@ namespace TUK::Framework
 		{
 			assetRoot = assetRoot.parent_path();
 		}
-		bool isSkybox = false;
-		if (const auto pass = json.find("pass"); pass != json.end())
+		MaterialPass pass = MaterialPass::SURFACE;
+		if (const auto field = json.find("pass"); field != json.end())
 		{
-			if (*pass != "skybox" && *pass != "surface")
+			if (*field == "skybox")
+			{
+				pass = MaterialPass::SKYBOX;
+			}
+			else if (*field == "imageUI")
+			{
+				pass = MaterialPass::IMAGE_UI;
+			}
+			else if (*field != "surface")
 			{
 				return parseError;
 			}
-			isSkybox = *pass == "skybox";
 		}
 
 		static constexpr std::pair<MaterialTextureSlot, const char*> TEXTURE_FIELDS[] =
@@ -133,7 +140,7 @@ namespace TUK::Framework
 			{
 				continue;
 			}
-			if (isSkybox || name.find('\0') != std::string::npos)
+			if (pass != MaterialPass::SURFACE || name.find('\0') != std::string::npos)
 			{
 				return parseError;
 			}
@@ -213,7 +220,7 @@ namespace TUK::Framework
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
 		description.VS = vertex->GetShader().GetD3DBytecode();
 		description.PS = pixel->GetShader().GetD3DBytecode();
-		if (!isSkybox)
+		if (pass == MaterialPass::SURFACE)
 		{
 			description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
 		}
@@ -224,14 +231,26 @@ namespace TUK::Framework
 		description.SampleDesc = { 1, 0 };
 		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		description.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		description.RasterizerState.CullMode = isSkybox ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
+		description.RasterizerState.CullMode = pass == MaterialPass::SURFACE ? D3D12_CULL_MODE_BACK : D3D12_CULL_MODE_NONE;
 		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
-		if (isSkybox)
+		if (pass == MaterialPass::SKYBOX)
 		{
 			description.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 			description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		}
+		else if (pass == MaterialPass::IMAGE_UI)
+		{
+			description.DepthStencilState.DepthEnable = FALSE;
+			description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+			auto& blend = description.BlendState.RenderTarget[0];
+			blend.BlendEnable = TRUE;
+			blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+			blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+			blend.SrcBlendAlpha = D3D12_BLEND_ONE;
+			blend.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
 		}
 
 		auto pipeline = device.CreateGraphicsPipelineState(description);
@@ -255,7 +274,7 @@ namespace TUK::Framework
 				.pixelShader = pixel,
 				.pipelineState = std::move(*pipeline),
 				.targetFormat = targetFormat,
-				.isSkybox = isSkybox
+				.pass = pass
 			});
 	}
 }

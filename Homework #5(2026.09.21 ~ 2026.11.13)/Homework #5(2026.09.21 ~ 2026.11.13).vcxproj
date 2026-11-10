@@ -366,6 +366,7 @@
       <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
     </CustomBuild>
     <None Include="Resources\Materials\Skybox.json" />
+    <None Include="Resources\Materials\ImageUI.json" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Skybox.hlsl">

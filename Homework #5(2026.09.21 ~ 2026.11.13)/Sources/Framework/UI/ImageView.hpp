@@ -4,6 +4,7 @@
 
 namespace TUK::Framework
 {
+	class MaterialAsset;
 	class TextureAsset;
 
 	class ImageView final : public Component
@@ -11,6 +12,7 @@ namespace TUK::Framework
 	public:
 		using Component::Component;
 
+		void OnStart() override;
 		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
 
 		[[nodiscard]] const TextureAsset* GetImage() const noexcept;
@@ -18,6 +20,7 @@ namespace TUK::Framework
 
 	private:
 		const TextureAsset* image = nullptr;
+		const MaterialAsset* material = nullptr;
 	};
 
 	inline const TextureAsset* ImageView::GetImage() const noexcept

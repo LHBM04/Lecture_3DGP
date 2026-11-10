@@ -445,6 +445,9 @@
     <None Include="Resources\Materials\Skybox.json">
       <Filter>Resources\Materials</Filter>
     </None>
+    <None Include="Resources\Materials\ImageUI.json">
+      <Filter>Resources\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Standard.hlsl">
