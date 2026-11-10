@@ -8,6 +8,7 @@
 #include "Framework/Entities.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
+#include "Framework/UI/ImageView.hpp"
 
 #include "../Components/PlayerController.hpp"
 #include "../Input.hpp"
@@ -50,6 +51,10 @@ namespace TUK::Game
 		camera->SetClearFlags(CameraClearFlags::Skybox);
 		camera->SetCubemap(assets->LoadAsset<Cubemap>("Resources/Textures/Polyverse Skies - Blue Sky.dds"));
 		SetSkyboxMaterial(assets->LoadAsset<MaterialAsset>("Resources/Materials/Skybox.json"));
+
+		auto test = Instantiate(Vector3D<f32>::GetZero());
+		test->GetComponent<Transform>()->SetLocalScale(Vector3D<f32>(100.0f, 100.0f, 1.0f));
+		test->AddComponent<ImageView>()->SetImage(assets->LoadAsset<TextureAsset>("Resources/Textures/Test.dds"));
 	}
 
 	void World_Stage::OnUpdate()

@@ -4,6 +4,7 @@
 #include <expected>
 #include <span>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -29,6 +30,7 @@ namespace TUK::Framework
 	class GPUTarget;
 	class GPUTexture2D;
 	class MaterialAsset;
+	class TextureAsset;
 
 	struct GPUCommandBufferCreateInfo final
 	{
@@ -87,6 +89,8 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::expected<void, std::string> DrawSkybox(const MaterialAsset* material, const Cubemap* cubemap);
 
+		[[nodiscard]] std::expected<void, std::string> DrawImageUI(const Entity* entity, const TextureAsset* image);
+
 		void Draw(u32 vertexCount, u32 firstVertex = 0);
 		void DrawIndexed(u32 indexCount, u32 firstIndex = 0, i32 baseVertex = 0);
 
@@ -98,6 +102,8 @@ namespace TUK::Framework
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
 	private:
+		[[nodiscard]] std::expected<GPUGraphicsPipelineState, std::string> CreateImageUIPipeline() const;
+
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 
@@ -121,6 +127,9 @@ namespace TUK::Framework
 		D3D12_CPU_DESCRIPTOR_HANDLE activeRTV{};
 		D3D12_CPU_DESCRIPTOR_HANDLE activeDSV{};
 		D3D12_RECT activeTargetBounds{};
+		D3D12_VIEWPORT activeViewport{};
+
+		std::unordered_map<DXGI_FORMAT, GPUGraphicsPipelineState> imageUIPipelines;
 		
 		bool cameraPrepared = false;
 	};

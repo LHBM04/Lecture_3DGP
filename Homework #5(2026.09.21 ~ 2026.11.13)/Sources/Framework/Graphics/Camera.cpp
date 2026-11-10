@@ -45,7 +45,7 @@ namespace TUK::Framework
 			{
 				const bool canDrawSkybox = cubemap && skyboxMaterial && skyboxMaterial->IsSkybox() &&
 					skyboxMaterial->GetTargetFormat() == commandBuffer.GetActiveTargetFormat();
-				if (commandBuffer.ClearCameraBuffers(this, !canDrawSkybox) && canDrawSkybox)
+				if (commandBuffer.ClearCameraBuffers(this, true) && canDrawSkybox)
 				{
 					return { skyboxMaterial, cubemap };
 				}

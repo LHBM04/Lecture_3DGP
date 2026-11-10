@@ -6,14 +6,19 @@
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#include <filesystem>
 #include <span>
 #include <utility>
+
+#include "../Core/App.hpp"
 
 #include "../Entities/Entity.hpp"
 #include "../Entities/Transform.hpp"
 
+#include "../Resources/AssetSubsystem.hpp"
 #include "../Resources/Cubemap.hpp"
 #include "../Resources/MaterialAsset.hpp"
+#include "../Resources/ShaderAsset.hpp"
 #include "../Resources/TextureAsset.hpp"
 
 #include "../Core/Common.hpp"
@@ -53,6 +58,14 @@ namespace TUK::Framework
 		};
 
 		static_assert(sizeof(MaterialConstants) == 64);
+
+		struct ImageUIConstants final
+		{
+			DirectX::XMFLOAT2 viewportSize;
+			DirectX::XMFLOAT2 padding{};
+		};
+
+		static_assert(sizeof(ImageUIConstants) == 16);
 
 		enum class GPURootSlot : u32
 		{
@@ -298,6 +311,7 @@ namespace TUK::Framework
 	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport) noexcept
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		activeViewport = viewport;
 		d3dCommandList->RSSetViewports(1, &viewport);
 	}
 
@@ -354,6 +368,59 @@ namespace TUK::Framework
 		return {};
 	}
 
+	std::expected<void, std::string> GPUCommandBuffer::DrawImageUI(const Entity* entity, const TextureAsset* image)
+	{
+		ASSERT_FMT(entity, "UI 이미지 엔티티가 nullptr입니다.");
+		ASSERT_FMT(image, "UI 이미지 텍스처가 nullptr입니다.");
+
+		if (!cameraPrepared || activeTargetFormat == DXGI_FORMAT_UNKNOWN ||
+			activeViewport.Width <= 0.0f || activeViewport.Height <= 0.0f)
+		{
+			return std::unexpected("UI 이미지를 그리려면 카메라와 렌더 타깃이 필요합니다.");
+		}
+
+		if (!entity->GetComponent<Transform>())
+		{
+			return std::unexpected("UI 이미지 엔티티에 Transform 컴포넌트가 필요합니다.");
+		}
+
+		auto pipeline = imageUIPipelines.find(activeTargetFormat);
+		if (pipeline == imageUIPipelines.end())
+		{
+			auto created = CreateImageUIPipeline();
+			if (!created)
+			{
+				return std::unexpected(created.error());
+			}
+			pipeline = imageUIPipelines.try_emplace(activeTargetFormat, std::move(*created)).first;
+		}
+
+		if (auto result = SetEntity(entity); !result)
+		{
+			return result;
+		}
+
+		const ImageUIConstants constants{ { activeViewport.Width, activeViewport.Height } };
+		auto allocation = UploadConstants(std::as_bytes(std::span(&constants, 1)));
+		if (!allocation)
+		{
+			return std::unexpected(allocation.error());
+		}
+
+		const std::array<const GPUTexture2D*, TEXTURE_SLOT_COUNT> textures{ &image->GetTexture() };
+		if (auto result = BindTextures(textures); !result)
+		{
+			return result;
+		}
+
+		SetGPUMaterialConstantBuffer(*allocation->first, allocation->second);
+		SetGPUGraphicsPipelineState(pipeline->second);
+		d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		constexpr u32 IMAGE_VERTEX_COUNT = 4;
+		Draw(IMAGE_VERTEX_COUNT);
+		return {};
+	}
+
 	void GPUCommandBuffer::Draw(u32 vertexCount, u32 firstVertex)
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
@@ -407,6 +474,56 @@ namespace TUK::Framework
 		activeTargetBounds = { 0, 0, static_cast<LONG>(description.Width), static_cast<LONG>(description.Height) };
 		cameraPrepared = false;
 		d3dCommandList->OMSetRenderTargets(1, &activeRTV, FALSE, &activeDSV);
+	}
+
+	std::expected<GPUGraphicsPipelineState, std::string> GPUCommandBuffer::CreateImageUIPipeline() const
+	{
+		AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
+		if (!assets)
+		{
+			return std::unexpected("에셋 서브시스템을 사용할 수 없습니다.");
+		}
+
+		constexpr DWORD EXECUTABLE_PATH_CAPACITY = 32768;
+		std::wstring executablePath(EXECUTABLE_PATH_CAPACITY, L'\0');
+		const DWORD length = GetModuleFileNameW(nullptr, executablePath.data(), EXECUTABLE_PATH_CAPACITY);
+		if (length == 0 || length >= EXECUTABLE_PATH_CAPACITY)
+		{
+			return std::unexpected("실행 파일의 경로를 확인하지 못했습니다.");
+		}
+		executablePath.resize(length);
+
+		const auto shaderDir = std::filesystem::path(executablePath).parent_path() / "Resources" / "Shaders";
+		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(shaderDir / "ImageUI.vert.cso");
+		const ShaderAsset* pixel = assets->LoadAsset<ShaderAsset>(shaderDir / "ImageUI.frag.cso");
+		if (!vertex || !pixel)
+		{
+			return std::unexpected("ImageUI 셰이더를 불러오지 못했습니다.");
+		}
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
+		description.VS = vertex->GetShader().GetD3DBytecode();
+		description.PS = pixel->GetShader().GetD3DBytecode();
+		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		description.NumRenderTargets = 1;
+		description.RTVFormats[0] = activeTargetFormat;
+		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
+		description.SampleMask = UINT_MAX;
+		description.SampleDesc = { 1, 0 };
+		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		description.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		description.DepthStencilState.DepthEnable = FALSE;
+		description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+
+		auto& blend = description.BlendState.RenderTarget[0];
+		blend.BlendEnable = TRUE;
+		blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		blend.SrcBlendAlpha = D3D12_BLEND_ONE;
+		blend.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+		return device->CreateGraphicsPipelineState(description);
 	}
 
 	std::expected<void, std::string> GPUCommandBuffer::BindTextures(

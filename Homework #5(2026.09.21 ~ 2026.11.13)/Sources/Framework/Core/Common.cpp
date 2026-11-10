@@ -13,12 +13,12 @@ namespace TUK::Framework
 		{
 			switch (level)
 			{
-				case Category::TRACE:    return "TRACE";
-				case Category::INFO:     return "INFO";
-				case Category::WARNING:  return "WARNING";
-				case Category::ERROR_LEVEL:    return "ERROR";
-				case Category::CRITICAL: return "CRITICAL";
-				default:				 break;
+				case Logger::Category::TRACE:		return "TRACE";
+				case Logger::Category::INFO:		return "INFO";
+				case Logger::Category::WARNING:		return "WARNING";
+				case Logger::Category::ERROR_LEVEL: return "ERROR";
+				case Logger::Category::CRITICAL:	return "CRITICAL";
+				default:							break;
 			}
 
 			std::unreachable();
@@ -82,7 +82,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Log(Category level, std::wstring_view message, const std::source_location& location)
+	void Logger::Log(Category level, std::wstring_view message, const std::source_location& location)
 	{
 		const std::string utf8Message = WideToAscii(message);
 		const std::string line = std::format(

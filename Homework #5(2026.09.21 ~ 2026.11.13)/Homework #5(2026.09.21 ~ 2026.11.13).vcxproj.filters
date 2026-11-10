@@ -37,6 +37,9 @@
     <Filter Include="Sources\Framework\Graphics">
       <UniqueIdentifier>{1464633f-6db7-442e-968e-67c77d2bcbb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\UI">
+      <UniqueIdentifier>{3ecb780f-ddc0-4d0e-9fee-0ba4b762e6ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
@@ -258,6 +261,9 @@
     <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\Time.hpp" />
+    <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
@@ -404,6 +410,9 @@
     <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
     <ClCompile Include="Sources\Game\Input.cpp" />
     <ClCompile Include="Sources\Game\Time.cpp" />
+    <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\Homework #5(2026.09.21 ~ 2026.11.13).rc">
@@ -439,6 +448,9 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
