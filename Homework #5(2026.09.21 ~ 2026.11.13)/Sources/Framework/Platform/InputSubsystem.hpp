@@ -42,6 +42,7 @@ namespace TUK::Framework
 		void OnDisplayFocus(const DisplayFocusEvent& event);
 		void OnInputActivation(const InputActivationEvent& event);
 
+		[[nodiscard]] const Display* GetActiveDisplay() const noexcept;
 		[[nodiscard]] const InputProvider* GetProvider() const noexcept;
 		[[nodiscard]] const InputProvider* GetProvider(const Display* display) const noexcept;
 
@@ -69,6 +70,11 @@ namespace TUK::Framework
 		, lastMousePosition()
 		, lastMouseWheel()
 	{
+	}
+
+	inline const Display* InputSubsystem::GetActiveDisplay() const noexcept
+	{
+		return activeDisplay;
 	}
 
 	inline const InputProvider* InputSubsystem::GetProvider() const noexcept

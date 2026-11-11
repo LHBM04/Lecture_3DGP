@@ -8,6 +8,8 @@
 #include "Framework/Entities.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
+
+#include "Framework/UI/ButtonUI.hpp"
 #include "Framework/UI/ImageView.hpp"
 
 #include "../Components/PlayerController.hpp"
@@ -55,6 +57,11 @@ namespace TUK::Game
 		auto test = Instantiate(Vector3D<f32>::GetZero());
 		test->GetComponent<Transform>()->SetLocalScale(Vector3D<f32>(100.0f, 100.0f, 1.0f));
 		test->AddComponent<ImageView>()->SetImage(assets->LoadAsset<TextureAsset>("Resources/Textures/Test.dds"));
+
+		auto buttonTest = test->AddComponent<ButtonUI>();
+		buttonTest->OnEnter().AddListener([]() { LOG_INFO("마우스가 버튼 위에 올라갔습니다."); });
+		buttonTest->OnExit().AddListener([]() { LOG_INFO("마우스가 버튼에서 벗어났습니다."); });
+		buttonTest->OnClick().AddListener([]() { LOG_INFO("버튼이 클릭되었습니다."); });
 	}
 
 	void World_Stage::OnUpdate()

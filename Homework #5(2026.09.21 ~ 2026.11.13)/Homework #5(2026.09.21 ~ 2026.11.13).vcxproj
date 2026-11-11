@@ -258,6 +258,8 @@
     <ClInclude Include="Sources\Framework\Resources\CubemapLoader.hpp" />
     <ClInclude Include="Sources\Framework\Resources\TextureAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\TextureAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\UI.hpp" />
+    <ClInclude Include="Sources\Framework\UI\ButtonUI.hpp" />
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp" />
     <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
@@ -276,6 +278,7 @@
     <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp" />
+    <ClInclude Include="Sources\Game\Worlds\World_Title.hpp" />
     <ClInclude Include="Sources\Resource.hpp" />
     <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
@@ -322,6 +325,7 @@
     <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\UI\ButtonUI.cpp" />
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp" />
     <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
     <ClCompile Include="Sources\Game\Input.cpp" />
@@ -330,6 +334,7 @@
     <ClCompile Include="Sources\Game\MyGame.cpp" />
     <ClCompile Include="Sources\Game\Time.cpp" />
     <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp" />
+    <ClCompile Include="Sources\Game\Worlds\World_Title.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

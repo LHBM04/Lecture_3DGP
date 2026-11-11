@@ -261,6 +261,9 @@
     <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\Time.hpp" />
+    <ClInclude Include="Sources\Framework\UI\ButtonUI.hpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClInclude>
@@ -410,6 +413,9 @@
     <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
     <ClCompile Include="Sources\Game\Input.cpp" />
     <ClCompile Include="Sources\Game\Time.cpp" />
+    <ClCompile Include="Sources\Framework\UI\ButtonUI.cpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClCompile>

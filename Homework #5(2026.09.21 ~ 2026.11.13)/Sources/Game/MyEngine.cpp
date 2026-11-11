@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
+#include <functional>
+
 #include "Framework/Platform.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Core/Common.hpp"
@@ -32,8 +34,8 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		eventSubsystem->AddListener<DisplayCreateEvent>(renderSubsystem, &RenderSubsystem::OnDisplayCreate);
-		eventSubsystem->AddListener<DisplayCloseEvent>(renderSubsystem, &RenderSubsystem::OnDisplayClose);
+		eventSubsystem->OnEvent<DisplayCreateEvent>() += std::bind_front(&RenderSubsystem::OnDisplayCreate, renderSubsystem);
+		eventSubsystem->OnEvent<DisplayCloseEvent>() += std::bind_front(&RenderSubsystem::OnDisplayClose, renderSubsystem);
 
 		return Engine::Startup();
 	}

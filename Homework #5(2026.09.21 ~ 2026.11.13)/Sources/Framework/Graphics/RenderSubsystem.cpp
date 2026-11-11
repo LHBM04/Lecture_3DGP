@@ -72,10 +72,7 @@ namespace TUK::Framework
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			commandBuffer->SetGPUTarget(target);
 
-			for (const RenderCallback& listener : listeners)
-			{
-				listener(*commandBuffer);
-			}
+			onRender.Broadcast(*commandBuffer);
 
 			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		}
@@ -99,7 +96,7 @@ namespace TUK::Framework
 
 	void RenderSubsystem::OnShutdown()
 	{
-		listeners.clear();
+		onRender.Clear();
 		swapChains.clear();
 		commandBuffer.reset();
 		fence.reset();
@@ -281,8 +278,4 @@ namespace TUK::Framework
 		return std::unexpected("GPU 디바이스 생성에 실패했습니다.");
 	}
 
-	void RenderSubsystem::AddListener(RenderCallback callback)
-	{
-		listeners.push_back(std::move(callback));
-	}
 }

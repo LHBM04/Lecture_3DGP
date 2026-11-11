@@ -1,15 +1,19 @@
 ﻿#pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <format>
+#include <functional>
+#include <memory>
 #include <source_location>
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace TUK::Framework
 {
@@ -33,6 +37,103 @@ namespace TUK::Framework
 
 	template <class TValue>
 	concept Scalarable = std::same_as<TValue, i32> || std::same_as<TValue, f32>;
+
+	/** C# Func */
+	template <class TResult, class... TArgs>
+	using Func = std::function<TResult(TArgs...)>;
+
+	/** C# Action */
+	template <class... TArgs>
+	using Action = std::function<void(TArgs...)>;
+
+	/** C# Predicate */
+	template <class... TArgs>
+	using Predicate = std::function<bool(TArgs...)>;
+
+	/** Delegate */
+
+	template <class... TArgs>
+	class Delegate
+	{
+	public:
+		using Listener = Action<TArgs...>;
+		using ListenerId = usize;
+
+		Delegate() noexcept = default;
+		virtual ~Delegate() noexcept = default;
+
+		Delegate(const Delegate&) noexcept = delete;
+		Delegate& operator=(const Delegate&) noexcept = delete;
+
+		Delegate(Delegate&&) noexcept = default;
+		Delegate& operator=(Delegate&&) noexcept = default;
+
+		Delegate& operator+=(Listener callback) noexcept;
+		ListenerId AddListener(Listener callback);
+		void RemoveListener(ListenerId id) noexcept;
+		void Clear() noexcept;
+		void Broadcast(TArgs... args) const;
+
+	private:
+		struct Subscription final
+		{
+			ListenerId id;
+			Listener callback;
+			bool isConnected = true;
+		};
+
+		std::vector<std::shared_ptr<Subscription>> subscriptions;
+		ListenerId nextListenerId = 1;
+	};
+
+	template <class... TArgs>
+	Delegate<TArgs...>& Delegate<TArgs...>::operator+=(Listener callback) noexcept
+	{
+		AddListener(std::move(callback));
+		return *this;
+	}
+
+	template <class... TArgs>
+	typename Delegate<TArgs...>::ListenerId Delegate<TArgs...>::AddListener(Listener callback)
+	{
+		const ListenerId id = nextListenerId++;
+		subscriptions.push_back(std::make_shared<Subscription>(Subscription{ id, std::move(callback) }));
+		return id;
+	}
+
+	template <class... TArgs>
+	void Delegate<TArgs...>::RemoveListener(ListenerId id) noexcept
+	{
+		const auto subscription = std::ranges::find(subscriptions, id, &Subscription::id);
+		if (subscription != subscriptions.end())
+		{
+			(*subscription)->isConnected = false;
+			subscriptions.erase(subscription);
+		}
+	}
+
+	template <class... TArgs>
+	void Delegate<TArgs...>::Clear() noexcept
+	{
+		for (const auto& subscription : subscriptions)
+		{
+			subscription->isConnected = false;
+		}
+		subscriptions.clear();
+	}
+
+	template <class... TArgs>
+	void Delegate<TArgs...>::Broadcast(TArgs... args) const
+	{
+		const auto snapshot = subscriptions;
+		for (const auto& subscription : snapshot)
+		{
+			if (subscription->isConnected && subscription->callback)
+			{
+				subscription->callback(args...);
+			}
+		}
+	}
 
 	namespace Logger
 	{

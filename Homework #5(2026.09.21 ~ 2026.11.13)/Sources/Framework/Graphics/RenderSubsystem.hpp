@@ -1,12 +1,10 @@
 ﻿#pragma once
 
 #include <expected>
-#include <functional>
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <utility>
-#include <vector>
 
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
@@ -26,8 +24,6 @@ namespace TUK::Framework
 	class RenderSubsystem : public EngineSubsystem
 	{
 	public:
-		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
-
 		RenderSubsystem() noexcept;
 
 		SystemStatus OnStartup() override;
@@ -36,11 +32,7 @@ namespace TUK::Framework
 		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
 
-		template <class TListener>
-		void AddListener(TListener* listener, void (TListener::* callback)(GPUCommandBuffer&));
-
-		template <class TListener>
-		void AddListener(const TListener* listener, void (TListener::* callback)(GPUCommandBuffer&) const);
+		[[nodiscard]] Delegate<GPUCommandBuffer&>& OnRender() noexcept;
 
 		void OnDisplayCreate(const DisplayCreateEvent& event);
 		void OnDisplayClose(const DisplayCloseEvent& event);
@@ -50,14 +42,13 @@ namespace TUK::Framework
 
 	private:
 		[[nodiscard]] std::expected<GPUDevice, std::string> CreateDevice() const;
-		void AddListener(RenderCallback callback);
 
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
 		std::unordered_map<Display::ID, GPUSwapChain> swapChains;
 		std::optional<GPUFence> fence;
 
-		std::vector<RenderCallback> listeners;
+		Delegate<GPUCommandBuffer&> onRender;
 	};
 
 	inline RenderSubsystem::RenderSubsystem() noexcept
@@ -65,30 +56,9 @@ namespace TUK::Framework
 	{
 	}
 
-	template <class TInstance>
-	void RenderSubsystem::AddListener(TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&))
+	inline Delegate<GPUCommandBuffer&>& RenderSubsystem::OnRender() noexcept
 	{
-		ASSERT_FMT(listener, "렌더 이벤트 수신 객체가 nullptr입니다.");
-		ASSERT_FMT(callback, "렌더 이벤트 콜백이 nullptr입니다.");
-
-		AddListener(
-			[listener, callback](GPUCommandBuffer& commandBuffer)
-			{
-				(listener->*callback)(commandBuffer);
-			});
-	}
-
-	template <class TInstance>
-	void RenderSubsystem::AddListener(const TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&) const)
-	{
-		ASSERT_FMT(listener, "렌더 이벤트 수신 객체가 nullptr입니다.");
-		ASSERT_FMT(callback, "렌더 이벤트 콜백이 nullptr입니다.");
-
-		AddListener(
-			[listener, callback](GPUCommandBuffer& commandBuffer)
-			{
-				(listener->*callback)(commandBuffer);
-			});
+		return onRender;
 	}
 
 	inline GPUDevice& RenderSubsystem::GetDevice() noexcept

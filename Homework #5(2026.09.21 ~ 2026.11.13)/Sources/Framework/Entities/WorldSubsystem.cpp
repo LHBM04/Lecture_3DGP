@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "WorldSubsystem.hpp"
 
+#include <algorithm>
+
 #include "World.hpp"
 
 #include "../Core/Common.hpp"
@@ -22,21 +24,31 @@ namespace TUK::Framework
 		return result;
 	}
 
+	bool WorldSubsystem::RequestWorldChange(World* targetWorld) noexcept
+	{
+		if (!targetWorld || targetWorld == currentWorld)
+		{
+			return false;
+		}
+
+		const bool isRegistered = std::ranges::any_of(worlds, [targetWorld](const std::unique_ptr<World>& world)
+		{
+			return world.get() == targetWorld;
+		});
+		if (!isRegistered)
+		{
+			return false;
+		}
+
+		nextWorld = targetWorld;
+		return true;
+	}
+
 	void WorldSubsystem::ExitWorld()
 	{
-		if (!currentWorld)
-		{
-			return;
-		}
-
-		World* exitingWorld = currentWorld;
-		currentWorld = nullptr;
-
-		if (exitingWorld->IsEntered())
-		{
-			exitingWorld->Exit();
-			NotifyWorldExited(exitingWorld);
-		}
+		nextWorld = nullptr;
+		ExitCurrentWorld();
+		nextWorld = nullptr;
 	}
 
 	void WorldSubsystem::PreRender(GPUCommandBuffer& commandBuffer)
@@ -76,25 +88,28 @@ namespace TUK::Framework
 
 	SystemStatus WorldSubsystem::OnEarlyUpdate()
 	{
+		if (nextWorld)
+		{
+			if (nextWorld != currentWorld)
+			{
+				ExitCurrentWorld();
+			}
+			currentWorld = std::exchange(nextWorld, nullptr);
+		}
+
 		if (!currentWorld)
 		{
-			return SystemStatus::FAILURE;
+			return SystemStatus::SUCCESS;
 		}
 
 		if (!currentWorld->IsEntered())
 		{
 			World* enteringWorld = currentWorld;
 			enteringWorld->Enter();
-			NotifyWorldEntered(enteringWorld);
-
-			if (!enteringWorld->IsEntered())
+			if (currentWorld == enteringWorld)
 			{
-				NotifyWorldExited(enteringWorld);
-				if (currentWorld == enteringWorld)
-				{
-					currentWorld = nullptr;
-				}
-				return SystemStatus::CONTINUE;
+				onEnterWorld.Broadcast(enteringWorld);
+				NotifyIfWorldExited(enteringWorld);
 			}
 		}
 
@@ -102,14 +117,7 @@ namespace TUK::Framework
 		{
 			World* updatingWorld = currentWorld;
 			updatingWorld->EarlyUpdate();
-			if (!updatingWorld->IsEntered())
-			{
-				NotifyWorldExited(updatingWorld);
-				if (currentWorld == updatingWorld)
-				{
-					currentWorld = nullptr;
-				}
-			}
+			NotifyIfWorldExited(updatingWorld);
 		}
 		return SystemStatus::CONTINUE;
 	}
@@ -120,14 +128,7 @@ namespace TUK::Framework
 		{
 			World* updatingWorld = currentWorld;
 			updatingWorld->FixedUpdate();
-			if (!updatingWorld->IsEntered())
-			{
-				NotifyWorldExited(updatingWorld);
-				if (currentWorld == updatingWorld)
-				{
-					currentWorld = nullptr;
-				}
-			}
+			NotifyIfWorldExited(updatingWorld);
 		}
 		return SystemStatus::CONTINUE;
 	}
@@ -138,14 +139,7 @@ namespace TUK::Framework
 		{
 			World* updatingWorld = currentWorld;
 			updatingWorld->Update();
-			if (!updatingWorld->IsEntered())
-			{
-				NotifyWorldExited(updatingWorld);
-				if (currentWorld == updatingWorld)
-				{
-					currentWorld = nullptr;
-				}
-			}
+			NotifyIfWorldExited(updatingWorld);
 		}
 		return SystemStatus::CONTINUE;
 	}
@@ -156,49 +150,36 @@ namespace TUK::Framework
 		{
 			World* updatingWorld = currentWorld;
 			updatingWorld->LateUpdate();
-			if (!updatingWorld->IsEntered())
-			{
-				NotifyWorldExited(updatingWorld);
-				if (currentWorld == updatingWorld)
-				{
-					currentWorld = nullptr;
-				}
-			}
+			NotifyIfWorldExited(updatingWorld);
 		}
-		return currentWorld ? SystemStatus::CONTINUE : SystemStatus::SUCCESS;
+		return currentWorld || nextWorld ? SystemStatus::CONTINUE : SystemStatus::SUCCESS;
 	}
 
 	void WorldSubsystem::OnShutdown()
 	{
 		ExitWorld();
-		enterListeners.clear();
-		exitListeners.clear();
+		onEnterWorld.Clear();
+		onExitWorld.Clear();
 		worlds.clear();
 	}
 
-	void WorldSubsystem::AddEnterListener(WorldCallback callback)
+	void WorldSubsystem::ExitCurrentWorld()
 	{
-		enterListeners.push_back(std::move(callback));
-	}
-
-	void WorldSubsystem::AddExitListener(WorldCallback callback)
-	{
-		exitListeners.push_back(std::move(callback));
-	}
-
-	void WorldSubsystem::NotifyWorldEntered(World* world)
-	{
-		for (const WorldCallback& listener : enterListeners)
+		World* exitingWorld = std::exchange(currentWorld, nullptr);
+		if (exitingWorld && exitingWorld->IsEntered())
 		{
-			listener(world);
+			exitingWorld->Exit();
+			onExitWorld.Broadcast(exitingWorld);
 		}
 	}
 
-	void WorldSubsystem::NotifyWorldExited(World* world)
+	void WorldSubsystem::NotifyIfWorldExited(World* world)
 	{
-		for (const WorldCallback& listener : exitListeners)
+		if (currentWorld == world && !world->IsEntered())
 		{
-			listener(world);
+			currentWorld = nullptr;
+			onExitWorld.Broadcast(world);
 		}
 	}
+
 }
