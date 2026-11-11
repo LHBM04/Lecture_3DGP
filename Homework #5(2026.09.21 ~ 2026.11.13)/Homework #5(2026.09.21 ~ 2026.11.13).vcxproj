@@ -203,6 +203,13 @@
     <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTex.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXMesh.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core\BinaryReader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ResourceImporter.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\ExportMetadata.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\FontAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\FontAssetLoader.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\AnimationAssetLoader.hpp" />
     <ClInclude Include="Sources\Framework\Objects.hpp" />
     <ClInclude Include="Sources\Framework\Objects\Component.hpp" />
     <ClInclude Include="Sources\Framework\Objects\GameObject.hpp" />
@@ -288,6 +295,8 @@
     <ClInclude Include="Sources\Precompiled.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Resources\FontAssetLoader.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\AnimationAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
     <ClCompile Include="Sources\Framework\Objects\GameObject.cpp" />
     <ClCompile Include="Sources\Framework\Objects\Transform.cpp" />
@@ -362,7 +371,7 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <RuntimeResource Include="Resources\Models\**\*.tukmodel;Resources\Meshes\**\*.tukmesh;Resources\Materials\**\*.tukmaterial;Resources\Textures\**\*;Resources\Fonts\**\*.tukfont;Resources\Fonts\**\*.dds" />
+    <RuntimeResource Include="Resources\Models\**\*.tukmodel;Resources\Meshes\**\*.tukmesh;Resources\Materials\**\*.tukmaterial;Resources\Textures\**\*.dds;Resources\Fonts\**\*.tukfont;Resources\Fonts\**\*.dds;Resources\Animations\**\*.tukanim;Resources\Cubemaps\**\*.dds" />
   </ItemGroup>
   <Target Name="CopyRuntimeResources" AfterTargets="Build">
     <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />
@@ -377,7 +386,6 @@
       <Message>Compiling %(Filename)%(Extension)</Message>
       <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
     </CustomBuild>
-    <None Include="Sources\Framework\Resources\FontBinaryFormat.md" />
     <None Include="Resources\Materials\Skybox.tukmaterial" />
     <None Include="Resources\Materials\ImageUI.tukmaterial" />
   </ItemGroup>

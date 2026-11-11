@@ -11,7 +11,7 @@
 #include "AssetSubsystem.hpp"
 #include "MaterialAsset.hpp"
 #include "MeshAsset.hpp"
-#include "ResourceMetadata.hpp"
+#include "ResourceImporter.hpp"
 
 namespace TUK::Framework
 {
@@ -27,7 +27,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected("모델 로더에는 .tukmodel 파일이 필요합니다.");
 		}
-		auto metadata = Serializer::Load<ModelMetadata>(path, static_cast<u32>(ResourceType::MODEL));
+		auto metadata = ResourceImporter::Load<ModelMetadata>(path, ResourceType::MODEL);
 		if (!metadata)
 		{
 			return std::unexpected(metadata.error());
@@ -44,7 +44,6 @@ namespace TUK::Framework
 		};
 		std::vector<PendingNode> pending{ { &metadata->root, -1 } };
 		std::vector<Submodel> nodes;
-		bool hasRenderer = false;
 		while (!pending.empty())
 		{
 			const auto [data, parentIndex] = pending.back();
@@ -76,17 +75,12 @@ namespace TUK::Framework
 						meshPath->generic_string(), materialPath->generic_string()));
 				}
 				node.renderParts.push_back({ mesh, material });
-				hasRenderer = true;
 			}
 			nodes.push_back(std::move(node));
 			for (auto child = data->children.crbegin(); child != data->children.crend(); ++child)
 			{
 				pending.push_back({ &*child, index });
 			}
-		}
-		if (!hasRenderer)
-		{
-			return std::unexpected("모델에 렌더 파트가 없습니다.");
 		}
 		return std::make_unique<ModelAsset>(path, std::move(nodes));
 	}

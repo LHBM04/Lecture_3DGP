@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "../Core/Serializer.hpp"
+#include "../Core/BinaryReader.hpp"
 
 namespace TUK::Framework
 {
@@ -15,7 +15,8 @@ namespace TUK::Framework
 		MODEL = 1,
 		MESH = 2,
 		MATERIAL = 3,
-		FONT = 4
+		FONT = 4,
+		ANIMATION = 5
 	};
 
 	struct RenderPartMetadata final
@@ -31,15 +32,19 @@ namespace TUK::Framework
 		std::array<f32, 3> localPosition{ 0, 0, 0 };
 		std::array<f32, 4> localRotation{ 0, 0, 0, 1 };
 		std::array<f32, 3> localScale{ 1, 1, 1 };
+		std::string meshPath;
+		std::string materialPath;
 		std::vector<RenderPartMetadata> renderParts;
 		std::vector<ModelNodeMetadata> children;
 		template <class TArchive> bool Serialize(TArchive& archive);
+		[[nodiscard]] bool Deserialize(BinaryReader& reader);
 	};
 
 	struct ModelMetadata final
 	{
 		ModelNodeMetadata root;
 		template <class TArchive> bool Serialize(TArchive& archive);
+		[[nodiscard]] bool Deserialize(BinaryReader& reader);
 	};
 
 	struct MeshMetadata final
@@ -49,6 +54,7 @@ namespace TUK::Framework
 		std::vector<std::array<f32, 2>> uv0;
 		std::vector<u32> indices;
 		template <class TArchive> bool Serialize(TArchive& archive);
+		[[nodiscard]] bool Deserialize(BinaryReader& reader);
 	};
 
 	struct TextureBindingMetadata final
@@ -68,11 +74,15 @@ namespace TUK::Framework
 		u32 pass = 0;
 		std::string vertexShader;
 		std::string pixelShader;
+		std::string hullShader;
+		std::string domainShader;
+		std::string geometryShader;
+		std::string heightTexture;
 		std::vector<TextureBindingMetadata> textures;
 		template <class TArchive> bool Serialize(TArchive& archive);
+		[[nodiscard]] bool Deserialize(BinaryReader& reader);
 	};
 
-	// Resource path policy belongs here, not in individual loader utility functions.
 	class ResourceMetadata final
 	{
 	public:
@@ -149,11 +159,60 @@ namespace TUK::Framework
 		{
 			return std::unexpected("Empty or invalid resource reference");
 		}
-		const auto path = std::filesystem::path(std::u8string(relativePath.begin(), relativePath.end())).lexically_normal();
+		auto path = std::filesystem::path(std::u8string(relativePath.begin(), relativePath.end())).lexically_normal();
+		if (root.filename() == "Resources" && !path.empty() && *path.begin() == "Resources")
+		{
+			path = path.lexically_relative("Resources");
+		}
 		if (path.empty() || path.has_root_path() || *path.begin() == "..")
 		{
 			return std::unexpected("Resource reference must stay inside its root: " + relativePath);
 		}
 		return (root / path).lexically_normal();
 	}
+	inline bool ModelNodeMetadata::Deserialize(BinaryReader& reader)
+	{
+		if (!reader.Read(name, localPosition, localRotation, localScale, meshPath, materialPath, children))
+		{
+			return false;
+		}
+
+		if (!meshPath.empty() && !materialPath.empty())
+		{
+			renderParts.push_back({ meshPath, materialPath });
+		}
+		return true;
+	}
+
+	inline bool ModelMetadata::Deserialize(BinaryReader& reader)
+	{
+		return reader.Read(root);
+	}
+
+	inline bool MeshMetadata::Deserialize(BinaryReader& reader)
+	{
+		return reader.Read(positions, normals, uv0, indices);
+	}
+
+	inline bool MaterialMetadata::Deserialize(BinaryReader& reader)
+	{
+		std::array<std::string, 9> paths;
+		if (!reader.Read(baseColor, emissiveColor, metallic, roughness, paths,
+			vertexShader, hullShader, domainShader, geometryShader, pixelShader))
+		{
+			return false;
+		}
+
+		heightTexture = std::move(paths[6]);
+		constexpr u32 FILE_SLOTS[]{ 0, 1, 2, 3, 4, 5, 7, 8 };
+		for (u32 slot = 0; slot < std::size(FILE_SLOTS); ++slot)
+		{
+			if (!paths[FILE_SLOTS[slot]].empty())
+			{
+				textures.push_back({ slot, std::move(paths[FILE_SLOTS[slot]]) });
+			}
+		}
+		return true;
+	}
+
 }

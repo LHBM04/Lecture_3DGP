@@ -15,3 +15,9 @@
 #include "Resources/ShaderAssetLoader.hpp"
 #include "Resources/TextureAsset.hpp"
 #include "Resources/TextureAssetLoader.hpp"
+
+#include "Resources/FontAsset.hpp"
+#include "Resources/FontAssetLoader.hpp"
+#include "Resources/AnimationAsset.hpp"
+#include "Resources/AnimationAssetLoader.hpp"
+#include "Resources/ResourceImporter.hpp"

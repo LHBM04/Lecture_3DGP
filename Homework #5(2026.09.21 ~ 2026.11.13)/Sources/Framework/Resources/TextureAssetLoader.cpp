@@ -17,7 +17,7 @@
 
 namespace TUK::Framework
 {
-	[[nodiscard]] static std::expected<GPUTexture2D, std::string> LoadDDSTexture(
+	std::expected<GPUTexture2D, std::string> TextureAssetLoader::LoadDDS(
 		const std::filesystem::path& path, const GPUDevice& device, bool expectsCubemap)
 	{
 		std::string extension = path.extension().string();
@@ -123,7 +123,7 @@ namespace TUK::Framework
 	std::expected<std::unique_ptr<TextureAsset>, std::string> TextureAssetLoader::Load(
 		const std::filesystem::path& path) const
 	{
-		auto texture = LoadDDSTexture(path, device, false);
+		auto texture = LoadDDS(path, device, false);
 		if (!texture)
 		{
 			return std::unexpected(texture.error());
@@ -134,7 +134,7 @@ namespace TUK::Framework
 	std::expected<std::unique_ptr<Cubemap>, std::string> CubemapLoader::Load(
 		const std::filesystem::path& path) const
 	{
-		auto texture = LoadDDSTexture(path, device, true);
+		auto texture = TextureAssetLoader::LoadDDS(path, device, true);
 		if (!texture)
 		{
 			return std::unexpected(texture.error());

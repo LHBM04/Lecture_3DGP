@@ -48,6 +48,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core\BinaryReader.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\ResourceImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\ExportMetadata.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\FontAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\FontAssetLoader.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\AnimationAssetLoader.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\FontMetadata.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
@@ -302,6 +323,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Resources\FontAssetLoader.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\AnimationAssetLoader.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>

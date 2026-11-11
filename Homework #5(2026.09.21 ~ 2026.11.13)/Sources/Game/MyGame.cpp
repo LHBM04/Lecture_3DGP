@@ -7,6 +7,7 @@
 #include "../Framework/Core.hpp"
 #include "../Framework/Objects/WorldSubsystem.hpp"
 #include "../Framework/Graphics.hpp"
+#include "../Framework/Resources.hpp"
 #include "../Framework/Platform.hpp"
 
 #include "Worlds/World_Stage.hpp"
@@ -96,6 +97,8 @@ namespace TUK::Game
 		assetSubsystem->AddLoader<CubemapLoader>(device);
 		assetSubsystem->AddLoader<MaterialAssetLoader>(device);
 		assetSubsystem->AddLoader<ShaderAssetLoader>();
+		assetSubsystem->AddLoader<FontAssetLoader>();
+		assetSubsystem->AddLoader<AnimationAssetLoader>();
 
 		eventSubsystem->OnEvent<DisplayCreateEvent>() += [this](const DisplayCreateEvent& event)
 		{

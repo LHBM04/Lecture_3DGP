@@ -19,7 +19,6 @@ namespace TUK::Framework
 	class TextureAsset;
 	class ShaderAsset;
 
-	// Slot order matches the SRV registers in Standard.hlsl.
 	enum class MaterialTextureSlot : u32
 	{
 		BASE_COLOR,
@@ -61,6 +60,7 @@ namespace TUK::Framework
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
 		MaterialPass pass = MaterialPass::SURFACE;
+		D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	};
 
 	class MaterialAsset final : public Asset
@@ -83,6 +83,7 @@ namespace TUK::Framework
 
 		[[nodiscard]] const MaterialTextures& GetTextures() const noexcept;
 		[[nodiscard]] MaterialPass GetPass() const noexcept;
+		[[nodiscard]] D3D_PRIMITIVE_TOPOLOGY GetTopology() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetVertexShader() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetPixelShader() const noexcept;
 
@@ -107,6 +108,7 @@ namespace TUK::Framework
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
 		MaterialPass pass = MaterialPass::SURFACE;
+		D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	};
 
 	inline MaterialAsset::MaterialAsset(
@@ -126,6 +128,7 @@ namespace TUK::Framework
 		, pipelineState(std::move(data.pipelineState))
 		, targetFormat(data.targetFormat)
 		, pass(data.pass)
+		, topology(data.topology)
 	{
 		ASSERT_FMT(vertexShader, "머티리얼의 정점 셰이더 에셋이 nullptr입니다.");
 		ASSERT_FMT(pixelShader, "머티리얼의 픽셀 셰이더 에셋이 nullptr입니다.");
@@ -200,4 +203,9 @@ namespace TUK::Framework
 	{
 		return targetFormat;
 	}
+	inline D3D_PRIMITIVE_TOPOLOGY MaterialAsset::GetTopology() const noexcept
+	{
+		return topology;
+	}
+
 }

@@ -12,7 +12,7 @@
 #include "../Graphics/GPUTarget.hpp"
 
 #include "AssetSubsystem.hpp"
-#include "ResourceMetadata.hpp"
+#include "ResourceImporter.hpp"
 #include "ShaderAsset.hpp"
 #include "TextureAsset.hpp"
 
@@ -31,7 +31,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected("머티리얼 로더에는 .tukmaterial 파일이 필요합니다.");
 		}
-		auto metadata = Serializer::Load<MaterialMetadata>(path, static_cast<u32>(ResourceType::MATERIAL));
+		auto metadata = ResourceImporter::Load<MaterialMetadata>(path, ResourceType::MATERIAL);
 		if (!metadata)
 		{
 			return std::unexpected(metadata.error());
@@ -92,6 +92,32 @@ namespace TUK::Framework
 			return std::unexpected(std::format("픽셀 셰이더를 로드하지 못했습니다: {}", pixelPath->generic_string()));
 		}
 
+		const ShaderAsset* hull = nullptr;
+		const ShaderAsset* domain = nullptr;
+		const ShaderAsset* geometry = nullptr;
+		const std::pair<const std::string*, const ShaderAsset**> extraShaders[]
+		{
+			{ &metadata->hullShader, &hull },
+			{ &metadata->domainShader, &domain },
+			{ &metadata->geometryShader, &geometry }
+		};
+		for (const auto& [name, target] : extraShaders)
+		{
+			if (name->empty())
+			{
+				continue;
+			}
+			const auto shaderPath = ResourceMetadata::ResolvePath(*root, *name);
+			if (!shaderPath || !(*target = assets->LoadAsset<ShaderAsset>(*shaderPath)))
+			{
+				return std::unexpected("Cannot load material shader: " + *name);
+			}
+		}
+		if (static_cast<bool>(hull) != static_cast<bool>(domain))
+		{
+			return std::unexpected("Hull and domain shaders must be provided together");
+		}
+
 		// 이걸 고정시켜야 쉐이더를 추가하기 수월해짐
 		// 안 그러면 쉐이더 만들 때마다 레이아웃을 추가로 넣어야 함
 		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =
@@ -105,11 +131,20 @@ namespace TUK::Framework
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
 		description.VS = vertex->GetShader().GetD3DBytecode();
 		description.PS = pixel->GetShader().GetD3DBytecode();
+		if (hull)
+		{
+			description.HS = hull->GetShader().GetD3DBytecode();
+			description.DS = domain->GetShader().GetD3DBytecode();
+		}
+		if (geometry)
+		{
+			description.GS = geometry->GetShader().GetD3DBytecode();
+		}
 		if (pass == MaterialPass::SURFACE)
 		{
 			description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
 		}
-		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		description.PrimitiveTopologyType = hull ? D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH : D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		description.NumRenderTargets = 1;
 		description.RTVFormats[0] = targetFormat;
 		description.SampleMask = UINT_MAX;
@@ -159,7 +194,8 @@ namespace TUK::Framework
 				.pixelShader = pixel,
 				.pipelineState = std::move(*pipeline),
 				.targetFormat = targetFormat,
-				.pass = pass
+				.pass = pass,
+				.topology = hull ? D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST : D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 			});
 	}
 }

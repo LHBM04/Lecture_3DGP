@@ -12,7 +12,7 @@
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUMesh.hpp"
 
-#include "ResourceMetadata.hpp"
+#include "ResourceImporter.hpp"
 
 namespace TUK::Framework
 {
@@ -23,7 +23,7 @@ namespace TUK::Framework
 		{
 			return std::unexpected("메시 로더에는 .tukmesh 파일이 필요합니다.");
 		}
-		auto metadata = Serializer::Load<MeshMetadata>(path, static_cast<u32>(ResourceType::MESH));
+		auto metadata = ResourceImporter::Load<MeshMetadata>(path, ResourceType::MESH);
 		if (!metadata)
 		{
 			return std::unexpected(metadata.error());
