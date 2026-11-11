@@ -27,7 +27,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		material = assets->LoadAsset<MaterialAsset>("Resources/Materials/ImageUI.json");
+		material = assets->LoadAsset<MaterialAsset>("Resources/Materials/ImageUI.tukmaterial");
 		if (!material || material->GetPass() != MaterialPass::IMAGE_UI)
 		{
 			LOG_ERROR("ImageUI 머티리얼을 로드하지 못했습니다.");

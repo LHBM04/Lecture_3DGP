@@ -4,19 +4,15 @@
 #include <algorithm>
 #include <filesystem>
 #include <format>
-#include <fstream>
 #include <memory>
 #include <string>
 #include <utility>
 
-#include <nlohmann/json.hpp>
-
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUTarget.hpp"
 
-#include "../Math/Mathf.hpp"
-
 #include "AssetSubsystem.hpp"
+#include "ResourceMetadata.hpp"
 #include "ShaderAsset.hpp"
 #include "TextureAsset.hpp"
 
@@ -31,180 +27,69 @@ namespace TUK::Framework
 			return std::unexpected("머티리얼 로더의 에셋 서브시스템이 nullptr입니다.");
 		}
 
-		if (path.extension() != ".json")
+		if (path.extension() != ".tukmaterial")
 		{
-			return std::unexpected("머티리얼 로더에는 .json 파일이 필요합니다.");
+			return std::unexpected("머티리얼 로더에는 .tukmaterial 파일이 필요합니다.");
 		}
-
-		std::ifstream file(path, std::ios::binary);
-		if (!file)
+		auto metadata = Serializer::Load<MaterialMetadata>(path, static_cast<u32>(ResourceType::MATERIAL));
+		if (!metadata)
 		{
-			return std::unexpected(std::format("머티리얼 파일을 열지 못했습니다: {}", path.generic_string()));
+			return std::unexpected(metadata.error());
 		}
-
-		const auto parseError = std::unexpected(
-			std::format("머티리얼 JSON을 읽지 못했습니다: {}", path.generic_string()));
-		const auto json = nlohmann::json::parse(file, nullptr, false);
-		if (file.bad() || !json.is_object())
+		if (metadata->pass > static_cast<u32>(MaterialPass::IMAGE_UI))
 		{
-			return parseError;
+			return std::unexpected("지원하지 않는 머티리얼 패스입니다.");
 		}
-
-		ColorRGBA<f32> parsedBaseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		ColorRGBA<f32> parsedEmissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
-		ColorRGBA<f32> parsedSpecularColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		const std::pair<const char*, ColorRGBA<f32>&> colorFields[]{
-			{ "baseColor", parsedBaseColor },
-			{ "emissiveColor", parsedEmissiveColor },
-			{ "specularColor", parsedSpecularColor }
-		};
-		for (const auto& [key, color] : colorFields)
+		const auto root = ResourceMetadata::FindRoot(path, "Materials");
+		if (!root)
 		{
-			if (const auto field = json.find(key); field != json.end() && !color.Deserialize(*field))
-			{
-				return parseError;
-			}
+			return std::unexpected(root.error());
 		}
-
-		f32 parsedMetallic = 0.0f;
-		f32 parsedRoughness = 0.5f;
-		const std::pair<const char*, f32&> numberFields[]{
-			{ "metallic", parsedMetallic },
-			{ "roughness", parsedRoughness }
-		};
-		for (const auto& [key, number] : numberFields)
+		const auto vertexPath = ResourceMetadata::ResolvePath(*root, metadata->vertexShader);
+		const auto pixelPath = ResourceMetadata::ResolvePath(*root, metadata->pixelShader);
+		if (!vertexPath || !pixelPath)
 		{
-			const auto field = json.find(key);
-			if (field != json.end() && (!field->is_number() || !Mathf::TryConvertScalar(field->get<f64>(), number)))
-			{
-				return parseError;
-			}
-			number = std::clamp(number, 0.0f, 1.0f);
+			return std::unexpected("머티리얼의 셰이더 참조 경로가 유효하지 않습니다.");
 		}
-
-		std::filesystem::path vertexPath;
-		std::filesystem::path pixelPath;
-		const std::pair<const char*, std::filesystem::path&> shaderFields[]{
-			{ "vertexShader", vertexPath },
-			{ "pixelShader", pixelPath }
-		};
-		const auto materialDir = path.parent_path();
-		auto assetRoot = materialDir.parent_path();
-		if (materialDir.filename() != "Materials" && assetRoot.filename() == "Materials")
-		{
-			assetRoot = assetRoot.parent_path();
-		}
-		MaterialPass pass = MaterialPass::SURFACE;
-		if (const auto field = json.find("pass"); field != json.end())
-		{
-			if (*field == "skybox")
-			{
-				pass = MaterialPass::SKYBOX;
-			}
-			else if (*field == "imageUI")
-			{
-				pass = MaterialPass::IMAGE_UI;
-			}
-			else if (*field != "surface")
-			{
-				return parseError;
-			}
-		}
-
-		static constexpr std::pair<MaterialTextureSlot, const char*> TEXTURE_FIELDS[] =
-		{
-			{ MaterialTextureSlot::BASE_COLOR, "baseColorTexture" },
-			{ MaterialTextureSlot::NORMAL, "normalTexture" },
-			{ MaterialTextureSlot::METALLIC, "metallicTexture" },
-			{ MaterialTextureSlot::ROUGHNESS, "roughnessTexture" },
-			{ MaterialTextureSlot::OCCLUSION, "occlusionTexture" },
-			{ MaterialTextureSlot::EMISSIVE, "emissiveTexture" },
-			{ MaterialTextureSlot::SPECULAR, "specularTexture" },
-			{ MaterialTextureSlot::MASK, "maskTexture" }
-		};
+		const auto& base = metadata->baseColor;
+		const auto& emission = metadata->emissiveColor;
+		const auto& specular = metadata->specularColor;
+		const ColorRGBA<f32> parsedBaseColor{ base[0], base[1], base[2], base[3] };
+		const ColorRGBA<f32> parsedEmissiveColor{ emission[0], emission[1], emission[2], emission[3] };
+		const ColorRGBA<f32> parsedSpecularColor{ specular[0], specular[1], specular[2], specular[3] };
+		const f32 parsedMetallic = std::clamp(metadata->metallic, 0.0f, 1.0f);
+		const f32 parsedRoughness = std::clamp(metadata->roughness, 0.0f, 1.0f);
+		const MaterialPass pass = static_cast<MaterialPass>(metadata->pass);
 		MaterialTextures textures{};
-		for (const auto& [slot, key] : TEXTURE_FIELDS)
+		for (const auto& binding : metadata->textures)
 		{
-			const auto field = json.find(key);
-			if (field == json.end())
+			if (binding.slot >= textures.size() || textures[binding.slot] || pass != MaterialPass::SURFACE)
 			{
-				continue;
+				return std::unexpected("머티리얼의 텍스처 슬롯이 유효하지 않습니다.");
 			}
-			if (!field->is_string())
+			const auto texturePath = ResourceMetadata::ResolvePath(*root, binding.path);
+			if (!texturePath)
 			{
-				return parseError;
+				return std::unexpected(texturePath.error());
 			}
-
-			const auto& name = field->get_ref<const std::string&>();
-			if (name.empty())
-			{
-				continue;
-			}
-			if (pass != MaterialPass::SURFACE || name.find('\0') != std::string::npos)
-			{
-				return parseError;
-			}
-
-			const auto imagePath = std::filesystem::path(
-				std::u8string(name.begin(), name.end())).lexically_normal();
-			if (imagePath.empty() || imagePath.has_root_path() || *imagePath.begin() == "..")
-			{
-				return parseError;
-			}
-
-			const auto texturePath = assetRoot / imagePath;
-			const TextureAsset* texture = assets->LoadAsset<TextureAsset>(texturePath);
+			const TextureAsset* texture = assets->LoadAsset<TextureAsset>(*texturePath);
 			if (!texture)
 			{
-				return std::unexpected(std::format("머티리얼 텍스처를 로드하지 못했습니다: {} ({})",
-					texturePath.generic_string(), key));
+				return std::unexpected("머티리얼 텍스처를 로드하지 못했습니다: " + texturePath->generic_string());
 			}
-			textures[static_cast<usize>(slot)] = texture;
+			textures[binding.slot] = texture;
 		}
 
-		for (const auto& [key, shaderPath] : shaderFields)
-		{
-			const auto field = json.find(key);
-			if (field == json.end() || !field->is_string())
-			{
-				return parseError;
-			}
-
-			const auto& name = field->get_ref<const std::string&>();
-			if (name.empty() || name.find('\0') != std::string::npos)
-			{
-				return parseError;
-			}
-
-			std::filesystem::path shader(std::u8string(name.begin(), name.end()));
-			if (!shader.is_absolute())
-			{
-				if (*shader.begin() == "Resources")
-				{
-					shader = assetRoot / shader.lexically_relative("Resources");
-				}
-				else if (*shader.begin() == "Shaders")
-				{
-					shader = assetRoot / shader;
-				}
-				else
-				{
-					shader = materialDir / shader;
-				}
-			}
-			shaderPath = shader.lexically_normal();
-		}
-
-		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(vertexPath);
+		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(*vertexPath);
 		if (!vertex)
 		{
-			return std::unexpected(std::format("정점 셰이더를 로드하지 못했습니다: {}", vertexPath.generic_string()));
+			return std::unexpected(std::format("정점 셰이더를 로드하지 못했습니다: {}", vertexPath->generic_string()));
 		}
 
-		const ShaderAsset* pixel = assets->LoadAsset<ShaderAsset>(pixelPath);
+		const ShaderAsset* pixel = assets->LoadAsset<ShaderAsset>(*pixelPath);
 		if (!pixel)
 		{
-			return std::unexpected(std::format("픽셀 셰이더를 로드하지 못했습니다: {}", pixelPath.generic_string()));
+			return std::unexpected(std::format("픽셀 셰이더를 로드하지 못했습니다: {}", pixelPath->generic_string()));
 		}
 
 		// 이걸 고정시켜야 쉐이더를 추가하기 수월해짐

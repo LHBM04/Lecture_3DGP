@@ -1,4 +1,4 @@
-﻿#pragma vertex VSMain
+#pragma vertex VSMain
 #pragma pixel PSMain
 
 #pragma pack_matrix(row_major)
@@ -25,7 +25,6 @@ cbuffer MaterialConstants : register(b2, space0)
     float4 specularColor;
 };
 
-// Keep the register order and mask bits aligned with MaterialTextureSlot.
 Texture2D<float4> baseColorTexture : register(t0, space0);
 Texture2D<float4> normalTexture : register(t1, space0);
 Texture2D<float4> metallicTexture : register(t2, space0);
@@ -93,8 +92,7 @@ float3 GetSurfaceNormal(VSOutput input)
     float3 tangentNormal = normalTexture.Sample(materialSampler, input.uv0).xyz * 2.0f - 1.0f;
     float3 positionDx = ddx(input.viewPosition);
     float3 positionDy = ddy(input.viewPosition);
-
-    // MeshAssetLoader flips V for DDS sampling. Build the frame in the source UV convention.
+    
     float2 sourceUV = float2(input.uv0.x, 1.0f - input.uv0.y);
     float2 uvDx = ddx(sourceUV);
     float2 uvDy = ddy(sourceUV);
@@ -137,7 +135,6 @@ float4 PSMain(VSOutput input) : SV_TARGET
     float ambientOcclusion = 1.0f;
     if (HasTexture(MASK_SLOT))
     {
-        // Unity HDRP mask: R = metallic, G = AO, A = smoothness.
         float4 mask = maskTexture.Sample(materialSampler, input.uv0);
         metalness = mask.r;
         ambientOcclusion = mask.g;
@@ -145,7 +142,6 @@ float4 PSMain(VSOutput input) : SV_TARGET
     }
     if (HasTexture(METALLIC_SLOT))
     {
-        // The exported metallic/gloss map stores metallic in R and smoothness in A.
         float4 metallicGloss = metallicTexture.Sample(materialSampler, input.uv0);
         metalness = metallicGloss.r;
         surfaceRoughness = 1.0f - metallicGloss.a;
@@ -172,7 +168,6 @@ float4 PSMain(VSOutput input) : SV_TARGET
     }
 
     float3 normal = GetSurfaceNormal(input);
-    // Orthographic rays are parallel along +Z in this left-handed view space.
     float3 viewDirection = projection._44 == 1.0f ? float3(0.0f, 0.0f, -1.0f) : normalize(-input.viewPosition);
     float3 halfDirection = viewDirection + input.lightDirection;
     halfDirection *= rsqrt(max(dot(halfDirection, halfDirection), 1e-6f));

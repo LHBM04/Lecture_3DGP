@@ -3,17 +3,15 @@
 
 #include <filesystem>
 #include <format>
-#include <fstream>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 #include "AssetSubsystem.hpp"
 #include "MaterialAsset.hpp"
 #include "MeshAsset.hpp"
+#include "ResourceMetadata.hpp"
 
 namespace TUK::Framework
 {
@@ -25,142 +23,71 @@ namespace TUK::Framework
 		{
 			return std::unexpected("모델 로더의 에셋 서브시스템이 nullptr입니다.");
 		}
-
-		if (path.extension() != ".json")
+		if (path.extension() != ".tukmodel")
 		{
-			return std::unexpected("모델 로더에는 .json 파일이 필요합니다.");
+			return std::unexpected("모델 로더에는 .tukmodel 파일이 필요합니다.");
 		}
-
-		std::ifstream file(path, std::ios::binary);
-		if (!file)
+		auto metadata = Serializer::Load<ModelMetadata>(path, static_cast<u32>(ResourceType::MODEL));
+		if (!metadata)
 		{
-			return std::unexpected("모델 파일을 열지 못했습니다: " + path.generic_string());
+			return std::unexpected(metadata.error());
 		}
-
-		const auto parseError = std::unexpected("모델 JSON을 읽지 못했습니다: " + path.generic_string());
-		const auto json = nlohmann::json::parse(file, nullptr, false);
-		if (file.bad() || !json.is_object())
+		const auto root = ResourceMetadata::FindRoot(path, "Models");
+		if (!root)
 		{
-			return parseError;
+			return std::unexpected(root.error());
 		}
-
-	constexpr u32 MAX_ELEMENT_COUNT = 16 * 1024 * 1024;
-
-	struct PendingNode
-	{
-		const nlohmann::json* json;
-		i32 parentIndex;
-	};
-
-	struct PendingRenderPart
-	{
-		usize nodeIndex;
-		std::filesystem::path meshPath;
-		std::filesystem::path materialPath;
-	};
-
+		struct PendingNode
+		{
+			const ModelNodeMetadata* data;
+			i32 parentIndex;
+		};
+		std::vector<PendingNode> pending{ { &metadata->root, -1 } };
 		std::vector<Submodel> nodes;
-		std::vector<PendingRenderPart> renderParts;
-		std::vector<PendingNode> pending{ { &json, -1 } };
+		bool hasRenderer = false;
 		while (!pending.empty())
 		{
-			const auto [value, parentIndex] = pending.back();
+			const auto [data, parentIndex] = pending.back();
 			pending.pop_back();
-			if (!value->is_object() || nodes.size() >= MAX_ELEMENT_COUNT)
+			if (nodes.size() >= SerializationLimits::MAX_ELEMENTS)
 			{
-				return parseError;
+				return std::unexpected("모델의 노드 수가 제한을 초과했습니다.");
 			}
-
-			const auto name = value->find("name");
-			const auto position = value->find("localPosition");
-			const auto rotation = value->find("localRotation");
-			const auto scale = value->find("localScale");
-			const auto parts = value->find("renderParts");
-			const auto children = value->find("children");
+			const i32 index = static_cast<i32>(nodes.size());
 			Submodel node{};
-			if (name == value->end() || !name->is_string()
-				|| position == value->end() || !node.localPosition.Deserialize(*position)
-				|| rotation == value->end() || !node.localRotation.Deserialize(*rotation)
-				|| scale == value->end() || !node.localScale.Deserialize(*scale)
-				|| parts == value->end() || !parts->is_array() || parts->size() > MAX_ELEMENT_COUNT
-				|| children == value->end() || !children->is_array() || children->size() > MAX_ELEMENT_COUNT)
-			{
-				return parseError;
-			}
-
-			const usize index = nodes.size();
-			node.name = name->get<std::string>();
+			node.name = data->name;
 			node.parentIndex = parentIndex;
-			node.renderParts.reserve(parts->size());
-			for (const auto& part : *parts)
+			node.localPosition.Set(data->localPosition[0], data->localPosition[1], data->localPosition[2]);
+			node.localRotation.Set(data->localRotation[0], data->localRotation[1], data->localRotation[2], data->localRotation[3]);
+			node.localScale.Set(data->localScale[0], data->localScale[1], data->localScale[2]);
+			for (const auto& part : data->renderParts)
 			{
-				PendingRenderPart renderPart{ .nodeIndex = index };
-				const std::pair<const char*, std::filesystem::path&> pathFields[]{
-					{ "mesh", renderPart.meshPath },
-					{ "material", renderPart.materialPath }
-				};
-				for (const auto& [key, outPath] : pathFields)
+				const auto meshPath = ResourceMetadata::ResolvePath(*root, part.mesh);
+				const auto materialPath = ResourceMetadata::ResolvePath(*root, part.material);
+				if (!meshPath || !materialPath)
 				{
-					const auto field = part.find(key);
-					if (field == part.end() || !field->is_string())
-					{
-						return parseError;
-					}
-
-					const auto& name = field->get_ref<const std::string&>();
-					if (name.empty() || name.find('\0') != std::string::npos)
-					{
-						return parseError;
-					}
-
-					auto assetPath = std::filesystem::path(std::u8string(name.begin(), name.end())).lexically_normal();
-					if (assetPath.has_root_path() || assetPath.empty() || *assetPath.begin() == ".."
-						|| assetPath.extension() != ".json")
-					{
-						return parseError;
-					}
-					outPath = std::move(assetPath);
+					return std::unexpected("모델의 리소스 참조 경로가 유효하지 않습니다.");
 				}
-				renderParts.push_back(std::move(renderPart));
+				const MeshAsset* mesh = assets->LoadAsset<MeshAsset>(*meshPath);
+				const MaterialAsset* material = assets->LoadAsset<MaterialAsset>(*materialPath);
+				if (!mesh || !material)
+				{
+					return std::unexpected(std::format("모델의 렌더 파트를 로드하지 못했습니다: {}, {}",
+						meshPath->generic_string(), materialPath->generic_string()));
+				}
+				node.renderParts.push_back({ mesh, material });
+				hasRenderer = true;
 			}
-
 			nodes.push_back(std::move(node));
-			for (auto child = children->crbegin(); child != children->crend(); ++child)
+			for (auto child = data->children.crbegin(); child != data->children.crend(); ++child)
 			{
-				pending.push_back({ &*child, static_cast<i32>(index) });
+				pending.push_back({ &*child, index });
 			}
 		}
-
-		if (renderParts.empty())
+		if (!hasRenderer)
 		{
-			return parseError;
+			return std::unexpected("모델에 렌더 파트가 없습니다.");
 		}
-
-		const auto modelDir = path.parent_path();
-		auto root = modelDir.parent_path();
-		if (modelDir.filename() != "Models" && root.filename() == "Models")
-		{
-			root = root.parent_path();
-		}
-		for (const auto& part : renderParts)
-		{
-			const auto meshPath = root / part.meshPath;
-			const MeshAsset* mesh = assets->LoadAsset<MeshAsset>(meshPath);
-			if (!mesh)
-			{
-				return std::unexpected(std::format("모델의 메시 에셋을 로드하지 못했습니다: {}", meshPath.generic_string()));
-			}
-
-			const auto materialPath = root / part.materialPath;
-			const MaterialAsset* material = assets->LoadAsset<MaterialAsset>(materialPath);
-			if (!material)
-			{
-				return std::unexpected(std::format("모델의 머티리얼 에셋을 로드하지 못했습니다: {}", materialPath.generic_string()));
-			}
-
-			nodes[part.nodeIndex].renderParts.push_back({ mesh, material });
-		}
-
 		return std::make_unique<ModelAsset>(path, std::move(nodes));
 	}
 }

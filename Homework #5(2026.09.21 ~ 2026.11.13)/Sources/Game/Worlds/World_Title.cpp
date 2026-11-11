@@ -84,12 +84,14 @@ namespace TUK::Game
 		startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
 
 		ButtonUI* startButton = startEntity->AddComponent<ButtonUI>();
-		startButton->OnEnter().AddListener([startImage, startButton, assetSubsystem]() {
+		startButton->OnEnter() += [startImage, assetSubsystem]()
+		{
 			startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Quit.dds"));
-		});
-		startButton->OnExit().AddListener([startImage, startButton, assetSubsystem]() {
+		};
+		startButton->OnExit() += [startImage, assetSubsystem]()
+		{
 			startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
-		});
+		};
 		startButton->OnClick() += [this]()
 		{
 			if (!transition->Request(stageWorld))

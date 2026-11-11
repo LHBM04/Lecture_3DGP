@@ -1,6 +1,0 @@
-{
-  "name": "Skybox",
-  "pass": "skybox",
-  "vertexShader": "Shaders/Skybox.vert.cso",
-  "pixelShader": "Shaders/Skybox.frag.cso"
-}

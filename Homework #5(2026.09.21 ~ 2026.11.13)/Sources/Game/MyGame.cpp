@@ -115,7 +115,7 @@ namespace TUK::Game
 
 		transitionRenderListenerId = renderSubsystem->OnRender().AddListener([this](GPUCommandBuffer& commandBuffer)
 		{
-			if (auto rendered = worldTransition.Render(commandBuffer); !rendered)
+			if (auto rendered = worldTransition.GetTransition().Render(commandBuffer); !rendered)
 			{
 				LOG_ERROR("페이드 렌더링에 실패했습니다: {}", rendered.error());
 			}

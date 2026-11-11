@@ -1,6 +1,8 @@
 #pragma vertex VSMain
 #pragma pixel PSMain
 
+#pragma pack_matrix(row_major)
+
 cbuffer FadeConstants : register(b3)
 {
     float4 fadeColor;

@@ -44,7 +44,7 @@ namespace TUK::Game
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
 		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 
-		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources/Models/Chi_Ha/Chi_Ha.json"))
+		if (const ModelAsset* model = assets->LoadAsset<ModelAsset>("Resources/Models/Chi_Ha/Chi_Ha.tukmodel"))
 		{
 			tank = Instantiate(model, Vector3D<f32>(0.0f, 0.0f, 0.0f));
 			tank->AddComponent<PlayerController>();
@@ -52,16 +52,25 @@ namespace TUK::Game
 
 		camera->SetClearFlags(CameraClearFlags::Skybox);
 		camera->SetCubemap(assets->LoadAsset<Cubemap>("Resources/Textures/Polyverse Skies - Blue Sky.dds"));
-		SetSkyboxMaterial(assets->LoadAsset<MaterialAsset>("Resources/Materials/Skybox.json"));
+		SetSkyboxMaterial(assets->LoadAsset<MaterialAsset>("Resources/Materials/Skybox.tukmaterial"));
 
 		auto test = Instantiate(Vector3D<f32>::GetZero());
 		test->GetComponent<Transform>()->SetLocalScale(Vector3D<f32>(100.0f, 100.0f, 1.0f));
 		test->AddComponent<ImageView>()->SetImage(assets->LoadAsset<TextureAsset>("Resources/Textures/Test.dds"));
 
 		auto buttonTest = test->AddComponent<ButtonUI>();
-		buttonTest->OnEnter().AddListener([]() { LOG_INFO("마우스가 버튼 위에 올라갔습니다."); });
-		buttonTest->OnExit().AddListener([]() { LOG_INFO("마우스가 버튼에서 벗어났습니다."); });
-		buttonTest->OnClick().AddListener([]() { LOG_INFO("버튼이 클릭되었습니다."); });
+		buttonTest->OnEnter() += []()
+		{
+			LOG_INFO("마우스가 버튼 위에 올라갔습니다.");
+		};
+		buttonTest->OnExit() += []()
+		{
+			LOG_INFO("마우스가 버튼에서 벗어났습니다.");
+		};
+		buttonTest->OnClick() += []()
+		{
+			LOG_INFO("버튼이 클릭되었습니다.");
+		};
 	}
 
 	void World_Stage::OnUpdate()

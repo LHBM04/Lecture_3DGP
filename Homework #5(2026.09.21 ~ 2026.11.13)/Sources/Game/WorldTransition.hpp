@@ -1,12 +1,6 @@
 ﻿#pragma once
 
-#include <expected>
-#include <optional>
-#include <string>
-
-#include "Framework/Core/Common.hpp"
-
-#include "Framework/Graphics/GPUGraphicsPipelineState.hpp"
+#include "Transition.hpp"
 
 namespace TUK::Framework
 {
@@ -34,37 +28,43 @@ namespace TUK::Game
 
 		[[nodiscard]] bool Request(Framework::World* world, Framework::f32 duration = 0.35f) noexcept;
 		void Update(Framework::f32 deltaTime);
-		[[nodiscard]] std::expected<void, std::string> Render(Framework::GPUCommandBuffer& commandBuffer);
-
 		[[nodiscard]] bool IsActive() const noexcept;
+		[[nodiscard]] Transition& GetTransition() noexcept;
+		[[nodiscard]] const Transition& GetTransition() const noexcept;
 
 	private:
 		enum class Phase : Framework::u8
 		{
 			IDLE,
-			FADE_OUT,
-			BLACK_FRAME,
+			WAIT_FOR_EXIT,
 			WAIT_FOR_WORLD,
-			FADE_IN
+			WAIT_FOR_ENTER
 		};
 
+		void BeginEnter() noexcept;
 		void Finish() noexcept;
-
-		static constexpr DXGI_FORMAT TARGET_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 		Framework::WorldSubsystem* worlds = nullptr;
 		Framework::InputSubsystem* input = nullptr;
-		std::optional<Framework::GPUGraphicsPipelineState> pipeline;
+		Transition transition;
 		Framework::World* targetWorld = nullptr;
 		Phase phase = Phase::IDLE;
-		Framework::f32 opacity = 0.0f;
 		Framework::f32 fadeDuration = 0.35f;
-		bool hasRenderedBlackFrame = false;
 		bool wasInputEnabled = true;
 	};
 
 	inline bool WorldTransition::IsActive() const noexcept
 	{
 		return phase != Phase::IDLE;
+	}
+
+	inline Transition& WorldTransition::GetTransition() noexcept
+	{
+		return transition;
+	}
+
+	inline const Transition& WorldTransition::GetTransition() const noexcept
+	{
+		return transition;
 	}
 }

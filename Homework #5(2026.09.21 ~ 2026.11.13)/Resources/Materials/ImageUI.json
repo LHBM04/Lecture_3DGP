@@ -1,6 +1,0 @@
-{
-  "name": "ImageUI",
-  "pass": "imageUI",
-  "vertexShader": "Shaders/ImageUI.vert.cso",
-  "pixelShader": "Shaders/ImageUI.frag.cso"
-}
