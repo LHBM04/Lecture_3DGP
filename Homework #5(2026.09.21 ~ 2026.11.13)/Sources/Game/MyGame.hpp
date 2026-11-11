@@ -6,6 +6,8 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 
+#include "WorldTransition.hpp"
+
 using namespace TUK::Framework;
 
 namespace TUK::Game
@@ -16,6 +18,7 @@ namespace TUK::Game
 
 	public:
 		SystemStatus Startup() override;
+		SystemStatus Routine() override;
 		void Shutdown() override;
 
 	private:
@@ -24,5 +27,7 @@ namespace TUK::Game
 		WorldSubsystem* worldSubsystem{ nullptr };
 		InputSubsystem* inputSubsystem{ nullptr };
 		AssetSubsystem* assetSubsystem{ nullptr };
+		WorldTransition worldTransition;
+		Delegate<GPUCommandBuffer&>::ListenerId transitionRenderListenerId = 0;
 	};
 }

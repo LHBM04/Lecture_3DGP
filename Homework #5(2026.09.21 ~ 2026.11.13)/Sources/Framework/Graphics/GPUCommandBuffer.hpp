@@ -33,6 +33,8 @@ namespace TUK::Framework
 	{
 	public:
 		static constexpr u32 TEXTURE_SLOT_COUNT = 8;
+		static constexpr u32 ROOT_CONSTANT_SLOT = 4;
+		static constexpr u32 ROOT_CONSTANT_COUNT = 4;
 
 		explicit GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept;
 
@@ -47,6 +49,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
 			u32 rootSlot, std::span<const std::byte> bytes);
+		void SetGraphicsRootConstants(
+			u32 rootSlot, std::span<const std::byte> bytes, u32 offset = 0) noexcept;
+
 		[[nodiscard]] std::expected<void, std::string> BindTextures(
 			std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
 			const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView = nullptr);

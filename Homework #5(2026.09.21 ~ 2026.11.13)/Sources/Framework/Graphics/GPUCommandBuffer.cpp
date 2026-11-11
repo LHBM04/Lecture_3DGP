@@ -73,6 +73,19 @@ namespace TUK::Framework
 		return {};
 	}
 
+	void GPUCommandBuffer::SetGraphicsRootConstants(
+		u32 rootSlot, std::span<const std::byte> bytes, u32 offset) noexcept
+	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		ASSERT_FMT(rootSlot == ROOT_CONSTANT_SLOT, "루트 상수 슬롯이 아닙니다.");
+		ASSERT_FMT(bytes.size() % sizeof(u32) == 0, "루트 상수 데이터는 32비트 단위여야 합니다.");
+		ASSERT_FMT(offset <= ROOT_CONSTANT_COUNT, "루트 상수 오프셋이 범위를 초과합니다.");
+		ASSERT_FMT(bytes.size() / sizeof(u32) <= ROOT_CONSTANT_COUNT - offset, "루트 상수 데이터가 범위를 초과합니다.");
+
+		d3dCommandList->SetGraphicsRoot32BitConstants(
+			rootSlot, static_cast<u32>(bytes.size() / sizeof(u32)), bytes.data(), offset);
+	}
+
 	void GPUCommandBuffer::TransitionTexture(
 		const GPUTexture2D& texture,
 		D3D12_RESOURCE_STATES stateBefore,

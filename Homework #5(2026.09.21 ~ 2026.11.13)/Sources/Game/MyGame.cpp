@@ -65,7 +65,7 @@ namespace TUK::Game
 
 		worldSubsystem = AddSubsystem<WorldSubsystem>();
 		auto stageWorld = std::make_unique<World_Stage>();
-		worldSubsystem->AddWorld(std::make_unique<World_Title>(stageWorld.get()));
+		worldSubsystem->AddWorld(std::make_unique<World_Title>(stageWorld.get(), &worldTransition));
 		worldSubsystem->AddWorld(std::move(stageWorld));
 
 		renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
@@ -107,12 +107,39 @@ namespace TUK::Game
 			Input::Release();
 		};
 
+		if (auto initialized = worldTransition.Initialize(worldSubsystem, inputSubsystem, device, assetSubsystem); !initialized)
+		{
+			LOG_ERROR("월드 전환 초기화에 실패했습니다: {}", initialized.error());
+			return SystemStatus::FAILURE;
+		}
+
+		transitionRenderListenerId = renderSubsystem->OnRender().AddListener([this](GPUCommandBuffer& commandBuffer)
+		{
+			if (auto rendered = worldTransition.Render(commandBuffer); !rendered)
+			{
+				LOG_ERROR("페이드 렌더링에 실패했습니다: {}", rendered.error());
+			}
+		});
+
 		Time::Initialize(Engine::GetInstance().GetSubsystem<TimeSubsystem>());
 		return App::Startup();
 	}
 
+	SystemStatus MyGame::Routine()
+	{
+		worldTransition.Update(Time::GetUnscaledDeltaTime());
+		return App::Routine();
+	}
+
 	void MyGame::Shutdown()
 	{
+		if (renderSubsystem)
+		{
+			renderSubsystem->OnRender().RemoveListener(transitionRenderListenerId);
+			transitionRenderListenerId = 0;
+		}
+		worldTransition.Shutdown();
+
 		App::Shutdown();
 		Time::Release();
 	}

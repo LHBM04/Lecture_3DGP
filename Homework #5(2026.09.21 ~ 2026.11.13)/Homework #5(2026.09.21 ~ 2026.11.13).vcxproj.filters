@@ -261,6 +261,7 @@
     <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
     <ClInclude Include="Sources\Game\Input.hpp" />
     <ClInclude Include="Sources\Game\Time.hpp" />
+    <ClInclude Include="Sources\Game\WorldTransition.hpp" />
     <ClInclude Include="Sources\Framework\UI\ButtonUI.hpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClInclude>
@@ -413,6 +414,7 @@
     <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
     <ClCompile Include="Sources\Game\Input.cpp" />
     <ClCompile Include="Sources\Game\Time.cpp" />
+    <ClCompile Include="Sources\Game\WorldTransition.cpp" />
     <ClCompile Include="Sources\Framework\UI\ButtonUI.cpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClCompile>
@@ -460,6 +462,9 @@
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\Fade.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

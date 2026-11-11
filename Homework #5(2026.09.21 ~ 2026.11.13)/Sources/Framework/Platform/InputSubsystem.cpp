@@ -22,6 +22,11 @@ namespace TUK::Framework
 
 	SystemStatus InputSubsystem::OnEarlyUpdate()
 	{
+		if (!isInputEnabled)
+		{
+			return SystemStatus::CONTINUE;
+		}
+
 		const auto it = providers.find(activeDisplay);
 		if (it == providers.end())
 		{
@@ -39,6 +44,11 @@ namespace TUK::Framework
 		provider.Update();
 		PollKeyboard(provider);
 		PollMouse(provider);
+		if (needsInputSync)
+		{
+			provider.SynchronizeHistory();
+			needsInputSync = false;
+		}
 
 		return SystemStatus::CONTINUE;
 	}
@@ -64,6 +74,22 @@ namespace TUK::Framework
 		activeDisplay = nullptr;
 		providers.clear();
 		hasMouseHistory = false;
+	}
+
+	void InputSubsystem::SetInputEnabled(bool value) noexcept
+	{
+		if (isInputEnabled == value)
+		{
+			return;
+		}
+
+		isInputEnabled = value;
+		needsInputSync = value;
+		hasMouseHistory = false;
+		for (InputProvider& provider : providers | std::views::values)
+		{
+			provider.Reset();
+		}
 	}
 
 	void InputSubsystem::AddProvider(const Display* display)

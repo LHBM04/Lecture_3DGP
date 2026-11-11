@@ -7,21 +7,22 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Platform/DisplaySubsystem.hpp"
 
+#include "../WorldTransition.hpp"
+
 namespace TUK::Game
 {
-	World_Title::World_Title(World* stageWorld) noexcept
+	World_Title::World_Title(World* stageWorld, WorldTransition* transition) noexcept
 		: stageWorld(stageWorld)
+		, transition(transition)
 	{
 		ASSERT_FMT(stageWorld, "전환할 스테이지 월드가 nullptr입니다.");
+		ASSERT_FMT(transition, "월드 전환 객체가 nullptr입니다.");
 	}
 
 	void World_Title::OnEnter()
 	{
 		AssetSubsystem* assetSubsystem = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		ASSERT_FMT(assetSubsystem, "에셋 서브시스템을 가져오지 못했습니다.");
-
-		WorldSubsystem* worldSubsystem = App::GetInstance().GetSubsystem<WorldSubsystem>();
-		ASSERT_FMT(worldSubsystem, "월드 서브시스템을 가져오지 못했습니다.");
 
 		// 카메라 세팅
 		{
@@ -89,13 +90,13 @@ namespace TUK::Game
 		startButton->OnExit().AddListener([startImage, startButton, assetSubsystem]() {
 			startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
 		});
-		startButton->OnClick().AddListener([this, worldSubsystem]()
+		startButton->OnClick() += [this]()
 		{
-			if (!worldSubsystem->RequestWorldChange(stageWorld))
+			if (!transition->Request(stageWorld))
 			{
-				LOG_ERROR("스테이지 전환을 예약하지 못했습니다.");
+				LOG_ERROR("스테이지 페이드 전환을 시작하지 못했습니다.");
 			}
-		});
+		};
 	}
 
 	void World_Title::OnExit()

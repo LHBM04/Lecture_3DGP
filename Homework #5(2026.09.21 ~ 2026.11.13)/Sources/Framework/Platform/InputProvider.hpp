@@ -25,6 +25,7 @@ namespace TUK::Framework
 
 		void Reset() noexcept;
 		void Update() noexcept;
+		void SynchronizeHistory() noexcept;
 
 		void SetKey(KeyCode key, bool isDown) noexcept;
 		void SetMouseButton(ButtonCode button, bool isDown) noexcept;
@@ -86,6 +87,14 @@ namespace TUK::Framework
 		hasMouseButtonState = false;
 		hasMousePosition = false;
 
+		mousePositionDelta = {};
+		mouseWheelDelta = {};
+	}
+
+	inline void InputProvider::SynchronizeHistory() noexcept
+	{
+		previousKeys = currentkeys;
+		previousButtons = currentButtons;
 		mousePositionDelta = {};
 		mouseWheelDelta = {};
 	}

@@ -34,6 +34,9 @@ namespace TUK::Framework
 		SystemStatus OnLateUpdate() override;
 		void OnShutdown() override;
 
+		[[nodiscard]] bool IsInputEnabled() const noexcept;
+		void SetInputEnabled(bool value) noexcept;
+
 		void AddProvider(const Display* display);
 		void RemoveProvider(const Display* display);
 
@@ -56,6 +59,8 @@ namespace TUK::Framework
 		
 		std::unordered_map<const Display*, InputProvider> providers;
 
+		bool isInputEnabled = true;
+		bool needsInputSync = false;
 		bool hasMouseHistory;
 		Vector2D<i32> lastMousePosition;
 		Vector2D<i32> lastMouseWheel;
@@ -70,6 +75,11 @@ namespace TUK::Framework
 		, lastMousePosition()
 		, lastMouseWheel()
 	{
+	}
+
+	inline bool InputSubsystem::IsInputEnabled() const noexcept
+	{
+		return isInputEnabled;
 	}
 
 	inline const Display* InputSubsystem::GetActiveDisplay() const noexcept

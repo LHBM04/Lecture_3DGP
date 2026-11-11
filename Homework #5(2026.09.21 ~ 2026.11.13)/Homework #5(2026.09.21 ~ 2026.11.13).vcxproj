@@ -266,6 +266,7 @@
     <ClInclude Include="Sources\Game\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\MyGame.hpp" />
     <ClInclude Include="Sources\Game\Time.hpp" />
+    <ClInclude Include="Sources\Game\WorldTransition.hpp" />
     <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp" />
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AssetLoader.hpp" />
@@ -333,6 +334,7 @@
     <ClCompile Include="Sources\Game\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\MyGame.cpp" />
     <ClCompile Include="Sources\Game\Time.cpp" />
+    <ClCompile Include="Sources\Game\WorldTransition.cpp" />
     <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp" />
     <ClCompile Include="Sources\Game\Worlds\World_Title.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
@@ -1541,6 +1543,12 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
+      <FileType>Document</FileType>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Message>Compiling %(Filename)%(Extension)</Message>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\Fade.hlsl">
       <FileType>Document</FileType>
       <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
       <Message>Compiling %(Filename)%(Extension)</Message>

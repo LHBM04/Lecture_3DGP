@@ -198,7 +198,7 @@ namespace TUK::Framework
 			}
 
 			constexpr u32 CONSTANT_BUFFER_SLOT_COUNT = 3;
-			std::array<CD3DX12_ROOT_PARAMETER1, CONSTANT_BUFFER_SLOT_COUNT + 1> parameters{};
+			std::array<CD3DX12_ROOT_PARAMETER1, CONSTANT_BUFFER_SLOT_COUNT + 2> parameters{};
 			for (u32 index = 0; index < CONSTANT_BUFFER_SLOT_COUNT; ++index)
 			{
 				parameters[index].InitAsConstantBufferView(
@@ -209,7 +209,9 @@ namespace TUK::Framework
 
 			CD3DX12_DESCRIPTOR_RANGE1 textureRange{};
 			textureRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, GPUCommandBuffer::TEXTURE_SLOT_COUNT, 0);
-			parameters.back().InitAsDescriptorTable(1, &textureRange, D3D12_SHADER_VISIBILITY_PIXEL);
+			parameters[CONSTANT_BUFFER_SLOT_COUNT].InitAsDescriptorTable(1, &textureRange, D3D12_SHADER_VISIBILITY_PIXEL);
+			parameters[GPUCommandBuffer::ROOT_CONSTANT_SLOT].InitAsConstants(
+				GPUCommandBuffer::ROOT_CONSTANT_COUNT, CONSTANT_BUFFER_SLOT_COUNT, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
 			const std::array samplers =
 			{
