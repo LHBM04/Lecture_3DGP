@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "../Framework/Core.hpp"
-#include "../Framework/Entities/WorldSubsystem.hpp"
+#include "../Framework/Objects/WorldSubsystem.hpp"
 #include "../Framework/Graphics.hpp"
 #include "../Framework/Platform.hpp"
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Framework/Core.hpp"
-#include "Framework/Entities.hpp"
+#include "Framework/Objects.hpp"
 
 using namespace TUK::Framework;
 

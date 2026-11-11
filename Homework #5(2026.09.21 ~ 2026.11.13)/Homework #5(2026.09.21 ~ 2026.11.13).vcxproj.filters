@@ -19,7 +19,7 @@
     <Filter Include="Sources\Framework\Core">
       <UniqueIdentifier>{5EA6E942-B2E7-4D2A-898A-054D4397724A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Framework\Entities">
+    <Filter Include="Sources\Framework\Objects">
       <UniqueIdentifier>{F9AA077E-A280-4C23-B731-C8F3986E182F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Framework\Resources">
@@ -99,20 +99,20 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Component.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\Objects\Component.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Entity.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\Objects\GameObject.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Transform.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\Objects\Transform.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\World.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\Objects\World.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\Objects\WorldSubsystem.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Math.hpp">
       <Filter>Sources\Framework</Filter>
@@ -222,7 +222,7 @@
     <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp">
       <Filter>Sources\Game\Worlds</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities.hpp">
+    <ClInclude Include="Sources\Framework\Objects.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources.hpp">
@@ -329,17 +329,17 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\Entity.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\Objects\GameObject.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\Transform.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\Objects\Transform.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\World.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\Objects\World.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\Objects\WorldSubsystem.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
       <Filter>Sources\Framework\Math</Filter>

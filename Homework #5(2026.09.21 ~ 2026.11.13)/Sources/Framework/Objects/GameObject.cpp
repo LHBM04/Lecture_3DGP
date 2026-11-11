@@ -1,5 +1,5 @@
 ﻿#include "Precompiled.hpp"
-#include "Entity.hpp"
+#include "GameObject.hpp"
 
 #include <algorithm>
 #include <ranges>
@@ -10,42 +10,42 @@
 
 namespace TUK::Framework
 {
-	Entity::~Entity() noexcept
+	GameObject::~GameObject() noexcept
 	{
 		DestroyAllComponents();
 	}
 
-	void Entity::FixedUpdate()
+	void GameObject::FixedUpdate()
 	{
 		UpdateComponents(&Component::OnFixedUpdate);
 	}
 
-	void Entity::Update()
+	void GameObject::Update()
 	{
 		UpdateComponents(&Component::OnUpdate);
 	}
 
-	void Entity::LateUpdate()
+	void GameObject::LateUpdate()
 	{
 		UpdateComponents(&Component::OnLateUpdate);
 	}
 
-	void Entity::PreRender(GPUCommandBuffer& commandBuffer)
+	void GameObject::PreRender(GPUCommandBuffer& commandBuffer)
 	{
 		RenderComponents(&Component::OnPreRender, commandBuffer);
 	}
 
-	void Entity::Render(GPUCommandBuffer& commandBuffer)
+	void GameObject::Render(GPUCommandBuffer& commandBuffer)
 	{
 		RenderComponents(&Component::OnRender, commandBuffer);
 	}
 
-	void Entity::PostRender(GPUCommandBuffer& commandBuffer)
+	void GameObject::PostRender(GPUCommandBuffer& commandBuffer)
 	{
 		RenderComponents(&Component::OnPostRender, commandBuffer);
 	}
 
-	void Entity::UpdateComponents(ComponentCallback callback)
+	void GameObject::UpdateComponents(ComponentCallback callback)
 	{
 		ASSERT_FMT(callback, "callback이 비어 있습니다.");
 
@@ -81,7 +81,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Entity::RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer)
+	void GameObject::RenderComponents(RenderCallback callback, GPUCommandBuffer& commandBuffer)
 	{
 		ASSERT_FMT(callback, "callback이 비어 있습니다.");
 
@@ -96,7 +96,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Entity::DestroyComponents()
+	void GameObject::DestroyComponents()
 	{
 		const auto destroyedCount = std::ranges::count_if(components,
 			[](const auto& component)
@@ -151,7 +151,7 @@ namespace TUK::Framework
 		}
 	}
 
-	void Entity::DestroyAllComponents()
+	void GameObject::DestroyAllComponents()
 	{
 		if (components.empty())
 		{

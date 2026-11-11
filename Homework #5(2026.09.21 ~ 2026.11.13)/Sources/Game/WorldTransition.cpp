@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#include "Framework/Entities/World.hpp"
-#include "Framework/Entities/WorldSubsystem.hpp"
+#include "Framework/Objects/World.hpp"
+#include "Framework/Objects/WorldSubsystem.hpp"
 #include "Framework/Platform/InputSubsystem.hpp"
 
 namespace TUK::Game

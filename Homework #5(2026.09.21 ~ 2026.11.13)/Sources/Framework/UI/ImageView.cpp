@@ -7,8 +7,8 @@
 #include "../Core/App.hpp"
 #include "../Core/Common.hpp"
 
-#include "../Entities/Entity.hpp"
-#include "../Entities/Transform.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
 
 #include "../Graphics/GPUCommandBuffer.hpp"
 

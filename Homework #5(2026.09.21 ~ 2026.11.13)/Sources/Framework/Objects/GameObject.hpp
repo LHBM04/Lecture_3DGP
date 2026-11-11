@@ -19,19 +19,19 @@ namespace TUK::Framework
 {
 	class World;
 
-	class Entity
+	class GameObject
 	{
 	public:
-		explicit Entity(World* world) noexcept;
-		explicit Entity(World* world, std::string_view name) noexcept;
-		explicit Entity(World* world, std::string_view name, std::string_view tag) noexcept;
-		virtual ~Entity() noexcept;
+		explicit GameObject(World* world) noexcept;
+		explicit GameObject(World* world, std::string_view name) noexcept;
+		explicit GameObject(World* world, std::string_view name, std::string_view tag) noexcept;
+		virtual ~GameObject() noexcept;
 
-		Entity(const Entity&) = delete;
-		Entity& operator=(const Entity&) = delete;
+		GameObject(const GameObject&) = delete;
+		GameObject& operator=(const GameObject&) = delete;
 
-		Entity(Entity&&) noexcept = default;
-		Entity& operator=(Entity&&) noexcept = default;
+		GameObject(GameObject&&) noexcept = default;
+		GameObject& operator=(GameObject&&) noexcept = default;
 
 		void FixedUpdate();
 		void Update();
@@ -84,7 +84,7 @@ namespace TUK::Framework
 		void DestroyComponents();
 		void DestroyAllComponents();
 
-		std::string name{ "New Entity" };
+		std::string name{ "New GameObject" };
 		std::string tag{ "Untagged" };
 
 		std::vector<std::unique_ptr<Component>> components;
@@ -96,20 +96,20 @@ namespace TUK::Framework
 		bool isDestroyed = false;
 	};
 
-	inline Entity::Entity(World* world) noexcept
+	inline GameObject::GameObject(World* world) noexcept
 		: world(world)
 	{
 		ASSERT_FMT(world, "엔티티의 월드가 nullptr입니다.");
 	}
 
-	inline Entity::Entity(World* world, std::string_view name) noexcept
+	inline GameObject::GameObject(World* world, std::string_view name) noexcept
 		: name(name)
 		, world(world)
 	{
 		ASSERT_FMT(world, "엔티티의 월드가 nullptr입니다.");
 	}
 
-	inline Entity::Entity(World* world, std::string_view name, std::string_view tag) noexcept
+	inline GameObject::GameObject(World* world, std::string_view name, std::string_view tag) noexcept
 		: name(name)
 		, tag(tag)
 		, world(world)
@@ -117,63 +117,63 @@ namespace TUK::Framework
 		ASSERT_FMT(world, "엔티티의 월드가 nullptr입니다.");
 	}
 
-	inline const std::string& Entity::GetName() const noexcept
+	inline const std::string& GameObject::GetName() const noexcept
 	{
 		return name;
 	}
 
-	inline void Entity::SetName(std::string_view value) noexcept
+	inline void GameObject::SetName(std::string_view value) noexcept
 	{
 		name = value;
 	}
 
-	inline const std::string& Entity::GetTag() const noexcept
+	inline const std::string& GameObject::GetTag() const noexcept
 	{
 		return tag;
 	}
 
-	inline void Entity::SetTag(std::string_view value) noexcept
+	inline void GameObject::SetTag(std::string_view value) noexcept
 	{
 		tag = value;
 	}
 
-	inline bool Entity::CompareTag(std::string_view value) const noexcept
+	inline bool GameObject::CompareTag(std::string_view value) const noexcept
 	{
 		return std::string_view(tag) == value;
 	}
 
-	inline const World* Entity::GetWorld() const noexcept
+	inline const World* GameObject::GetWorld() const noexcept
 	{
 		return world;
 	}
 
-	inline World* Entity::GetWorld() noexcept
+	inline World* GameObject::GetWorld() noexcept
 	{
 		return world;
 	}
 
-	inline bool Entity::IsEnabled() const noexcept
+	inline bool GameObject::IsEnabled() const noexcept
 	{
 		return isEnabled;
 	}
 
-	inline void Entity::SetEnabled(bool value) noexcept
+	inline void GameObject::SetEnabled(bool value) noexcept
 	{
 		isEnabled = value;
 	}
 
-	inline bool Entity::IsDestroyed() const noexcept
+	inline bool GameObject::IsDestroyed() const noexcept
 	{
 		return isDestroyed;
 	}
 
-	inline void Entity::Destroy() noexcept
+	inline void GameObject::Destroy() noexcept
 	{
 		isDestroyed = true;
 	}
 
 	template <std::derived_from<Component> TComponent>
-	TComponent* Entity::AddComponent()
+	TComponent* GameObject::AddComponent()
 	{
 		auto component = std::make_unique<TComponent>(this);
 		TComponent* componentPtr = component.get();
@@ -192,7 +192,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Component> TComponent>
-	TComponent* Entity::GetComponent() noexcept
+	TComponent* GameObject::GetComponent() noexcept
 	{
 		const auto result = componentsByType.find(std::type_index(typeid(TComponent)));
 		if (result != componentsByType.end() && !result->second->IsDestroyed())
@@ -204,7 +204,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Component> TComponent>
-	const TComponent* Entity::GetComponent() const noexcept
+	const TComponent* GameObject::GetComponent() const noexcept
 	{
 		const auto result = componentsByType.find(std::type_index(typeid(TComponent)));
 		if (result != componentsByType.end() && !result->second->IsDestroyed())
@@ -216,13 +216,13 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Component> TComponent>
-	bool Entity::HasComponent() const noexcept
+	bool GameObject::HasComponent() const noexcept
 	{
 		return GetComponent<TComponent>() != nullptr;
 	}
 
 	template <std::derived_from<Component> TComponent>
-	bool Entity::RemoveComponent() noexcept
+	bool GameObject::RemoveComponent() noexcept
 	{
 		TComponent* component = GetComponent<TComponent>();
 		if (!component)
@@ -234,7 +234,7 @@ namespace TUK::Framework
 		return true;
 	}
 
-	inline auto Entity::GetComponents() noexcept
+	inline auto GameObject::GetComponents() noexcept
 	{
 		return components | std::views::transform([](const std::unique_ptr<Component>& componentPtr) -> Component*
 			{
@@ -242,7 +242,7 @@ namespace TUK::Framework
 			});
 	}
 
-	inline auto Entity::GetComponents() const noexcept
+	inline auto GameObject::GetComponents() const noexcept
 	{
 		return components | std::views::transform([](const std::unique_ptr<Component>& componentPtr) -> const Component*
 			{

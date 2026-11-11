@@ -13,7 +13,7 @@
 
 namespace TUK::Framework
 {
-	class Entity;
+	class GameObject;
 
 	class Transform : public Component
 	{

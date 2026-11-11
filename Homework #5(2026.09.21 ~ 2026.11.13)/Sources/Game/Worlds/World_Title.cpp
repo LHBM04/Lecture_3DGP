@@ -26,11 +26,11 @@ namespace TUK::Game
 
 		// 카메라 세팅
 		{
-			Entity* cameraEntity = Instantiate();
-			cameraEntity->SetName("Camera");
-			cameraEntity->SetTag("Main Camera");
+			GameObject* cameraGameObject = Instantiate();
+			cameraGameObject->SetName("Camera");
+			cameraGameObject->SetTag("Main Camera");
 
-			Transform* cameraTransform = cameraEntity->AddComponent<Transform>();
+			Transform* cameraTransform = cameraGameObject->AddComponent<Transform>();
 			cameraTransform->SetLocalRotation(Quaternion<f32>{});
 			cameraTransform->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -10.0f));
 
@@ -41,7 +41,7 @@ namespace TUK::Game
 			ASSERT_FMT(display, "타이틀 화면을 표시할 디스플레이가 없습니다.");
 
 			const Vector2D<i32> clientSize = display->GetClientSize();
-			Camera* camera = cameraEntity->AddComponent<Camera>();
+			Camera* camera = cameraGameObject->AddComponent<Camera>();
 			camera->SetViewport(CD3DX12_VIEWPORT(
 				0.0f, 0.0f, static_cast<f32>(clientSize.GetX()), static_cast<f32>(clientSize.GetY())));
 			camera->SetScissorRect(CD3DX12_RECT(0, 0, clientSize.GetX(), clientSize.GetY()));
@@ -51,15 +51,15 @@ namespace TUK::Game
 
 		// 타이틀 로고 세팅
 		{
-			Entity* logoEntity = Instantiate();
-			logoEntity->SetName("Title Logo");
+			GameObject* logoGameObject = Instantiate();
+			logoGameObject->SetName("Title Logo");
 
-			Transform* logoTransform = logoEntity->AddComponent<Transform>();
+			Transform* logoTransform = logoGameObject->AddComponent<Transform>();
 			logoTransform->SetLocalPosition({ 0.0f, -200.0f, 0.0f });
 			logoTransform->SetLocalRotation({ 0.0f, 0.0f, 0.0f, 1.0f });
 			logoTransform->SetLocalScale({ 1000.0f, 450.0f, 1.0f });
 
-			ImageView* titleImage = logoEntity->AddComponent<ImageView>();
+			ImageView* titleImage = logoGameObject->AddComponent<ImageView>();
 			titleImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Title.dds"));
 		}
 
@@ -72,18 +72,18 @@ namespace TUK::Game
 			ASSERT_FMT(clickTexture, "클릭 시 사용할 텍스처를 로드하지 못했습니다.");
 		}
 
-		Entity* startEntity = Instantiate();
-		startEntity->SetName("Start Button");
+		GameObject* startGameObject = Instantiate();
+		startGameObject->SetName("Start Button");
 
-		Transform* startTransform = startEntity->AddComponent<Transform>();
+		Transform* startTransform = startGameObject->AddComponent<Transform>();
 		startTransform->SetLocalPosition({ 0.0f, 170.0f, 0.0f });
 		startTransform->SetLocalRotation(Quaternion<f32>{0.0f, 0.0f, 0.0f, 1.0f});
 		startTransform->SetLocalScale({ 350.0f, 200.0f, 1.0f });
 
-		ImageView* startImage = startEntity->AddComponent<ImageView>();
+		ImageView* startImage = startGameObject->AddComponent<ImageView>();
 		startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
 
-		ButtonUI* startButton = startEntity->AddComponent<ButtonUI>();
+		ButtonUI* startButton = startGameObject->AddComponent<ButtonUI>();
 		startButton->OnEnter() += [startImage, assetSubsystem]()
 		{
 			startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Quit.dds"));

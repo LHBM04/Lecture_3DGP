@@ -7,9 +7,9 @@
 
 #include "../Core/App.hpp"
 
-#include "../Entities/Entity.hpp"
-#include "../Entities/Transform.hpp"
-#include "../Entities/World.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
+#include "../Objects/World.hpp"
 
 #include "../Graphics/Camera.hpp"
 
@@ -25,7 +25,7 @@ namespace TUK::Framework
 			// UI uses the viewport left active by the last camera in the world render pass.
 			for (const Camera* camera : world->GetCameras() | std::views::reverse)
 			{
-				const Entity* owner = camera->GetOwner();
+				const GameObject* owner = camera->GetOwner();
 				if (camera->IsEnabled() && !camera->IsDestroyed() && owner->IsEnabled() && !owner->IsDestroyed())
 				{
 					return camera;
@@ -74,7 +74,7 @@ namespace TUK::Framework
 
 	void ButtonUI::OnUpdate()
 	{
-		const Entity* owner = GetOwner();
+		const GameObject* owner = GetOwner();
 		const World* world = owner->GetWorld();
 		const auto isActive = [this, owner, world]()
 		{

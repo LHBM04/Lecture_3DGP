@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "Framework/Core.hpp"
-#include "Framework/Entities.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 
@@ -33,14 +33,14 @@ namespace TUK::Game
 			return;
 		}
 
-		Entity* cameraEntity = Instantiate();
-		cameraEntity->SetName("Camera");
-		cameraEntity->SetTag("Main Camera");
-		cameraTransform = cameraEntity->AddComponent<Transform>();
+		GameObject* cameraGameObject = Instantiate();
+		cameraGameObject->SetName("Camera");
+		cameraGameObject->SetTag("Main Camera");
+		cameraTransform = cameraGameObject->AddComponent<Transform>();
 		cameraTransform->SetLocalRotation(Quaternion<f32>{});
 		cameraTransform->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -10.0f));
 
-		Camera* camera = cameraEntity->AddComponent<Camera>();
+		Camera* camera = cameraGameObject->AddComponent<Camera>();
 		camera->SetViewport(CD3DX12_VIEWPORT(0.0f, 0.0f, 1280.0f, 960.0f));
 		camera->SetScissorRect(CD3DX12_RECT(0, 0, 1280, 960));
 

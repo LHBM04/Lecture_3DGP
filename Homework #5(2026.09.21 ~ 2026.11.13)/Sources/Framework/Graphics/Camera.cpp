@@ -8,9 +8,9 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Entities/Entity.hpp"
-#include "../Entities/Transform.hpp"
-#include "../Entities/World.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
+#include "../Objects/World.hpp"
 
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"

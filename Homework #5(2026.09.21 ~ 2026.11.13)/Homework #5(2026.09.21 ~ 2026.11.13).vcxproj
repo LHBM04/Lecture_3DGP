@@ -203,10 +203,15 @@
     <Copy SourceFiles="$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTK12.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXTex.dll;$(ProjectDir)External\Binaries\$(ExternalTriplet)\$(Configuration)\DirectXMesh.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Objects.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Component.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\GameObject.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Transform.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\World.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\FontMetadata.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ResourceMetadata.hpp" />
     <ClInclude Include="Sources\Framework\Core\Serializer.hpp" />
-    <ClInclude Include="Sources\Framework\Entities.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp" />
     <ClInclude Include="Sources\Framework\Resources.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
@@ -232,11 +237,6 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
-    <ClInclude Include="Sources\Framework\Entities\Component.hpp" />
-    <ClInclude Include="Sources\Framework\Entities\Entity.hpp" />
-    <ClInclude Include="Sources\Framework\Entities\Transform.hpp" />
-    <ClInclude Include="Sources\Framework\Entities\World.hpp" />
-    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
@@ -289,6 +289,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\GameObject.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\Transform.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\World.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\WorldSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\TextureAssetLoader.cpp" />
     <ClCompile Include="Sources\Framework\Core\Common.cpp" />
@@ -305,10 +309,6 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp" />
-    <ClCompile Include="Sources\Framework\Entities\Entity.cpp" />
-    <ClCompile Include="Sources\Framework\Entities\Transform.cpp" />
-    <ClCompile Include="Sources\Framework\Entities\World.cpp" />
-    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp" />
@@ -378,10 +378,6 @@
       <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
     </CustomBuild>
     <None Include="Sources\Framework\Resources\FontBinaryFormat.md" />
-    <None Include="Sources\Framework\Resources\TUKFontExporter.md" />
-    <None Include="Sources\Framework\Resources\TUKFontExporter.cs" />
-    <None Include="Sources\Framework\Resources\TUKEntityExporter.cs" />
-    <None Include="Sources\Framework\Resources\TUKSerializer.cs" />
     <None Include="Resources\Materials\Skybox.tukmaterial" />
     <None Include="Resources\Materials\ImageUI.tukmaterial" />
   </ItemGroup>

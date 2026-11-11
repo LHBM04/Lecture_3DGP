@@ -7,7 +7,7 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Entities/Component.hpp"
+#include "../Objects/Component.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Matrix4x4.hpp"
@@ -15,7 +15,7 @@
 namespace TUK::Framework
 {
 	class Cubemap;
-	class Entity;
+	class GameObject;
 	class MaterialAsset;
 
 	enum class CameraClearFlags : u8

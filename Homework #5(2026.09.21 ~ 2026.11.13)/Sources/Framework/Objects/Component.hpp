@@ -4,13 +4,13 @@
 
 namespace TUK::Framework
 {
-	class Entity;
+	class GameObject;
 	class GPUCommandBuffer;
 
 	class Component
 	{
 	public:
-		explicit Component(Entity* owner) noexcept;
+		explicit Component(GameObject* owner) noexcept;
 		virtual ~Component() noexcept = default;
 
 		Component(const Component&) = delete;
@@ -35,8 +35,8 @@ namespace TUK::Framework
 
 		virtual void OnDestroy();
 
-		[[nodiscard]] const Entity* GetOwner() const noexcept;
-		[[nodiscard]] Entity* GetOwner() noexcept;
+		[[nodiscard]] const GameObject* GetOwner() const noexcept;
+		[[nodiscard]] GameObject* GetOwner() noexcept;
 
 		[[nodiscard]] bool IsStarted() const noexcept;
 		void SetStarted(bool value) noexcept;
@@ -48,14 +48,14 @@ namespace TUK::Framework
 		void Destroy() noexcept;
 
 	private:
-		Entity* owner = nullptr;
+		GameObject* owner = nullptr;
 
 		bool isStarted = false;
 		bool isEnabled = true;
 		bool isDestroyed = false;
 	};
 
-	inline Component::Component(Entity* owner) noexcept
+	inline Component::Component(GameObject* owner) noexcept
 		: owner(owner)
 	{
 		ASSERT_FMT(owner, "컴포넌트 소유자가 nullptr입니다.");
@@ -105,12 +105,12 @@ namespace TUK::Framework
 	{
 	}
 
-	inline const Entity* Component::GetOwner() const noexcept
+	inline const GameObject* Component::GetOwner() const noexcept
 	{
 		return owner;
 	}
 
-	inline Entity* Component::GetOwner() noexcept
+	inline GameObject* Component::GetOwner() noexcept
 	{
 		return owner;
 	}

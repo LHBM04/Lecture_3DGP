@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Framework/Entities.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Resources.hpp"
 #include "Framework/Platform.hpp"
 
@@ -24,6 +24,6 @@ namespace TUK::Game
 		f32 cameraYaw = 0.0f;
 		f32 cameraPitch = 0.0f;
 
-		Entity* tank = nullptr;
+		GameObject* tank = nullptr;
 	};
 }
