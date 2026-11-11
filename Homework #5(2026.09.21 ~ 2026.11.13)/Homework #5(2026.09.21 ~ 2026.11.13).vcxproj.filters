@@ -40,6 +40,12 @@
     <Filter Include="Sources\Framework\UI">
       <UniqueIdentifier>{3ecb780f-ddc0-4d0e-9fee-0ba4b762e6ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game\Core">
+      <UniqueIdentifier>{ef4c2b3b-f671-4f6f-a4b5-a4b4e1eaa823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\UI">
+      <UniqueIdentifier>{959dc655-7c02-4949-b3b0-96d97d389143}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
@@ -174,9 +180,6 @@
     <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Resource.hpp">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -207,14 +210,8 @@
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\MyGame.hpp">
-      <Filter>Sources\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp">
       <Filter>Sources\Game\Worlds</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\MyEngine.hpp">
-      <Filter>Sources\Game</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Entities.hpp">
       <Filter>Sources\Framework</Filter>
@@ -258,15 +255,38 @@
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
-    <ClInclude Include="Sources\Game\Input.hpp" />
-    <ClInclude Include="Sources\Game\Time.hpp" />
-    <ClInclude Include="Sources\Game\WorldTransition.hpp" />
     <ClInclude Include="Sources\Framework\UI\ButtonUI.hpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
       <Filter>Sources\Framework\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Components\PlayerController.hpp">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Input.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\MyEngine.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\MyGame.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Time.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Worlds\World_Title.hpp">
+      <Filter>Sources\Game\Worlds</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\WorldTransition.hpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Resource.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\UI.hpp">
+      <Filter>Sources\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -387,12 +407,6 @@
     <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp">
       <Filter>Sources\Game\Worlds</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\MyGame.cpp">
-      <Filter>Sources\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\MyEngine.cpp">
-      <Filter>Sources\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
@@ -411,15 +425,32 @@
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
-    <ClCompile Include="Sources\Game\Input.cpp" />
-    <ClCompile Include="Sources\Game\Time.cpp" />
-    <ClCompile Include="Sources\Game\WorldTransition.cpp" />
     <ClCompile Include="Sources\Framework\UI\ButtonUI.cpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
       <Filter>Sources\Framework\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Components\PlayerController.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Input.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\MyEngine.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\MyGame.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Time.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Worlds\World_Title.cpp">
+      <Filter>Sources\Game\Worlds</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\WorldTransition.cpp">
+      <Filter>Sources\Game\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -464,7 +495,7 @@
     <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Resources\Shaders\Fade.hlsl">
+    <CustomBuild Include="Resources\Shaders\WorldTransition.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

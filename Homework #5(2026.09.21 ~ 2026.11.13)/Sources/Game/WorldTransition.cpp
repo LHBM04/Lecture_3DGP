@@ -32,12 +32,12 @@ namespace TUK::Game
 
 		// Load directly so world asset cleanup cannot release the transition pipeline.
 		ShaderAssetLoader loader(assets);
-		auto vertex = loader.Load("Resources/Shaders/Fade.vert.cso");
+		auto vertex = loader.Load("Resources/Shaders/WorldTransition.vert.cso");
 		if (!vertex)
 		{
 			return std::unexpected(vertex.error());
 		}
-		auto pixel = loader.Load("Resources/Shaders/Fade.frag.cso");
+		auto pixel = loader.Load("Resources/Shaders/WorldTransition.frag.cso");
 		if (!pixel)
 		{
 			return std::unexpected(pixel.error());
