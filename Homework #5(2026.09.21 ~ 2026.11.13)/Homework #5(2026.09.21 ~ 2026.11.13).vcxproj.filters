@@ -1,16 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{c9abf943-ff0a-4081-a2e0-c79d422133e5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources">
       <UniqueIdentifier>{d404648d-e0cf-4baa-8fac-57481c2802ad}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Game">
       <UniqueIdentifier>{b4a5aea1-254d-4503-bc15-32b43ddd36ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Worlds">
+    <Filter Include="Sources\Game\Scenes">
       <UniqueIdentifier>{9A98B935-C06F-48B3-A38A-CB795E409464}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Framework">
@@ -19,7 +16,7 @@
     <Filter Include="Sources\Framework\Core">
       <UniqueIdentifier>{5EA6E942-B2E7-4D2A-898A-054D4397724A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Framework\Entities">
+    <Filter Include="Sources\Framework\GameObjects">
       <UniqueIdentifier>{F9AA077E-A280-4C23-B731-C8F3986E182F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Framework\Resources">
@@ -31,14 +28,41 @@
     <Filter Include="Sources\Framework\Platform">
       <UniqueIdentifier>{A3A8B3C7-A5E7-4C30-8ED3-2C45E3F08021}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Icon">
-      <UniqueIdentifier>{ce30deb5-0fa6-4819-8259-3de494e3b125}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Framework\Graphics">
       <UniqueIdentifier>{1464633f-6db7-442e-968e-67c77d2bcbb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Framework\UI">
+      <UniqueIdentifier>{3ecb780f-ddc0-4d0e-9fee-0ba4b762e6ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Core">
+      <UniqueIdentifier>{ef4c2b3b-f671-4f6f-a4b5-a4b4e1eaa823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\UI">
+      <UniqueIdentifier>{959dc655-7c02-4949-b3b0-96d97d389143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Component">
+      <UniqueIdentifier>{60b77e23-16ed-4f8a-b7c8-a8613607197a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Framework\Core\BinaryReader.hpp">
+      <Filter>Sources\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\FontAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\FontAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\AnimationAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\ResourcePath.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
@@ -81,20 +105,20 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Component.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\Component.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Entity.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\GameObject.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\Transform.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\Transform.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\World.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\Scene.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities\WorldSubsystem.hpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\SceneSubsystem.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Math.hpp">
       <Filter>Sources\Framework</Filter>
@@ -129,7 +153,7 @@
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\AssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\AssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\AssetSubsystem.hpp">
@@ -138,23 +162,38 @@
     <ClInclude Include="Sources\Framework\Resources\MaterialAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\MaterialAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\MaterialAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\MeshAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\MeshAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ModelAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\ModelAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\CubemapAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\CubemapAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\TextureAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\TextureAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\ShaderAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Resource.h">
-      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
@@ -183,16 +222,13 @@
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\MyGame.hpp">
-      <Filter>Sources\Game</Filter>
+    <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp">
-      <Filter>Sources\Game\Worlds</Filter>
+    <ClInclude Include="Sources\Game\Scenes\Scene_Stage.hpp">
+      <Filter>Sources\Game\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\MyEngine.hpp">
-      <Filter>Sources\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Entities.hpp">
+    <ClInclude Include="Sources\Framework\GameObjects.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources.hpp">
@@ -216,7 +252,10 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUTexture.hpp">
+    <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUTexture2D.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUTarget.hpp">
@@ -228,18 +267,66 @@
     <ClInclude Include="Sources\Framework\Graphics\MeshRenderer.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\SkyboxRenderer.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\Camera.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\UI\ButtonUI.hpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Scenes\Scene_Title.hpp">
+      <Filter>Sources\Game\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Resource.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\UI.hpp">
+      <Filter>Sources\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\Input.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\MyEngine.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\MyGame.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\Time.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\Transition.hpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\SceneTransition.hpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Components\PlayerController.hpp">
+      <Filter>Sources\Game\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\Assets.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Framework\Resources\FontAssetImporter.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\AnimationAssetImporter.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Core\Engine.cpp">
+    <ClCompile Include="Sources\Framework\Core\Common.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Core\System.cpp">
+    <ClCompile Include="Sources\Framework\Core\Engine.cpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp">
@@ -254,20 +341,23 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\Entity.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\GameObject.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\Transform.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\Transform.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\World.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\Scene.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Entities\WorldSubsystem.cpp">
-      <Filter>Sources\Framework\Entities</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\SceneSubsystem.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
       <Filter>Sources\Framework\Math</Filter>
@@ -302,13 +392,34 @@
     <ClCompile Include="Sources\Framework\Resources\MaterialAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\MaterialAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\MeshAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\MeshAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ModelAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ModelAssetImporter.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\TextureAssetImporter.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\CubemapAssetImporter.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\ShaderAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Main.cpp">
@@ -323,14 +434,11 @@
     <ClCompile Include="Sources\Framework\Platform\InputSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp">
-      <Filter>Sources\Game\Worlds</Filter>
+    <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
+      <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\MyGame.cpp">
-      <Filter>Sources\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\MyEngine.cpp">
-      <Filter>Sources\Game</Filter>
+    <ClCompile Include="Sources\Game\Scenes\Scene_Stage.cpp">
+      <Filter>Sources\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
@@ -347,8 +455,44 @@
     <ClCompile Include="Sources\Framework\Graphics\MeshRenderer.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Graphics\SkyboxRenderer.cpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\Camera.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\UI\ButtonUI.cpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Scenes\Scene_Title.cpp">
+      <Filter>Sources\Game\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\Input.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\MyEngine.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\MyGame.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\Time.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\Transition.cpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\SceneTransition.cpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Components\PlayerController.cpp">
+      <Filter>Sources\Game\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\Assets.cpp">
+      <Filter>Sources\Game\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -360,5 +504,3643 @@
     <Image Include="Resources\Icon\Homework #5%282026.09.21 ~ 2026.11.13%29.ico">
       <Filter>Resources\Icon</Filter>
     </Image>
+    <Image Include="Resources\Textures\Title.dds">
+      <Filter>Resources\Textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\WorldTransition.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\TextUI.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\Shaders\Skybox.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{c9abf943-ff0a-4081-a2e0-c79d422133e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Cubemaps">
+      <UniqueIdentifier>{B61E8349-0E8A-4D23-AFF2-FF1EF4B0D3C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Cubemaps\Polyverse Skies - Blue Sky">
+      <UniqueIdentifier>{58FD5DA4-CE19-4616-9134-AD0F2CA0710C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Cubemaps\Polyverse Skies - Night Sky">
+      <UniqueIdentifier>{8558B7CF-AB15-4F3B-9816-52F119889B30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Fonts">
+      <UniqueIdentifier>{61D37892-C59C-4059-AAF0-D03CE7DEB643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Icon">
+      <UniqueIdentifier>{ce30deb5-0fa6-4819-8259-3de494e3b125}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Materials">
+      <UniqueIdentifier>{28E6E712-FDB8-49F2-9581-EAFA1E6A5871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes">
+      <UniqueIdentifier>{87D33B37-9373-4C0E-A340-AFA17229B5CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Carro_Armato_L6_40">
+      <UniqueIdentifier>{C76EED0B-BE54-4608-85F0-1E1FCD5137F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Carro_Armato_M13_40">
+      <UniqueIdentifier>{1CD51CE9-81B4-49FE-A7E3-AADAB0E815BF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Chi_Ha">
+      <UniqueIdentifier>{A4165C30-E144-4057-BDD3-78E30BC2D183}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Cromwell_IV">
+      <UniqueIdentifier>{5F5CEA0C-4CDE-4E23-93DE-6E35CBB1F94B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\E_50">
+      <UniqueIdentifier>{6CCBC1FA-9310-41F9-928F-9667E8F4935D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Ha_Go">
+      <UniqueIdentifier>{75BD314A-CAD5-49ED-8D45-1A0CAFE5E7B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Hotchkiss_H35">
+      <UniqueIdentifier>{19CA4E4E-9508-4523-8573-DF01C5CCAAAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\KV_2(1940)">
+      <UniqueIdentifier>{052918D2-7945-4B64-8933-6E8E59A6DF05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\M4A3(75)_Sherman">
+      <UniqueIdentifier>{2C582CCC-5263-4DB4-A4A5-6F0ED16A78B9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\M5A1_Stuart">
+      <UniqueIdentifier>{FE290E67-6E8E-4592-A323-5B78754063AE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Matilda_II">
+      <UniqueIdentifier>{37CE1CC3-047E-48DA-B8E1-8D152D72C347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Panzer_II_F">
+      <UniqueIdentifier>{5AAEA3C7-2F56-41EE-B43F-D3E21C3CB6A6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Panzer_VI_E">
+      <UniqueIdentifier>{58D8EE06-C282-4967-BDF0-1C8F0082D862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Renault_ZB">
+      <UniqueIdentifier>{9B81BD5F-3873-4D5A-B0C0-CEBCBFB2A7BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\SOMUA_S35">
+      <UniqueIdentifier>{F39E30F3-3030-4A58-AF36-C837C19787C5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\T_28_85">
+      <UniqueIdentifier>{768D68FB-FE1A-4CBE-88ED-CD2F557CFB3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\T_34_76(1942)">
+      <UniqueIdentifier>{4AE455B5-0D03-4138-852E-DC0A0571DCB2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Meshes\Vickers_Mk_E_Type_B">
+      <UniqueIdentifier>{E395227B-D09A-4DBE-BAB4-DD5B062DF800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Models">
+      <UniqueIdentifier>{D4F3F1E9-E764-4AF9-84DC-AD1F66BA7DD2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{ED90E0B9-7F4E-4103-9B7B-80DE416932BC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures">
+      <UniqueIdentifier>{FC6E692A-CA4E-4C51-B9B4-787CD8685414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Carro_Armato_L6_40">
+      <UniqueIdentifier>{3A646045-5AA9-4AD3-9A35-98D20073E11E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Carro_Armato_M13_40">
+      <UniqueIdentifier>{FBC4F7E2-2ABA-484F-B679-0BA7BDA946A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Chi_Ha">
+      <UniqueIdentifier>{B8EFCA6B-C80E-42EB-8A1E-14F4B491C3E0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Cromwell_IV">
+      <UniqueIdentifier>{0D7BBF06-6C16-439B-93B4-B0BBDA898388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\E_50">
+      <UniqueIdentifier>{33EAC430-6D3F-46A2-BEFF-D62839513533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Ha_Go">
+      <UniqueIdentifier>{33902402-78B6-4818-BCCD-86C94FCA0932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Hotchkiss_H35">
+      <UniqueIdentifier>{86F196D9-F9DE-40E6-A3B3-78BF88252CAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\KV_2(1940)">
+      <UniqueIdentifier>{3988F759-DE20-4EDF-9A18-4F831BB0B27E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\M4A3(75)_Sherman">
+      <UniqueIdentifier>{0693D4F1-8ED9-456A-A7AC-4DE3179E9C4F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\M5A1_Stuart">
+      <UniqueIdentifier>{90C8210D-411D-4930-AEF8-31ED66943DD2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Matilda_II">
+      <UniqueIdentifier>{B52F549B-EE20-432E-9944-5F4B3EAB8992}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Panzer_II_F">
+      <UniqueIdentifier>{6FE7006C-FD34-481F-9C4A-B6845CD31E4C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Panzer_VI_E">
+      <UniqueIdentifier>{CFDE6BEC-387A-473B-A8AA-D5B8CFA467B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Renault_ZB">
+      <UniqueIdentifier>{3942199C-C133-4A5E-A35A-186EB9D985CA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\SOMUA_S35">
+      <UniqueIdentifier>{166BA9B0-584C-493E-915E-BC4E44FED246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\T_28_85">
+      <UniqueIdentifier>{8D56FD8F-9554-445E-B732-B87E549B1C74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\T_34_76(1942)">
+      <UniqueIdentifier>{8941BC11-8C24-408F-A733-2A9D8EC59C9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Track">
+      <UniqueIdentifier>{43878DF4-1A32-4D15-852D-763CA2C5FF96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Textures\Vickers_Mk_E_Type_B">
+      <UniqueIdentifier>{9EB4622A-448F-48A0-B42E-0A9BC3C5461C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeX.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeY.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeZ.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveX.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveY.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveZ.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeX.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeY.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeZ.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveX.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveY.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
+    </None>
+    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveZ.png">
+      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMDOHYEON_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMDOHYEON_ttf.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMDOHYEON_ttf_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljiro10yearslater 1.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljiro10yearslater 1_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljiro10yearslater.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljiro10yearslater_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljiro10yearslater_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljirooraeorae.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljirooraeorae_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEuljirooraeorae_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEULJIROTTF.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEULJIROTTF_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMEULJIROTTF_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNA_11yrs_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNA_11yrs_ttf.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNA_11yrs_ttf_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNAAir_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNAAir_ttf.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNAAir_ttf_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNAPro.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNAPro_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMHANNAPro_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMJUA_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMJUA_ttf.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMJUA_ttf_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMKkubulimTTF.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMKkubulimTTF_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMKkubulimTTF_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMYEONSUNG_0.dds">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMYEONSUNG_ttf.tukfont">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Fonts\BMYEONSUNG_ttf_0.png">
+      <Filter>Resources\Fonts</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_L6_40.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Carro_Armato_M13_40.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Chi_Ha.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Cromwell_IV.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\E_50.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Ha_Go.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Hotchkiss_H35.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\ImageUI.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\KV_2(1940).tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\M4A3(75)_Sherman.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\M5A1_Stuart.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Matilda_II.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_II_F.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Panzer_VI_E.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Renault_ZB.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Skybox.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\SOMUA_S35.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\T_28_85.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\T_34_76(1942).tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Track.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Vickers_MK_E_Type_B.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Gun.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Hull.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Turret.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_L6_40_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Gun.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Hull.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Turret.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40\Carro_Armato_M13_40_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Carro_Armato_M13_40_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Gun.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Hull.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Turret.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha\Chi_Ha_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Chi_Ha_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Gun.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Hull.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Turret.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV\Cromwell_IV_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Cromwell_IV_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Gun.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Hull.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Track_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Track_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Turret.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50\E_50_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\E_50</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\E_50_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Gun.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Hull.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Turret.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go\Ha_Go_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Ha_Go_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Gun.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Hull.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Turret.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35\Hotchkiss_H35_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Hotchkiss_H35_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Gun.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Hull.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Track_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Track_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Turret.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)\KV_2(1940)_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\KV_2(1940)_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Gun.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Hull.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Track_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Track_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Turret.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman\M4A3(75)_Sherman_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M4A3(75)_Sherman_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Gun.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Hull.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Track_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Track_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Turret.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart\M5A1_Stuart_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\M5A1_Stuart_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Gun.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Hull.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Turret.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel10_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel10_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel11_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel11_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel9_L.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II\Matilda_II_Wheel9_R.tukmesh">
+      <Filter>Resources\Meshes\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel10_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel10_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel11_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel11_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel9_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Matilda_II_Wheel9_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Gun.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Hull.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller4_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Roller4_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Turret.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F\Panzer_II_F_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Roller4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_II_F_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Gun.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Hull.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Turret.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E\Panzer_VI_E_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Panzer_VI_E_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Gun.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Hull.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Turret.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB\Renault_ZB_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Renault_ZB_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Gun.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Hull.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Track_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Track_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Turret.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel9_L.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35\SOMUA_S35_Wheel9_R.tukmesh">
+      <Filter>Resources\Meshes\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel9_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\SOMUA_S35_Wheel9_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Aux_Turret_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Aux_Turret_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Gun.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Hull.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller4_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Roller4_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Track_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Track_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Turret.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel10_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel10_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel11_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel11_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel12_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel12_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel9_L.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85\T_28_85_Wheel9_R.tukmesh">
+      <Filter>Resources\Meshes\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Aux_Turret_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Aux_Turret_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Roller4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel10_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel10_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel11_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel11_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel12_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel12_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel9_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_28_85_Wheel9_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Gun.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Hull.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Track_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Track_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Turret.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)\T_34_76(1942)_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\T_34_76(1942)_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Gun.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Hull.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Idler_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Idler_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Mantlet.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller4_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Roller4_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Track_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Turret.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Gun.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Hull.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Idler_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Idler_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Mantlet.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Roller4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Sprocket_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Sprocket_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Track_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Track_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Turret.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel1_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel1_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel2_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel2_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel3_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel3_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel4_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel4_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel5_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel5_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel6_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel6_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel7_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel7_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel8_L.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Meshes\Vickers_Mk_E_Type_B_Wheel8_R.tukmesh">
+      <Filter>Resources\Meshes</Filter>
+    </None>
+    <None Include="Resources\Models\Carro_Armato_L6_40.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Carro_Armato_M13_40.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Chi_Ha.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Cromwell_IV.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\E_50.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Ha_Go.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Hotchkiss_H35.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\KV_2(1940).tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\M4A3(75)_Sherman.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\M5A1_Stuart.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Matilda_II.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Panzer_II_F.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Panzer_VI_E.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Renault_ZB.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\SOMUA_S35.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\T_28_85.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\T_34_76(1942).tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Models\Vickers_Mk_E_Type_B.tukmodel">
+      <Filter>Resources\Models</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_AO.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Metallic.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_L6_40\Carro_Armato_L6_40_Normal.dds">
+      <Filter>Resources\Textures\Carro_Armato_L6_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_AO.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Metallic.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Carro_Armato_M13_40\Carro_Armato_M13_40_Normal.dds">
+      <Filter>Resources\Textures\Carro_Armato_M13_40</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_AO.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Metallic.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Chi_Ha\Chi_Ha_Normal.dds">
+      <Filter>Resources\Textures\Chi_Ha</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_AO.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Metallic.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\Cromwell_IV\Cromwell_IV_Normal.dds">
+      <Filter>Resources\Textures\Cromwell_IV</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_AO.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Metallic.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\E_50\E_50_Normal.dds">
+      <Filter>Resources\Textures\E_50</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_AO.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Metallic.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Ha_Go\Ha_Go_Normal.dds">
+      <Filter>Resources\Textures\Ha_Go</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_AO.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Metallic.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\Hotchkiss_H35\Hotchkiss_H35_Normal.dds">
+      <Filter>Resources\Textures\Hotchkiss_H35</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2(1940)\KV_2(1940)_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2(1940)\KV_2(1940)_AO.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2(1940)\KV_2(1940)_Metallic.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\KV_2(1940)\KV_2(1940)_Normal.dds">
+      <Filter>Resources\Textures\KV_2(1940)</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3(75)_Sherman\M4A3(75)_Sherman_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3(75)_Sherman\M4A3(75)_Sherman_AO.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3(75)_Sherman\M4A3(75)_Sherman_Metallic.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M4A3(75)_Sherman\M4A3(75)_Sherman_Normal.dds">
+      <Filter>Resources\Textures\M4A3(75)_Sherman</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_AO.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Metallic.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\M5A1_Stuart\M5A1_Stuart_Normal.dds">
+      <Filter>Resources\Textures\M5A1_Stuart</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_AO.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Metallic.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Matilda_II\Matilda_II_Normal.dds">
+      <Filter>Resources\Textures\Matilda_II</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_AO.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Metallic.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_II_F\Panzer_II_F_Normal.dds">
+      <Filter>Resources\Textures\Panzer_II_F</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_AO.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Metallic.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Panzer_VI_E\Panzer_VI_E_Normal.dds">
+      <Filter>Resources\Textures\Panzer_VI_E</Filter>
+    </None>
+    <None Include="Resources\Textures\Quit.dds">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_AO.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Metallic.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\Renault_ZB\Renault_ZB_Normal.dds">
+      <Filter>Resources\Textures\Renault_ZB</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_AO.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Metallic.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\SOMUA_S35\SOMUA_S35_Normal.dds">
+      <Filter>Resources\Textures\SOMUA_S35</Filter>
+    </None>
+    <None Include="Resources\Textures\Start.dds">
+      <Filter>Resources\Textures</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_AO.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Metallic.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_28_85\T_28_85_Normal.dds">
+      <Filter>Resources\Textures\T_28_85</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76(1942)\T_34_76(1942)_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76(1942)\T_34_76(1942)_AO.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76(1942)\T_34_76(1942)_Metallic.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\T_34_76(1942)\T_34_76(1942)_Normal.dds">
+      <Filter>Resources\Textures\T_34_76(1942)</Filter>
+    </None>
+    <None Include="Resources\Textures\Track\Track_AlbedoTransparency.dds">
+      <Filter>Resources\Textures\Track</Filter>
+    </None>
+    <None Include="Resources\Textures\Track\Track_AO.dds">
+      <Filter>Resources\Textures\Track</Filter>
+    </None>
+    <None Include="Resources\Textures\Track\Track_Metallic.dds">
+      <Filter>Resources\Textures\Track</Filter>
+    </None>
+    <None Include="Resources\Textures\Track\Track_Normal.dds">
+      <Filter>Resources\Textures\Track</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_AlbedoTransparency_1.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_AO.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Metallic.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Normal.dds">
+      <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
   </ItemGroup>
 </Project>

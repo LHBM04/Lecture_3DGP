@@ -20,15 +20,12 @@
 
 namespace TUK::Framework
 {
-	using namespace GameInput::v3;
-
 	class Display;
 
 	class InputSubsystem : public AppSubsystem
 	{
 	public:
 		InputSubsystem() noexcept;
-		~InputSubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;
@@ -37,27 +34,33 @@ namespace TUK::Framework
 		SystemStatus OnLateUpdate() override;
 		void OnShutdown() override;
 
-		void AddProvider(const Display& display);
-		void RemoveProvider(const Display& display);
+		[[nodiscard]] bool IsInputEnabled() const noexcept;
+		void SetInputEnabled(bool value) noexcept;
 
-		void OnCreate(const DisplayCreateEvent& event);
-		void OnClose(const DisplayCloseEvent& event);
-		void OnFocus(const DisplayFocusEvent& event);
-		void OnActivation(const InputActivationEvent& event);
+		void AddProvider(const Display* display);
+		void RemoveProvider(const Display* display);
 
+		void OnDisplayCreate(const DisplayCreateEvent& event);
+		void OnDisplayClose(const DisplayCloseEvent& event);
+		void OnDisplayFocus(const DisplayFocusEvent& event);
+		void OnInputActivation(const InputActivationEvent& event);
+
+		[[nodiscard]] const Display* GetActiveDisplay() const noexcept;
 		[[nodiscard]] const InputProvider* GetProvider() const noexcept;
-		[[nodiscard]] const InputProvider* GetProvider(const Display& display) const noexcept;
+		[[nodiscard]] const InputProvider* GetProvider(const Display* display) const noexcept;
 
 	private:
 		void PollKeyboard(InputProvider& provider) noexcept;
 		void PollMouse(InputProvider& provider) noexcept;
 
-		ComPtr<IGameInput> gameInput;
+		Microsoft::WRL::ComPtr<GameInput::v3::IGameInput> gameInput;
 
 		const Display* activeDisplay;
 		
 		std::unordered_map<const Display*, InputProvider> providers;
 
+		bool isInputEnabled = true;
+		bool needsInputSync = false;
 		bool hasMouseHistory;
 		Vector2D<i32> lastMousePosition;
 		Vector2D<i32> lastMouseWheel;
@@ -74,14 +77,29 @@ namespace TUK::Framework
 	{
 	}
 
-	inline const InputProvider* InputSubsystem::GetProvider() const noexcept
+	inline bool InputSubsystem::IsInputEnabled() const noexcept
 	{
-		return activeDisplay ? GetProvider(*activeDisplay) : nullptr;
+		return isInputEnabled;
 	}
 
-	inline const InputProvider* InputSubsystem::GetProvider(const Display& display) const noexcept
+	inline const Display* InputSubsystem::GetActiveDisplay() const noexcept
 	{
-		const auto it = providers.find(&display);
+		return activeDisplay;
+	}
+
+	inline const InputProvider* InputSubsystem::GetProvider() const noexcept
+	{
+		return activeDisplay ? GetProvider(activeDisplay) : nullptr;
+	}
+
+	inline const InputProvider* InputSubsystem::GetProvider(const Display* display) const noexcept
+	{
+		if (!display)
+		{
+			return nullptr;
+		}
+
+		const auto it = providers.find(display);
 		return it != providers.end() ? &it->second : nullptr;
 	}
 }

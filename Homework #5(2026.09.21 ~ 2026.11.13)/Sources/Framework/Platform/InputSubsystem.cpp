@@ -1,6 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "InputSubsystem.hpp"
 
+#include "../Core/Common.hpp"
+
 #include "Display.hpp"
 
 namespace TUK::Framework
@@ -20,6 +22,11 @@ namespace TUK::Framework
 
 	SystemStatus InputSubsystem::OnEarlyUpdate()
 	{
+		if (!isInputEnabled)
+		{
+			return SystemStatus::CONTINUE;
+		}
+
 		const auto it = providers.find(activeDisplay);
 		if (it == providers.end())
 		{
@@ -37,6 +44,11 @@ namespace TUK::Framework
 		provider.Update();
 		PollKeyboard(provider);
 		PollMouse(provider);
+		if (needsInputSync)
+		{
+			provider.SynchronizeHistory();
+			needsInputSync = false;
+		}
 
 		return SystemStatus::CONTINUE;
 	}
@@ -64,39 +76,59 @@ namespace TUK::Framework
 		hasMouseHistory = false;
 	}
 
-	void InputSubsystem::AddProvider(const Display& display)
+	void InputSubsystem::SetInputEnabled(bool value) noexcept
 	{
-		providers.try_emplace(&display);
-		if (display.GetHWND() == GetFocus())
+		if (isInputEnabled == value)
 		{
-			activeDisplay = &display;
+			return;
+		}
+
+		isInputEnabled = value;
+		needsInputSync = value;
+		hasMouseHistory = false;
+		for (InputProvider& provider : providers | std::views::values)
+		{
+			provider.Reset();
+		}
+	}
+
+	void InputSubsystem::AddProvider(const Display* display)
+	{
+		ASSERT_FMT(display, "입력 제공자를 등록할 디스플레이가 nullptr입니다.");
+
+		providers.try_emplace(display);
+		if (display->GetHWND() == GetFocus())
+		{
+			activeDisplay = display;
 			hasMouseHistory = false;
 		}
 	}
 
-	void InputSubsystem::RemoveProvider(const Display& display)
+	void InputSubsystem::RemoveProvider(const Display* display)
 	{
-		if (activeDisplay == &display)
+		ASSERT_FMT(display, "입력 제공자를 해제할 디스플레이가 nullptr입니다.");
+
+		if (activeDisplay == display)
 		{
 			activeDisplay = nullptr;
 			hasMouseHistory = false;
 		}
-		providers.erase(&display);
+		providers.erase(display);
 	}
 
-	void InputSubsystem::OnCreate(const DisplayCreateEvent& event)
+	void InputSubsystem::OnDisplayCreate(const DisplayCreateEvent& event)
 	{
 		AddProvider(event.display);
 	}
 
-	void InputSubsystem::OnClose(const DisplayCloseEvent& event)
+	void InputSubsystem::OnDisplayClose(const DisplayCloseEvent& event)
 	{
 		RemoveProvider(event.display);
 	}
 
-	void InputSubsystem::OnFocus(const DisplayFocusEvent& event)
+	void InputSubsystem::OnDisplayFocus(const DisplayFocusEvent& event)
 	{
-		const auto it = providers.find(&event.display);
+		const auto it = providers.find(event.display);
 		if (it == providers.end())
 		{
 			return;
@@ -107,7 +139,7 @@ namespace TUK::Framework
 
 		if (!event.isFocused)
 		{
-			if (activeDisplay == &event.display)
+			if (activeDisplay == event.display)
 			{
 				activeDisplay = nullptr;
 			}
@@ -119,10 +151,10 @@ namespace TUK::Framework
 			previous->second.Reset();
 		}
 
-		activeDisplay = &event.display;
+		activeDisplay = event.display;
 	}
 
-	void InputSubsystem::OnActivation(const InputActivationEvent& event)
+	void InputSubsystem::OnInputActivation(const InputActivationEvent& event)
 	{
 		if (!event.isActive)
 		{
@@ -136,7 +168,7 @@ namespace TUK::Framework
 
 	void InputSubsystem::PollKeyboard(InputProvider& provider) noexcept
 	{
-		ComPtr<IGameInputReading> reading;
+		Microsoft::WRL::ComPtr<IGameInputReading> reading;
 		if (FAILED(gameInput->GetCurrentReading(GameInputKindKeyboard, nullptr, &reading)))
 		{
 			return;
@@ -178,7 +210,7 @@ namespace TUK::Framework
 			provider.SetMousePosition({ cursorPos.x, cursorPos.y });
 		}
 
-		ComPtr<IGameInputReading> reading;
+		Microsoft::WRL::ComPtr<IGameInputReading> reading;
 		if (FAILED(gameInput->GetCurrentReading(GameInputKindMouse, nullptr, &reading)))
 		{
 			hasMouseHistory = false;

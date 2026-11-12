@@ -1,9 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
-#include "Resource.h"
-
 #include "../Core/Engine.hpp"
+
+#include "../Core/Common.hpp"
 
 #include "DisplayEvents.hpp"
 #include "EventSubsystem.hpp"
@@ -13,9 +13,12 @@ namespace TUK::Framework
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		ASSERT_FMT(hWnd, "hWnd가 nullptr입니다.");
+
 		if (message == WM_NCCREATE)
 		{
 			const CREATESTRUCTW* creation = reinterpret_cast<const CREATESTRUCTW*>(lParam);
+			ASSERT_FMT(creation, "creation이 nullptr입니다.");
 
 			Display* display = static_cast<Display*>(creation->lpCreateParams);
 			if (!display)
@@ -43,7 +46,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(InputActivationEvent{ { *display }, static_cast<bool>(wParam) });
+					eventSubsystem->PushEvent(InputActivationEvent{ { display }, static_cast<bool>(wParam) });
 				}
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
@@ -51,7 +54,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(DisplayCreateEvent{ { *display } });
+					eventSubsystem->PushEvent(DisplayCreateEvent{ { display } });
 				}
 				return 0;
 			}
@@ -59,7 +62,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(DisplayResizeEvent{ { *display }, Vector2D<std::int32_t>{ LOWORD(lParam), HIWORD(lParam) } });
+					eventSubsystem->PushEvent(DisplayResizeEvent{ { display }, Vector2D<std::int32_t>{ LOWORD(lParam), HIWORD(lParam) } });
 				}
 				return 0;
 			}
@@ -67,7 +70,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(DisplayMoveEvent{ { *display }, Vector2D<std::int32_t>{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) } });
+					eventSubsystem->PushEvent(DisplayMoveEvent{ { display }, Vector2D<std::int32_t>{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) } });
 				}
 				return 0;
 			}
@@ -76,7 +79,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(DisplayFocusEvent{ { *display }, message == WM_SETFOCUS });
+					eventSubsystem->PushEvent(DisplayFocusEvent{ { display }, message == WM_SETFOCUS });
 				}
 				return 0;
 			}
@@ -85,7 +88,7 @@ namespace TUK::Framework
 				display->SetShouldClose(true);
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(DisplayCloseEvent{ { *display } });
+					eventSubsystem->PushEvent(DisplayCloseEvent{ { display } });
 				}
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
@@ -93,7 +96,7 @@ namespace TUK::Framework
 			{
 				if (eventSubsystem)
 				{
-					eventSubsystem->PushEvent(DisplayDestroyEvent{ { *display } });
+					eventSubsystem->PushEvent(DisplayDestroyEvent{ { display } });
 				}
 				return 0;
 			}
@@ -127,6 +130,7 @@ namespace TUK::Framework
 
 		if (wndClass = RegisterClassEx(&windowClass); wndClass == 0)
 		{
+			LOG_ERROR("윈도우 클래스 등록에 실패했습니다 (Win32 오류: {}).", GetLastError());
 			return SystemStatus::FAILURE;
 		}
 
@@ -167,7 +171,7 @@ namespace TUK::Framework
 		instance = nullptr;
 	}
 
-	std::expected<std::reference_wrapper<Display>, std::string> DisplaySubsystem::CreateDisplay(const DisplayOptions& options) noexcept
+	std::expected<Display*, std::string> DisplaySubsystem::CreateDisplay(const DisplayOptions& options) noexcept
 	{
 		std::unique_ptr<Display> newWindow = std::make_unique<Display>(nullptr);
 
@@ -187,23 +191,25 @@ namespace TUK::Framework
 
 		if (!hWnd)
 		{
-			return std::unexpected(std::format("창 생성 실패 (Win32 오류: {}).", GetLastError()));
+			return std::unexpected(std::format("윈도우 생성에 실패했습니다 (Win32 오류: {}).", GetLastError()));
 		}
 
-		auto reference = std::ref(*newWindow);
+		Display* pointer = newWindow.get();
 		displays.push_back(std::move(newWindow));
 
 		ShowWindow(hWnd, options.show);
 		UpdateWindow(hWnd);
 		
-		return reference;
+		return pointer;
 	}
 
-	void DisplaySubsystem::DestroyDisplay(Display& display) noexcept
+	void DisplaySubsystem::DestroyDisplay(Display* display) noexcept
 	{
-		std::erase_if(displays, [&display](const std::unique_ptr<Display>& item)
+		ASSERT_FMT(display, "삭제할 디스플레이가 nullptr입니다.");
+
+		std::erase_if(displays, [display](const std::unique_ptr<Display>& item)
 			{
-				return item.get() == &display;
+				return item.get() == display;
 			});
 	}
 
@@ -212,14 +218,14 @@ namespace TUK::Framework
 		return displays.size();
 	}
 
-	Display& DisplaySubsystem::GetDisplay(usize index) noexcept
+	Display* DisplaySubsystem::GetDisplay(usize index) noexcept
 	{
-		return *displays[index];
+		return index < displays.size() ? displays[index].get() : nullptr;
 	}
 
-	const Display& DisplaySubsystem::GetDisplay(usize index) const noexcept
+	const Display* DisplaySubsystem::GetDisplay(usize index) const noexcept
 	{
-		return *displays[index];
+		return index < displays.size() ? displays[index].get() : nullptr;
 	}
 
 	Display* DisplaySubsystem::FindDisplayByHWND(HWND hWnd) noexcept
@@ -258,11 +264,16 @@ namespace TUK::Framework
 		return result != displays.end() ? result->get() : nullptr;
 	}
 
-	bool DisplaySubsystem::IsDisplayValid(const Display& display) const noexcept
+	bool DisplaySubsystem::IsDisplayValid(const Display* display) const noexcept
 	{
-		return std::ranges::any_of(displays, [&display](const auto& item)
+		if (!display)
+		{
+			return false;
+		}
+
+		return std::ranges::any_of(displays, [display](const auto& item)
 			{
-				return item.get() == &display;
+				return item.get() == display;
 			});
 	}
 

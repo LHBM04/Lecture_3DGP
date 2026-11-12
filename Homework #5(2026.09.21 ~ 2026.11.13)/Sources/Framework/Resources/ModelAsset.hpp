@@ -1,62 +1,64 @@
 ﻿#pragma once
 
+#include <filesystem>
 #include <span>
 #include <string>
-#include <string_view>
 #include <utility>
 #include <vector>
 
-#include "Framework/Graphics/GPUMesh.hpp"
+#include "../Core/Common.hpp"
 
-#include "Framework/Math/Matrix4x4.hpp"
+#include "../Math/Quaternion.hpp"
+#include "../Math/Vector3D.hpp"
 
 #include "Asset.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
 	class MaterialAsset;
+	class MeshAsset;
 
-	struct ModelPart final
+	struct Submodel final
 	{
-		GPUMesh mesh;
-		const MaterialAsset* material;
-		Matrix4x4<f32> localToModel;
+		struct RenderPart final
+		{
+			const MeshAsset* mesh = nullptr;
+			const MaterialAsset* material = nullptr;
+		};
+
+		i32 parentIndex = -1;
+		std::string name;
+
+		Vector3D<f32> localPosition{ 0.0f, 0.0f, 0.0f };
+		Quaternion<f32> localRotation{ 0.0f, 0.0f, 0.0f, 1.0f };
+		Vector3D<f32> localScale{ 1.0f, 1.0f, 1.0f };
+
+		std::vector<RenderPart> renderParts;
 	};
 
-	class ModelAsset : public Asset
+	class ModelAsset final : public Asset
 	{
 	public:
-		ModelAsset(std::string name, std::vector<ModelPart> parts) noexcept;
-		~ModelAsset() noexcept override = default;
+		explicit ModelAsset(
+			std::filesystem::path path,
+			std::vector<Submodel>&& submodels) noexcept;
 
-		ModelAsset(const ModelAsset&) = delete;
-		ModelAsset& operator=(const ModelAsset&) = delete;
-		ModelAsset(ModelAsset&&) noexcept = default;
-		ModelAsset& operator=(ModelAsset&&) noexcept = default;
-
-		[[nodiscard]] std::string_view GetName() const noexcept;
-		[[nodiscard]] std::span<const ModelPart> GetParts() const noexcept;
+		[[nodiscard]] std::span<const Submodel> GetSubmodels() const noexcept;
 
 	private:
-		std::string name;
-		std::vector<ModelPart> parts;
+		std::vector<Submodel> submodels;
 	};
 
-	inline ModelAsset::ModelAsset(std::string name, std::vector<ModelPart> parts) noexcept
-		: name(std::move(name))
-		, parts(std::move(parts))
+	inline ModelAsset::ModelAsset(
+		std::filesystem::path path,
+		std::vector<Submodel>&& submodels) noexcept
+		: Asset(std::move(path))
+		, submodels(std::move(submodels))
 	{
 	}
 
-	inline std::string_view ModelAsset::GetName() const noexcept
+	inline std::span<const Submodel> ModelAsset::GetSubmodels() const noexcept
 	{
-		return name;
-	}
-
-	inline std::span<const ModelPart> ModelAsset::GetParts() const noexcept
-	{
-		return parts;
+		return submodels;
 	}
 }

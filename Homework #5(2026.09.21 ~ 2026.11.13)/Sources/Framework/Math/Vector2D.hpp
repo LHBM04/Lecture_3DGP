@@ -7,18 +7,19 @@
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector3D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector4D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector2D
 	{
 	public:
@@ -26,14 +27,14 @@ namespace TUK::Framework
 		explicit Vector2D(TScalar scalar) noexcept;
 		Vector2D(TScalar x, TScalar y) noexcept;
 
-		Vector2D(const Vector2D& other) noexcept;
-		Vector2D(Vector2D&& other) noexcept;
+		Vector2D(const Vector2D& other) noexcept = default;
+		Vector2D(Vector2D&& other) noexcept = default;
 
 		explicit Vector2D(const Vector3D<TScalar>& vector) noexcept;
 		explicit Vector2D(const Vector4D<TScalar>& vector) noexcept;
 
-		Vector2D& operator=(const Vector2D& other) noexcept;
-		Vector2D& operator=(Vector2D&& other) noexcept;
+		Vector2D& operator=(const Vector2D& other) noexcept = default;
+		Vector2D& operator=(Vector2D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector3D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector4D<TScalar>() const noexcept;
@@ -136,6 +137,9 @@ namespace TUK::Framework
 			f32 smoothTime,
 			f32 maxSpeed,
 			f32 deltaTime) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT2, DirectX::XMFLOAT2> value;

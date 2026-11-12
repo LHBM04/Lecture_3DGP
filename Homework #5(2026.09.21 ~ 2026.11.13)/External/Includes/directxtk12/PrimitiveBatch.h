@@ -1,4 +1,4 @@
-//--------------------------------------------------------------------------------------
+﻿//--------------------------------------------------------------------------------------
 // File: PrimitiveBatch.h
 //
 // Copyright (c) Microsoft Corporation.
@@ -73,7 +73,7 @@ namespace DirectX
             protected:
                 // Internal, untyped drawing method.
                 DIRECTX_TOOLKIT_API void __cdecl Draw(
-                    D3D_PRIMITIVE_TOPOLOGY topology,
+                    D3D_PRIMITIVE_TOPOLOGY primitive,
                     bool isIndexed, _In_opt_count_(indexCount) uint16_t const* indices, size_t indexCount,
                     size_t vertexCount,
                     _Outptr_ void** pMappedVertices);
@@ -108,12 +108,12 @@ namespace DirectX
 
             // Similar to the D3D9 API DrawPrimitiveUP.
             void Draw(
-                D3D_PRIMITIVE_TOPOLOGY topology,
+                D3D_PRIMITIVE_TOPOLOGY primitive,
                 _In_reads_(vertexCount) TVertex const* vertices, size_t vertexCount)
             {
                 void* mappedVertices;
 
-                PrimitiveBatchBase::Draw(topology, false, nullptr, 0, vertexCount, &mappedVertices);
+                PrimitiveBatchBase::Draw(primitive, false, nullptr, 0, vertexCount, &mappedVertices);
 
                 memcpy(mappedVertices, vertices, vertexCount * sizeof(TVertex));
             }
@@ -121,13 +121,13 @@ namespace DirectX
 
             // Similar to the D3D9 API DrawIndexedPrimitiveUP.
             void DrawIndexed(
-                D3D_PRIMITIVE_TOPOLOGY topology,
+                D3D_PRIMITIVE_TOPOLOGY primitive,
                 _In_reads_(indexCount) uint16_t const* indices, size_t indexCount,
                 _In_reads_(vertexCount) TVertex const* vertices, size_t vertexCount)
             {
                 void* mappedVertices;
 
-                PrimitiveBatchBase::Draw(topology, true, indices, indexCount, vertexCount, &mappedVertices);
+                PrimitiveBatchBase::Draw(primitive, true, indices, indexCount, vertexCount, &mappedVertices);
 
                 memcpy(mappedVertices, vertices, vertexCount * sizeof(TVertex));
             }

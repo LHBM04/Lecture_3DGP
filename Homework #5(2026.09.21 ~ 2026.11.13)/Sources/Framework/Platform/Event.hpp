@@ -6,6 +6,6 @@ namespace TUK::Framework
 
 	struct Event
 	{
-		const Display& display;
+		const Display* display = nullptr;
 	};
 }

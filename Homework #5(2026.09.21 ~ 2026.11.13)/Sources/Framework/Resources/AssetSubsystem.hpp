@@ -6,37 +6,42 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
+#include <directx/d3d12.h>
+
 #include "../Core/AppSubsystem.hpp"
+#include "../Core/Common.hpp"
 
 #include "Asset.hpp"
-#include "AssetLoader.hpp"
-
-#include "../Core/Common.hpp"
+#include "AssetImporter.hpp"
 
 namespace TUK::Framework
 {
+	class MaterialAsset;
+	class Scene;
+
 	class AssetSubsystem : public AppSubsystem
 	{
-		friend class System;
-
 	public:
-		~AssetSubsystem() noexcept override = default;
+		AssetSubsystem() noexcept;
 
-		template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
-		void AddLoader(TArgs&&... args);
+		template <std::derived_from<AssetImporter<>> TAssetImporter, class... TArgs>
+		void AddImporter(TArgs&&... args);
 
 		template <std::derived_from<Asset> TAsset>
-		TAsset* LoadAsset(const std::filesystem::path& path);
+		[[nodiscard]] const TAsset* LoadAsset(const std::filesystem::path& path);
 
-		template <std::derived_from<Asset> TAsset, class... TArgs>
-		TAsset* CreateAsset(TArgs&&... args);
+		void UnloadAsset(const std::filesystem::path& path);
+		void UnloadAllAssets() noexcept;
 
-	protected:
+		void OnSceneEntered(const Scene* scene);
+		void OnSceneExited(const Scene* scene);
+
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;
 		SystemStatus OnFixedUpdate() override;
@@ -45,74 +50,90 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
-		using AssetLoaderList = std::pmr::vector<std::unique_ptr<AssetLoader>>;
-		using AssetLoaderDict = std::pmr::unordered_map<std::type_index, AssetLoader*>;
+		template <std::derived_from<Asset> TAsset>
+		[[nodiscard]] const TAsset* GetLoadedAsset(const std::filesystem::path& path) const noexcept;
 
-		using AssetList = std::pmr::vector<std::unique_ptr<Asset>>;
-		using AssetDict = std::pmr::unordered_map<std::filesystem::path, AssetList>;
+		using AssetImporterList = std::vector<std::unique_ptr<AssetImporter<>>>;
+		using AssetImporterDict = std::unordered_map<std::type_index, AssetImporter<>*>;
 
-		AssetSubsystem() noexcept;
+		using AssetList = std::vector<std::unique_ptr<Asset>>;
+		using AssetDict = std::unordered_map<std::filesystem::path, const Asset*>;
 
-		AssetLoaderList assetLoaders;
-		AssetLoaderDict assetLoadersByType;
+		AssetImporterList assetImporters;
+		AssetImporterDict assetImportersByType;
 
 		AssetList assets;
+		AssetDict assetsByPath;
 	};
 
 	inline AssetSubsystem::AssetSubsystem() noexcept
-		: AppSubsystem(10) // TODO: 이거 적당한 값 찾기
+		: AppSubsystem(10)
 	{
 	}
 
-	template <std::derived_from<AssetLoader> TAssetLoader, class... TArgs>
-	void AssetSubsystem::AddLoader(TArgs&&... args)
+	template <std::derived_from<AssetImporter<>> TAssetImporter, class... TArgs>
+	void AssetSubsystem::AddImporter(TArgs&&... args)
 	{
-		using TAsset = typename TAssetLoader::AssetType;
-		static_assert(std::derived_from<TAsset, Asset>);
+		const auto getAssetType = []<class TImporter, std::derived_from<Asset> TAsset>(
+			std::expected<std::unique_ptr<TAsset>, std::string>(TImporter::*)(const std::filesystem::path&) const) noexcept
+		{
+			return std::type_index(typeid(TAsset));
+		};
 
-		const std::type_index assetType(typeid(TAsset));
-		if (assetLoadersByType.contains(assetType))
+		const std::type_index assetType = getAssetType(&TAssetImporter::Import);
+		if (assetImportersByType.contains(assetType))
 		{
 			return;
 		}
 
-		auto loader = std::make_unique<TAssetLoader>(std::forward<TArgs>(args)...);
-		AssetLoader* pointer = loader.get();
-		assetLoaders.emplace_back(std::move(loader));
-		assetLoadersByType.emplace(assetType, pointer);
+		auto importer = std::make_unique<TAssetImporter>(this, std::forward<TArgs>(args)...);
+		AssetImporter<>* pointer = importer.get();
+		assetImporters.emplace_back(std::move(importer));
+		assetImportersByType.emplace(assetType, pointer);
 	}
 
 	template <std::derived_from<Asset> TAsset>
-	TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
+	const TAsset* AssetSubsystem::GetLoadedAsset(const std::filesystem::path& path) const noexcept
 	{
-		const auto assetLoader = assetLoadersByType.find(std::type_index(typeid(TAsset)));
-		if (assetLoader == assetLoadersByType.end())
+		const auto cached = assetsByPath.find(path.lexically_normal());
+		if (cached == assetsByPath.end())
+		{
+			return nullptr;
+		}
+		return dynamic_cast<const TAsset*>(cached->second);
+	}
+
+	template <std::derived_from<Asset> TAsset>
+	const TAsset* AssetSubsystem::LoadAsset(const std::filesystem::path& path)
+	{
+		const std::filesystem::path normalizedPath = path.lexically_normal();
+		if (const auto cached = assetsByPath.find(normalizedPath); cached != assetsByPath.end())
+		{
+			return dynamic_cast<const TAsset*>(cached->second);
+		}
+
+		const auto assetImporter = assetImportersByType.find(std::type_index(typeid(TAsset)));
+		if (assetImporter == assetImportersByType.end())
 		{
 			return nullptr;
 		}
 
-		auto asset = assetLoader->second->Load(path);
+		const auto* importer = static_cast<const AssetImporter<TAsset>*>(assetImporter->second);
+		auto asset = importer->Import(normalizedPath);
 		if (!asset)
 		{
-			std::cerr << "Asset load failed: " << path.generic_string() << ": " << asset.error() << std::endl;
+			LOG_ERROR("에셋 로드에 실패했습니다: {}: {}", normalizedPath.generic_string(), asset.error());
 			return nullptr;
 		}
 
-		auto* result = dynamic_cast<TAsset*>(asset->get());
+		const TAsset* result = asset->get();
 		if (!result)
 		{
 			return nullptr;
 		}
 
 		assets.emplace_back(std::move(*asset));
-		return result;
-	}
-	template <std::derived_from<Asset> TAsset, class... TArgs>
-	TAsset* AssetSubsystem::CreateAsset(TArgs&&... args)
-	{
-		auto asset = std::make_unique<TAsset>(std::forward<TArgs>(args)...);
-		TAsset* result = asset.get();
-		assets.emplace_back(std::move(asset));
+		assetsByPath.emplace(normalizedPath, result);
 		return result;
 	}
 }

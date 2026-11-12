@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include <functional>
-#include <memory_resource>
+#include <expected>
 #include <optional>
+#include <string>
 #include <unordered_map>
 #include <utility>
-#include <vector>
 
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
@@ -25,10 +24,7 @@ namespace TUK::Framework
 	class RenderSubsystem : public EngineSubsystem
 	{
 	public:
-		using RenderCallback = std::function<void(GPUCommandBuffer&)>;
-
 		RenderSubsystem() noexcept;
-		~RenderSubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;
@@ -36,27 +32,23 @@ namespace TUK::Framework
 		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
 
-		template <class TListener>
-		void AddListener(TListener* listener, void (TListener::* callback)(GPUCommandBuffer&));
+		[[nodiscard]] Delegate<GPUCommandBuffer&>& OnRender() noexcept;
 
-		template <class TListener>
-		void AddListener(const TListener* listener, void (TListener::* callback)(GPUCommandBuffer&) const);
-
-		void OnDisplayCreated(const DisplayCreateEvent& event);
-		void OnDisplayClosed(const DisplayCloseEvent& event);
+		void OnDisplayCreate(const DisplayCreateEvent& event);
+		void OnDisplayClose(const DisplayCloseEvent& event);
 
 		[[nodiscard]] GPUDevice& GetDevice() noexcept;
 		[[nodiscard]] const GPUDevice& GetDevice() const noexcept;
 
 	private:
-		void AddListener(RenderCallback callback);
+		[[nodiscard]] std::expected<GPUDevice, std::string> CreateDevice() const;
 
 		std::optional<GPUDevice> device;
 		std::optional<GPUCommandBuffer> commandBuffer;
-		std::pmr::unordered_map<Display::ID, GPUSwapChain> swapChains;
+		std::unordered_map<Display::ID, GPUSwapChain> swapChains;
 		std::optional<GPUFence> fence;
 
-		std::vector<RenderCallback> listeners;
+		Delegate<GPUCommandBuffer&> onRender;
 	};
 
 	inline RenderSubsystem::RenderSubsystem() noexcept
@@ -64,24 +56,9 @@ namespace TUK::Framework
 	{
 	}
 
-	template <class TInstance>
-	void RenderSubsystem::AddListener(TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&))
+	inline Delegate<GPUCommandBuffer&>& RenderSubsystem::OnRender() noexcept
 	{
-		AddListener(
-			[listener, callback](GPUCommandBuffer& commandBuffer)
-			{
-				(listener->*callback)(commandBuffer);
-			});
-	}
-
-	template <class TInstance>
-	void RenderSubsystem::AddListener(const TInstance* listener, void (TInstance::* callback)(GPUCommandBuffer&) const)
-	{
-		AddListener(
-			[listener, callback](GPUCommandBuffer& commandBuffer)
-			{
-				(listener->*callback)(commandBuffer);
-			});
+		return onRender;
 	}
 
 	inline GPUDevice& RenderSubsystem::GetDevice() noexcept

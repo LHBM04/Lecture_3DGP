@@ -7,18 +7,19 @@
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector2D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector3D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector4D
 	{
 	public:
@@ -26,14 +27,14 @@ namespace TUK::Framework
 		explicit Vector4D(TScalar scalar) noexcept;
 		Vector4D(TScalar x, TScalar y, TScalar z, TScalar w) noexcept;
 
-		Vector4D(const Vector4D& other) noexcept;
-		Vector4D(Vector4D&& other) noexcept;
+		Vector4D(const Vector4D& other) noexcept = default;
+		Vector4D(Vector4D&& other) noexcept = default;
 
 		explicit Vector4D(const Vector2D<TScalar>& vector, TScalar z = TScalar{}, TScalar w = TScalar{}) noexcept;
 		explicit Vector4D(const Vector3D<TScalar>& vector, TScalar w = TScalar{}) noexcept;
 
-		Vector4D& operator=(const Vector4D& other) noexcept;
-		Vector4D& operator=(Vector4D&& other) noexcept;
+		Vector4D& operator=(const Vector4D& other) noexcept = default;
+		Vector4D& operator=(Vector4D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector2D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector3D<TScalar>() const noexcept;
@@ -126,6 +127,9 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector4D SlerpUnclamped(const Vector4D& a, const Vector4D& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static Vector4D MoveTowards(const Vector4D& current, const Vector4D& target, f32 maxDistanceDelta) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

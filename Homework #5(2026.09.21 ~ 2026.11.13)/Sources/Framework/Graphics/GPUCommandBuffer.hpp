@@ -13,26 +13,30 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Math/ColorRGBA.hpp"
-#include "../Math/Matrix4x4.hpp"
-
 #include "GPUBuffer.hpp"
 #include "GPUGraphicsPipelineState.hpp"
 
 namespace TUK::Framework
 {
-	class Camera;
-	class Entity;
 	class GPUDevice;
-	class GPUMesh;
 	class GPUTarget;
-	class GPUTexture;
-	class MaterialAsset;
+	class GPUTexture2D;
+
+	struct GPUCommandBufferCreateInfo final
+	{
+		const GPUDevice* device = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+	};
 
 	class GPUCommandBuffer
 	{
 	public:
-		~GPUCommandBuffer() noexcept = default;
+		static constexpr u32 TEXTURE_SLOT_COUNT = 8;
+		static constexpr u32 ROOT_CONSTANT_SLOT = 4;
+		static constexpr u32 ROOT_CONSTANT_COUNT = 4;
+
+		explicit GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept;
 
 		GPUCommandBuffer(const GPUCommandBuffer&) = delete;
 		GPUCommandBuffer& operator=(const GPUCommandBuffer&) = delete;
@@ -43,13 +47,17 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> Reset();
 		[[nodiscard]] std::expected<void, std::string> Submit();
 
-		[[nodiscard]] std::expected<void, std::string> SetEntity(const Entity& entity) noexcept;
-		[[nodiscard]] std::expected<void, std::string> SetCamera(const Camera& camera) noexcept;
-		[[nodiscard]] std::expected<void, std::string> SetMaterial(const MaterialAsset& material) noexcept;
-		[[nodiscard]] std::expected<void, std::string> SetObjectTransform(const Matrix4x4<f32>& worldMatrix) noexcept;
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
+			u32 rootSlot, std::span<const std::byte> bytes);
+		void SetGraphicsRootConstants(
+			u32 rootSlot, std::span<const std::byte> bytes, u32 offset = 0) noexcept;
+
+		[[nodiscard]] std::expected<void, std::string> BindTextures(
+			std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
+			const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView = nullptr);
 
 		void TransitionTexture(
-			const GPUTexture& texture,
+			const GPUTexture2D& texture,
 			D3D12_RESOURCE_STATES stateBefore,
 			D3D12_RESOURCE_STATES stateAfter);
 
@@ -67,61 +75,83 @@ namespace TUK::Framework
 
 		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
 
-		void SetGPUCameraConstantBuffer(const GPUBuffer& buffer, u64 offset = 0) noexcept;
-		void SetGPUObjectConstantBuffer(const GPUBuffer& buffer, u64 offset = 0) noexcept;
-		void SetGPUMaterialConstantBuffer(const GPUBuffer& buffer, u64 offset = 0) noexcept;
+		void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitive) noexcept;
 		void SetViewport(const D3D12_VIEWPORT& viewport) noexcept;
 		void SetScissorRect(const D3D12_RECT& scissorRect) noexcept;
 
-		void SetGPUMesh(const GPUMesh& mesh) noexcept;
+		void SetVertexBuffer(u32 slot, const D3D12_VERTEX_BUFFER_VIEW& view) noexcept;
+		void SetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& view) noexcept;
 
 		void Draw(u32 vertexCount, u32 firstVertex = 0);
 		void DrawIndexed(u32 indexCount, u32 firstIndex = 0, i32 baseVertex = 0);
 
-		void ClearGPUTarget(const GPUTarget& target, const ColorRGBA<f32>& clearColor);
+		void ClearRenderTarget(const f32 (&color)[4], const D3D12_RECT& rect) noexcept;
+		void ClearDepthStencil(f32 depth, const D3D12_RECT& rect) noexcept;
 		void SetGPUTarget(const GPUTarget& target) noexcept;
 
+		[[nodiscard]] DXGI_FORMAT GetActiveTargetFormat() const noexcept;
+		[[nodiscard]] const D3D12_RECT& GetActiveTargetBounds() const noexcept;
+		[[nodiscard]] const D3D12_VIEWPORT& GetActiveViewport() const noexcept;
 		[[nodiscard]] ID3D12GraphicsCommandList10& GetD3DCommandList() const noexcept;
 		[[nodiscard]] ID3D12CommandAllocator& GetD3DCommandAllocator() const noexcept;
 
-		[[nodiscard]] static std::expected<GPUCommandBuffer, std::string> Create(const GPUDevice& device);
-
 	private:
-		explicit GPUCommandBuffer(
-			const GPUDevice& device,
-			ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-			ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept;
-
 		[[nodiscard]] std::expected<std::pair<const GPUBuffer*, u64>, std::string> UploadConstants(
 			std::span<const std::byte> bytes);
 
 		const GPUDevice* device;
-		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
-		ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
+		
 		std::vector<GPUBuffer> constantBufferPages;
 		usize constantBufferPageIndex = 0;
 		u64 constantBufferOffset = 0;
+
+		std::vector<Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>> textureDescriptorPages;
+		usize textureDescriptorCount = 0;
+		
 		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
-		bool cameraPrepared = false;
+		D3D12_CPU_DESCRIPTOR_HANDLE activeRTV{};
+		D3D12_CPU_DESCRIPTOR_HANDLE activeDSV{};
+		D3D12_RECT activeTargetBounds{};
+		D3D12_VIEWPORT activeViewport{};
 	};
+
+	inline GPUCommandBuffer::GPUCommandBuffer(GPUCommandBufferCreateInfo&& createInfo) noexcept
+		: device(createInfo.device)
+		, d3dCommandList(std::move(createInfo.d3dCommandList))
+		, d3dCommandAllocator(std::move(createInfo.d3dCommandAllocator))
+	{
+		ASSERT_FMT(this->device, "device가 nullptr입니다.");
+		ASSERT_FMT(this->d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		ASSERT_FMT(this->d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
+	}
+
+	inline DXGI_FORMAT GPUCommandBuffer::GetActiveTargetFormat() const noexcept
+	{
+		return activeTargetFormat;
+	}
+
+	inline const D3D12_RECT& GPUCommandBuffer::GetActiveTargetBounds() const noexcept
+	{
+		return activeTargetBounds;
+	}
+
+	inline const D3D12_VIEWPORT& GPUCommandBuffer::GetActiveViewport() const noexcept
+	{
+		return activeViewport;
+	}
 
 	inline ID3D12GraphicsCommandList10& GPUCommandBuffer::GetD3DCommandList() const noexcept
 	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 		return *d3dCommandList.Get();
 	}
 
 	inline ID3D12CommandAllocator& GPUCommandBuffer::GetD3DCommandAllocator() const noexcept
 	{
+		ASSERT_FMT(d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
 		return *d3dCommandAllocator.Get();
-	}
-
-	inline GPUCommandBuffer::GPUCommandBuffer(
-		const GPUDevice& device,
-		ComPtr<ID3D12GraphicsCommandList10> d3dCommandList,
-		ComPtr<ID3D12CommandAllocator> d3dCommandAllocator) noexcept
-		: device(&device)
-		, d3dCommandList(std::move(d3dCommandList))
-		, d3dCommandAllocator(std::move(d3dCommandAllocator))
-	{
 	}
 }

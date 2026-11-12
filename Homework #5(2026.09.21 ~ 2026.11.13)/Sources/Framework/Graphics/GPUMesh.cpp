@@ -1,55 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUMesh.hpp"
 
-#include <limits>
-
 namespace TUK::Framework
 {
-	std::expected<GPUMesh, std::string> GPUMesh::Create(
-		GPUBuffer vertexBuffer,
-		u32 vertexStride,
-		GPUBuffer indexBuffer,
-		DXGI_FORMAT indexFormat,
-		D3D12_PRIMITIVE_TOPOLOGY topology)
-	{
-		if (vertexStride == 0 || vertexBuffer.GetSizeInBytes() == 0
-			|| vertexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
-			|| vertexBuffer.GetSizeInBytes() % vertexStride != 0)
-		{
-			return std::unexpected("정점 버퍼 크기 또는 스트라이드가 유효하지 않습니다.");
-		}
-
-		if (indexFormat != DXGI_FORMAT_R16_UINT && indexFormat != DXGI_FORMAT_R32_UINT)
-		{
-			return std::unexpected("인덱스 형식은 R16_UINT 또는 R32_UINT여야 합니다.");
-		}
-
-		const u32 INDEX_SIZE = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		if (indexBuffer.GetSizeInBytes() == 0
-			|| indexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
-			|| indexBuffer.GetSizeInBytes() % INDEX_SIZE != 0)
-		{
-			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
-		}
-
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-		vertexBufferView.BufferLocation = vertexBuffer.GetGPUVirtualAddress();
-		vertexBufferView.SizeInBytes = static_cast<UINT>(vertexBuffer.GetSizeInBytes());
-		vertexBufferView.StrideInBytes = vertexStride;
-
-		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-		indexBufferView.BufferLocation = indexBuffer.GetGPUVirtualAddress();
-		indexBufferView.SizeInBytes = static_cast<UINT>(indexBuffer.GetSizeInBytes());
-		indexBufferView.Format = indexFormat;
-
-		return GPUMesh(
-			std::move(vertexBuffer),
-			vertexBufferView,
-			std::move(indexBuffer),
-			indexBufferView,
-			topology);
-	}
-
 	const GPUBuffer& GPUMesh::GetVertexBuffer() const noexcept
 	{
 		return vertexBuffer;
@@ -83,6 +36,6 @@ namespace TUK::Framework
 
 	D3D12_PRIMITIVE_TOPOLOGY GPUMesh::GetD3DTopology() const noexcept
 	{
-		return topology;
+		return primitive;
 	}
 }

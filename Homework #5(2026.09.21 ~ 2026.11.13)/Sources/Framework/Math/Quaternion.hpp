@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "Vector3D.hpp"
 
@@ -14,7 +15,7 @@
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Quaternion
 	{
 	public:
@@ -22,11 +23,11 @@ namespace TUK::Framework
 		explicit Quaternion(TScalar value) noexcept;
 		Quaternion(TScalar x, TScalar y, TScalar z, TScalar w) noexcept;
 
-		Quaternion(const Quaternion& other) noexcept;
-		Quaternion(Quaternion&& other) noexcept;
+		Quaternion(const Quaternion& other) noexcept = default;
+		Quaternion(Quaternion&& other) noexcept = default;
 
-		Quaternion& operator=(const Quaternion& other) noexcept;
-		Quaternion& operator=(Quaternion&& other) noexcept;
+		Quaternion& operator=(const Quaternion& other) noexcept = default;
+		Quaternion& operator=(Quaternion&& other) noexcept = default;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
@@ -113,6 +114,9 @@ namespace TUK::Framework
 		[[nodiscard]] static Quaternion FromToRotation(const Vector3D<f32>& fromDirection, const Vector3D<f32>& toDirection) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion LookRotation(const Vector3D<f32>& forward, const Vector3D<f32>& up) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion RotateTowards(const Quaternion& from, const Quaternion& to, f32 maxDegreesDelta) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

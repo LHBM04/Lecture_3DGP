@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <algorithm>
+#include <cmath>
+#include <limits>
 
 #include "../Core/Common.hpp"
 
@@ -29,6 +31,20 @@ namespace TUK::Framework
 			return std::max(min, std::min(max, value));
 		}
 		
+		template <Scalarable TScalar>
+		[[nodiscard]] bool TryConvertScalar(f64 value, TScalar& outValue) noexcept
+		{
+			if (!std::isfinite(value)
+				|| value < std::numeric_limits<TScalar>::lowest()
+				|| value > (std::numeric_limits<TScalar>::max)())
+			{
+				return false;
+			}
+
+			outValue = static_cast<TScalar>(value);
+			return true;
+		}
+
 		/** 선형 보간 */
 		[[nodiscard]] constexpr f32 Lerp(f32 start, f32 end, f32 t) noexcept
 		{

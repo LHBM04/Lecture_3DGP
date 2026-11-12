@@ -29,18 +29,11 @@ namespace TUK::Framework
 	{
 		readBuffer.swap(writeBuffer);
 
-		for (const QueuedEvent& queuedEvent : readBuffer)
+		for (const Action<>& action : readBuffer)
 		{
-			const auto result = listeners.find(queuedEvent.type);
-			if (result == listeners.end())
+			if (action)
 			{
-				continue;
-			}
-
-			const auto callbacks = result->second;
-			for (const EventCallback& callback : callbacks)
-			{
-				callback(*queuedEvent.event);
+				action();
 			}
 		}
 
@@ -57,6 +50,10 @@ namespace TUK::Framework
 	{
 		writeBuffer.clear();
 		readBuffer.clear();
+		for (auto& [type, delegate] : listeners)
+		{
+			delegate.Clear();
+		}
 		listeners.clear();
 	}
 }

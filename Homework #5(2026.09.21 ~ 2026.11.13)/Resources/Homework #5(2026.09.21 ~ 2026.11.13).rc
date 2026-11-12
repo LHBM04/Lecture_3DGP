@@ -2,7 +2,7 @@
 //
 #pragma code_page(65001)
 
-#include "../Sources/Resource.h"
+#include "../Sources/Resource.hpp"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 
 1 TEXTINCLUDE 
 BEGIN
-    "../Sources/Resource.h\0"
+    "../Sources/Resource.hpp\0"
 END
 
 2 TEXTINCLUDE 

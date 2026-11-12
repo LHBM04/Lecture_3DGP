@@ -7,18 +7,19 @@
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector2D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector4D;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class Vector3D
 	{
 	public:
@@ -26,16 +27,16 @@ namespace TUK::Framework
 		explicit Vector3D(TScalar scalar) noexcept;
 		Vector3D(TScalar x, TScalar y, TScalar z) noexcept;
 
-		Vector3D(const Vector3D& other) noexcept;
-		Vector3D(Vector3D&& other) noexcept;
+		Vector3D(const Vector3D& other) noexcept = default;
+		Vector3D(Vector3D&& other) noexcept = default;
 
 		explicit Vector3D(const Vector2D<TScalar>& vector, TScalar z = TScalar{}) noexcept;
 		explicit Vector3D(const Vector4D<TScalar>& vector) noexcept;
 
 		explicit Vector3D(DirectX::XMVECTOR vector) noexcept requires std::same_as<TScalar, f32>;
 
-		Vector3D& operator=(const Vector3D& other) noexcept;
-		Vector3D& operator=(Vector3D&& other) noexcept;
+		Vector3D& operator=(const Vector3D& other) noexcept = default;
+		Vector3D& operator=(Vector3D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector2D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector4D<TScalar>() const noexcept;
@@ -149,6 +150,9 @@ namespace TUK::Framework
 			f32 smoothTime,
 			f32 maxSpeed,
 			f32 deltaTime) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;

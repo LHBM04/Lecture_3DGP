@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include <concepts>
-#include <functional>
+#include <utility>
+
+#include "Common.hpp"
 
 #include "System.hpp"
 #include "EngineSubsystem.hpp"
@@ -10,13 +12,9 @@ namespace TUK::Framework
 {
 	class App;
 
-	class Engine : public System
+	class Engine : public System<EngineSubsystem>
 	{
 	public:
-		explicit Engine(App& app) noexcept;
-
-		[[nodiscard]] i32 Run();
-
 		SystemStatus Startup() override;
 		SystemStatus Routine() override;
 		void Shutdown() override;
@@ -25,15 +23,29 @@ namespace TUK::Framework
 		TSubsystem* AddSubsystem();
 
 		template <std::derived_from<EngineSubsystem> TSubsystem>
-		[[nodiscard]] TSubsystem* GetSubsystem();
+		void RemoveSubsystem();
 
 		template <std::derived_from<EngineSubsystem> TSubsystem>
-		[[nodiscard]] const TSubsystem* GetSubsystem() const;
+		[[nodiscard]] TSubsystem* GetSubsystem() noexcept;
 
-		[[nodiscard]] auto GetSubsystems();
-		[[nodiscard]] const auto GetSubsystems() const;
+		template <std::derived_from<EngineSubsystem> TSubsystem>
+		[[nodiscard]] const TSubsystem* GetSubsystem() const noexcept;
 
-		[[nodiscard]] static Engine& GetInstance();
+		template <std::derived_from<EngineSubsystem> TSubsystem>
+		Delegate<EngineSubsystem*>::ListenerId OnSubsystemAdded(Action<TSubsystem*> callback);
+
+		template <std::derived_from<EngineSubsystem> TSubsystem, class TObject>
+		Delegate<EngineSubsystem*>::ListenerId OnSubsystemAdded(TObject* object, void (TObject::*method)(TSubsystem*));
+
+		template <std::derived_from<EngineSubsystem> TSubsystem>
+		Delegate<EngineSubsystem*>::ListenerId OnSubsystemRemoved(Action<TSubsystem*> callback);
+
+		template <std::derived_from<EngineSubsystem> TSubsystem, class TObject>
+		Delegate<EngineSubsystem*>::ListenerId OnSubsystemRemoved(TObject* object, void (TObject::*method)(TSubsystem*));
+
+		[[nodiscard]] i32 Run(App* target);
+
+		[[nodiscard]] static Engine& GetInstance() noexcept;
 
 	private:
 		SystemStatus PreTick();
@@ -42,13 +54,8 @@ namespace TUK::Framework
 
 		inline static Engine* instance = nullptr;
 
-		std::reference_wrapper<App> app;
+		App* app;
 	};
-
-	inline Engine::Engine(App& app) noexcept
-		: app(app)
-	{
-	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
 	TSubsystem* Engine::AddSubsystem()
@@ -57,29 +64,51 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
-	TSubsystem* Engine::GetSubsystem()
+	void Engine::RemoveSubsystem()
+	{
+		System::RemoveSubsystem<TSubsystem>();
+	}
+
+	template <std::derived_from<EngineSubsystem> TSubsystem>
+	TSubsystem* Engine::GetSubsystem() noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
 	}
 
 	template <std::derived_from<EngineSubsystem> TSubsystem>
-	const TSubsystem* Engine::GetSubsystem() const
+	const TSubsystem* Engine::GetSubsystem() const noexcept
 	{
 		return System::GetSubsystem<TSubsystem>();
 	}
 
-	inline auto Engine::GetSubsystems()
+	template <std::derived_from<EngineSubsystem> TSubsystem>
+	Delegate<EngineSubsystem*>::ListenerId Engine::OnSubsystemAdded(Action<TSubsystem*> callback)
 	{
-		return System::GetSubsystems<EngineSubsystem>();
+		return System::OnSubsystemAdded<TSubsystem>(std::move(callback));
 	}
 
-	inline const auto Engine::GetSubsystems() const
+	template <std::derived_from<EngineSubsystem> TSubsystem, class TObject>
+	Delegate<EngineSubsystem*>::ListenerId Engine::OnSubsystemAdded(TObject* object, void (TObject::*method)(TSubsystem*))
 	{
-		return System::GetSubsystems<EngineSubsystem>();
+		return System::OnSubsystemAdded<TSubsystem>(object, method);
 	}
-	
-	inline Engine& Engine::GetInstance()
+
+	template <std::derived_from<EngineSubsystem> TSubsystem>
+	Delegate<EngineSubsystem*>::ListenerId Engine::OnSubsystemRemoved(Action<TSubsystem*> callback)
 	{
+		return System::OnSubsystemRemoved<TSubsystem>(std::move(callback));
+	}
+
+	template <std::derived_from<EngineSubsystem> TSubsystem, class TObject>
+	Delegate<EngineSubsystem*>::ListenerId Engine::OnSubsystemRemoved(TObject* object, void (TObject::*method)(TSubsystem*))
+	{
+		return System::OnSubsystemRemoved<TSubsystem>(object, method);
+	}
+
+	inline Engine& Engine::GetInstance() noexcept
+	{
+		ASSERT_FMT(instance, "Engine 인스턴스가 초기화되지 않았습니다.");
+
 		return *instance;
 	}
 }

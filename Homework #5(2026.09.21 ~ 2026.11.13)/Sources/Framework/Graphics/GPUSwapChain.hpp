@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <expected>
-#include <memory_resource>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -14,17 +11,24 @@
 #include "../Core/Common.hpp"
 
 #include "GPUTarget.hpp"
-#include "GPUTexture.hpp"
+#include "GPUTexture2D.hpp"
 
 namespace TUK::Framework
 {
-	class Display;
-	class GPUDevice;
+	struct GPUSwapChainCreateInfo final
+	{
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
+		std::vector<GPUTexture2D> backBuffers;
+		u32 rtvDescriptorSize = 0;
+	};
 
 	class GPUSwapChain
 	{
 	public:
-		~GPUSwapChain() noexcept = default;
+		explicit GPUSwapChain(GPUSwapChainCreateInfo&& createInfo) noexcept;
 
 		GPUSwapChain(const GPUSwapChain&) = delete;
 		GPUSwapChain& operator=(const GPUSwapChain&) = delete;
@@ -37,38 +41,35 @@ namespace TUK::Framework
 		[[nodiscard]] GPUTarget GetCurrentBackBufferTarget() const noexcept;
 		[[nodiscard]] IDXGISwapChain4& GetDXGISwapChain() const noexcept;
 
-		[[nodiscard]] static std::expected<GPUSwapChain, std::string> Create(
-			const GPUDevice& device,
-			const Display& display,
-			const DXGI_SWAP_CHAIN_DESC1& description);
-
 	private:
-		GPUSwapChain(
-			ComPtr<IDXGISwapChain4> dxgiSwapChain,
-			ComPtr<ID3D12DescriptorHeap> rtvHeap,
-			std::pmr::vector<GPUTexture>&& backBuffers,
-			u32 rtvDescriptorSize) noexcept;
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> dxgiSwapChain;
 
-		ComPtr<IDXGISwapChain4> dxgiSwapChain;
-		ComPtr<ID3D12DescriptorHeap> rtvHeap;
-		std::pmr::vector<GPUTexture> backBuffers;
-		u32 rtvDescriptorSize;
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+		UINT rtvDescriptorSize;
+
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
+		
+		std::vector<GPUTexture2D> backBuffers;
 	};
+
+	inline GPUSwapChain::GPUSwapChain(GPUSwapChainCreateInfo&& createInfo) noexcept
+		: dxgiSwapChain(std::move(createInfo.dxgiSwapChain))
+		, rtvHeap(std::move(createInfo.rtvHeap))
+		, dsvHeap(std::move(createInfo.dsvHeap))
+		, depthStencil(std::move(createInfo.depthStencil))
+		, backBuffers(std::move(createInfo.backBuffers))
+		, rtvDescriptorSize(createInfo.rtvDescriptorSize)
+	{
+		ASSERT_FMT(this->dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+		ASSERT_FMT(this->rtvHeap.Get(), "rtvHeap이 nullptr입니다.");
+		ASSERT_FMT(this->dsvHeap.Get(), "dsvHeap이 nullptr입니다.");
+		ASSERT_FMT(this->depthStencil.Get(), "depthStencil이 nullptr입니다.");
+	}
 
 	inline IDXGISwapChain4& GPUSwapChain::GetDXGISwapChain() const noexcept
 	{
+		ASSERT_FMT(dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
 		return *dxgiSwapChain.Get();
-	}
-
-	inline GPUSwapChain::GPUSwapChain(
-		ComPtr<IDXGISwapChain4> dxgiSwapChain,
-		ComPtr<ID3D12DescriptorHeap> rtvHeap,
-		std::pmr::vector<GPUTexture>&& backBuffers,
-		u32 rtvDescriptorSize) noexcept
-		: dxgiSwapChain(std::move(dxgiSwapChain))
-		, rtvHeap(std::move(rtvHeap))
-		, backBuffers(std::move(backBuffers))
-		, rtvDescriptorSize(rtvDescriptorSize)
-	{
 	}
 }

@@ -9,7 +9,6 @@ namespace TUK::Framework
 	{
 	public:
 		using Subsystem::Subsystem;
-		~EngineSubsystem() noexcept override = default;
 
 		virtual SystemStatus OnPreTick() = 0;
 		virtual SystemStatus OnTick() = 0;

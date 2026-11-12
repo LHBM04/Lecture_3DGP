@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 
-#include "../Entities/Component.hpp"
+#include "../GameObjects/Component.hpp"
 
 namespace TUK::Framework
 {
 	class MaterialAsset;
-	class ModelAsset;
+	class MeshAsset;
 
 	class MeshRenderer final : public Component
 	{
@@ -14,34 +14,34 @@ namespace TUK::Framework
 
 		void OnRender(GPUCommandBuffer& commandBuffer) override;
 
-		[[nodiscard]] const ModelAsset& GetModel() const noexcept;
-		void SetModel(const ModelAsset& value) noexcept;
+		[[nodiscard]] const MeshAsset* GetMesh() const noexcept;
+		void SetMesh(const MeshAsset* value) noexcept;
 
-		[[nodiscard]] const MaterialAsset& GetMaterial() const noexcept;
-		void SetMaterial(const MaterialAsset& value) noexcept;
+		[[nodiscard]] const MaterialAsset* GetMaterial() const noexcept;
+		void SetMaterial(const MaterialAsset* value) noexcept;
 
 	private:
-		const ModelAsset* model = nullptr;
+		const MeshAsset* mesh = nullptr;
 		const MaterialAsset* material = nullptr;
 	};
 
-	inline const ModelAsset& MeshRenderer::GetModel() const noexcept
+	inline const MeshAsset* MeshRenderer::GetMesh() const noexcept
 	{
-		return *model;
+		return mesh;
 	}
 
-	inline void MeshRenderer::SetModel(const ModelAsset& value) noexcept
+	inline void MeshRenderer::SetMesh(const MeshAsset* value) noexcept
 	{
-		model = &value;
+		mesh = value;
 	}
 
-	inline const MaterialAsset& MeshRenderer::GetMaterial() const noexcept
+	inline const MaterialAsset* MeshRenderer::GetMaterial() const noexcept
 	{
-		return *material;
+		return material;
 	}
 
-	inline void MeshRenderer::SetMaterial(const MaterialAsset& value) noexcept
+	inline void MeshRenderer::SetMaterial(const MaterialAsset* value) noexcept
 	{
-		material = &value;
+		material = value;
 	}
 }

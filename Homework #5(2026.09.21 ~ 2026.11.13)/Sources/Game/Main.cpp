@@ -1,12 +1,12 @@
 ﻿#include "Precompiled.hpp"
 
-#include "MyEngine.hpp"
-#include "MyGame.hpp"
+#include "Framework/Core.hpp"
 
+#include "Core/MyEngine.hpp"
+#include "Core/MyGame.hpp"
+
+using namespace TUK::Framework;
 using namespace TUK::Game;
-
-static MyGame app;
-static MyEngine engine(app);
 
 INT APIENTRY _tWinMain(
 	_In_ HINSTANCE hInstance,
@@ -14,8 +14,28 @@ INT APIENTRY _tWinMain(
 	_In_ LPTSTR lpCmdLine,
 	_In_ INT nCmdShow)
 {
+	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(nCmdShow);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	return engine.Run();
+#ifdef _DEBUG
+	AllocConsole();
+	SetConsoleOutputCP(CP_UTF8);
+
+	FILE* pFile{ nullptr };
+	freopen_s(&pFile, "CONOUT$", "w", stdout);
+	freopen_s(&pFile, "CONOUT$", "w", stderr);
+
+	LOG_INFO("디버그 콘솔이 활성화되었습니다.");
+#endif
+
+	i32 exitCode = 0;
+	{
+		MyGame app;
+		MyEngine engine;
+		exitCode = engine.Run(&app);
+	}
+
+	return exitCode;
 }

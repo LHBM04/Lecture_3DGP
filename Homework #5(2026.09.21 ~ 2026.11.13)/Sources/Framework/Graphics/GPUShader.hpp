@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <cassert>
-#include <expected>
-#include <filesystem>
-#include <string>
 #include <utility>
 
 #include <wrl/client.h>
@@ -19,12 +15,7 @@ namespace TUK::Framework
 	class GPUShader
 	{
 	public:
-		[[nodiscard]] static std::expected<GPUShader, std::string> Create(
-			const std::filesystem::path& path,
-			LPCTSTR target,
-			LPCTSTR entryPoint);
-
-		~GPUShader() noexcept = default;
+		explicit GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept;
 
 		GPUShader(const GPUShader&) = delete;
 		GPUShader& operator=(const GPUShader&) = delete;
@@ -36,25 +27,26 @@ namespace TUK::Framework
 		[[nodiscard]] D3D12_SHADER_BYTECODE GetD3DBytecode() const noexcept;
 
 	private:
-		explicit GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept;
-
-		ComPtr<IDxcBlob> dxcBlob;
+		Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob;
 	};
+
+	inline GPUShader::GPUShader(Microsoft::WRL::ComPtr<IDxcBlob> dxcBlob) noexcept
+		: dxcBlob(std::move(dxcBlob))
+	{
+		ASSERT_FMT(this->dxcBlob.Get(), "dxcBlob이 nullptr입니다.");
+	}
 
 	inline IDxcBlob& GPUShader::GetDXCBlob() const noexcept
 	{
-		assert(dxcBlob);
+		ASSERT_FMT(dxcBlob.Get(), "dxcBlob이 nullptr입니다.");
+
 		return *dxcBlob.Get();
 	}
 
 	inline D3D12_SHADER_BYTECODE GPUShader::GetD3DBytecode() const noexcept
 	{
-		assert(dxcBlob);
-		return CD3DX12_SHADER_BYTECODE(dxcBlob->GetBufferPointer(), dxcBlob->GetBufferSize());
-	}
+		ASSERT_FMT(dxcBlob.Get(), "dxcBlob이 nullptr입니다.");
 
-	inline GPUShader::GPUShader(ComPtr<IDxcBlob> dxcBlob) noexcept
-		: dxcBlob(std::move(dxcBlob))
-	{
+		return CD3DX12_SHADER_BYTECODE(dxcBlob->GetBufferPointer(), dxcBlob->GetBufferSize());
 	}
 }

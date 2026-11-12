@@ -1,22 +1,23 @@
 ﻿#pragma once
 
 #include <concepts>
-#include <limits>
 #include <type_traits>
 
 #include <directxmath/DirectXMath.h>
-
-#include "Vector3D.hpp"
-#include "Vector4D.hpp"
+#include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"
 
+#include "Mathf.hpp"
+#include "Vector3D.hpp"
+#include "Vector4D.hpp"
+
 namespace TUK::Framework
 {
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class ColorRGBA;
 
-	template <ScalarType TScalar>
+	template <Scalarable TScalar>
 	class ColorRGB
 	{
 	public:
@@ -24,15 +25,15 @@ namespace TUK::Framework
 		explicit ColorRGB(TScalar value) noexcept;
 		ColorRGB(TScalar r, TScalar g, TScalar b) noexcept;
 
-		ColorRGB(const ColorRGB& color) noexcept;
-		ColorRGB(ColorRGB&& color) noexcept;
+		ColorRGB(const ColorRGB& color) noexcept = default;
+		ColorRGB(ColorRGB&& color) noexcept = default;
 
 		explicit ColorRGB(const Vector3D<TScalar>& vector) noexcept;
 		explicit ColorRGB(const Vector4D<TScalar>& vector) noexcept;
 		explicit ColorRGB(const ColorRGBA<TScalar>& color) noexcept;
 
-		ColorRGB& operator=(const ColorRGB& other) noexcept;
-		ColorRGB& operator=(ColorRGB&& other) noexcept;
+		ColorRGB& operator=(const ColorRGB& other) noexcept = default;
+		ColorRGB& operator=(ColorRGB&& other) noexcept = default;
 
 		[[nodiscard]] bool operator==(const ColorRGB& other) const noexcept;
 		[[nodiscard]] bool operator!=(const ColorRGB& other) const noexcept;
@@ -78,7 +79,7 @@ namespace TUK::Framework
 		[[nodiscard]] static DirectX::XMVECTOR Load(const ColorRGB& color) noexcept requires std::same_as<TScalar, f32>;
 		static void Store(ColorRGB& destination, DirectX::XMVECTOR source) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] static bool IsApproximately(const ColorRGB& lhs, const ColorRGB& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] static bool IsApproximately(const ColorRGB& lhs, const ColorRGB& rhs, f32 epsilon = Mathf::Epsilon) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static f32 LinearToGammaSpace(f32 value) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static f32 GammaToLinearSpace(f32 value) noexcept requires std::same_as<TScalar, f32>;
@@ -89,6 +90,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] static ColorRGB Lerp(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static ColorRGB LerpUnclamped(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
+
+		[[nodiscard]] nlohmann::json Serialize() const;
+		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;

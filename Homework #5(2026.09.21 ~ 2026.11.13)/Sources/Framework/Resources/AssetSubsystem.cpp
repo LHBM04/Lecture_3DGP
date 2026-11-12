@@ -1,9 +1,40 @@
 ﻿#include "Precompiled.hpp"
-
 #include "AssetSubsystem.hpp"
 
 namespace TUK::Framework
 {
+	void AssetSubsystem::UnloadAsset(const std::filesystem::path& path)
+	{
+		const std::filesystem::path normalizedPath = path.lexically_normal();
+		const auto cached = assetsByPath.find(normalizedPath);
+		if (cached == assetsByPath.end())
+		{
+			return;
+		}
+
+		const Asset* target = cached->second;
+		assetsByPath.erase(cached);
+		std::erase_if(assets, [target](const std::unique_ptr<Asset>& asset)
+		{
+			return asset.get() == target;
+		});
+	}
+
+	void AssetSubsystem::UnloadAllAssets() noexcept
+	{
+		assetsByPath.clear();
+		assets.clear();
+	}
+
+	void AssetSubsystem::OnSceneEntered([[maybe_unused]] const Scene* scene)
+	{
+	}
+
+	void AssetSubsystem::OnSceneExited([[maybe_unused]] const Scene* scene)
+	{
+		UnloadAllAssets();
+	}
+
 	SystemStatus AssetSubsystem::OnStartup()
 	{
 		return SystemStatus::CONTINUE;
@@ -31,8 +62,8 @@ namespace TUK::Framework
 
 	void AssetSubsystem::OnShutdown()
 	{
-		assets.clear();
-		assetLoadersByType.clear();
-		assetLoaders.clear();
+		UnloadAllAssets();
+		assetImportersByType.clear();
+		assetImporters.clear();
 	}
 }

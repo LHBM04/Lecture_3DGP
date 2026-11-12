@@ -1,6 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "App.hpp"
 
+#include "Engine.hpp"
+
+#include "../Platform/TimeSubsystem.hpp"
+
 namespace TUK::Framework
 {
 	SystemStatus App::Startup()
@@ -13,34 +17,32 @@ namespace TUK::Framework
 	{
 		if (SystemStatus status = EarlyUpdate(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
-		if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
+		if (TimeSubsystem* timeSubsystem = Engine::GetInstance().GetSubsystem<TimeSubsystem>())
 		{
-			if (status != SystemStatus::CONTINUE)
+			while (timeSubsystem->ShouldFixedStep())
 			{
-				return status;
+				if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
+				{
+					return status;
+				}
 			}
+		}
+		else if (SystemStatus status = FixedUpdate(); status != SystemStatus::CONTINUE)
+		{
+			return status;
 		}
 
 		if (SystemStatus status = Update(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
 		if (SystemStatus status = LateUpdate(); status != SystemStatus::CONTINUE)
 		{
-			if (status != SystemStatus::CONTINUE)
-			{
-				return status;
-			}
+			return status;
 		}
 
 		return SystemStatus::CONTINUE;
@@ -54,9 +56,9 @@ namespace TUK::Framework
 
 	SystemStatus App::EarlyUpdate()
 	{
-		for (AppSubsystem& subsystem : GetSubsystems())
+		for (AppSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnEarlyUpdate(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnEarlyUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
@@ -67,9 +69,9 @@ namespace TUK::Framework
 
 	SystemStatus App::FixedUpdate()
 	{
-		for (AppSubsystem& subsystem : GetSubsystems())
+		for (AppSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnFixedUpdate(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnFixedUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
@@ -80,9 +82,9 @@ namespace TUK::Framework
 
 	SystemStatus App::Update()
 	{
-		for (AppSubsystem& subsystem : GetSubsystems())
+		for (AppSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnUpdate(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}
@@ -93,9 +95,9 @@ namespace TUK::Framework
 
 	SystemStatus App::LateUpdate()
 	{
-		for (AppSubsystem& subsystem : GetSubsystems())
+		for (AppSubsystem* subsystem : GetSubsystems())
 		{
-			if (const SystemStatus status = subsystem.OnLateUpdate(); status != SystemStatus::CONTINUE)
+			if (const SystemStatus status = subsystem->OnLateUpdate(); status != SystemStatus::CONTINUE)
 			{
 				return status;
 			}

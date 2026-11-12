@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <expected>
-#include <functional>
 #include <memory>
 #include <ranges>
 #include <string>
@@ -21,7 +20,6 @@ namespace TUK::Framework
 	{
 	public:
 		DisplaySubsystem() noexcept;
-		~DisplaySubsystem() noexcept override = default;
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnPreTick() override;
@@ -29,16 +27,16 @@ namespace TUK::Framework
 		SystemStatus OnPostTick() override;
 		void OnShutdown() override;
 
-		std::expected<std::reference_wrapper<Display>, std::string> CreateDisplay(const DisplayOptions& options) noexcept;
-		void DestroyDisplay(Display& display) noexcept;
+		[[nodiscard]] std::expected<Display*, std::string> CreateDisplay(const DisplayOptions& options) noexcept;
+		void DestroyDisplay(Display* display) noexcept;
 
 		[[nodiscard]] auto GetDisplays() noexcept;
-		[[nodiscard]] const auto GetDisplays() const noexcept;
+		[[nodiscard]] auto GetDisplays() const noexcept;
 
 		[[nodiscard]] usize GetDisplayCount() const noexcept;
 
-		[[nodiscard]] Display& GetDisplay(usize index) noexcept;
-		[[nodiscard]] const Display& GetDisplay(usize index) const noexcept;
+		[[nodiscard]] Display* GetDisplay(usize index) noexcept;
+		[[nodiscard]] const Display* GetDisplay(usize index) const noexcept;
 		
 		[[nodiscard]] Display* FindDisplayByHWND(HWND hWnd) noexcept;
 		[[nodiscard]] const Display* FindDisplayByHWND(HWND hWnd) const noexcept;
@@ -46,7 +44,7 @@ namespace TUK::Framework
 		[[nodiscard]] Display* FindDisplayByID(Display::ID id) noexcept;
 		[[nodiscard]] const Display* FindDisplayByID(Display::ID id) const noexcept;
 		
-		[[nodiscard]] bool IsDisplayValid(const Display& display) const noexcept;
+		[[nodiscard]] bool IsDisplayValid(const Display* display) const noexcept;
 		[[nodiscard]] bool IsDisplayValid(HWND hWnd) const noexcept;
 		[[nodiscard]] bool IsDisplayValid(Display::ID id) const noexcept;
 
@@ -58,7 +56,7 @@ namespace TUK::Framework
 		TCHAR wndClassName[WNDCLASS_NAME_LENGTH];
 		ATOM wndClass;
 
-		std::pmr::vector<std::unique_ptr<Display>> displays;
+		std::vector<std::unique_ptr<Display>> displays;
 	};
 
 	inline DisplaySubsystem::DisplaySubsystem() noexcept
@@ -71,17 +69,17 @@ namespace TUK::Framework
 
 	inline auto DisplaySubsystem::GetDisplays() noexcept
 	{
-		return displays | std::views::transform([](const std::unique_ptr<Display>& displayPtr) -> std::reference_wrapper<Display>
+		return displays | std::views::transform([](const std::unique_ptr<Display>& displayPtr) -> Display*
 			{
-				return *displayPtr;
+				return displayPtr.get();
 			});
 	}
 
-	inline const auto DisplaySubsystem::GetDisplays() const noexcept
+	inline auto DisplaySubsystem::GetDisplays() const noexcept
 	{
-		return displays | std::views::transform([](const std::unique_ptr<Display>& displayPtr) -> std::reference_wrapper<const Display>
+		return displays | std::views::transform([](const std::unique_ptr<Display>& displayPtr) -> const Display*
 			{
-				return std::cref(*displayPtr);
+				return displayPtr.get();
 			});
 	}
 }
