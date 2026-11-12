@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <expected>
+#include <optional>
 #include <string>
 
 #include <directx/d3dx12.h>
@@ -14,18 +15,6 @@
 
 namespace TUK::Framework
 {
-	class Cubemap;
-	class GameObject;
-	class MaterialAsset;
-
-	enum class CameraClearFlags : u8
-	{
-		SolidColor,
-		DepthOnly,
-		Nothing,
-		Skybox
-	};
-
 	enum class CameraProjectionType : u8
 	{
 		Perspective,
@@ -35,30 +24,13 @@ namespace TUK::Framework
 	class Camera : public Component
 	{
 	public:
-		struct BackgroundPass final
-		{
-			const MaterialAsset* material = nullptr;
-			const Cubemap* cubemap = nullptr;
-		};
-
 		using Component::Component;
 
 		void OnEnable() override;
 		void OnDisable() override;
 
-		[[nodiscard]] std::expected<void, std::string> PrepareRender(GPUCommandBuffer& commandBuffer) const;
-		[[nodiscard]] BackgroundPass PrepareBackground(
-			GPUCommandBuffer& commandBuffer, const MaterialAsset* skyboxMaterial) const;
-		void RenderBackground(GPUCommandBuffer& commandBuffer, const BackgroundPass& pass) const;
-
-		[[nodiscard]] CameraClearFlags GetClearFlags() const noexcept;
-		void SetClearFlags(CameraClearFlags value) noexcept;
-
-		[[nodiscard]] const ColorRGBA<f32>& GetBackgroundColor() const noexcept;
-		void SetBackgroundColor(const ColorRGBA<f32>& value) noexcept;
-
-		[[nodiscard]] const Cubemap* GetCubemap() const noexcept;
-		void SetCubemap(const Cubemap* value) noexcept;
+		[[nodiscard]] const ColorRGBA<f32>& GetClearColor() const noexcept;
+		void SetClearColor(const ColorRGBA<f32>& value) noexcept;
 
 		[[nodiscard]] CameraProjectionType GetProjectionType() const noexcept;
 		void SetProjectionType(CameraProjectionType value) noexcept;
@@ -85,11 +57,7 @@ namespace TUK::Framework
 		[[nodiscard]] Matrix4x4<f32> GetProjectionMatrix() const noexcept;
 
 	private:
-		bool ClearBuffers(GPUCommandBuffer& commandBuffer, bool clearColor) const;
-
-		CameraClearFlags clearFlags = CameraClearFlags::SolidColor;
-		ColorRGBA<f32> backgroundColor = ColorRGBA<f32>::GetBlack();
-		const Cubemap* cubemap = nullptr;
+		ColorRGBA<f32> clearColor = ColorRGBA<f32>::GetBlack();
 		CameraProjectionType projectionType = CameraProjectionType::Perspective;
 
 		f32 fieldOfView = 60.0f;
@@ -103,34 +71,14 @@ namespace TUK::Framework
 		f32 orthoSize = 10.0f;
 	};
 
-	inline CameraClearFlags Camera::GetClearFlags() const noexcept
+	inline const ColorRGBA<f32>& Camera::GetClearColor() const noexcept
 	{
-		return clearFlags;
+		return clearColor;
 	}
 
-	inline void Camera::SetClearFlags(CameraClearFlags value) noexcept
+	inline void Camera::SetClearColor(const ColorRGBA<f32>& value) noexcept
 	{
-		clearFlags = value;
-	}
-
-	inline const ColorRGBA<f32>& Camera::GetBackgroundColor() const noexcept
-	{
-		return backgroundColor;
-	}
-
-	inline void Camera::SetBackgroundColor(const ColorRGBA<f32>& value) noexcept
-	{
-		backgroundColor = value;
-	}
-
-	inline const Cubemap* Camera::GetCubemap() const noexcept
-	{
-		return cubemap;
-	}
-
-	inline void Camera::SetCubemap(const Cubemap* value) noexcept
-	{
-		cubemap = value;
+		clearColor = value;
 	}
 
 	inline CameraProjectionType Camera::GetProjectionType() const noexcept

@@ -9,10 +9,10 @@
 
 namespace TUK::Framework
 {
-	class Cubemap final : public Asset
+	class CubemapAsset final : public Asset
 	{
 	public:
-		explicit Cubemap(std::filesystem::path path, GPUTexture2D&& texture) noexcept;
+		explicit CubemapAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept;
 
 		[[nodiscard]] const GPUTexture2D& GetTexture() const noexcept;
 
@@ -20,13 +20,13 @@ namespace TUK::Framework
 		GPUTexture2D texture;
 	};
 
-	inline Cubemap::Cubemap(std::filesystem::path path, GPUTexture2D&& texture) noexcept
+	inline CubemapAsset::CubemapAsset(std::filesystem::path path, GPUTexture2D&& texture) noexcept
 		: Asset(std::move(path))
 		, texture(std::move(texture))
 	{
 	}
 
-	inline const GPUTexture2D& Cubemap::GetTexture() const noexcept
+	inline const GPUTexture2D& CubemapAsset::GetTexture() const noexcept
 	{
 		return texture;
 	}

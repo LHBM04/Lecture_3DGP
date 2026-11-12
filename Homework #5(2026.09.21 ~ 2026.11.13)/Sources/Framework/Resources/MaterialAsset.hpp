@@ -34,61 +34,52 @@ namespace TUK::Framework
 
 	using MaterialTextures = std::array<const TextureAsset*, static_cast<usize>(MaterialTextureSlot::COUNT)>;
 
-	enum class MaterialPass : u8
-	{
-		SURFACE,
-		SKYBOX,
-		IMAGE_UI
-	};
-
-	struct MaterialAssetData final
-	{
-		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
-		D3D12_FILL_MODE fillMode = D3D12_FILL_MODE_SOLID;
-
-		ColorRGBA<f32> baseColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-		ColorRGBA<f32> emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
-		ColorRGBA<f32> specularColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-
-		f32 metallic = 0.0f;
-		f32 roughness = 0.5f;
-
-		MaterialTextures textures{};
-		const ShaderAsset* vertexShader = nullptr;
-		const ShaderAsset* pixelShader = nullptr;
-
-		GPUGraphicsPipelineState pipelineState;
-		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
-		MaterialPass pass = MaterialPass::SURFACE;
-		D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	};
-
 	class MaterialAsset final : public Asset
 	{
 	public:
 		explicit MaterialAsset(
 			std::filesystem::path path,
-			MaterialAssetData&& data) noexcept;
+			const ShaderAsset* vertexShader,
+			const ShaderAsset* pixelShader,
+			GPUGraphicsPipelineState&& pipelineState) noexcept;
 
 		[[nodiscard]] D3D12_CULL_MODE GetCullMode() const noexcept;
+		void SetCullMode(D3D12_CULL_MODE value) noexcept;
+
 		[[nodiscard]] D3D12_FILL_MODE GetFillMode() const noexcept;
+		void SetFillMode(D3D12_FILL_MODE value) noexcept;
 
 		[[nodiscard]] const ColorRGBA<f32>& GetBaseColor() const noexcept;
+		void SetBaseColor(const ColorRGBA<f32>& value) noexcept;
+
 		[[nodiscard]] const ColorRGBA<f32>& GetEmissiveColor() const noexcept;
+		void SetEmissiveColor(const ColorRGBA<f32>& value) noexcept;
+
 		[[nodiscard]] const ColorRGBA<f32>& GetSpecularColor() const noexcept;
+		void SetSpecularColor(const ColorRGBA<f32>& value) noexcept;
 
 		[[nodiscard]] f32 GetMetallic() const noexcept;
+		void SetMetallic(f32 value) noexcept;
+
 		[[nodiscard]] f32 GetRoughness() const noexcept;
+		void SetRoughness(f32 value) noexcept;
+
 		[[nodiscard]] f32 GetSmoothness() const noexcept;
+		void SetSmoothness(f32 value) noexcept;
 
 		[[nodiscard]] const MaterialTextures& GetTextures() const noexcept;
-		[[nodiscard]] MaterialPass GetPass() const noexcept;
-		[[nodiscard]] D3D_PRIMITIVE_TOPOLOGY GetTopology() const noexcept;
+		void SetTextures(const MaterialTextures& value) noexcept;
+
+		[[nodiscard]] D3D_PRIMITIVE_TOPOLOGY GetPrimitive() const noexcept;
+		void SetPrimitive(D3D_PRIMITIVE_TOPOLOGY value) noexcept;
+
 		[[nodiscard]] const ShaderAsset* GetVertexShader() const noexcept;
 		[[nodiscard]] const ShaderAsset* GetPixelShader() const noexcept;
 
 		[[nodiscard]] const GPUGraphicsPipelineState& GetGraphicsPipelineState() const noexcept;
+
 		[[nodiscard]] DXGI_FORMAT GetTargetFormat() const noexcept;
+		void SetTargetFormat(DXGI_FORMAT value) noexcept;
 
 	private:
 		D3D12_CULL_MODE cullMode = D3D12_CULL_MODE_BACK;
@@ -107,31 +98,21 @@ namespace TUK::Framework
 
 		GPUGraphicsPipelineState pipelineState;
 		DXGI_FORMAT targetFormat = DXGI_FORMAT_UNKNOWN;
-		MaterialPass pass = MaterialPass::SURFACE;
-		D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	};
 
 	inline MaterialAsset::MaterialAsset(
 		std::filesystem::path path,
-		MaterialAssetData&& data) noexcept
+		const ShaderAsset* vertexShader,
+		const ShaderAsset* pixelShader,
+		GPUGraphicsPipelineState&& pipelineState) noexcept
 		: Asset(std::move(path))
-		, cullMode(data.cullMode)
-		, fillMode(data.fillMode)
-		, baseColor(data.baseColor)
-		, emissiveColor(data.emissiveColor)
-		, specularColor(data.specularColor)
-		, metallic(data.metallic)
-		, roughness(data.roughness)
-		, textures(data.textures)
-		, vertexShader(data.vertexShader)
-		, pixelShader(data.pixelShader)
-		, pipelineState(std::move(data.pipelineState))
-		, targetFormat(data.targetFormat)
-		, pass(data.pass)
-		, topology(data.topology)
+		, vertexShader(vertexShader)
+		, pixelShader(pixelShader)
+		, pipelineState(std::move(pipelineState))
 	{
-		ASSERT_FMT(vertexShader, "머티리얼의 정점 셰이더 에셋이 nullptr입니다.");
-		ASSERT_FMT(pixelShader, "머티리얼의 픽셀 셰이더 에셋이 nullptr입니다.");
+		ASSERT_FMT(this->vertexShader, "머티리얼의 정점 셰이더 에셋이 nullptr입니다.");
+		ASSERT_FMT(this->pixelShader, "머티리얼의 픽셀 셰이더 에셋이 nullptr입니다.");
 	}
 
 	inline D3D12_CULL_MODE MaterialAsset::GetCullMode() const noexcept
@@ -139,9 +120,19 @@ namespace TUK::Framework
 		return cullMode;
 	}
 
+	inline void MaterialAsset::SetCullMode(D3D12_CULL_MODE value) noexcept
+	{
+		cullMode = value;
+	}
+
 	inline D3D12_FILL_MODE MaterialAsset::GetFillMode() const noexcept
 	{
 		return fillMode;
+	}
+
+	inline void MaterialAsset::SetFillMode(D3D12_FILL_MODE value) noexcept
+	{
+		fillMode = value;
 	}
 
 	inline const ColorRGBA<f32>& MaterialAsset::GetBaseColor() const noexcept
@@ -149,9 +140,19 @@ namespace TUK::Framework
 		return baseColor;
 	}
 
+	inline void MaterialAsset::SetBaseColor(const ColorRGBA<f32>& value) noexcept
+	{
+		baseColor = value;
+	}
+
 	inline const ColorRGBA<f32>& MaterialAsset::GetEmissiveColor() const noexcept
 	{
 		return emissiveColor;
+	}
+
+	inline void MaterialAsset::SetEmissiveColor(const ColorRGBA<f32>& value) noexcept
+	{
+		emissiveColor = value;
 	}
 
 	inline const ColorRGBA<f32>& MaterialAsset::GetSpecularColor() const noexcept
@@ -159,9 +160,19 @@ namespace TUK::Framework
 		return specularColor;
 	}
 
+	inline void MaterialAsset::SetSpecularColor(const ColorRGBA<f32>& value) noexcept
+	{
+		specularColor = value;
+	}
+
 	inline f32 MaterialAsset::GetMetallic() const noexcept
 	{
 		return metallic;
+	}
+
+	inline void MaterialAsset::SetMetallic(f32 value) noexcept
+	{
+		metallic = value;
 	}
 
 	inline f32 MaterialAsset::GetRoughness() const noexcept
@@ -169,9 +180,19 @@ namespace TUK::Framework
 		return roughness;
 	}
 
+	inline void MaterialAsset::SetRoughness(f32 value) noexcept
+	{
+		roughness = value;
+	}
+
 	inline f32 MaterialAsset::GetSmoothness() const noexcept
 	{
 		return 1.0f - roughness;
+	}
+
+	inline void MaterialAsset::SetSmoothness(f32 value) noexcept
+	{
+		roughness = 1.0f - value;
 	}
 
 	inline const MaterialTextures& MaterialAsset::GetTextures() const noexcept
@@ -179,9 +200,19 @@ namespace TUK::Framework
 		return textures;
 	}
 
-	inline MaterialPass MaterialAsset::GetPass() const noexcept
+	inline void MaterialAsset::SetTextures(const MaterialTextures& value) noexcept
 	{
-		return pass;
+		textures = value;
+	}
+
+	inline D3D_PRIMITIVE_TOPOLOGY MaterialAsset::GetPrimitive() const noexcept
+	{
+		return primitive;
+	}
+
+	inline void MaterialAsset::SetPrimitive(D3D_PRIMITIVE_TOPOLOGY value) noexcept
+	{
+		primitive = value;
 	}
 
 	inline const ShaderAsset* MaterialAsset::GetVertexShader() const noexcept
@@ -203,9 +234,9 @@ namespace TUK::Framework
 	{
 		return targetFormat;
 	}
-	inline D3D_PRIMITIVE_TOPOLOGY MaterialAsset::GetTopology() const noexcept
-	{
-		return topology;
-	}
 
+	inline void MaterialAsset::SetTargetFormat(DXGI_FORMAT value) noexcept
+	{
+		targetFormat = value;
+	}
 }

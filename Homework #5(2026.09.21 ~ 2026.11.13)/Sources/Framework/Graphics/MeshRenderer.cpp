@@ -24,8 +24,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		if (material->GetPass() != MaterialPass::SURFACE ||
-			material->GetTargetFormat() != commandBuffer.GetActiveTargetFormat())
+		if (material->GetTargetFormat() != commandBuffer.GetActiveTargetFormat())
 		{
 			LOG_ERROR("메시 머티리얼이 현재 렌더 타깃과 호환되지 않습니다.");
 			return;
@@ -92,7 +91,7 @@ namespace TUK::Framework
 
 		const GPUMesh& gpuMesh = mesh->GetGPUMesh();
 		commandBuffer.SetGPUGraphicsPipelineState(material->GetGraphicsPipelineState());
-		commandBuffer.SetPrimitiveTopology(material->GetTopology());
+		commandBuffer.SetPrimitiveTopology(material->GetPrimitive());
 		commandBuffer.SetVertexBuffer(0, gpuMesh.GetD3DVertexBufferView());
 		commandBuffer.SetIndexBuffer(gpuMesh.GetD3DIndexBufferView());
 		commandBuffer.DrawIndexed(gpuMesh.GetIndexCount());

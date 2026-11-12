@@ -1,16 +1,14 @@
 ﻿#include "Precompiled.hpp"
 #include "Time.hpp"
 
-#include "Framework/Platform.hpp"
+namespace
+{
+	const TimeSubsystem* timeSubsystem = nullptr;
+}
 
 namespace TUK::Game
 {
-	namespace
-	{
-		const TimeSubsystem* timeSubsystem = nullptr;
-	}
-
-	void Time::Initialize(TimeSubsystem* subsystem)
+	void Time::Initialize(const TimeSubsystem* subsystem)
 	{
 		timeSubsystem = subsystem;
 	}
@@ -18,6 +16,11 @@ namespace TUK::Game
 	void Time::Release()
 	{
 		timeSubsystem = nullptr;
+	}
+
+	const TimeSubsystem* Time::GetSubsystem() noexcept
+	{
+		return timeSubsystem;
 	}
 
 	f32 Time::GetTimeScale()

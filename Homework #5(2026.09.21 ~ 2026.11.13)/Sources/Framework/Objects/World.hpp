@@ -18,7 +18,6 @@ namespace TUK::Framework
 	class Camera;
 	class GameObject;
 	class GPUCommandBuffer;
-	class MaterialAsset;
 	class ModelAsset;
 	class Transform;
 
@@ -89,7 +88,6 @@ namespace TUK::Framework
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
 
-		void SetSkyboxMaterial(const MaterialAsset* value) noexcept;
 
 	private:
 		using WorldCallback = void (World::*)();
@@ -111,14 +109,8 @@ namespace TUK::Framework
 		bool isRunningPhase = false;
 
 		std::vector<std::unique_ptr<GameObject>> objects{};
-		std::vector<Camera*> cameras{};
-		const MaterialAsset* skyboxMaterial = nullptr;
+		std::vector<Camera*> activeCameras{};
 	};
-
-	inline void World::SetSkyboxMaterial(const MaterialAsset* value) noexcept
-	{
-		skyboxMaterial = value;
-	}
 
 	inline bool World::IsEntered() const noexcept
 	{
@@ -143,12 +135,12 @@ namespace TUK::Framework
 
 	inline std::span<Camera* const> World::GetCameras() noexcept
 	{
-		return cameras;
+		return activeCameras;
 	}
 
 	inline std::span<const Camera* const> World::GetCameras() const noexcept
 	{
-		return cameras;
+		return activeCameras;
 	}
 
 	inline void World::OnEnter()

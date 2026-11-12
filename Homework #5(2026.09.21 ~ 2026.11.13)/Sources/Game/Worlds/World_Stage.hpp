@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <memory>
+
 #include "Framework/Objects.hpp"
 #include "Framework/Resources.hpp"
 #include "Framework/Platform.hpp"
@@ -18,12 +20,7 @@ namespace TUK::Game
 
 	private:
 		AssetSubsystem* assets = nullptr;
-		InputSubsystem* input = nullptr;
-
-		Transform* cameraTransform = nullptr;
-		f32 cameraYaw = 0.0f;
-		f32 cameraPitch = 0.0f;
-
+		
 		GameObject* tank = nullptr;
 	};
 }

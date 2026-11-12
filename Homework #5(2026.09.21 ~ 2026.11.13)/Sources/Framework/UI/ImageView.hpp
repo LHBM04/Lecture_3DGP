@@ -1,35 +1,53 @@
 ﻿#pragma once
 
+#include <expected>
+#include <optional>
+#include <string>
+
+#include "../Graphics/GPUGraphicsPipelineState.hpp"
+
 #include "../Objects/Component.hpp"
 
 namespace TUK::Framework
 {
-	class MaterialAsset;
 	class TextureAsset;
+	class MaterialAsset;
 
 	class ImageView final : public Component
 	{
 	public:
 		using Component::Component;
 
-		void OnStart() override;
 		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
 
 		[[nodiscard]] const TextureAsset* GetImage() const noexcept;
 		void SetImage(const TextureAsset* value) noexcept;
 
+		[[nodiscard]] const MaterialAsset* GetMaterial() const noexcept;
+		void SetMaterial(const MaterialAsset* value) noexcept;
+
 	private:
-		const TextureAsset* image = nullptr;
+		const TextureAsset* texture = nullptr;
 		const MaterialAsset* material = nullptr;
 	};
 
 	inline const TextureAsset* ImageView::GetImage() const noexcept
 	{
-		return image;
+		return texture;
 	}
 
 	inline void ImageView::SetImage(const TextureAsset* value) noexcept
 	{
-		image = value;
+		texture = value;
+	}
+
+	inline const MaterialAsset* ImageView::GetMaterial() const noexcept
+	{
+		return material;
+	}
+
+	inline void ImageView::SetMaterial(const MaterialAsset* value) noexcept
+	{
+		material = value;
 	}
 }

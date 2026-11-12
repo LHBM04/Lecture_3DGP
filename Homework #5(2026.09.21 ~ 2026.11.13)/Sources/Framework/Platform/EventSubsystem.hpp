@@ -1,9 +1,8 @@
 ﻿#pragma once
 
 #include <concepts>
-#include <memory>
+#include <functional>
 #include <typeindex>
-#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -27,48 +26,30 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 		template <std::derived_from<Event> TEvent>
-		void PushEvent(TEvent&& event);
+		void PushEvent(const TEvent& event);
 
 		template <std::derived_from<Event> TEvent, class... TArgs>
 		void PushEvent(TArgs&&... args);
 
 		template <std::derived_from<Event> TEvent>
-		void DispatchEvent(TEvent&& event);
+		void DispatchEvent(const TEvent& event);
 
 		template <std::derived_from<Event> TEvent, class... TArgs>
 		void DispatchEvent(TArgs&&... args);
 
 		template <std::derived_from<Event> TEvent>
-		[[nodiscard]] Delegate<const TEvent&>& OnEvent() noexcept;
+		Delegate<const Event&>::ListenerId Subscribe(Action<const TEvent&> callback);
 
-	private:
-		using EventDeleter = void (*)(const Event*) noexcept;
-
-		struct EventChannel
-		{
-			virtual ~EventChannel() noexcept = default;
-			virtual void Broadcast(const Event& event) const = 0;
-			virtual void Clear() noexcept = 0;
-		};
+		template <std::derived_from<Event> TEvent, class TObject>
+		Delegate<const Event&>::ListenerId Subscribe(TObject* object, void (TObject::*method)(const TEvent&));
 
 		template <std::derived_from<Event> TEvent>
-		struct TypedEventChannel final : EventChannel
-		{
-			void Broadcast(const Event& event) const override;
-			void Clear() noexcept override;
+		void Unsubscribe(Delegate<const Event&>::ListenerId id) noexcept;
 
-			Delegate<const TEvent&> onEvent;
-		};
-
-		struct QueuedEvent
-		{
-			std::type_index type;
-			std::unique_ptr<const Event, EventDeleter> event;
-		};
-
-		std::vector<QueuedEvent> writeBuffer;
-		std::vector<QueuedEvent> readBuffer;
-		std::unordered_map<std::type_index, std::unique_ptr<EventChannel>> onEvents;
+	private:
+		std::vector<Action<>> writeBuffer;
+		std::vector<Action<>> readBuffer;
+		std::unordered_map<std::type_index, Delegate<const Event&>> listeners;
 	};
 
 	inline EventSubsystem::EventSubsystem() noexcept
@@ -77,77 +58,74 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Event> TEvent>
-	void EventSubsystem::PushEvent(TEvent&& event)
+	void EventSubsystem::PushEvent(const TEvent& event)
 	{
-		using EventType = std::remove_cvref_t<TEvent>;
-		std::unique_ptr<const Event, EventDeleter> storedEvent(
-			new const EventType(std::forward<TEvent>(event)),
-			[](const Event* value) noexcept
-			{
-				delete static_cast<const EventType*>(value);
-			});
-		writeBuffer.push_back(QueuedEvent{ std::type_index(typeid(EventType)), std::move(storedEvent) });
+		writeBuffer.push_back([this, event]()
+		{
+			DispatchEvent(event);
+		});
 	}
 
 	template <std::derived_from<Event> TEvent, class... TArgs>
 	void EventSubsystem::PushEvent(TArgs&&... args)
 	{
-		std::unique_ptr<const Event, EventDeleter> storedEvent(
-			new const TEvent(std::forward<TArgs>(args)...),
-			[](const Event* value) noexcept
-			{
-				delete static_cast<const TEvent*>(value);
-			});
-		writeBuffer.push_back(QueuedEvent{ std::type_index(typeid(TEvent)), std::move(storedEvent) });
+		writeBuffer.push_back([this, storedEvent = TEvent(std::forward<TArgs>(args)...)]()
+		{
+			DispatchEvent(storedEvent);
+		});
 	}
 
 	template <std::derived_from<Event> TEvent>
-	void EventSubsystem::DispatchEvent(TEvent&& event)
+	void EventSubsystem::DispatchEvent(const TEvent& event)
 	{
-		using EventType = std::remove_cvref_t<TEvent>;
-		const auto result = onEvents.find(std::type_index(typeid(EventType)));
-		if (result == onEvents.end())
+		const auto result = listeners.find(std::type_index(typeid(TEvent)));
+		if (result == listeners.end())
 		{
 			return;
 		}
 
-		result->second->Broadcast(event);
+		result->second.Broadcast(event);
 	}
 
 	template <std::derived_from<Event> TEvent, class... TArgs>
 	void EventSubsystem::DispatchEvent(TArgs&&... args)
 	{
-		const auto result = onEvents.find(std::type_index(typeid(TEvent)));
-		if (result == onEvents.end())
+		const auto result = listeners.find(std::type_index(typeid(TEvent)));
+		if (result == listeners.end())
 		{
 			return;
 		}
 
 		const TEvent event(std::forward<TArgs>(args)...);
-		result->second->Broadcast(event);
+		result->second.Broadcast(event);
 	}
 
 	template <std::derived_from<Event> TEvent>
-	Delegate<const TEvent&>& EventSubsystem::OnEvent() noexcept
+	Delegate<const Event&>::ListenerId EventSubsystem::Subscribe(Action<const TEvent&> callback)
 	{
-		const std::type_index type(typeid(TEvent));
-		auto result = onEvents.find(type);
-		if (result == onEvents.end())
+		return listeners[std::type_index(typeid(TEvent))].AddListener(
+			[callback = std::move(callback)](const Event& event)
+			{
+				if (callback)
+				{
+					callback(static_cast<const TEvent&>(event));
+				}
+			});
+	}
+
+	template <std::derived_from<Event> TEvent, class TObject>
+	Delegate<const Event&>::ListenerId EventSubsystem::Subscribe(TObject* object, void (TObject::*method)(const TEvent&))
+	{
+		return Subscribe<TEvent>(std::bind_front(method, object));
+	}
+
+	template <std::derived_from<Event> TEvent>
+	void EventSubsystem::Unsubscribe(Delegate<const Event&>::ListenerId id) noexcept
+	{
+		const auto result = listeners.find(std::type_index(typeid(TEvent)));
+		if (result != listeners.end())
 		{
-			result = onEvents.emplace(type, std::make_unique<TypedEventChannel<TEvent>>()).first;
+			result->second.RemoveListener(id);
 		}
-		return static_cast<TypedEventChannel<TEvent>&>(*result->second).onEvent;
-	}
-
-	template <std::derived_from<Event> TEvent>
-	void EventSubsystem::TypedEventChannel<TEvent>::Broadcast(const Event& event) const
-	{
-		onEvent.Broadcast(static_cast<const TEvent&>(event));
-	}
-
-	template <std::derived_from<Event> TEvent>
-	void EventSubsystem::TypedEventChannel<TEvent>::Clear() noexcept
-	{
-		onEvent.Clear();
 	}
 }

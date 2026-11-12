@@ -1,12 +1,15 @@
 ﻿#pragma once
 
 #include <concepts>
+#include <functional>
 #include <memory>
 #include <ranges>
 #include <typeindex>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
+#include "Common.hpp"
 #include "Subsystem.hpp"
 #include "SystemStatus.hpp"
 
@@ -34,6 +37,9 @@ namespace TUK::Framework
 		TResult* AddSubsystem();
 
 		template <std::derived_from<TSubsystem> TResult>
+		void RemoveSubsystem();
+
+		template <std::derived_from<TSubsystem> TResult>
 		[[nodiscard]] TResult* GetSubsystem() noexcept;
 
 		template <std::derived_from<TSubsystem> TResult>
@@ -42,9 +48,23 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetSubsystems() noexcept;
 		[[nodiscard]] auto GetSubsystems() const noexcept;
 
+		template <std::derived_from<TSubsystem> TResult>
+		Delegate<TSubsystem*>::ListenerId OnSubsystemAdded(Action<TResult*> callback);
+
+		template <std::derived_from<TSubsystem> TResult, class TObject>
+		Delegate<TSubsystem*>::ListenerId OnSubsystemAdded(TObject* object, void (TObject::*method)(TResult*));
+
+		template <std::derived_from<TSubsystem> TResult>
+		Delegate<TSubsystem*>::ListenerId OnSubsystemRemoved(Action<TResult*> callback);
+
+		template <std::derived_from<TSubsystem> TResult, class TObject>
+		Delegate<TSubsystem*>::ListenerId OnSubsystemRemoved(TObject* object, void (TObject::*method)(TResult*));
+
 	private:
 		std::vector<std::unique_ptr<TSubsystem>> subsystems;
 		std::unordered_map<std::type_index, TSubsystem*> subsystemsByType;
+		std::unordered_map<std::type_index, Delegate<TSubsystem*>> onSubsystemAdded;
+		std::unordered_map<std::type_index, Delegate<TSubsystem*>> onSubsystemRemoved;
 	};
 
 	template <std::derived_from<Subsystem> TSubsystem>
@@ -75,9 +95,25 @@ namespace TUK::Framework
 	{
 		for (const std::unique_ptr<TSubsystem>& subsystem : subsystems | std::views::reverse)
 		{
-			subsystem->OnShutdown();
+			TSubsystem* pointer = subsystem.get();
+			const std::type_index type(typeid(*pointer));
+			if (const auto result = onSubsystemRemoved.find(type); result != onSubsystemRemoved.end())
+			{
+				result->second.Broadcast(pointer);
+			}
+			pointer->OnShutdown();
 		}
 
+		for (auto& [type, delegate] : onSubsystemAdded)
+		{
+			delegate.Clear();
+		}
+		for (auto& [type, delegate] : onSubsystemRemoved)
+		{
+			delegate.Clear();
+		}
+		onSubsystemAdded.clear();
+		onSubsystemRemoved.clear();
 		subsystems.clear();
 		subsystemsByType.clear();
 	}
@@ -86,7 +122,8 @@ namespace TUK::Framework
 	template <std::derived_from<TSubsystem> TResult>
 	TResult* System<TSubsystem>::AddSubsystem()
 	{
-		const auto result = subsystemsByType.find(std::type_index(typeid(TResult)));
+		const std::type_index type(typeid(TResult));
+		const auto result = subsystemsByType.find(type);
 		if (result != subsystemsByType.end())
 		{
 			return static_cast<TResult*>(result->second);
@@ -95,8 +132,38 @@ namespace TUK::Framework
 		auto subsystem = std::make_unique<TResult>();
 		auto* pointer = subsystem.get();
 		subsystems.push_back(std::move(subsystem));
-		subsystemsByType.emplace(std::type_index(typeid(TResult)), pointer);
+		subsystemsByType.emplace(type, pointer);
+
+		if (const auto found = onSubsystemAdded.find(type); found != onSubsystemAdded.end())
+		{
+			found->second.Broadcast(pointer);
+		}
 		return pointer;
+	}
+
+	template <std::derived_from<Subsystem> TSubsystem>
+	template <std::derived_from<TSubsystem> TResult>
+	void System<TSubsystem>::RemoveSubsystem()
+	{
+		const std::type_index type(typeid(TResult));
+		const auto result = subsystemsByType.find(type);
+		if (result == subsystemsByType.end())
+		{
+			return;
+		}
+
+		TSubsystem* pointer = result->second;
+		if (const auto found = onSubsystemRemoved.find(type); found != onSubsystemRemoved.end())
+		{
+			found->second.Broadcast(pointer);
+		}
+		pointer->OnShutdown();
+
+		subsystemsByType.erase(result);
+		std::erase_if(subsystems, [pointer](const std::unique_ptr<TSubsystem>& subsystem)
+		{
+			return subsystem.get() == pointer;
+		});
 	}
 
 	template <std::derived_from<Subsystem> TSubsystem>
@@ -141,5 +208,47 @@ namespace TUK::Framework
 			{
 				return subsystem.get();
 			});
+	}
+
+	template <std::derived_from<Subsystem> TSubsystem>
+	template <std::derived_from<TSubsystem> TResult>
+	Delegate<TSubsystem*>::ListenerId System<TSubsystem>::OnSubsystemAdded(Action<TResult*> callback)
+	{
+		return onSubsystemAdded[std::type_index(typeid(TResult))].AddListener(
+			[callback = std::move(callback)](TSubsystem* subsystem)
+			{
+				if (callback)
+				{
+					callback(static_cast<TResult*>(subsystem));
+				}
+			});
+	}
+
+	template <std::derived_from<Subsystem> TSubsystem>
+	template <std::derived_from<TSubsystem> TResult, class TObject>
+	Delegate<TSubsystem*>::ListenerId System<TSubsystem>::OnSubsystemAdded(TObject* object, void (TObject::*method)(TResult*))
+	{
+		return OnSubsystemAdded<TResult>(std::bind_front(method, object));
+	}
+
+	template <std::derived_from<Subsystem> TSubsystem>
+	template <std::derived_from<TSubsystem> TResult>
+	Delegate<TSubsystem*>::ListenerId System<TSubsystem>::OnSubsystemRemoved(Action<TResult*> callback)
+	{
+		return onSubsystemRemoved[std::type_index(typeid(TResult))].AddListener(
+			[callback = std::move(callback)](TSubsystem* subsystem)
+			{
+				if (callback)
+				{
+					callback(static_cast<TResult*>(subsystem));
+				}
+			});
+	}
+
+	template <std::derived_from<Subsystem> TSubsystem>
+	template <std::derived_from<TSubsystem> TResult, class TObject>
+	Delegate<TSubsystem*>::ListenerId System<TSubsystem>::OnSubsystemRemoved(TObject* object, void (TObject::*method)(TResult*))
+	{
+		return OnSubsystemRemoved<TResult>(std::bind_front(method, object));
 	}
 }

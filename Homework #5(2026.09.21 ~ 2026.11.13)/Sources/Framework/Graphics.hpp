@@ -14,3 +14,4 @@
 #include "Graphics/GPUTexture2D.hpp"
 #include "Graphics/MeshRenderer.hpp"
 #include "Graphics/RenderSubsystem.hpp"
+#include "Graphics/SkyboxRenderer.hpp"

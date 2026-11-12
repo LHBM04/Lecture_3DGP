@@ -24,6 +24,12 @@ namespace TUK::Game
 		AssetSubsystem* assetSubsystem = App::GetInstance().GetSubsystem<AssetSubsystem>();
 		ASSERT_FMT(assetSubsystem, "에셋 서브시스템을 가져오지 못했습니다.");
 
+		const RenderSubsystem* renderer = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
+		ASSERT_FMT(renderer, "렌더 서브시스템을 가져오지 못했습니다.");
+		const GPUDevice& device = renderer->GetDevice();
+		const ShaderAsset* imageVertex = assetSubsystem->LoadAsset<ShaderAsset>("Resources/Shaders/ImageUI.vert.cso");
+		const ShaderAsset* imagePixel = assetSubsystem->LoadAsset<ShaderAsset>("Resources/Shaders/ImageUI.frag.cso");
+
 		// 카메라 세팅
 		{
 			GameObject* cameraGameObject = Instantiate();
@@ -45,8 +51,7 @@ namespace TUK::Game
 			camera->SetViewport(CD3DX12_VIEWPORT(
 				0.0f, 0.0f, static_cast<f32>(clientSize.GetX()), static_cast<f32>(clientSize.GetY())));
 			camera->SetScissorRect(CD3DX12_RECT(0, 0, clientSize.GetX(), clientSize.GetY()));
-			camera->SetClearFlags(CameraClearFlags::SolidColor);
-			camera->SetBackgroundColor(ColorRGBA<f32>::GetBlue());
+			camera->SetClearColor(ColorRGBA<f32>::GetBlue());
 		}
 
 		// 타이틀 로고 세팅
@@ -61,44 +66,37 @@ namespace TUK::Game
 
 			ImageView* titleImage = logoGameObject->AddComponent<ImageView>();
 			titleImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Title.dds"));
+			titleImage->SetMaterial(assetSubsystem->LoadAsset<MaterialAsset>("Resources/Materials/ImageUI.tukmat"));
 		}
 
 		// 시작 버튼 세팅
 		{
-			const TextureAsset* startTexture = assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds");
-			ASSERT_FMT(startTexture, "시작 버튼 텍스처를 로드하지 못했습니다.");
+			GameObject* startGameObject = Instantiate();
+			startGameObject->SetName("Start Button");
 
-			const TextureAsset* clickTexture = assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Quit.dds");
-			ASSERT_FMT(clickTexture, "클릭 시 사용할 텍스처를 로드하지 못했습니다.");
-		}
+			Transform* startTransform = startGameObject->AddComponent<Transform>();
+			startTransform->SetLocalPosition({ 0.0f, 170.0f, 0.0f });
+			startTransform->SetLocalRotation({0.0f, 0.0f, 0.0f, 1.0f});
+			startTransform->SetLocalScale({ 350.0f, 200.0f, 1.0f });
 
-		GameObject* startGameObject = Instantiate();
-		startGameObject->SetName("Start Button");
-
-		Transform* startTransform = startGameObject->AddComponent<Transform>();
-		startTransform->SetLocalPosition({ 0.0f, 170.0f, 0.0f });
-		startTransform->SetLocalRotation(Quaternion<f32>{0.0f, 0.0f, 0.0f, 1.0f});
-		startTransform->SetLocalScale({ 350.0f, 200.0f, 1.0f });
-
-		ImageView* startImage = startGameObject->AddComponent<ImageView>();
-		startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
-
-		ButtonUI* startButton = startGameObject->AddComponent<ButtonUI>();
-		startButton->OnEnter() += [startImage, assetSubsystem]()
-		{
-			startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Quit.dds"));
-		};
-		startButton->OnExit() += [startImage, assetSubsystem]()
-		{
+			ImageView* startImage = startGameObject->AddComponent<ImageView>();
 			startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
-		};
-		startButton->OnClick() += [this]()
-		{
-			if (!transition->Request(stageWorld))
-			{
-				LOG_ERROR("스테이지 페이드 전환을 시작하지 못했습니다.");
-			}
-		};
+			startImage->SetMaterial(assetSubsystem->LoadAsset<MaterialAsset>("Resources/Materials/ImageUI.tukmat"));
+
+			ButtonUI* startButton = startGameObject->AddComponent<ButtonUI>();
+			startButton->OnEnter() += [startImage, assetSubsystem]() {
+				startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Quit.dds"));
+			};
+			startButton->OnExit() += [startImage, assetSubsystem]() {
+				startImage->SetImage(assetSubsystem->LoadAsset<TextureAsset>("Resources/Textures/Start.dds"));
+			};
+			startButton->OnClick() += [this]() {
+				if (!transition->Request(stageWorld))
+				{
+					LOG_ERROR("스테이지 페이드 전환을 시작하지 못했습니다.");
+				}
+			};
+		}
 	}
 
 	void World_Title::OnExit()

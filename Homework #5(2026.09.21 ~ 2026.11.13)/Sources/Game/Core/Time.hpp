@@ -9,8 +9,10 @@ namespace TUK::Game
 {
 	namespace Time
 	{
-		void Initialize(TimeSubsystem* subsystem);
+		void Initialize(const TimeSubsystem* subsystem);
 		void Release();
+
+		[[nodiscard]] const TimeSubsystem* GetSubsystem() noexcept;
 
 		[[nodiscard]] f32 GetTimeScale();
 

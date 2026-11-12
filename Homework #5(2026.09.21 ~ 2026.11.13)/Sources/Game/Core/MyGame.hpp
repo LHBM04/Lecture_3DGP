@@ -22,6 +22,13 @@ namespace TUK::Game
 		void Shutdown() override;
 
 	private:
+		void OnInputSubsystemAdded(InputSubsystem* subsystem);
+		void OnInputSubsystemRemoved(InputSubsystem* subsystem);
+		void OnWorldSubsystemAdded(WorldSubsystem* subsystem);
+		void OnAssetSubsystemAdded(AssetSubsystem* subsystem);
+		void OnAssetSubsystemRemoved(AssetSubsystem* subsystem);
+
+		EventSubsystem* eventSubsystem{ nullptr };
 		DisplaySubsystem* displaySubsystem{ nullptr };
 		RenderSubsystem* renderSubsystem{ nullptr };
 		WorldSubsystem* worldSubsystem{ nullptr };

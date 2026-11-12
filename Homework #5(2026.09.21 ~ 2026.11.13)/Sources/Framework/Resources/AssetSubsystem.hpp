@@ -12,6 +12,8 @@
 #include <utility>
 #include <vector>
 
+#include <directx/d3d12.h>
+
 #include "../Core/AppSubsystem.hpp"
 #include "../Core/Common.hpp"
 
@@ -20,6 +22,7 @@
 
 namespace TUK::Framework
 {
+	class MaterialAsset;
 	class World;
 
 	class AssetSubsystem : public AppSubsystem
@@ -29,9 +32,6 @@ namespace TUK::Framework
 
 		template <std::derived_from<AssetLoader<>> TAssetLoader, class... TArgs>
 		void AddLoader(TArgs&&... args);
-
-		template <std::derived_from<Asset> TAsset>
-		[[nodiscard]] const TAsset* FindLoadedAsset(const std::filesystem::path& path) const noexcept;
 
 		template <std::derived_from<Asset> TAsset>
 		[[nodiscard]] const TAsset* LoadAsset(const std::filesystem::path& path);
@@ -50,6 +50,9 @@ namespace TUK::Framework
 		void OnShutdown() override;
 
 	private:
+		template <std::derived_from<Asset> TAsset>
+		[[nodiscard]] const TAsset* GetLoadedAsset(const std::filesystem::path& path) const noexcept;
+
 		using AssetLoaderList = std::vector<std::unique_ptr<AssetLoader<>>>;
 		using AssetLoaderDict = std::unordered_map<std::type_index, AssetLoader<>*>;
 
@@ -90,7 +93,7 @@ namespace TUK::Framework
 	}
 
 	template <std::derived_from<Asset> TAsset>
-	const TAsset* AssetSubsystem::FindLoadedAsset(const std::filesystem::path& path) const noexcept
+	const TAsset* AssetSubsystem::GetLoadedAsset(const std::filesystem::path& path) const noexcept
 	{
 		const auto cached = assetsByPath.find(path.lexically_normal());
 		if (cached == assetsByPath.end())

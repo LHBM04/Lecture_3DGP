@@ -12,14 +12,18 @@ namespace TUK::Game
 		void Initialize(const InputProvider* newProvide);
 		void Release();
 
-		bool IsKeyPressed(KeyCode keyCode);
-		bool IsKeyHeld(KeyCode keyCode);
-		bool IsKeyReleased(KeyCode keyCode);
+		[[nodiscard]] bool IsKeyPressed(KeyCode keyCode);
+		[[nodiscard]] bool IsKeyHeld(KeyCode keyCode);
+		[[nodiscard]] bool IsKeyReleased(KeyCode keyCode);
 
-		bool IsMouseButtonPressed(ButtonCode button);
-		bool IsMouseButtonHeld(ButtonCode button);
-		bool IsMouseButtonReleased(ButtonCode button);
+		[[nodiscard]] bool IsMouseButtonPressed(ButtonCode button);
+		[[nodiscard]] bool IsMouseButtonHeld(ButtonCode button);
+		[[nodiscard]] bool IsMouseButtonReleased(ButtonCode button);
 
+		[[nodiscard]] float GetHorizontal(KeyCode left, KeyCode right);
+		[[nodiscard]] float GetVertical(KeyCode up, KeyCode Down);
+
+		[[nodiscard]] Vector2D<i32> GetMousePosition() noexcept;
 		[[nodiscard]] Vector2D<i32> GetMousePositionDelta() noexcept;
 	}
 }

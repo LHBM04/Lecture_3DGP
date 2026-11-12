@@ -1,17 +1,21 @@
 ﻿#include "Precompiled.hpp"
 #include "ModelAssetLoader.hpp"
 
+#include <array>
 #include <filesystem>
+#include <fstream>
 #include <format>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "../Core/BinaryReader.hpp"
+
 #include "AssetSubsystem.hpp"
 #include "MaterialAsset.hpp"
 #include "MeshAsset.hpp"
-#include "ResourceImporter.hpp"
+#include "ResourcePath.hpp"
 
 namespace TUK::Framework
 {
@@ -27,60 +31,79 @@ namespace TUK::Framework
 		{
 			return std::unexpected("모델 로더에는 .tukmodel 파일이 필요합니다.");
 		}
-		auto metadata = ResourceImporter::Load<ModelMetadata>(path, ResourceType::MODEL);
-		if (!metadata)
+		std::ifstream file(path, std::ios::binary);
+		if (!file)
 		{
-			return std::unexpected(metadata.error());
+			return std::unexpected("Cannot open resource: " + path.generic_string());
 		}
-		const auto root = ResourceMetadata::FindRoot(path, "Models");
+		BinaryReader reader(file);
+		const auto root = FindResourceRoot(path, "Models");
 		if (!root)
 		{
 			return std::unexpected(root.error());
 		}
-		struct PendingNode
+		struct PendingChildren final
 		{
-			const ModelNodeMetadata* data;
 			i32 parentIndex;
+			i32 count;
 		};
-		std::vector<PendingNode> pending{ { &metadata->root, -1 } };
+		std::vector<PendingChildren> pending{ { -1, 1 } };
 		std::vector<Submodel> nodes;
 		while (!pending.empty())
 		{
-			const auto [data, parentIndex] = pending.back();
-			pending.pop_back();
-			if (nodes.size() >= SerializationLimits::MAX_ELEMENTS)
+			if (pending.back().count == 0)
 			{
-				return std::unexpected("모델의 노드 수가 제한을 초과했습니다.");
+				pending.pop_back();
+				continue;
 			}
-			const i32 index = static_cast<i32>(nodes.size());
-			Submodel node{};
-			node.name = data->name;
-			node.parentIndex = parentIndex;
-			node.localPosition.Set(data->localPosition[0], data->localPosition[1], data->localPosition[2]);
-			node.localRotation.Set(data->localRotation[0], data->localRotation[1], data->localRotation[2], data->localRotation[3]);
-			node.localScale.Set(data->localScale[0], data->localScale[1], data->localScale[2]);
-			for (const auto& part : data->renderParts)
+			if (nodes.size() >= BinaryReader::MAX_ELEMENTS || pending.size() > BinaryReader::MAX_DEPTH)
 			{
-				const auto meshPath = ResourceMetadata::ResolvePath(*root, part.mesh);
-				const auto materialPath = ResourceMetadata::ResolvePath(*root, part.material);
+				return std::unexpected("Model node count or hierarchy depth exceeds its limit");
+			}
+			Submodel node{};
+			node.parentIndex = pending.back().parentIndex;
+			--pending.back().count;
+			std::array<f32, 3> position{};
+			std::array<f32, 4> rotation{};
+			std::array<f32, 3> scale{};
+			std::string meshReference;
+			std::string materialReference;
+			i32 childCount = 0;
+			if (!reader.Read(node.name, position, rotation, scale, meshReference, materialReference)
+				|| !reader.ReadCount(childCount, sizeof(Submodel)))
+			{
+				return std::unexpected("Invalid model node data: " + path.generic_string());
+			}
+			node.localPosition.Set(position[0], position[1], position[2]);
+			node.localRotation.Set(rotation[0], rotation[1], rotation[2], rotation[3]);
+			node.localScale.Set(scale[0], scale[1], scale[2]);
+			if (!meshReference.empty() && !materialReference.empty())
+			{
+				const auto meshPath = ResolveResourcePath(*root, meshReference);
+				const auto materialPath = ResolveResourcePath(*root, materialReference);
 				if (!meshPath || !materialPath)
 				{
-					return std::unexpected("모델의 리소스 참조 경로가 유효하지 않습니다.");
+					return std::unexpected("Invalid model resource reference");
 				}
 				const MeshAsset* mesh = assets->LoadAsset<MeshAsset>(*meshPath);
 				const MaterialAsset* material = assets->LoadAsset<MaterialAsset>(*materialPath);
 				if (!mesh || !material)
 				{
-					return std::unexpected(std::format("모델의 렌더 파트를 로드하지 못했습니다: {}, {}",
+					return std::unexpected(std::format("Cannot load model render part: {}, {}",
 						meshPath->generic_string(), materialPath->generic_string()));
 				}
 				node.renderParts.push_back({ mesh, material });
 			}
+			const i32 index = static_cast<i32>(nodes.size());
 			nodes.push_back(std::move(node));
-			for (auto child = data->children.crbegin(); child != data->children.crend(); ++child)
+			if (childCount > 0)
 			{
-				pending.push_back({ &*child, index });
+				pending.push_back({ index, childCount });
 			}
+		}
+		if (!reader.IsAtEnd())
+		{
+			return std::unexpected("Unexpected trailing model data: " + path.generic_string());
 		}
 		return std::make_unique<ModelAsset>(path, std::move(nodes));
 	}

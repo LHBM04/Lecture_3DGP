@@ -28,35 +28,34 @@ namespace TUK::Framework
 		DirectX::XMFLOAT2 uv0;
 	};
 
-	struct MeshAssetData final
-	{
-		Vector3D<f32> boundsCenter{};
-		Vector3D<f32> boundsExtents{};
-		std::vector<Vector3D<f32>> positions;
-		std::vector<ColorRGBA<f32>> colors;
-		std::vector<Vector3D<f32>> normals;
-		std::vector<Vector2D<f32>> textureCoords;
-		std::vector<MeshVertex> vertices;
-		std::vector<u32> indices;
-		GPUMesh gpuMesh;
-	};
-
 	class MeshAsset final : public Asset
 	{
 	public:
-		explicit MeshAsset(
-			std::filesystem::path path,
-			MeshAssetData&& data) noexcept;
+		explicit MeshAsset(std::filesystem::path path, GPUMesh&& gpuMesh) noexcept;
 
 		[[nodiscard]] const Vector3D<f32>& GetBoundsCenter() const noexcept;
+		void SetBoundsCenter(const Vector3D<f32>& value) noexcept;
+
 		[[nodiscard]] const Vector3D<f32>& GetBoundsExtents() const noexcept;
+		void SetBoundsExtents(const Vector3D<f32>& value) noexcept;
 
 		[[nodiscard]] std::span<const Vector3D<f32>> GetPositions() const noexcept;
+		void SetPositions(std::vector<Vector3D<f32>>&& value) noexcept;
+
 		[[nodiscard]] std::span<const ColorRGBA<f32>> GetColors() const noexcept;
+		void SetColors(std::vector<ColorRGBA<f32>>&& value) noexcept;
+
 		[[nodiscard]] std::span<const Vector3D<f32>> GetNormals() const noexcept;
+		void SetNormals(std::vector<Vector3D<f32>>&& value) noexcept;
+
 		[[nodiscard]] std::span<const Vector2D<f32>> GetTextureCoords() const noexcept;
+		void SetTextureCoords(std::vector<Vector2D<f32>>&& value) noexcept;
+
 		[[nodiscard]] std::span<const MeshVertex> GetVertices() const noexcept;
+		void SetVertices(std::vector<MeshVertex>&& value) noexcept;
+
 		[[nodiscard]] std::span<const u32> GetIndices() const noexcept;
+		void SetIndices(std::vector<u32>&& value) noexcept;
 
 		[[nodiscard]] const GPUMesh& GetGPUMesh() const noexcept;
 
@@ -72,19 +71,9 @@ namespace TUK::Framework
 		GPUMesh gpuMesh;
 	};
 
-	inline MeshAsset::MeshAsset(
-		std::filesystem::path path,
-		MeshAssetData&& data) noexcept
+	inline MeshAsset::MeshAsset(std::filesystem::path path, GPUMesh&& gpuMesh) noexcept
 		: Asset(std::move(path))
-		, boundsCenter(data.boundsCenter)
-		, boundsExtents(data.boundsExtents)
-		, positions(std::move(data.positions))
-		, colors(std::move(data.colors))
-		, normals(std::move(data.normals))
-		, textureCoords(std::move(data.textureCoords))
-		, vertices(std::move(data.vertices))
-		, indices(std::move(data.indices))
-		, gpuMesh(std::move(data.gpuMesh))
+		, gpuMesh(std::move(gpuMesh))
 	{
 	}
 
@@ -93,9 +82,19 @@ namespace TUK::Framework
 		return boundsCenter;
 	}
 
+	inline void MeshAsset::SetBoundsCenter(const Vector3D<f32>& value) noexcept
+	{
+		boundsCenter = value;
+	}
+
 	inline const Vector3D<f32>& MeshAsset::GetBoundsExtents() const noexcept
 	{
 		return boundsExtents;
+	}
+
+	inline void MeshAsset::SetBoundsExtents(const Vector3D<f32>& value) noexcept
+	{
+		boundsExtents = value;
 	}
 
 	inline std::span<const Vector3D<f32>> MeshAsset::GetPositions() const noexcept
@@ -103,9 +102,19 @@ namespace TUK::Framework
 		return positions;
 	}
 
+	inline void MeshAsset::SetPositions(std::vector<Vector3D<f32>>&& value) noexcept
+	{
+		positions = std::move(value);
+	}
+
 	inline std::span<const ColorRGBA<f32>> MeshAsset::GetColors() const noexcept
 	{
 		return colors;
+	}
+
+	inline void MeshAsset::SetColors(std::vector<ColorRGBA<f32>>&& value) noexcept
+	{
+		colors = std::move(value);
 	}
 
 	inline std::span<const Vector3D<f32>> MeshAsset::GetNormals() const noexcept
@@ -113,9 +122,19 @@ namespace TUK::Framework
 		return normals;
 	}
 
+	inline void MeshAsset::SetNormals(std::vector<Vector3D<f32>>&& value) noexcept
+	{
+		normals = std::move(value);
+	}
+
 	inline std::span<const Vector2D<f32>> MeshAsset::GetTextureCoords() const noexcept
 	{
 		return textureCoords;
+	}
+
+	inline void MeshAsset::SetTextureCoords(std::vector<Vector2D<f32>>&& value) noexcept
+	{
+		textureCoords = std::move(value);
 	}
 
 	inline std::span<const MeshVertex> MeshAsset::GetVertices() const noexcept
@@ -123,9 +142,19 @@ namespace TUK::Framework
 		return vertices;
 	}
 
+	inline void MeshAsset::SetVertices(std::vector<MeshVertex>&& value) noexcept
+	{
+		vertices = std::move(value);
+	}
+
 	inline std::span<const u32> MeshAsset::GetIndices() const noexcept
 	{
 		return indices;
+	}
+
+	inline void MeshAsset::SetIndices(std::vector<u32>&& value) noexcept
+	{
+		indices = std::move(value);
 	}
 
 	inline const GPUMesh& MeshAsset::GetGPUMesh() const noexcept

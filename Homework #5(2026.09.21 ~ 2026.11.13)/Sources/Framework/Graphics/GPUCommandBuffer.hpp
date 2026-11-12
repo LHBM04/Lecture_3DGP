@@ -75,7 +75,7 @@ namespace TUK::Framework
 
 		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
 
-		void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) noexcept;
+		void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitive) noexcept;
 		void SetViewport(const D3D12_VIEWPORT& viewport) noexcept;
 		void SetScissorRect(const D3D12_RECT& scissorRect) noexcept;
 
@@ -86,7 +86,7 @@ namespace TUK::Framework
 		void DrawIndexed(u32 indexCount, u32 firstIndex = 0, i32 baseVertex = 0);
 
 		void ClearRenderTarget(const f32 (&color)[4], const D3D12_RECT& rect) noexcept;
-		void ClearDepth(f32 depth, const D3D12_RECT& rect) noexcept;
+		void ClearDepthStencil(f32 depth, const D3D12_RECT& rect) noexcept;
 		void SetGPUTarget(const GPUTarget& target) noexcept;
 
 		[[nodiscard]] DXGI_FORMAT GetActiveTargetFormat() const noexcept;

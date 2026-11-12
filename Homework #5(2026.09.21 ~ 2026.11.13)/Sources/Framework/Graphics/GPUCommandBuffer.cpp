@@ -152,10 +152,10 @@ namespace TUK::Framework
 		d3dCommandList->SetPipelineState(&pipelineState.GetD3DPipelineState());
 	}
 
-	void GPUCommandBuffer::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) noexcept
+	void GPUCommandBuffer::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitive) noexcept
 	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-		d3dCommandList->IASetPrimitiveTopology(topology);
+		d3dCommandList->IASetPrimitiveTopology(primitive);
 	}
 
 	void GPUCommandBuffer::SetViewport(const D3D12_VIEWPORT& viewport) noexcept
@@ -201,7 +201,7 @@ namespace TUK::Framework
 		d3dCommandList->ClearRenderTargetView(activeRTV, color, 1, &rect);
 	}
 
-	void GPUCommandBuffer::ClearDepth(f32 depth, const D3D12_RECT& rect) noexcept
+	void GPUCommandBuffer::ClearDepthStencil(f32 depth, const D3D12_RECT& rect) noexcept
 	{
 		ASSERT_FMT(activeDSV.ptr, "깊이 버퍼가 설정되지 않았습니다.");
 		d3dCommandList->ClearDepthStencilView(activeDSV, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 1, &rect);
@@ -283,11 +283,12 @@ namespace TUK::Framework
 	std::expected<std::pair<const GPUBuffer*, u64>, std::string> GPUCommandBuffer::UploadConstants(
 		std::span<const std::byte> bytes)
 	{
+		ASSERT_FMT(device, "GPU 디바이스가 nullptr입니다.");
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
 
 		constexpr u64 CONSTANT_BUFFER_PAGE_SIZE = 64 * 1024;
 		constexpr u64 ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
-		if (!device || bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
+		if (bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
 		{
 			return std::unexpected("GPU 디바이스 또는 상수 버퍼 데이터가 유효하지 않습니다.");
 		}

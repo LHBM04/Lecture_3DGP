@@ -16,7 +16,7 @@ namespace TUK::Framework
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 		GPUBuffer indexBuffer;
 		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-		D3D12_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+		D3D12_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
 	};
 
 	class GPUMesh
@@ -47,7 +47,7 @@ namespace TUK::Framework
 		GPUBuffer indexBuffer;
 		D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
-		D3D12_PRIMITIVE_TOPOLOGY topology;
+		D3D12_PRIMITIVE_TOPOLOGY primitive;
 	};
 
 	inline GPUMesh::GPUMesh(GPUMeshCreateInfo&& createInfo) noexcept
@@ -55,7 +55,7 @@ namespace TUK::Framework
 		, vertexBufferView(createInfo.vertexBufferView)
 		, indexBuffer(std::move(createInfo.indexBuffer))
 		, indexBufferView(createInfo.indexBufferView)
-		, topology(createInfo.topology)
+		, primitive(createInfo.primitive)
 	{
 	}
 }

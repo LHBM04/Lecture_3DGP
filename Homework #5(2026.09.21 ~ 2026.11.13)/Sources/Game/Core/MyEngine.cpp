@@ -7,10 +7,19 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Core/Common.hpp"
 
+#include "Time.hpp"
+
 namespace TUK::Game
 {
 	SystemStatus MyEngine::Startup()
 	{
+		OnSubsystemAdded<TimeSubsystem>(&Time::Initialize);
+		OnSubsystemRemoved<TimeSubsystem>([](TimeSubsystem*)
+		{
+			Time::Release();
+		});
+		OnSubsystemAdded<RenderSubsystem>(this, &MyEngine::OnRenderSubsystemAdded);
+
 		AddSubsystem<TimeSubsystem>();
 
 		displaySubsystem = AddSubsystem<DisplaySubsystem>();
@@ -26,7 +35,7 @@ namespace TUK::Game
 			LOG_ERROR("이벤트 서브시스템을 추가하지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
-		
+
 		renderSubsystem = AddSubsystem<RenderSubsystem>();
 		if (!renderSubsystem)
 		{
@@ -34,9 +43,14 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		eventSubsystem->OnEvent<DisplayCreateEvent>() += std::bind_front(&RenderSubsystem::OnDisplayCreate, renderSubsystem);
-		eventSubsystem->OnEvent<DisplayCloseEvent>() += std::bind_front(&RenderSubsystem::OnDisplayClose, renderSubsystem);
-
 		return Engine::Startup();
+	}
+
+	void MyEngine::OnRenderSubsystemAdded(RenderSubsystem* subsystem)
+	{
+		ASSERT_FMT(eventSubsystem, "이벤트 서브시스템이 nullptr입니다.");
+
+		eventSubsystem->Subscribe<DisplayCreateEvent>(subsystem, &RenderSubsystem::OnDisplayCreate);
+		eventSubsystem->Subscribe<DisplayCloseEvent>(subsystem, &RenderSubsystem::OnDisplayClose);
 	}
 }

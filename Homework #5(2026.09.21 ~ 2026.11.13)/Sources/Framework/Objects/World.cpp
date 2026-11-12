@@ -1,8 +1,13 @@
 ﻿#include "Precompiled.hpp"
 #include "World.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <span>
+
 #include "../Graphics/Camera.hpp"
 #include "../Graphics/GPUCommandBuffer.hpp"
+#include "../Graphics/GPUTarget.hpp"
 #include "../Graphics/MeshRenderer.hpp"
 
 #include "../Resources/ModelAsset.hpp"
@@ -106,39 +111,81 @@ namespace TUK::Framework
 
 		RunPhase([this, &commandBuffer]()
 		{
-			// 렌더 콜백은 카메라를 활성화하거나 비활성화할 수 있습니다.
-			const auto frameCameras = cameras;
-			for (Camera* camera : frameCameras)
+			// 렌더 콜백 중 카메라 목록이 변경되어도 현재 순회는 유지합니다.
+			const auto frameCameras = activeCameras;
+			for (Camera* activeCamera : frameCameras)
 			{
+				ASSERT_FMT(activeCamera, "활성화된 카메라가 nullptr입니다.");
+
 				if (!isEntered)
 				{
 					break;
 				}
-				if (!camera->IsEnabled() || camera->IsDestroyed())
+
+				if (!activeCamera->IsEnabled() || activeCamera->IsDestroyed())
 				{
 					continue;
 				}
 
-				const GameObject* owner = camera->GetOwner();
-				if (!owner || !owner->IsEnabled() || owner->IsDestroyed())
+				const GameObject* owner = activeCamera->GetOwner();
+				ASSERT_FMT(owner, "활성화된 카메라의 소유자가 nullptr입니다.");
+
+				if (!owner->IsEnabled() || owner->IsDestroyed())
 				{
 					continue;
 				}
 
-				if (auto result = camera->PrepareRender(commandBuffer); !result)
+				if (commandBuffer.GetActiveTargetFormat() == DXGI_FORMAT_UNKNOWN)
 				{
-					LOG_ERROR("월드의 카메라 설정에 실패했습니다: {}", result.error());
+					LOG_ERROR("카메라를 적용하기 전에 렌더 타깃을 설정해야 합니다.");
 					continue;
 				}
 
-				const Camera::BackgroundPass background = camera->PrepareBackground(commandBuffer, skyboxMaterial);
+				const auto& viewport = activeCamera->GetViewport();
+				const auto& scissor = activeCamera->GetScissorRect();
+				const auto& bounds = commandBuffer.GetActiveTargetBounds();
+				if (viewport.Width <= 0.0f || viewport.Height <= 0.0f)
+				{
+					continue;
+				}
+
+				const f32 targetWidth = static_cast<f32>(bounds.right);
+				const f32 targetHeight = static_cast<f32>(bounds.bottom);
+				const D3D12_RECT clearRect
+				{
+					std::max(scissor.left, static_cast<LONG>(std::floor(std::clamp(viewport.TopLeftX, 0.0f, targetWidth)))),
+					std::max(scissor.top, static_cast<LONG>(std::floor(std::clamp(viewport.TopLeftY, 0.0f, targetHeight)))),
+					std::min(scissor.right, static_cast<LONG>(std::ceil(std::clamp(viewport.TopLeftX + viewport.Width, 0.0f, targetWidth)))),
+					std::min(scissor.bottom, static_cast<LONG>(std::ceil(std::clamp(viewport.TopLeftY + viewport.Height, 0.0f, targetHeight))))
+				};
+				if (clearRect.left >= clearRect.right || clearRect.top >= clearRect.bottom)
+				{
+					continue;
+				}
+
+				struct CameraConstants final
+				{
+					DirectX::XMFLOAT4X4 view;
+					DirectX::XMFLOAT4X4 projection;
+				};
+				CameraConstants constants{};
+				DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(activeCamera->GetViewMatrix()));
+				DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(activeCamera->GetProjectionMatrix()));
+				constexpr u32 CAMERA_ROOT_SLOT = 0;
+				if (auto uploaded = commandBuffer.SetGraphicsConstants(CAMERA_ROOT_SLOT, std::as_bytes(std::span(&constants, 1))); !uploaded)
+				{
+					LOG_ERROR("월드의 카메라 상수 설정에 실패했습니다: {}", uploaded.error());
+					continue;
+				}
+
+				commandBuffer.SetViewport(viewport);
+				commandBuffer.SetScissorRect(scissor);
+				const auto& clearColor = activeCamera->GetClearColor();
+				const f32 color[]{ clearColor.GetR(), clearColor.GetG(), clearColor.GetB(), clearColor.GetA() };
+				commandBuffer.ClearRenderTarget(color, clearRect);
+				commandBuffer.ClearDepthStencil(GPUTarget::DEPTH_CLEAR_VALUE, clearRect);
 
 				RenderObjects(&GameObject::Render, commandBuffer);
-
-				if (isEntered)
-				{
-					camera->RenderBackground(commandBuffer, background);
-				}
 			}
 		});
 	}
@@ -162,7 +209,6 @@ namespace TUK::Framework
 			{
 				isEntered = false;
 				OnExit();
-				skyboxMaterial = nullptr;
 			}
 		};
 
@@ -287,11 +333,6 @@ namespace TUK::Framework
 	GameObject* World::Instantiate(const ModelAsset* modelAsset, Transform* parent)
 	{
 		ASSERT_FMT(modelAsset, "인스턴스화할 모델이 nullptr입니다.");
-
-		if (!modelAsset)
-		{
-			return nullptr;
-		}
 
 		const ModelAsset& model = *modelAsset;
 
@@ -420,7 +461,7 @@ namespace TUK::Framework
 	{
 		if (objects.empty())
 		{
-			cameras.clear();
+			activeCameras.clear();
 			return;
 		}
 
@@ -433,16 +474,16 @@ namespace TUK::Framework
 			gameObject.reset();
 		}
 
-		cameras.clear();
+		activeCameras.clear();
 	}
 
 	void World::AddCamera(Camera* camera)
 	{
 		ASSERT_FMT(camera, "등록할 카메라가 nullptr입니다.");
 
-		if (camera && std::ranges::find(cameras, camera) == cameras.end())
+		if (camera && std::ranges::find(activeCameras, camera) == activeCameras.end())
 		{
-			cameras.push_back(camera);
+			activeCameras.push_back(camera);
 		}
 	}
 
@@ -450,7 +491,7 @@ namespace TUK::Framework
 	{
 		ASSERT_FMT(camera, "등록 해제할 카메라가 nullptr입니다.");
 
-		std::erase(cameras, camera);
+		std::erase(activeCameras, camera);
 	}
 
 	GameObject* World::FindGameObjectByName(std::string_view name) noexcept

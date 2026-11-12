@@ -3,48 +3,28 @@
 
 #include <array>
 #include <span>
+#include <utility>
 
-#include "../Core/App.hpp"
+#include <directx/d3dx12.h>
+
 #include "../Core/Common.hpp"
 
 #include "../Objects/GameObject.hpp"
 #include "../Objects/Transform.hpp"
 
 #include "../Graphics/GPUCommandBuffer.hpp"
+#include "../Graphics/GPUDevice.hpp"
+#include "../Graphics/GPUTarget.hpp"
 
-#include "../Resources/AssetSubsystem.hpp"
 #include "../Resources/MaterialAsset.hpp"
+#include "../Resources/ShaderAsset.hpp"
 #include "../Resources/TextureAsset.hpp"
 
 namespace TUK::Framework
 {
-	void ImageView::OnStart()
-	{
-		AssetSubsystem* assets = App::GetInstance().GetSubsystem<AssetSubsystem>();
-		if (!assets)
-		{
-			LOG_ERROR("UI 머티리얼을 로드할 에셋 서브시스템이 없습니다.");
-			return;
-		}
-
-		material = assets->LoadAsset<MaterialAsset>("Resources/Materials/ImageUI.tukmaterial");
-		if (!material || material->GetPass() != MaterialPass::IMAGE_UI)
-		{
-			LOG_ERROR("ImageUI 머티리얼을 로드하지 못했습니다.");
-			material = nullptr;
-		}
-	}
-
 	void ImageView::OnPostRender(GPUCommandBuffer& commandBuffer)
 	{
-		if (!image || !material)
-		{
-			return;
-		}
-
-		const D3D12_VIEWPORT& viewport = commandBuffer.GetActiveViewport();
-		if (material->GetTargetFormat() != commandBuffer.GetActiveTargetFormat() ||
-			viewport.Width <= 0.0f || viewport.Height <= 0.0f)
+		if (!texture || !material)
 		{
 			return;
 		}
@@ -73,7 +53,7 @@ namespace TUK::Framework
 		};
 		static_assert(sizeof(ImageUIConstants) == 16);
 
-		const ImageUIConstants constants{ { viewport.Width, viewport.Height } };
+		const ImageUIConstants constants{ { 1280, 960 } };
 		constexpr u32 IMAGE_UI_ROOT_SLOT = 2;
 		if (auto result = commandBuffer.SetGraphicsConstants(IMAGE_UI_ROOT_SLOT, std::as_bytes(std::span(&constants, 1))); !result)
 		{
@@ -81,7 +61,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		const std::array<const GPUTexture2D*, GPUCommandBuffer::TEXTURE_SLOT_COUNT> textures{ &image->GetTexture() };
+		const std::array<const GPUTexture2D*, GPUCommandBuffer::TEXTURE_SLOT_COUNT> textures{ &texture->GetTexture() };
 		if (auto result = commandBuffer.BindTextures(textures); !result)
 		{
 			LOG_ERROR("UI 이미지 텍스처를 바인딩하지 못했습니다: {}", result.error());
@@ -89,7 +69,7 @@ namespace TUK::Framework
 		}
 
 		commandBuffer.SetGPUGraphicsPipelineState(material->GetGraphicsPipelineState());
-		commandBuffer.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		commandBuffer.SetPrimitiveTopology(material->GetPrimitive());
 		constexpr u32 IMAGE_VERTEX_COUNT = 4;
 		commandBuffer.Draw(IMAGE_VERTEX_COUNT);
 	}

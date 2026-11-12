@@ -3,7 +3,7 @@
 #include "Resources/Asset.hpp"
 #include "Resources/AssetLoader.hpp"
 #include "Resources/AssetSubsystem.hpp"
-#include "Resources/Cubemap.hpp"
+#include "Resources/CubemapAsset.hpp"
 #include "Resources/CubemapLoader.hpp"
 #include "Resources/MaterialAsset.hpp"
 #include "Resources/MaterialAssetLoader.hpp"
@@ -20,4 +20,3 @@
 #include "Resources/FontAssetLoader.hpp"
 #include "Resources/AnimationAsset.hpp"
 #include "Resources/AnimationAssetLoader.hpp"
-#include "Resources/ResourceImporter.hpp"

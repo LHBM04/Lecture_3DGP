@@ -2,17 +2,20 @@
 #include "MaterialAssetLoader.hpp"
 
 #include <algorithm>
+#include <array>
 #include <filesystem>
+#include <fstream>
 #include <format>
 #include <memory>
 #include <string>
 #include <utility>
 
+#include "../Core/BinaryReader.hpp"
+
 #include "../Graphics/GPUDevice.hpp"
-#include "../Graphics/GPUTarget.hpp"
 
 #include "AssetSubsystem.hpp"
-#include "ResourceImporter.hpp"
+#include "ResourcePath.hpp"
 #include "ShaderAsset.hpp"
 #include "TextureAsset.hpp"
 
@@ -27,47 +30,58 @@ namespace TUK::Framework
 			return std::unexpected("머티리얼 로더의 에셋 서브시스템이 nullptr입니다.");
 		}
 
-		if (path.extension() != ".tukmaterial")
+		if (path.extension() != ".tukmat")
 		{
-			return std::unexpected("머티리얼 로더에는 .tukmaterial 파일이 필요합니다.");
+			return std::unexpected("머티리얼 로더에는 .tukmat 파일이 필요합니다.");
 		}
-		auto metadata = ResourceImporter::Load<MaterialMetadata>(path, ResourceType::MATERIAL);
-		if (!metadata)
+		std::ifstream file(path, std::ios::binary);
+		if (!file)
 		{
-			return std::unexpected(metadata.error());
+			return std::unexpected("Cannot open resource: " + path.generic_string());
 		}
-		if (metadata->pass > static_cast<u32>(MaterialPass::IMAGE_UI))
+		BinaryReader reader(file);
+		std::array<f32, 4> base{};
+		std::array<f32, 4> emission{};
+		f32 metallic = 0.0f;
+		f32 roughness = 0.5f;
+		std::array<std::string, 9> textureReferences;
+		std::string vertexShader;
+		std::string hullShader;
+		std::string domainShader;
+		std::string geometryShader;
+		std::string pixelShader;
+		if (!reader.Read(base, emission, metallic, roughness, textureReferences,
+			vertexShader, hullShader, domainShader, geometryShader, pixelShader) || !reader.IsAtEnd())
 		{
-			return std::unexpected("지원하지 않는 머티리얼 패스입니다.");
+			return std::unexpected("Invalid material data: " + path.generic_string());
 		}
-		const auto root = ResourceMetadata::FindRoot(path, "Materials");
+		const auto root = FindResourceRoot(path, "Materials");
 		if (!root)
 		{
 			return std::unexpected(root.error());
 		}
-		const auto vertexPath = ResourceMetadata::ResolvePath(*root, metadata->vertexShader);
-		const auto pixelPath = ResourceMetadata::ResolvePath(*root, metadata->pixelShader);
+		const auto vertexPath = ResolveResourcePath(*root, vertexShader);
+		const auto pixelPath = ResolveResourcePath(*root, pixelShader);
 		if (!vertexPath || !pixelPath)
 		{
 			return std::unexpected("머티리얼의 셰이더 참조 경로가 유효하지 않습니다.");
 		}
-		const auto& base = metadata->baseColor;
-		const auto& emission = metadata->emissiveColor;
-		const auto& specular = metadata->specularColor;
 		const ColorRGBA<f32> parsedBaseColor{ base[0], base[1], base[2], base[3] };
 		const ColorRGBA<f32> parsedEmissiveColor{ emission[0], emission[1], emission[2], emission[3] };
-		const ColorRGBA<f32> parsedSpecularColor{ specular[0], specular[1], specular[2], specular[3] };
-		const f32 parsedMetallic = std::clamp(metadata->metallic, 0.0f, 1.0f);
-		const f32 parsedRoughness = std::clamp(metadata->roughness, 0.0f, 1.0f);
-		const MaterialPass pass = static_cast<MaterialPass>(metadata->pass);
+		const ColorRGBA<f32> parsedSpecularColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		const f32 parsedMetallic = std::clamp(metallic, 0.0f, 1.0f);
+		const f32 parsedRoughness = std::clamp(roughness, 0.0f, 1.0f);
 		MaterialTextures textures{};
-		for (const auto& binding : metadata->textures)
+		// Height is stored at file slot 6, but has no runtime texture slot.
+		constexpr usize FILE_SLOTS[]{ 0, 1, 2, 3, 4, 5, 7, 8 };
+		for (usize slot = 0; slot < textures.size(); ++slot)
 		{
-			if (binding.slot >= textures.size() || textures[binding.slot] || pass != MaterialPass::SURFACE)
+			const auto& reference = textureReferences[FILE_SLOTS[slot]];
+			if (reference.empty())
 			{
-				return std::unexpected("머티리얼의 텍스처 슬롯이 유효하지 않습니다.");
+				continue;
 			}
-			const auto texturePath = ResourceMetadata::ResolvePath(*root, binding.path);
+			const auto texturePath = ResolveResourcePath(*root, reference);
 			if (!texturePath)
 			{
 				return std::unexpected(texturePath.error());
@@ -75,9 +89,9 @@ namespace TUK::Framework
 			const TextureAsset* texture = assets->LoadAsset<TextureAsset>(*texturePath);
 			if (!texture)
 			{
-				return std::unexpected("머티리얼 텍스처를 로드하지 못했습니다: " + texturePath->generic_string());
+				return std::unexpected("Cannot load material texture: " + texturePath->generic_string());
 			}
-			textures[binding.slot] = texture;
+			textures[slot] = texture;
 		}
 
 		const ShaderAsset* vertex = assets->LoadAsset<ShaderAsset>(*vertexPath);
@@ -97,9 +111,9 @@ namespace TUK::Framework
 		const ShaderAsset* geometry = nullptr;
 		const std::pair<const std::string*, const ShaderAsset**> extraShaders[]
 		{
-			{ &metadata->hullShader, &hull },
-			{ &metadata->domainShader, &domain },
-			{ &metadata->geometryShader, &geometry }
+			{ &hullShader, &hull },
+			{ &domainShader, &domain },
+			{ &geometryShader, &geometry }
 		};
 		for (const auto& [name, target] : extraShaders)
 		{
@@ -107,7 +121,7 @@ namespace TUK::Framework
 			{
 				continue;
 			}
-			const auto shaderPath = ResourceMetadata::ResolvePath(*root, *name);
+			const auto shaderPath = ResolveResourcePath(*root, *name);
 			if (!shaderPath || !(*target = assets->LoadAsset<ShaderAsset>(*shaderPath)))
 			{
 				return std::unexpected("Cannot load material shader: " + *name);
@@ -118,59 +132,18 @@ namespace TUK::Framework
 			return std::unexpected("Hull and domain shaders must be provided together");
 		}
 
-		// 이걸 고정시켜야 쉐이더를 추가하기 수월해짐
-		// 안 그러면 쉐이더 만들 때마다 레이아웃을 추가로 넣어야 함
-		static constexpr D3D12_INPUT_ELEMENT_DESC INPUT_ELEMENTS[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-		};
-
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC description = vertex->CreatePipelineDescription(targetFormat);
 		description.VS = vertex->GetShader().GetD3DBytecode();
 		description.PS = pixel->GetShader().GetD3DBytecode();
+		description.HS = hull ? hull->GetShader().GetD3DBytecode() : D3D12_SHADER_BYTECODE{};
+		description.DS = domain ? domain->GetShader().GetD3DBytecode() : D3D12_SHADER_BYTECODE{};
+		description.GS = geometry ? geometry->GetShader().GetD3DBytecode() : D3D12_SHADER_BYTECODE{};
+
+		D3D_PRIMITIVE_TOPOLOGY primitive = vertex->GetPrimitive();
 		if (hull)
 		{
-			description.HS = hull->GetShader().GetD3DBytecode();
-			description.DS = domain->GetShader().GetD3DBytecode();
-		}
-		if (geometry)
-		{
-			description.GS = geometry->GetShader().GetD3DBytecode();
-		}
-		if (pass == MaterialPass::SURFACE)
-		{
-			description.InputLayout = { INPUT_ELEMENTS, static_cast<UINT>(std::size(INPUT_ELEMENTS)) };
-		}
-		description.PrimitiveTopologyType = hull ? D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH : D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		description.NumRenderTargets = 1;
-		description.RTVFormats[0] = targetFormat;
-		description.SampleMask = UINT_MAX;
-		description.SampleDesc = { 1, 0 };
-		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		description.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		description.RasterizerState.CullMode = pass == MaterialPass::SURFACE ? D3D12_CULL_MODE_BACK : D3D12_CULL_MODE_NONE;
-		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
-		if (pass == MaterialPass::SKYBOX)
-		{
-			description.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-			description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		}
-		else if (pass == MaterialPass::IMAGE_UI)
-		{
-			description.DepthStencilState.DepthEnable = FALSE;
-			description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-
-			auto& blend = description.BlendState.RenderTarget[0];
-			blend.BlendEnable = TRUE;
-			blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-			blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-			blend.SrcBlendAlpha = D3D12_BLEND_ONE;
-			blend.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+			description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+			primitive = D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
 		}
 
 		auto pipeline = device.CreateGraphicsPipelineState(description);
@@ -179,23 +152,18 @@ namespace TUK::Framework
 			return std::unexpected(std::format("그래픽스 파이프라인 상태 생성에 실패했습니다: {}", pipeline.error()));
 		}
 
-		return std::make_unique<MaterialAsset>(
-			path,
-			MaterialAssetData{
-				.cullMode = description.RasterizerState.CullMode,
-				.fillMode = D3D12_FILL_MODE_SOLID,
-				.baseColor = parsedBaseColor,
-				.emissiveColor = parsedEmissiveColor,
-				.specularColor = parsedSpecularColor,
-				.metallic = parsedMetallic,
-				.roughness = parsedRoughness,
-				.textures = textures,
-				.vertexShader = vertex,
-				.pixelShader = pixel,
-				.pipelineState = std::move(*pipeline),
-				.targetFormat = targetFormat,
-				.pass = pass,
-				.topology = hull ? D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST : D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
-			});
+		auto material = std::make_unique<MaterialAsset>(path, vertex, pixel, std::move(*pipeline));
+		material->SetCullMode(description.RasterizerState.CullMode);
+		material->SetFillMode(description.RasterizerState.FillMode);
+		material->SetBaseColor(parsedBaseColor);
+		material->SetEmissiveColor(parsedEmissiveColor);
+		material->SetSpecularColor(parsedSpecularColor);
+		material->SetMetallic(parsedMetallic);
+		material->SetRoughness(parsedRoughness);
+		material->SetTextures(textures);
+		material->SetTargetFormat(description.RTVFormats[0]);
+		material->SetPrimitive(primitive);
+
+		return material;
 	}
 }

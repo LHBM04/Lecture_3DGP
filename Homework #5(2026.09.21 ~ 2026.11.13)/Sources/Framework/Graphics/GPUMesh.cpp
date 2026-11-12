@@ -36,6 +36,6 @@ namespace TUK::Framework
 
 	D3D12_PRIMITIVE_TOPOLOGY GPUMesh::GetD3DTopology() const noexcept
 	{
-		return topology;
+		return primitive;
 	}
 }

@@ -69,10 +69,13 @@ namespace TUK::Framework
 		Delegate& operator=(Delegate&&) noexcept = default;
 
 		Delegate& operator+=(Listener callback) noexcept;
+
 		ListenerId AddListener(Listener callback);
 		void RemoveListener(ListenerId id) noexcept;
-		void Clear() noexcept;
+		
 		void Broadcast(TArgs... args) const;
+
+		void Clear() noexcept;
 
 	private:
 		struct Subscription final

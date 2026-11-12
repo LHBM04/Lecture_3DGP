@@ -1,13 +1,13 @@
 ﻿#include "Precompiled.hpp"
 #include "Input.hpp"
 
+namespace
+{
+	const InputProvider* provider = nullptr;
+}
+
 namespace TUK::Game
 {
-	namespace
-	{
-		const InputProvider* provider = nullptr;
-	}
-
 	void Input::Initialize(const InputProvider* newProvider)
 	{
 		provider = newProvider;
@@ -46,6 +46,29 @@ namespace TUK::Game
 	bool Input::IsMouseButtonReleased(ButtonCode button)
 	{
 		return provider && provider->IsMouseButtonReleased(button);
+	}
+
+	float Input::GetHorizontal(KeyCode left, KeyCode right)
+	{
+		if (!provider)
+		{
+			return 0.0f;
+		}
+		return static_cast<f32>(Input::IsKeyHeld(left)) - static_cast<f32>(Input::IsKeyHeld(right));
+	}
+
+	float Input::GetVertical(KeyCode up, KeyCode Down)
+	{
+		if (!provider)
+		{
+			return 0.0f;
+		}
+		return static_cast<f32>(Input::IsKeyHeld(up)) - static_cast<f32>(Input::IsKeyHeld(Down));
+	}
+
+	Vector2D<i32> Input::GetMousePosition() noexcept
+	{
+		return provider ? provider->GetMousePosition() : Vector2D<i32>{};
 	}
 
 	Vector2D<i32> Input::GetMousePositionDelta() noexcept

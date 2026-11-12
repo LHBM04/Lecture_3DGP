@@ -250,7 +250,7 @@ namespace TUK::Framework
 		u32 vertexStride,
 		GPUBuffer indexBuffer,
 		DXGI_FORMAT indexFormat,
-		D3D12_PRIMITIVE_TOPOLOGY topology) const
+		D3D12_PRIMITIVE_TOPOLOGY primitive) const
 	{
 		if (vertexStride == 0 || vertexBuffer.GetSizeInBytes() == 0
 			|| vertexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
@@ -287,7 +287,7 @@ namespace TUK::Framework
 			.vertexBufferView = vertexBufferView,
 			.indexBuffer = std::move(indexBuffer),
 			.indexBufferView = indexBufferView,
-			.topology = topology
+			.primitive = primitive
 		});
 	}
 
@@ -296,7 +296,7 @@ namespace TUK::Framework
 		u32 vertexStride,
 		std::span<const std::byte> indexData,
 		DXGI_FORMAT indexFormat,
-		D3D12_PRIMITIVE_TOPOLOGY topology) const
+		D3D12_PRIMITIVE_TOPOLOGY primitive) const
 	{
 		auto vertexBuffer = CreateUploadBuffer(vertexData);
 		auto indexBuffer = CreateUploadBuffer(indexData);
@@ -310,6 +310,6 @@ namespace TUK::Framework
 			vertexStride,
 			std::move(*indexBuffer),
 			indexFormat,
-			topology);
+			primitive);
 	}
 }

@@ -1,11 +1,14 @@
 ﻿#include "Precompiled.hpp"
 #include "FontAssetLoader.hpp"
 
+#include <fstream>
 #include <unordered_map>
 #include <unordered_set>
 
+#include "../Core/BinaryReader.hpp"
+
 #include "AssetSubsystem.hpp"
-#include "ResourceImporter.hpp"
+#include "ResourcePath.hpp"
 #include "TextureAsset.hpp"
 
 namespace TUK::Framework
@@ -17,25 +20,76 @@ namespace TUK::Framework
 		{
 			return std::unexpected("Font requires a .tukfont file");
 		}
-		auto data = ResourceImporter::Load<FontImportData>(path, ResourceType::FONT);
-		if (!data)
+		std::ifstream file(path, std::ios::binary);
+		if (!file)
 		{
-			return std::unexpected(data.error());
+			return std::unexpected("Cannot open resource: " + path.generic_string());
 		}
-		if (data->pointSize <= 0 || data->faceScale <= 0 || data->atlasPadding < 0 || data->atlases.empty())
+		BinaryReader reader(file);
+		std::string name{};
+		std::string renderMode{};
+		bool isDistanceField{};
+		f32 pointSize{};
+		f32 faceScale{};
+		f32 lineHeight{};
+		f32 ascentLine{};
+		f32 descentLine{};
+		i32 atlasPadding{};
+		if (!reader.Read(name, renderMode, isDistanceField, pointSize,
+			faceScale, lineHeight, ascentLine, descentLine, atlasPadding))
+		{
+			return std::unexpected("Invalid font header");
+		}
+		i32 count = 0;
+		if (!reader.ReadCount(count, sizeof(FontAtlasData)))
+		{
+			return std::unexpected("Invalid font atlas count");
+		}
+		std::vector<FontAtlasData> parsedAtlases(count);
+		for (auto& atlas : parsedAtlases)
+		{
+			if (!reader.Read(atlas.index, atlas.texture, atlas.width, atlas.height))
+			{
+				return std::unexpected("Invalid font atlas data");
+			}
+		}
+		if (!reader.ReadCount(count, sizeof(FontCharacterData)))
+		{
+			return std::unexpected("Invalid font character count");
+		}
+		std::vector<FontCharacterData> parsedCharacters(count);
+		for (auto& character : parsedCharacters)
+		{
+			if (!reader.Read(character.unicode, character.glyphIndex, character.atlasIndex,
+				character.characterScale, character.glyphScale, character.glyphRect, character.sampleRect,
+				character.uvMin, character.uvMax, character.width, character.height,
+				character.bearingX, character.bearingY, character.advance))
+			{
+				return std::unexpected("Invalid font character data");
+			}
+		}
+		if (!reader.IsAtEnd())
+		{
+			return std::unexpected("Unexpected trailing font data");
+		}
+		if (!GetOwner())
+		{
+			return std::unexpected("Font loader has no asset subsystem");
+		}
+		if (pointSize <= 0 || faceScale <= 0 || atlasPadding < 0 || parsedAtlases.empty())
 		{
 			return std::unexpected("Invalid font metrics or missing atlases");
 		}
 
-		std::unordered_map<i32, const FontAtlasImportData*> atlases;
+		std::unordered_map<i32, const FontAtlasData*> atlases;
 		std::vector<const TextureAsset*> textures;
-		for (const auto& atlas : data->atlases)
+		for (const auto& atlas : parsedAtlases)
 		{
 			if (atlas.index < 0 || atlas.width <= 0 || atlas.height <= 0 || !atlases.emplace(atlas.index, &atlas).second)
 			{
 				return std::unexpected("Invalid or duplicate font atlas");
 			}
-			const auto texturePath = ResourceMetadata::ResolvePath(path.parent_path(), atlas.texture);
+			const auto texturePath = ResolveResourcePath(path.parent_path(), atlas.texture);
 			const TextureAsset* texture = texturePath ? GetOwner()->LoadAsset<TextureAsset>(*texturePath) : nullptr;
 			if (!texture)
 			{
@@ -50,7 +104,7 @@ namespace TUK::Framework
 		}
 
 		std::unordered_set<u32> characters;
-		for (const auto& character : data->characters)
+		for (const auto& character : parsedCharacters)
 		{
 			const auto page = atlases.find(character.atlasIndex);
 			if (page == atlases.end() || character.unicode > 0x10FFFF ||
@@ -67,6 +121,20 @@ namespace TUK::Framework
 				}
 			}
 		}
-		return std::make_unique<FontAsset>(path, std::move(*data), std::move(textures));
+
+		auto font = std::make_unique<FontAsset>(path);
+		font->SetName(std::move(name));
+		font->SetRenderMode(std::move(renderMode));
+		font->SetDistanceField(isDistanceField);
+		font->SetPointSize(pointSize);
+		font->SetFaceScale(faceScale);
+		font->SetLineHeight(lineHeight);
+		font->SetAscentLine(ascentLine);
+		font->SetDescentLine(descentLine);
+		font->SetAtlasPadding(atlasPadding);
+		font->SetAtlasData(std::move(parsedAtlases));
+		font->SetCharacters(std::move(parsedCharacters));
+		font->SetAtlases(std::move(textures));
+		return font;
 	}
 }

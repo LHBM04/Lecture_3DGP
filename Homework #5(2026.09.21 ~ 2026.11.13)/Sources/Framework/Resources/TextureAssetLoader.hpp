@@ -21,9 +21,6 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<std::unique_ptr<TextureAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
-		[[nodiscard]] static std::expected<GPUTexture2D, std::string> LoadDDS(
-			const std::filesystem::path& path, const GPUDevice& device, bool expectsCubemap);
-
 	private:
 		const GPUDevice& device;
 	};

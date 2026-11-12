@@ -16,6 +16,8 @@ namespace TUK::Game
 		SystemStatus Startup() override;
 
 	private:
+		void OnRenderSubsystemAdded(RenderSubsystem* subsystem);
+
 		DisplaySubsystem* displaySubsystem = nullptr;
 		RenderSubsystem* renderSubsystem = nullptr;
 		EventSubsystem* eventSubsystem = nullptr;

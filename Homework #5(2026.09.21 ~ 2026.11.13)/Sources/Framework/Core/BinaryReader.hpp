@@ -4,88 +4,73 @@
 #include <array>
 #include <bit>
 #include <cmath>
-#include <cstring>
-#include <expected>
-#include <filesystem>
+#include <concepts>
 #include <fstream>
-#include <span>
 #include <string>
-#include <utility>
-#include <vector>
+#include <string_view>
 
-#include "Serializer.hpp"
+#include "Common.hpp"
 
 namespace TUK::Framework
 {
+	// Reads the sequential little-endian format written by TUKBinaryWriter.
 	class BinaryReader final
 	{
 	public:
-		explicit BinaryReader(std::vector<byte>&& bytes) noexcept;
-		[[nodiscard]] static std::expected<BinaryReader, std::string> Open(const std::filesystem::path& path);
-		template <BinaryNumber T> bool Read(T& value);
-		bool Read(bool& value);
-		bool Read(std::string& value);
-		template <class T, usize N> bool Read(std::array<T, N>& values);
-		template <class T> bool Read(std::vector<T>& values);
-		template <class T> requires requires(T& value, BinaryReader& reader) { value.Deserialize(reader); }
-		bool Read(T& value);
+		static constexpr usize MAX_BYTES = 512 * 1024 * 1024;
+		static constexpr u32 MAX_ELEMENTS = 16 * 1024 * 1024;
+		static constexpr u32 MAX_DEPTH = 128;
+
+		explicit BinaryReader(std::ifstream& file) noexcept;
+		template <class T> requires ((std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>)
+		[[nodiscard]] bool Read(T& value);
+		[[nodiscard]] bool Read(bool& value);
+		[[nodiscard]] bool Read(std::string& value);
+		template <class T, usize N> [[nodiscard]] bool Read(std::array<T, N>& values);
 		template <class T, class... TRest> requires (sizeof...(TRest) > 0)
-		bool Read(T& first, TRest&... rest);
+		[[nodiscard]] bool Read(T& first, TRest&... rest);
+		[[nodiscard]] bool ReadCount(i32& count, usize elementSize);
 		[[nodiscard]] bool IsAtEnd() const noexcept;
-		[[nodiscard]] bool IsLegacy() const noexcept;
 
 	private:
-		std::vector<byte> bytes;
-		usize position = 0;
-		usize allocationBudget = SerializationLimits::MAX_BYTES;
-		u32 depth = 0;
+		[[nodiscard]] bool ReadBytes(char* destination, usize size);
+		[[nodiscard]] static bool IsValidText(std::string_view text) noexcept;
+
+		std::ifstream& file;
+		usize remainingBytes = 0;
+		usize allocationBudget = MAX_BYTES;
 	};
 
-	inline BinaryReader::BinaryReader(std::vector<byte>&& bytes) noexcept
-		: bytes(std::move(bytes))
+	inline BinaryReader::BinaryReader(std::ifstream& file) noexcept
+		: file(file)
 	{
-	}
-
-	inline std::expected<BinaryReader, std::string> BinaryReader::Open(const std::filesystem::path& path)
-	{
-		std::ifstream file(path, std::ios::binary | std::ios::ate);
 		if (!file)
 		{
-			return std::unexpected("Cannot open resource: " + path.generic_string());
+			return;
 		}
-
+		file.seekg(0, std::ios::end);
 		const auto size = file.tellg();
-		if (size <= 0 || size > static_cast<std::streamoff>(SerializationLimits::MAX_BYTES))
+		if (size <= 0 || size > static_cast<std::streamoff>(MAX_BYTES))
 		{
-			return std::unexpected("Invalid resource size: " + path.generic_string());
+			file.setstate(std::ios::failbit);
+			return;
 		}
-
-		std::vector<byte> bytes(static_cast<usize>(size));
+		remainingBytes = static_cast<usize>(size);
 		file.seekg(0);
-		if (!file.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size())))
-		{
-			return std::unexpected("Cannot read resource: " + path.generic_string());
-		}
-
-		return BinaryReader(std::move(bytes));
 	}
 
-	template <BinaryNumber T>
+	template <class T> requires ((std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>)
 	bool BinaryReader::Read(T& value)
 	{
-		if (sizeof(T) > bytes.size() - position)
+		std::array<char, sizeof(T)> encoded{};
+		if (!ReadBytes(encoded.data(), encoded.size()))
 		{
 			return false;
 		}
-
-		std::array<byte, sizeof(T)> encoded{};
-		std::memcpy(encoded.data(), bytes.data() + position, sizeof(T));
-		position += sizeof(T);
 		if constexpr (std::endian::native == std::endian::big)
 		{
 			std::ranges::reverse(encoded);
 		}
-
 		value = std::bit_cast<T>(encoded);
 		if constexpr (std::floating_point<T>)
 		{
@@ -107,6 +92,7 @@ namespace TUK::Framework
 
 	inline bool BinaryReader::Read(std::string& value)
 	{
+		// BinaryWriter prefixes UTF-8 strings with a 7-bit encoded byte count.
 		u32 length = 0;
 		bool complete = false;
 		for (u32 i = 0; i < 5; ++i)
@@ -123,16 +109,13 @@ namespace TUK::Framework
 				break;
 			}
 		}
-
-		if (!complete || length > SerializationLimits::MAX_ELEMENTS || length > bytes.size() - position
-			|| length > allocationBudget)
+		if (!complete || length > MAX_ELEMENTS || length > remainingBytes || length > allocationBudget)
 		{
 			return false;
 		}
 		allocationBudget -= length;
-		value.assign(reinterpret_cast<const char*>(bytes.data() + position), length);
-		position += length;
-		return Serializer::IsValidText(value);
+		value.resize(length);
+		return ReadBytes(value.data(), length) && IsValidText(value);
 	}
 
 	template <class T, usize N>
@@ -148,22 +131,91 @@ namespace TUK::Framework
 		return true;
 	}
 
-	template <class T>
-	bool BinaryReader::Read(std::vector<T>& values)
+	template <class T, class... TRest> requires (sizeof...(TRest) > 0)
+	bool BinaryReader::Read(T& first, TRest&... rest)
 	{
-		i32 count = 0;
-		if (!Read(count) || count < 0 || static_cast<u32>(count) > SerializationLimits::MAX_ELEMENTS
-			|| static_cast<usize>(count) > bytes.size() - position
-			|| static_cast<usize>(count) > allocationBudget / sizeof(T))
+		return Read(first) && (Read(rest) && ...);
+	}
+
+	inline bool BinaryReader::ReadCount(i32& count, usize elementSize)
+	{
+		if (!Read(count) || count < 0 || static_cast<u32>(count) > MAX_ELEMENTS
+			|| static_cast<usize>(count) > remainingBytes || elementSize == 0
+			|| static_cast<usize>(count) > allocationBudget / elementSize)
 		{
 			return false;
 		}
+		allocationBudget -= static_cast<usize>(count) * elementSize;
+		return true;
+	}
 
-		allocationBudget -= static_cast<usize>(count) * sizeof(T);
-		values.resize(count);
-		for (T& value : values)
+	inline bool BinaryReader::IsAtEnd() const noexcept
+	{
+		return file.good() && remainingBytes == 0;
+	}
+
+	inline bool BinaryReader::ReadBytes(char* destination, usize size)
+	{
+		if (!file || size > remainingBytes || !file.read(destination, static_cast<std::streamsize>(size)))
 		{
-			if (!Read(value))
+			return false;
+		}
+		remainingBytes -= size;
+		return true;
+	}
+
+	inline bool BinaryReader::IsValidText(std::string_view text) noexcept
+	{
+		for (usize i = 0; i < text.size();)
+		{
+			const auto first = static_cast<u8>(text[i++]);
+			if (first == 0)
+			{
+				return false;
+			}
+			if (first < 0x80)
+			{
+				continue;
+			}
+			u32 codepoint = 0;
+			u32 minimum = 0;
+			usize continuationCount = 0;
+			if (first >= 0xC2 && first <= 0xDF)
+			{
+				codepoint = first & 0x1F;
+				minimum = 0x80;
+				continuationCount = 1;
+			}
+			else if (first >= 0xE0 && first <= 0xEF)
+			{
+				codepoint = first & 0x0F;
+				minimum = 0x800;
+				continuationCount = 2;
+			}
+			else if (first >= 0xF0 && first <= 0xF4)
+			{
+				codepoint = first & 0x07;
+				minimum = 0x10000;
+				continuationCount = 3;
+			}
+			else
+			{
+				return false;
+			}
+			if (continuationCount > text.size() - i)
+			{
+				return false;
+			}
+			for (usize j = 0; j < continuationCount; ++j)
+			{
+				const auto next = static_cast<u8>(text[i++]);
+				if ((next & 0xC0) != 0x80)
+				{
+					return false;
+				}
+				codepoint = (codepoint << 6) | (next & 0x3F);
+			}
+			if (codepoint < minimum || codepoint > 0x10FFFF || (codepoint >= 0xD800 && codepoint <= 0xDFFF))
 			{
 				return false;
 			}
@@ -171,33 +223,4 @@ namespace TUK::Framework
 		return true;
 	}
 
-	template <class T> requires requires(T& value, BinaryReader& reader) { value.Deserialize(reader); }
-	bool BinaryReader::Read(T& value)
-	{
-		if (depth >= SerializationLimits::MAX_DEPTH)
-		{
-			return false;
-		}
-		++depth;
-		const bool result = value.Deserialize(*this);
-		--depth;
-		return result;
-	}
-
-	template <class T, class... TRest> requires (sizeof...(TRest) > 0)
-	bool BinaryReader::Read(T& first, TRest&... rest)
-	{
-		return Read(first) && (Read(rest) && ...);
-	}
-
-	inline bool BinaryReader::IsAtEnd() const noexcept
-	{
-		return position == bytes.size();
-	}
-
-	inline bool BinaryReader::IsLegacy() const noexcept
-	{
-		return bytes.size() >= 4 && bytes[0] == byte{ 'T' } && bytes[1] == byte{ 'U' }
-			&& bytes[2] == byte{ 'K' } && bytes[3] == byte{ 'R' };
-	}
 }

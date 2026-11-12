@@ -36,28 +36,9 @@ namespace TUK::Game
 			return std::unexpected(pixel.error());
 		}
 
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC description = (*vertex)->CreatePipelineDescription(TARGET_FORMAT);
 		description.VS = (*vertex)->GetShader().GetD3DBytecode();
 		description.PS = (*pixel)->GetShader().GetD3DBytecode();
-		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		description.NumRenderTargets = 1;
-		description.RTVFormats[0] = TARGET_FORMAT;
-		description.DSVFormat = GPUTarget::DEPTH_FORMAT;
-		description.SampleMask = UINT_MAX;
-		description.SampleDesc = { 1, 0 };
-		description.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		description.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		description.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		description.DepthStencilState.DepthEnable = FALSE;
-		description.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		description.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-
-		auto& blend = description.BlendState.RenderTarget[0];
-		blend.BlendEnable = TRUE;
-		blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-		blend.SrcBlendAlpha = D3D12_BLEND_ONE;
-		blend.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
 
 		auto created = device.CreateGraphicsPipelineState(description);
 		if (!created)

@@ -6,19 +6,19 @@
 #include <string>
 
 #include "AssetLoader.hpp"
-#include "Cubemap.hpp"
+#include "CubemapAsset.hpp"
 
 namespace TUK::Framework
 {
 	class AssetSubsystem;
 	class GPUDevice;
 
-	class CubemapLoader final : public AssetLoader<Cubemap>
+	class CubemapLoader final : public AssetLoader<CubemapAsset>
 	{
 	public:
 		explicit CubemapLoader(AssetSubsystem* owner, const GPUDevice& device) noexcept;
 
-		[[nodiscard]] std::expected<std::unique_ptr<Cubemap>, std::string> Load(
+		[[nodiscard]] std::expected<std::unique_ptr<CubemapAsset>, std::string> Load(
 			const std::filesystem::path& path) const override;
 
 	private:
@@ -26,7 +26,7 @@ namespace TUK::Framework
 	};
 
 	inline CubemapLoader::CubemapLoader(AssetSubsystem* owner, const GPUDevice& device) noexcept
-		: AssetLoader<Cubemap>(owner)
+		: AssetLoader<CubemapAsset>(owner)
 		, device(device)
 	{
 	}

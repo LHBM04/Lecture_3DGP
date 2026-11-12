@@ -10,6 +10,7 @@
 #include "../Worlds/World_Stage.hpp"
 #include "../Worlds/World_Title.hpp"
 
+#include "Assets.hpp"
 #include "Time.hpp"
 #include "Input.hpp"
 
@@ -17,12 +18,32 @@ namespace TUK::Game
 {
 	SystemStatus MyGame::Startup()
 	{
-		EventSubsystem* eventSubsystem = Engine::GetInstance().GetSubsystem<EventSubsystem>();
+		eventSubsystem = Engine::GetInstance().GetSubsystem<EventSubsystem>();
 		if (!eventSubsystem)
 		{
 			LOG_ERROR("이벤트 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
+
+		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
+		if (!displaySubsystem)
+		{
+			LOG_ERROR("디스플레이 서브시스템을 가져오지 못했습니다.");
+			return SystemStatus::FAILURE;
+		}
+
+		renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
+		if (!renderSubsystem)
+		{
+			LOG_ERROR("렌더 서브시스템을 가져오지 못했습니다.");
+			return SystemStatus::FAILURE;
+		}
+
+		OnSubsystemAdded<InputSubsystem>(this, &MyGame::OnInputSubsystemAdded);
+		OnSubsystemRemoved<InputSubsystem>(this, &MyGame::OnInputSubsystemRemoved);
+		OnSubsystemAdded<WorldSubsystem>(this, &MyGame::OnWorldSubsystemAdded);
+		OnSubsystemAdded<AssetSubsystem>(this, &MyGame::OnAssetSubsystemAdded);
+		OnSubsystemRemoved<AssetSubsystem>(this, &MyGame::OnAssetSubsystemRemoved);
 
 		inputSubsystem = AddSubsystem<InputSubsystem>();
 		if (!inputSubsystem)
@@ -31,15 +52,17 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		eventSubsystem->OnEvent<InputActivationEvent>() += std::bind_front(&InputSubsystem::OnInputActivation, inputSubsystem);
-		eventSubsystem->OnEvent<DisplayCreateEvent>() += std::bind_front(&InputSubsystem::OnDisplayCreate, inputSubsystem);
-		eventSubsystem->OnEvent<DisplayCloseEvent>() += std::bind_front(&InputSubsystem::OnDisplayClose, inputSubsystem);
-		eventSubsystem->OnEvent<DisplayFocusEvent>() += std::bind_front(&InputSubsystem::OnDisplayFocus, inputSubsystem);
-
-		displaySubsystem = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
-		if (!displaySubsystem)
+		worldSubsystem = AddSubsystem<WorldSubsystem>();
+		if (!worldSubsystem)
 		{
-			LOG_ERROR("디스플레이 서브시스템을 가져오지 못했습니다.");
+			LOG_ERROR("월드 서브시스템을 가져오지 못했습니다.");
+			return SystemStatus::FAILURE;
+		}
+
+		assetSubsystem = AddSubsystem<AssetSubsystem>();
+		if (!assetSubsystem)
+		{
+			LOG_ERROR("에셋 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
 		}
 
@@ -61,53 +84,7 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		worldSubsystem = AddSubsystem<WorldSubsystem>();
-		auto stageWorld = std::make_unique<World_Stage>();
-		worldSubsystem->AddWorld(std::make_unique<World_Title>(stageWorld.get(), &worldTransition));
-		worldSubsystem->AddWorld(std::move(stageWorld));
-
-		renderSubsystem = Engine::GetInstance().GetSubsystem<RenderSubsystem>();
-		if (!renderSubsystem)
-		{
-			LOG_ERROR("렌더 서브시스템을 가져오지 못했습니다.");
-			return SystemStatus::FAILURE;
-		}
-
-		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::PreRender, worldSubsystem);
-		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::Render, worldSubsystem);
-		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::PostRender, worldSubsystem);
-
-		assetSubsystem = AddSubsystem<AssetSubsystem>();
-		if (!assetSubsystem)
-		{
-			LOG_ERROR("에셋 서브시스템을 가져오지 못했습니다.");
-			return SystemStatus::FAILURE;
-		}
-
-		worldSubsystem->OnEnterWorld() += std::bind_front(&AssetSubsystem::OnWorldEntered, assetSubsystem);
-		worldSubsystem->OnExitWorld() += std::bind_front(&AssetSubsystem::OnWorldExited, assetSubsystem);
-
-		auto& device = renderSubsystem->GetDevice();
-		assetSubsystem->AddLoader<ModelAssetLoader>();
-		assetSubsystem->AddLoader<MeshAssetLoader>(device);
-		assetSubsystem->AddLoader<TextureAssetLoader>(device);
-		assetSubsystem->AddLoader<CubemapLoader>(device);
-		assetSubsystem->AddLoader<MaterialAssetLoader>(device);
-		assetSubsystem->AddLoader<ShaderAssetLoader>();
-		assetSubsystem->AddLoader<FontAssetLoader>();
-		assetSubsystem->AddLoader<AnimationAssetLoader>();
-
-		eventSubsystem->OnEvent<DisplayCreateEvent>() += [this](const DisplayCreateEvent& event)
-		{
-			const InputProvider* provider = inputSubsystem->GetProvider(event.display);
-			Input::Initialize(provider);
-		};
-		eventSubsystem->OnEvent<DisplayCloseEvent>() += [](const DisplayCloseEvent&)
-		{
-			Input::Release();
-		};
-
-		if (auto initialized = worldTransition.Initialize(worldSubsystem, inputSubsystem, device, assetSubsystem); !initialized)
+		if (auto initialized = worldTransition.Initialize(worldSubsystem, inputSubsystem, renderSubsystem->GetDevice(), assetSubsystem); !initialized)
 		{
 			LOG_ERROR("월드 전환 초기화에 실패했습니다: {}", initialized.error());
 			return SystemStatus::FAILURE;
@@ -121,7 +98,6 @@ namespace TUK::Game
 			}
 		});
 
-		Time::Initialize(Engine::GetInstance().GetSubsystem<TimeSubsystem>());
 		return App::Startup();
 	}
 
@@ -141,6 +117,69 @@ namespace TUK::Game
 		worldTransition.Shutdown();
 
 		App::Shutdown();
-		Time::Release();
+	}
+
+	void MyGame::OnInputSubsystemAdded(InputSubsystem* subsystem)
+	{
+		ASSERT_FMT(eventSubsystem, "이벤트 서브시스템이 nullptr입니다.");
+
+		eventSubsystem->Subscribe<InputActivationEvent>(subsystem, &InputSubsystem::OnInputActivation);
+		eventSubsystem->Subscribe<DisplayCreateEvent>(subsystem, &InputSubsystem::OnDisplayCreate);
+		eventSubsystem->Subscribe<DisplayCloseEvent>(subsystem, &InputSubsystem::OnDisplayClose);
+		eventSubsystem->Subscribe<DisplayFocusEvent>(subsystem, &InputSubsystem::OnDisplayFocus);
+
+		eventSubsystem->Subscribe<DisplayCreateEvent>([subsystem](const DisplayCreateEvent& event)
+		{
+			const InputProvider* provider = subsystem->GetProvider(event.display);
+			Input::Initialize(provider);
+		});
+		eventSubsystem->Subscribe<DisplayCloseEvent>([](const DisplayCloseEvent&)
+		{
+			Input::Release();
+		});
+	}
+
+	void MyGame::OnInputSubsystemRemoved([[maybe_unused]] InputSubsystem* subsystem)
+	{
+		Input::Release();
+	}
+
+	void MyGame::OnWorldSubsystemAdded(WorldSubsystem* subsystem)
+	{
+		ASSERT_FMT(renderSubsystem, "렌더 서브시스템이 nullptr입니다.");
+
+		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::PreRender, subsystem);
+		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::Render, subsystem);
+		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::PostRender, subsystem);
+
+		auto stageWorld = std::make_unique<World_Stage>();
+		subsystem->AddWorld(std::make_unique<World_Title>(stageWorld.get(), &worldTransition));
+		subsystem->AddWorld(std::move(stageWorld));
+	}
+
+	void MyGame::OnAssetSubsystemAdded(AssetSubsystem* subsystem)
+	{
+		ASSERT_FMT(worldSubsystem, "월드 서브시스템이 nullptr입니다.");
+		ASSERT_FMT(renderSubsystem, "렌더 서브시스템이 nullptr입니다.");
+
+		worldSubsystem->OnEnterWorld() += std::bind_front(&AssetSubsystem::OnWorldEntered, subsystem);
+		worldSubsystem->OnExitWorld() += std::bind_front(&AssetSubsystem::OnWorldExited, subsystem);
+
+		const GPUDevice& device = renderSubsystem->GetDevice();
+		subsystem->AddLoader<ModelAssetLoader>();
+		subsystem->AddLoader<MeshAssetLoader>(device);
+		subsystem->AddLoader<TextureAssetLoader>(device);
+		subsystem->AddLoader<CubemapLoader>(device);
+		subsystem->AddLoader<MaterialAssetLoader>(device);
+		subsystem->AddLoader<ShaderAssetLoader>();
+		subsystem->AddLoader<FontAssetLoader>();
+		subsystem->AddLoader<AnimationAssetLoader>();
+
+		Assets::Initialize(subsystem);
+	}
+
+	void MyGame::OnAssetSubsystemRemoved([[maybe_unused]] AssetSubsystem* subsystem)
+	{
+		Assets::Release();
 	}
 }

@@ -62,13 +62,13 @@ namespace TUK::Framework
 			u32 vertexStride,
 			GPUBuffer indexBuffer,
 			DXGI_FORMAT indexFormat,
-			D3D12_PRIMITIVE_TOPOLOGY topology) const;
+			D3D12_PRIMITIVE_TOPOLOGY primitive) const;
 		[[nodiscard]] std::expected<GPUMesh, std::string> CreateMesh(
 			std::span<const std::byte> vertexData,
 			u32 vertexStride,
 			std::span<const std::byte> indexData,
 			DXGI_FORMAT indexFormat,
-			D3D12_PRIMITIVE_TOPOLOGY topology) const;
+			D3D12_PRIMITIVE_TOPOLOGY primitive) const;
 
 		[[nodiscard]] IDXGIFactory6& GetDXGIFactory() const noexcept;
 		[[nodiscard]] ID3D12Device& GetD3DDevice() const noexcept;
