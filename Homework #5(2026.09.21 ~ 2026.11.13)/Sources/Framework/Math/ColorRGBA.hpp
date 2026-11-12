@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <nlohmann/json_fwd.hpp>
-
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
 
@@ -96,9 +94,6 @@ namespace TUK::Framework
 		[[nodiscard]] static bool IsApproximately(const ColorRGBA& lhs, const ColorRGBA& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static ColorRGBA Lerp(const ColorRGBA& start, const ColorRGBA& end, f32 t) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

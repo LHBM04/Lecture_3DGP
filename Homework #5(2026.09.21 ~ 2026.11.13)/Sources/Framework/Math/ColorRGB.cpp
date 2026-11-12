@@ -473,43 +473,6 @@ namespace TUK::Framework
 			Mathf::Lerp(a.value.z, b.value.z, t));
 	}
 
-	template <Scalarable TScalar>
-	nlohmann::json ColorRGB<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetR(), GetG(), GetB() };
-
-		if (!IsFinite())
-		{
-			return nlohmann::json::value_t::discarded;
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool ColorRGB<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 3;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = ColorRGB<TScalar>{ components[0], components[1], components[2] };
-		return true;
-	}
-
 	template class ColorRGB<i32>;
 	template class ColorRGB<f32>;
 }

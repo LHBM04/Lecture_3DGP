@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <nlohmann/json_fwd.hpp>
-
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
 
@@ -102,9 +100,6 @@ namespace TUK::Framework
 		[[nodiscard]] static Matrix4x4 Ortho(f32 width, f32 height, f32 nearZ, f32 farZ) noexcept requires std::same_as<TScalar, f32>;
 
 		static bool TryInverse3DAffine(const Matrix4x4& input, Matrix4x4& result) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, std::array<i32, 16>, DirectX::XMFLOAT4X4> value;

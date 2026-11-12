@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <nlohmann/json_fwd.hpp>
-
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
@@ -126,9 +124,6 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector4D SlerpUnclamped(const Vector4D& a, const Vector4D& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static Vector4D MoveTowards(const Vector4D& current, const Vector4D& target, f32 maxDistanceDelta) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

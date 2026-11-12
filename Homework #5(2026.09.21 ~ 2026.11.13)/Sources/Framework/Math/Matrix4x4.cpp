@@ -590,50 +590,6 @@ namespace TUK::Framework
 		return input.TryGetInverse(result);
 	}
 
-	template <Scalarable TScalar>
-	nlohmann::json Matrix4x4<TScalar>::Serialize() const
-	{
-		TScalar components[16]{};
-		for (usize index = 0; index < 16; ++index)
-		{
-			components[index] = (*this)[index];
-		}
-
-		for (const TScalar component : components)
-		{
-			if (!std::isfinite(component))
-			{
-				return nlohmann::json::value_t::discarded;
-			}
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool Matrix4x4<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 16;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = Matrix4x4<TScalar>{ components };
-		return true;
-	}
-
 	template class Matrix4x4<std::int32_t>;
 	template class Matrix4x4<float>;
 }

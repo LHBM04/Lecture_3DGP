@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <nlohmann/json_fwd.hpp>
-
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework
@@ -148,9 +146,6 @@ namespace TUK::Framework
 			f32 smoothTime,
 			f32 maxSpeed,
 			f32 deltaTime) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;

@@ -481,46 +481,6 @@ namespace TUK::Framework
 		return result;
 	}
 
-	template <Scalarable TScalar>
-	nlohmann::json ColorRGBA<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetR(), GetG(), GetB(), GetA() };
-
-		for (const TScalar component : components)
-		{
-			if (!std::isfinite(component))
-			{
-				return nlohmann::json::value_t::discarded;
-			}
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool ColorRGBA<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 4;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = ColorRGBA<TScalar>{ components[0], components[1], components[2], components[3] };
-		return true;
-	}
-
 	template class ColorRGBA<std::int32_t>;
 	template class ColorRGBA<float>;
 }

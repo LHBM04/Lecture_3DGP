@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <nlohmann/json_fwd.hpp>
-
 #include "../Core/Common.hpp"
 
 #include "Mathf.hpp"
@@ -93,9 +91,6 @@ namespace TUK::Framework
 
 		[[nodiscard]] static ColorRGB Lerp(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static ColorRGB LerpUnclamped(const ColorRGB& a, const ColorRGB& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT3, DirectX::XMFLOAT3> value;

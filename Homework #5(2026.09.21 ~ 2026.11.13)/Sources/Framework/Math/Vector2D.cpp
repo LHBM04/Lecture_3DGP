@@ -633,43 +633,6 @@ namespace TUK::Framework
 			return output;
 	}
 
-	template <Scalarable TScalar>
-	nlohmann::json Vector2D<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetX(), GetY() };
-
-		if (!IsFinite())
-		{
-			return nlohmann::json::value_t::discarded;
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool Vector2D<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 2;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = Vector2D<TScalar>{ components[0], components[1] };
-		return true;
-	}
-
 	template class Vector2D<std::int32_t>;
 	template class Vector2D<float>;
 
