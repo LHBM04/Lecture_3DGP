@@ -1,9 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "TitleAnimationSequence.hpp"
 
-#include <cmath>
-#include <numbers>
-
 #include "../Core/Time.hpp"
 
 namespace TUK::Game

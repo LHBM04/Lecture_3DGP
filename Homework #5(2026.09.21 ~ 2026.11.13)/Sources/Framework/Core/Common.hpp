@@ -25,19 +25,14 @@ namespace TUK::Framework
 	template <class TValue>
 	concept Scalarable = std::same_as<TValue, i32> || std::same_as<TValue, f32>;
 
-	/** C# Func */
 	template <class TResult, class... TArgs>
 	using Func = std::function<TResult(TArgs...)>;
 
-	/** C# Action */
 	template <class... TArgs>
 	using Action = std::function<void(TArgs...)>;
 
-	/** C# Predicate */
 	template <class... TArgs>
 	using Predicate = std::function<bool(TArgs...)>;
-
-	/** Delegate */
 
 	template <class... TArgs>
 	class Delegate
@@ -59,7 +54,7 @@ namespace TUK::Framework
 
 		ListenerId AddListener(Listener callback);
 		void RemoveListener(ListenerId id) noexcept;
-		
+
 		void Broadcast(TArgs... args) const;
 
 		void Clear() noexcept;
@@ -123,6 +118,12 @@ namespace TUK::Framework
 				subscription->callback(args...);
 			}
 		}
+	}
+
+	namespace Random
+	{
+		[[nodiscard]] i32 RandInt(i32 min, i32 max);
+		[[nodiscard]] f32 RandFloat(f32 min, f32 max);
 	}
 
 	namespace Logger

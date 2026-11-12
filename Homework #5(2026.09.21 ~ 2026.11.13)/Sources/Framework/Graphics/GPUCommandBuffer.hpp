@@ -38,14 +38,14 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> Reset();
 		[[nodiscard]] std::expected<void, std::string> Submit();
 
-		template <typename T>
+		template <class T>
 		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(u32 rootSlot, const T& constants);
-		
-		template <typename T>
+
+		template <class T>
 		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(const T& constants);
 
 		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(u32 rootSlot, std::span<const std::byte> bytes);
-		
+
 		void SetGraphicsRootConstants(u32 rootSlot, std::span<const std::byte> bytes, u32 offset = 0) noexcept;
 		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
 
@@ -80,6 +80,8 @@ namespace TUK::Framework
 
 		void Draw(u32 vertexCount, u32 firstVertex = 0);
 		void DrawIndexed(u32 indexCount, u32 firstIndex = 0, i32 baseVertex = 0);
+		void DrawInstanced(u32 vertexCountPerInstance, u32 instanceCount, u32 firstVertex = 0, u32 firstInstance = 0);
+		void DrawIndexedInstanced(u32 indexCountPerInstance, u32 instanceCount, u32 firstIndex = 0, i32 baseVertex = 0, u32 firstInstance = 0);
 
 		void ClearRenderTarget(const f32 (&color)[4], const D3D12_RECT& rect) noexcept;
 		void ClearDepthStencil(f32 depth, const D3D12_RECT& rect) noexcept;
@@ -99,14 +101,14 @@ namespace TUK::Framework
 
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList10> d3dCommandList;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> d3dCommandAllocator;
-		
+
 		std::vector<GPUBuffer> constantBufferPages;
 		usize constantBufferPageIndex = 0;
 		u64 constantBufferOffset = 0;
 
 		std::vector<Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>> textureDescriptorPages;
 		usize textureDescriptorCount = 0;
-		
+
 		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
 		D3D12_CPU_DESCRIPTOR_HANDLE activeRTV{};
 		D3D12_CPU_DESCRIPTOR_HANDLE activeDSV{};
@@ -152,7 +154,7 @@ namespace TUK::Framework
 		return *d3dCommandAllocator.Get();
 	}
 
-	template <typename T>
+	template <class T>
 	inline std::expected<void, std::string> GPUCommandBuffer::SetGraphicsConstants(
 		u32 rootSlot, const T& constants)
 	{
@@ -160,7 +162,7 @@ namespace TUK::Framework
 		return SetGraphicsConstants(rootSlot, std::as_bytes(std::span(&constants, 1)));
 	}
 
-	template <typename T>
+	template <class T>
 	inline std::expected<void, std::string> GPUCommandBuffer::SetGraphicsConstants(
 		const T& constants)
 	{

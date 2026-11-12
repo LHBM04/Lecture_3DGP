@@ -77,7 +77,6 @@ namespace TUK::Framework
 	template <std::derived_from<Subsystem> TSubsystem>
 	SystemStatus System<TSubsystem>::Routine()
 	{
-		// 일관성을 위해서 그냥 구현함.
 		return SystemStatus::CONTINUE;
 	}
 

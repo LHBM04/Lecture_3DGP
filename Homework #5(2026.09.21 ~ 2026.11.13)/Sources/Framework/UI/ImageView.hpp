@@ -13,9 +13,9 @@ namespace TUK::Framework
 
 	class ImageView final : public Component
 	{
+	public:
 		using Component::Component;
 
-	public:
 		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
 
 		[[nodiscard]] const TextureAsset* GetImage() const noexcept;

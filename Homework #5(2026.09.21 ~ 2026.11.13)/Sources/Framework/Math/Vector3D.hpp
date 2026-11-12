@@ -37,8 +37,8 @@ namespace TUK::Framework
 		[[nodiscard]] operator DirectX::XMFLOAT3() const noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] operator DirectX::XMINT3() const noexcept requires std::same_as<TScalar, i32>;
 
-		[[nodiscard]] TScalar operator[](std::size_t index) const noexcept;
-		[[nodiscard]] TScalar& operator[](std::size_t index) noexcept;
+		[[nodiscard]] TScalar operator[](usize index) const noexcept;
+		[[nodiscard]] TScalar& operator[](usize index) noexcept;
 
 		[[nodiscard]] Vector3D operator+() const noexcept;
 		[[nodiscard]] Vector3D operator+(const Vector3D& other) const noexcept;
@@ -119,7 +119,7 @@ namespace TUK::Framework
 		[[nodiscard]] static f32 Dot(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Vector3D Cross(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] static f32 Distance(const Vector3D& _v1, const Vector3D& _v2) noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] static f32 Distance(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static f32 Angle(const Vector3D& a, const Vector3D& b) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static f32 SignedAngle(const Vector3D& from, const Vector3D& to, const Vector3D& axis) noexcept requires std::same_as<TScalar, f32>;
@@ -127,8 +127,8 @@ namespace TUK::Framework
 		[[nodiscard]] static Vector3D Project(const Vector3D& vector, const Vector3D& onNormal) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Vector3D ProjectOnPlane(const Vector3D& vector, const Vector3D& planeNormal) noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] static Vector3D Reflect(const Vector3D& _vector, const Vector3D& _normal) noexcept requires std::same_as<TScalar, f32>;
-		[[nodiscard]] static Vector3D Refract(const Vector3D& _vector, const Vector3D& _normal, f32 _eta) noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] static Vector3D Reflect(const Vector3D& vector, const Vector3D& normal) noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] static Vector3D Refract(const Vector3D& vector, const Vector3D& normal, f32 eta) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static Vector3D Lerp(const Vector3D& a, const Vector3D& b, f32 t) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Vector3D LerpUnclamped(const Vector3D& a, const Vector3D& b, f32 t) noexcept requires std::same_as<TScalar, f32>;

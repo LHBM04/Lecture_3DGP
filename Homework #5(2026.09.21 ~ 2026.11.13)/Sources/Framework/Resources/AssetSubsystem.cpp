@@ -18,10 +18,16 @@ namespace TUK::Framework
 		{
 			return asset.get() == target;
 		});
+		LOG_TRACE("에셋을 해제했습니다: {}", normalizedPath.generic_string());
 	}
 
 	void AssetSubsystem::UnloadAllAssets() noexcept
 	{
+		for (const auto& [path, asset] : assetsByPath)
+		{
+			LOG_TRACE("에셋을 해제했습니다: {}", path.generic_string());
+		}
+
 		assetsByPath.clear();
 		assets.clear();
 	}

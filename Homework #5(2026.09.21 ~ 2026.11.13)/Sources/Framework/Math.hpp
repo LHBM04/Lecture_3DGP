@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#include "Math/BoundingBox.hpp"
+#include "Math/BoundingOrientedBox.hpp"
+#include "Math/BoundingSphere.hpp"
+#include "Math/CollisionTypes.hpp"
 #include "Math/ColorRGB.hpp"
 #include "Math/ColorRGBA.hpp"
 #include "Math/Mathf.hpp"

@@ -1,15 +1,16 @@
 ﻿#include "Precompiled.hpp"
 #include "Scene.hpp"
 
+#include "../Core/Common.hpp"
+
 #include "../Graphics/Camera.hpp"
+#include "../Graphics/DirectionalLight.hpp"
 #include "../Graphics/GPUCommandBuffer.hpp"
+#include "../Graphics/GPUConstants.hpp"
 #include "../Graphics/GPUTarget.hpp"
 #include "../Graphics/MeshRenderer.hpp"
-#include "../Graphics/GPUConstants.hpp"
 
 #include "../Resources/ModelAsset.hpp"
-
-#include "../Core/Common.hpp"
 
 #include "GameObject.hpp"
 #include "Transform.hpp"
@@ -158,10 +159,27 @@ namespace TUK::Framework
 					continue;
 				}
 
+				Vector3D<f32> lightDir{ -0.5f, -1.0f, 0.5f };
+				f32 lightIntensity = 1.0f;
+				ColorRGBA<f32> lightColor = ColorRGBA<f32>::GetWhite();
+				ColorRGBA<f32> ambientColor{ 0.15f, 0.15f, 0.15f, 1.0f };
+
+				if (const DirectionalLight* mainLight = GetMainLight())
+				{
+					lightDir = mainLight->GetDirection();
+					lightIntensity = mainLight->GetIntensity();
+					lightColor = mainLight->GetColor();
+					ambientColor = mainLight->GetAmbientColor();
+				}
+
 				const CameraConstants constants
 				{
 					.view = activeCamera->GetViewMatrix(),
-					.projection = activeCamera->GetProjectionMatrix()
+					.projection = activeCamera->GetProjectionMatrix(),
+					.lightDirection = lightDir,
+					.lightIntensity = lightIntensity,
+					.lightColor = lightColor,
+					.ambientLightColor = ambientColor
 				};
 				if (auto uploaded = commandBuffer.SetGraphicsConstants(constants); !uploaded)
 				{
@@ -177,6 +195,9 @@ namespace TUK::Framework
 				commandBuffer.ClearDepthStencil(GPUTarget::DEPTH_CLEAR_VALUE, clearRect);
 
 				RenderObjects(&GameObject::Render, commandBuffer);
+#ifdef _DEBUG
+				RenderObjects(&GameObject::DrawGizmos, commandBuffer);
+#endif
 			}
 		});
 	}
@@ -412,7 +433,8 @@ namespace TUK::Framework
 			return;
 		}
 
-		const auto destroyedCount = std::ranges::count_if(objects, [](const auto& gameObject) {
+		const auto destroyedCount = std::ranges::count_if(objects, [](const auto& gameObject)
+		{
 			return gameObject->IsDestroyed();
 		});
 		if (destroyedCount == 0)
@@ -447,6 +469,7 @@ namespace TUK::Framework
 		if (objects.empty())
 		{
 			activeCameras.clear();
+		activeDirectionalLights.clear();
 			return;
 		}
 
@@ -460,6 +483,7 @@ namespace TUK::Framework
 		}
 
 		activeCameras.clear();
+		activeDirectionalLights.clear();
 	}
 
 	void Scene::AddCamera(Camera* camera)
@@ -479,6 +503,57 @@ namespace TUK::Framework
 		std::erase(activeCameras, camera);
 	}
 
+	void Scene::AddDirectionalLight(DirectionalLight* light)
+	{
+		ASSERT_FMT(light, "등록할 라이트가 nullptr입니다.");
+
+		if (light && std::ranges::find(activeDirectionalLights, light) == activeDirectionalLights.end())
+		{
+			activeDirectionalLights.push_back(light);
+		}
+	}
+
+	void Scene::RemoveDirectionalLight(const DirectionalLight* light)
+	{
+		ASSERT_FMT(light, "등록 해제할 라이트가 nullptr입니다.");
+
+		std::erase(activeDirectionalLights, light);
+	}
+
+	DirectionalLight* Scene::GetMainLight() noexcept
+	{
+		for (DirectionalLight* light : activeDirectionalLights)
+		{
+			if (light && light->IsEnabled() && !light->IsDestroyed())
+			{
+				const GameObject* owner = light->GetOwner();
+				if (owner && owner->IsEnabled() && !owner->IsDestroyed())
+				{
+					return light;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
+	const DirectionalLight* Scene::GetMainLight() const noexcept
+	{
+		for (const DirectionalLight* light : activeDirectionalLights)
+		{
+			if (light && light->IsEnabled() && !light->IsDestroyed())
+			{
+				const GameObject* owner = light->GetOwner();
+				if (owner && owner->IsEnabled() && !owner->IsDestroyed())
+				{
+					return light;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
 	std::vector<std::unique_ptr<GameObject>> Scene::ExtractPersistentObjects()
 	{
 		std::vector<std::unique_ptr<GameObject>> extracted;
@@ -492,7 +567,6 @@ namespace TUK::Framework
 					RemoveCamera(camera);
 				}
 
-				// 씬이 전환되어도 파괴되지 않는 객체는 따로 수집해둔다
 				extracted.push_back(std::move(*object));
 				object = objects.erase(object);
 			}

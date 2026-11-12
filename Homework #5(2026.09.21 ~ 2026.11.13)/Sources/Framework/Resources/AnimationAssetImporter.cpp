@@ -10,13 +10,13 @@ namespace TUK::Framework
 	{
 		if (path.extension() != ".tukanim")
 		{
-			return std::unexpected("Animation requires a .tukanim file");
+			return std::unexpected("애니메이션 로더에는 .tukanim 파일이 필요합니다.");
 		}
 
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
-			return std::unexpected("Cannot open resource: " + path.generic_string());
+			return std::unexpected("리소스를 열 수 없습니다: " + path.generic_string());
 		}
 
 		BinaryReader reader(file);
@@ -25,13 +25,13 @@ namespace TUK::Framework
 		f32 frameRate = 0.0f;
 		if (!reader.Read(name, length, frameRate))
 		{
-			return std::unexpected("Invalid animation header");
+			return std::unexpected("애니메이션 헤더가 유효하지 않습니다.");
 		}
 
 		i32 count = 0;
 		if (!reader.ReadCount(count, sizeof(AnimationTransform)))
 		{
-			return std::unexpected("Invalid animation transform count");
+			return std::unexpected("애니메이션 트랜스폼 개수가 유효하지 않습니다.");
 		}
 
 		std::vector<AnimationTransform> transforms(count);
@@ -39,26 +39,26 @@ namespace TUK::Framework
 		{
 			if (!reader.Read(transform.path) || !reader.ReadCount(count, sizeof(AnimationFrame)))
 			{
-				return std::unexpected("Invalid animation transform data");
+				return std::unexpected("애니메이션 트랜스폼 데이터가 유효하지 않습니다.");
 			}
 			transform.frames.resize(count);
 			for (auto& frame : transform.frames)
 			{
 				if (!reader.Read(frame.time, frame.position, frame.rotation, frame.scale))
 				{
-					return std::unexpected("Invalid animation frame data");
+					return std::unexpected("애니메이션 프레임 데이터가 유효하지 않습니다.");
 				}
 			}
 		}
 
 		if (!reader.IsAtEnd())
 		{
-			return std::unexpected("Unexpected trailing animation data");
+			return std::unexpected("애니메이션 파일 끝에 예상치 못한 데이터가 남아 있습니다.");
 		}
 
 		if (length < 0.0f || frameRate <= 0.0f || transforms.empty())
 		{
-			return std::unexpected("Invalid animation timing or transform count");
+			return std::unexpected("애니메이션 시간 정보 또는 트랜스폼 개수가 유효하지 않습니다.");
 		}
 
 		std::unordered_set<std::string> paths;
@@ -66,7 +66,7 @@ namespace TUK::Framework
 		{
 			if (!paths.insert(transform.path).second || transform.frames.empty())
 			{
-				return std::unexpected("Duplicate animation target or missing frames");
+				return std::unexpected("중복된 애니메이션 대상이 있거나 프레임이 비어 있습니다.");
 			}
 
 			f32 previous = -1.0f;
@@ -80,7 +80,7 @@ namespace TUK::Framework
 				if (frame.time < 0.0f || frame.time < previous || frame.time > length ||
 					!std::isfinite(magnitude) || magnitude < 0.000001f)
 				{
-					return std::unexpected("Invalid animation frame time or rotation");
+					return std::unexpected("애니메이션 프레임 시간 또는 회전값이 유효하지 않습니다.");
 				}
 				previous = frame.time;
 			}

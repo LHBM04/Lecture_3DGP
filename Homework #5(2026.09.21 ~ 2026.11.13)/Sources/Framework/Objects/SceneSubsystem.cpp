@@ -1,10 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "SceneSubsystem.hpp"
 
+#include "../Core/Common.hpp"
+
 #include "GameObject.hpp"
 #include "Scene.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -193,5 +193,4 @@ namespace TUK::Framework
 			onExitScene.Broadcast(scene);
 		}
 	}
-
 }

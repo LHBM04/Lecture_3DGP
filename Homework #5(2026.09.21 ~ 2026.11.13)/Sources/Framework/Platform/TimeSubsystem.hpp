@@ -17,21 +17,21 @@ namespace TUK::Framework
 	public:
 		TimeSubsystem() noexcept;
 
-		[[nodiscard]] float GetTotalTime() const noexcept;
+		[[nodiscard]] f32 GetTotalTime() const noexcept;
 
-		[[nodiscard]] float GetTimeScale() const noexcept;
-		void SetTimeScale(float timeScale) noexcept;
+		[[nodiscard]] f32 GetTimeScale() const noexcept;
+		void SetTimeScale(f32 value) noexcept;
 
-		[[nodiscard]] std::uint32_t GetFixedStep() const noexcept;
-		void SetFixedStep(std::uint32_t count) noexcept;
+		[[nodiscard]] u32 GetFixedStep() const noexcept;
+		void SetFixedStep(u32 value) noexcept;
 
-		[[nodiscard]] float GetDeltaTime() const noexcept;
-		[[nodiscard]] float GetUnscaledDeltaTime() const noexcept;
+		[[nodiscard]] f32 GetDeltaTime() const noexcept;
+		[[nodiscard]] f32 GetUnscaledDeltaTime() const noexcept;
 
-		[[nodiscard]] float GetFixedDeltaTime() const noexcept;
-		[[nodiscard]] float GetUnscaledFixedDeltaTime() const noexcept;
+		[[nodiscard]] f32 GetFixedDeltaTime() const noexcept;
+		[[nodiscard]] f32 GetUnscaledFixedDeltaTime() const noexcept;
 
-		[[nodiscard]] std::uint32_t GetFrameCount() const noexcept;
+		[[nodiscard]] u32 GetFrameCount() const noexcept;
 
 		SystemStatus OnStartup() noexcept override;
 		SystemStatus OnPreTick() noexcept override;
@@ -45,17 +45,17 @@ namespace TUK::Framework
 		LARGE_INTEGER startTime{};
 		LARGE_INTEGER previousTime{};
 
-		double totalTime = 0.0;
-		double secondsPerCount = 0.0;
+		f64 totalTime = 0.0;
+		f64 secondsPerCount = 0.0;
 
-		double deltaTime = 0.0;
-		float timeScale = 1.0f;
+		f64 deltaTime = 0.0;
+		f32 timeScale = 1.0f;
 
-		double fixedDeltaTime = 1.0 / 60.0;
-		double fixedAccumulator = 0.0;
+		f64 fixedDeltaTime = 1.0 / 60.0;
+		f64 fixedAccumulator = 0.0;
 
-		std::uint32_t maxFixedStepsPerFrame = 5;
-		std::uint32_t fixedSteps = 0;
-		std::uint32_t frameCount = 0;
+		u32 maxFixedStepsPerFrame = 5;
+		u32 fixedSteps = 0;
+		u32 frameCount = 0;
 	};
 }

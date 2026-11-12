@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "TextureAssetImporter.hpp"
 
-#include <cctype>
-
 #include "../Core/Common.hpp"
 
 #include "../Graphics/GPUBuffer.hpp"
@@ -89,7 +87,6 @@ namespace TUK::Framework
 		ID3D12CommandList* lists[] = { commands.Get() };
 		queue.ExecuteCommandLists(1, lists);
 		constexpr UINT64 COMPLETION_VALUE = 1;
-		// A null event makes SetEventOnCompletion block until completion.
 		if (FAILED(queue.Signal(fence.Get(), COMPLETION_VALUE)) ||
 			FAILED(fence->SetEventOnCompletion(COMPLETION_VALUE, nullptr)))
 		{
@@ -97,7 +94,6 @@ namespace TUK::Framework
 			{
 				return std::unexpected("이미지 업로드 중 디바이스가 제거되었습니다.");
 			}
-			// Returning would release resources that may still be in use by the GPU.
 			LOG_ERROR("이미지 업로드를 동기화할 수 없어 GPU 리소스의 수명을 보장할 수 없습니다.");
 			std::abort();
 		}

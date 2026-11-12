@@ -8,10 +8,10 @@
 
 #pragma pack_matrix(row_major)
 
-cbuffer CameraBuffer : register(b0)
+cbuffer CameraConstants : register(b0)
 {
-    matrix viewMatrix;
-    matrix projectionMatrix;
+    float4x4 view;
+    float4x4 projection;
 };
 
 cbuffer SkyboxConstants : register(b2)
@@ -22,29 +22,24 @@ cbuffer SkyboxConstants : register(b2)
 TextureCube<float4> skyboxTexture : register(t0);
 SamplerState linearClamp : register(s1);
 
-struct VSInput
-{
-    uint vertexID : SV_VertexID;
-};
-
 struct VSOutput
 {
     float4 position : SV_POSITION;
     float3 direction : TEXCOORD0;
 };
 
-VSOutput VSMain(VSInput input)
+VSOutput VSMain(uint vertexID : SV_VertexID)
 {
-    const float2 ndc = float2((input.vertexID == 1u) ? 3.0f : -1.0f, (input.vertexID == 2u) ? -3.0f : 1.0f);
+    const float2 ndc = float2((vertexID == 1u) ? 3.0f : -1.0f, (vertexID == 2u) ? -3.0f : 1.0f);
     float3 viewDirection = float3(0.0f, 0.0f, 1.0f);
-    if (projectionMatrix[2][3] != 0.0f)
+    if (projection[2][3] != 0.0f)
     {
-        viewDirection.xy = ndc / float2(projectionMatrix[0][0], projectionMatrix[1][1]);
+        viewDirection.xy = ndc / float2(projection[0][0], projection[1][1]);
     }
 
     VSOutput output;
     output.position = float4(ndc, 1.0f, 1.0f);
-    output.direction = mul(viewDirection, transpose((float3x3)viewMatrix));
+    output.direction = mul(viewDirection, transpose((float3x3)view));
     return output;
 }
 

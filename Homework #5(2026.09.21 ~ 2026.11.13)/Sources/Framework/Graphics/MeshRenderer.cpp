@@ -81,7 +81,7 @@ namespace TUK::Framework
 			commandBuffer.SetPrimitiveTopology(material.GetPrimitive());
 			commandBuffer.SetVertexBuffer(0, gpuMesh.GetD3DVertexBufferView());
 			commandBuffer.SetIndexBuffer(gpuMesh.GetD3DIndexBufferView());
-			commandBuffer.DrawIndexed(gpuMesh.GetIndexCount());
+			commandBuffer.DrawIndexedInstanced(gpuMesh.GetIndexCount(), 1);
 		}
 	}
 

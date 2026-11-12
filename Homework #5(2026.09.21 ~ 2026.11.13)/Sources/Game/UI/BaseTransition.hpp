@@ -19,8 +19,7 @@ namespace TUK::Game
 	class BaseTransition : public Component
 	{
 	public:
-		explicit BaseTransition(GameObject* owner) noexcept;
-		~BaseTransition() noexcept override = default;
+		using Component::Component;
 
 		void OnAwake() override;
 		void OnUpdate() override;
@@ -55,11 +54,6 @@ namespace TUK::Game
 		TransitionState state = TransitionState::IDLE;
 		f32 progress = 0.0f;
 	};
-
-	inline BaseTransition::BaseTransition(GameObject* owner) noexcept
-		: Component(owner)
-	{
-	}
 
 	inline bool BaseTransition::IsCloseAfterOpen() const noexcept
 	{

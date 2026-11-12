@@ -43,7 +43,7 @@ namespace TUK::Framework
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
 		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
-		
+
 		std::vector<GPUTexture2D> backBuffers;
 	};
 

@@ -31,13 +31,13 @@ namespace TUK::Framework
 
 		[[nodiscard]] Display* GetDisplay(usize index) noexcept;
 		[[nodiscard]] const Display* GetDisplay(usize index) const noexcept;
-		
+
 		[[nodiscard]] Display* FindDisplayByHWND(HWND hWnd) noexcept;
 		[[nodiscard]] const Display* FindDisplayByHWND(HWND hWnd) const noexcept;
-		
+
 		[[nodiscard]] Display* FindDisplayByID(Display::ID id) noexcept;
 		[[nodiscard]] const Display* FindDisplayByID(Display::ID id) const noexcept;
-		
+
 		[[nodiscard]] bool IsDisplayValid(const Display* display) const noexcept;
 		[[nodiscard]] bool IsDisplayValid(HWND hWnd) const noexcept;
 		[[nodiscard]] bool IsDisplayValid(Display::ID id) const noexcept;

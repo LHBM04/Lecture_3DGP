@@ -20,7 +20,7 @@ namespace TUK::Framework
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
-			return std::unexpected("Cannot open resource: " + path.generic_string());
+			return std::unexpected("리소스를 열 수 없습니다: " + path.generic_string());
 		}
 
 		BinaryReader reader(file);
@@ -32,7 +32,7 @@ namespace TUK::Framework
 
 		if (!reader.ReadCount(count, sizeof(decltype(parsedPositions)::value_type)))
 		{
-			return std::unexpected("Invalid mesh attribute count");
+			return std::unexpected("메시 속성 개수가 유효하지 않습니다.");
 		}
 		parsedPositions.resize(count);
 		for (auto& value : parsedPositions)
@@ -40,14 +40,14 @@ namespace TUK::Framework
 			std::array<f32, 3> components{};
 			if (!reader.Read(components))
 			{
-				return std::unexpected("Invalid mesh attribute data");
+				return std::unexpected("메시 속성 데이터가 유효하지 않습니다.");
 			}
 			value.Set(components[0], components[1], components[2]);
 		}
 
 		if (!reader.ReadCount(count, sizeof(decltype(parsedNormals)::value_type)))
 		{
-			return std::unexpected("Invalid mesh attribute count");
+			return std::unexpected("메시 속성 개수가 유효하지 않습니다.");
 		}
 		parsedNormals.resize(count);
 		for (auto& value : parsedNormals)
@@ -55,14 +55,14 @@ namespace TUK::Framework
 			std::array<f32, 3> components{};
 			if (!reader.Read(components))
 			{
-				return std::unexpected("Invalid mesh attribute data");
+				return std::unexpected("메시 속성 데이터가 유효하지 않습니다.");
 			}
 			value.Set(components[0], components[1], components[2]);
 		}
 
 		if (!reader.ReadCount(count, sizeof(decltype(parsedUVs)::value_type)))
 		{
-			return std::unexpected("Invalid mesh attribute count");
+			return std::unexpected("메시 속성 개수가 유효하지 않습니다.");
 		}
 		parsedUVs.resize(count);
 		for (auto& value : parsedUVs)
@@ -70,14 +70,14 @@ namespace TUK::Framework
 			std::array<f32, 2> components{};
 			if (!reader.Read(components))
 			{
-				return std::unexpected("Invalid mesh attribute data");
+				return std::unexpected("메시 속성 데이터가 유효하지 않습니다.");
 			}
 			value.Set(components[0], components[1]);
 		}
 
 		if (!reader.ReadCount(count, sizeof(u32)))
 		{
-			return std::unexpected("Invalid mesh index count");
+			return std::unexpected("메시 인덱스 개수가 유효하지 않습니다.");
 		}
 		parsedIndices.resize(count);
 		for (u32& index : parsedIndices)
@@ -88,9 +88,9 @@ namespace TUK::Framework
 			}
 		}
 
-		if (!reader.IsAtEnd() || parsedPositions.empty() || parsedNormals.size() != parsedPositions.size()
-			|| (!parsedUVs.empty() && parsedUVs.size() != parsedPositions.size())
-			|| parsedIndices.empty() || parsedIndices.size() % 3 != 0)
+		if (!reader.IsAtEnd() || parsedPositions.empty() || parsedNormals.size() != parsedPositions.size() ||
+			(!parsedUVs.empty() && parsedUVs.size() != parsedPositions.size()) ||
+			parsedIndices.empty() || parsedIndices.size() % 3 != 0)
 		{
 			return std::unexpected("메시 정점 속성 또는 인덱스 개수가 유효하지 않습니다.");
 		}

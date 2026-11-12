@@ -14,7 +14,7 @@ namespace TUK::Framework
 		SystemStatus Startup() override;
 		SystemStatus Routine() override;
 		void Shutdown() override;
-		
+
 		template <std::derived_from<AppSubsystem> TSubsystem>
 		TSubsystem* AddSubsystem();
 

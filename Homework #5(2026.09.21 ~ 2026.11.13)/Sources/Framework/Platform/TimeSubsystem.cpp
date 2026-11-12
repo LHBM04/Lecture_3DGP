@@ -8,52 +8,52 @@ namespace TUK::Framework
 	{
 	}
 
-	float TimeSubsystem::GetTotalTime() const noexcept
+	f32 TimeSubsystem::GetTotalTime() const noexcept
 	{
-		return static_cast<float>(totalTime);
+		return static_cast<f32>(totalTime);
 	}
 
-	float TimeSubsystem::GetTimeScale() const noexcept
+	f32 TimeSubsystem::GetTimeScale() const noexcept
 	{
 		return timeScale;
 	}
 
-	void TimeSubsystem::SetTimeScale(float timeScale) noexcept
+	void TimeSubsystem::SetTimeScale(f32 value) noexcept
 	{
-		this->timeScale = timeScale;
+		timeScale = value;
 	}
 
-	std::uint32_t TimeSubsystem::GetFixedStep() const noexcept
+	u32 TimeSubsystem::GetFixedStep() const noexcept
 	{
 		return maxFixedStepsPerFrame;
 	}
 
-	void TimeSubsystem::SetFixedStep(std::uint32_t count) noexcept
+	void TimeSubsystem::SetFixedStep(u32 value) noexcept
 	{
-		maxFixedStepsPerFrame = count;
+		maxFixedStepsPerFrame = value;
 	}
 
-	float TimeSubsystem::GetDeltaTime() const noexcept
+	f32 TimeSubsystem::GetDeltaTime() const noexcept
 	{
-		return static_cast<float>(deltaTime) * timeScale;
+		return static_cast<f32>(deltaTime) * timeScale;
 	}
 
-	float TimeSubsystem::GetUnscaledDeltaTime() const noexcept
+	f32 TimeSubsystem::GetUnscaledDeltaTime() const noexcept
 	{
-		return static_cast<float>(deltaTime);
+		return static_cast<f32>(deltaTime);
 	}
 
-	float TimeSubsystem::GetFixedDeltaTime() const noexcept
+	f32 TimeSubsystem::GetFixedDeltaTime() const noexcept
 	{
-		return static_cast<float>(fixedDeltaTime) * timeScale;
+		return static_cast<f32>(fixedDeltaTime) * timeScale;
 	}
 
-	float TimeSubsystem::GetUnscaledFixedDeltaTime() const noexcept
+	f32 TimeSubsystem::GetUnscaledFixedDeltaTime() const noexcept
 	{
-		return static_cast<float>(fixedDeltaTime);
+		return static_cast<f32>(fixedDeltaTime);
 	}
 
-	std::uint32_t TimeSubsystem::GetFrameCount() const noexcept
+	u32 TimeSubsystem::GetFrameCount() const noexcept
 	{
 		return frameCount;
 	}
@@ -67,7 +67,7 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		secondsPerCount = 1.0 / static_cast<double>(frequency.QuadPart);
+		secondsPerCount = 1.0 / static_cast<f64>(frequency.QuadPart);
 
 		previousTime = startTime;
 
@@ -90,8 +90,8 @@ namespace TUK::Framework
 			return SystemStatus::FAILURE;
 		}
 
-		deltaTime = (frameCount == 0 || now.QuadPart < previousTime.QuadPart) ? 0.0 : static_cast<double>(now.QuadPart - previousTime.QuadPart) * secondsPerCount;
-		totalTime = static_cast<double>(now.QuadPart - startTime.QuadPart) * secondsPerCount;
+		deltaTime = (frameCount == 0 || now.QuadPart < previousTime.QuadPart) ? 0.0 : static_cast<f64>(now.QuadPart - previousTime.QuadPart) * secondsPerCount;
+		totalTime = static_cast<f64>(now.QuadPart - startTime.QuadPart) * secondsPerCount;
 		previousTime = now;
 
 		++frameCount;

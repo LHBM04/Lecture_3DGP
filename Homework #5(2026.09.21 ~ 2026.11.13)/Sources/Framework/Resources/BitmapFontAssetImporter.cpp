@@ -10,13 +10,13 @@ namespace TUK::Framework
 	{
 		if (path.extension() != ".tukfont")
 		{
-			return std::unexpected("Font requires a .tukfont file");
+			return std::unexpected("폰트 로더에는 .tukfont 파일이 필요합니다.");
 		}
 
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
-			return std::unexpected("Cannot open resource: " + path.generic_string());
+			return std::unexpected("리소스를 열 수 없습니다: " + path.generic_string());
 		}
 
 		BinaryReader reader(file);
@@ -32,13 +32,13 @@ namespace TUK::Framework
 		if (!reader.Read(name, renderMode, isDistanceField, pointSize,
 			faceScale, lineHeight, ascentLine, descentLine, atlasPadding))
 		{
-			return std::unexpected("Invalid font header");
+			return std::unexpected("폰트 헤더가 유효하지 않습니다.");
 		}
 
 		i32 count = 0;
 		if (!reader.ReadCount(count, sizeof(FontAtlasData)))
 		{
-			return std::unexpected("Invalid font atlas count");
+			return std::unexpected("폰트 아틀라스 개수가 유효하지 않습니다.");
 		}
 
 		std::vector<FontAtlasData> parsedAtlases(count);
@@ -46,13 +46,13 @@ namespace TUK::Framework
 		{
 			if (!reader.Read(atlas.index, atlas.texture, atlas.width, atlas.height))
 			{
-				return std::unexpected("Invalid font atlas data");
+				return std::unexpected("폰트 아틀라스 데이터가 유효하지 않습니다.");
 			}
 		}
 
 		if (!reader.ReadCount(count, sizeof(FontCharacterData)))
 		{
-			return std::unexpected("Invalid font character count");
+			return std::unexpected("폰트 문자 개수가 유효하지 않습니다.");
 		}
 
 		std::vector<FontCharacterData> parsedCharacters(count);
@@ -63,18 +63,18 @@ namespace TUK::Framework
 				character.uvMin, character.uvMax, character.width, character.height,
 				character.bearingX, character.bearingY, character.advance))
 			{
-				return std::unexpected("Invalid font character data");
+				return std::unexpected("폰트 문자 데이터가 유효하지 않습니다.");
 			}
 		}
 
 		if (!reader.IsAtEnd())
 		{
-			return std::unexpected("Unexpected trailing font data");
+			return std::unexpected("폰트 파일 끝에 예상치 못한 데이터가 남아 있습니다.");
 		}
 
 		if (pointSize <= 0.0f || faceScale <= 0.0f || atlasPadding < 0 || parsedAtlases.empty())
 		{
-			return std::unexpected("Invalid font metrics or missing atlases");
+			return std::unexpected("폰트 메트릭이 유효하지 않거나 아틀라스가 없습니다.");
 		}
 
 		std::unordered_map<i32, const FontAtlasData*> atlases;
@@ -82,7 +82,7 @@ namespace TUK::Framework
 		{
 			if (atlas.index < 0 || atlas.width <= 0 || atlas.height <= 0 || !atlases.emplace(atlas.index, &atlas).second)
 			{
-				return std::unexpected("Invalid or duplicate font atlas");
+				return std::unexpected("폰트 아틀라스가 유효하지 않거나 중복되었습니다.");
 			}
 		}
 
@@ -93,14 +93,14 @@ namespace TUK::Framework
 			if (page == atlases.end() || character.unicode > 0x10FFFF ||
 				(character.unicode >= 0xD800 && character.unicode <= 0xDFFF) || !characters.insert(character.unicode).second)
 			{
-				return std::unexpected("Invalid font character mapping");
+				return std::unexpected("폰트 문자 매핑이 유효하지 않습니다.");
 			}
 			for (const auto& rect : { character.glyphRect, character.sampleRect })
 			{
 				if (rect[0] < 0 || rect[1] < 0 || rect[2] < 0 || rect[3] < 0 ||
 					rect[0] + rect[2] > page->second->width || rect[1] + rect[3] > page->second->height)
 				{
-					return std::unexpected("Font glyph rectangle exceeds its atlas");
+					return std::unexpected("폰트 글리프 영역이 아틀라스 범위를 벗어났습니다.");
 				}
 			}
 		}

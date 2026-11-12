@@ -32,6 +32,9 @@ namespace TUK::Framework
 		virtual void OnPreRender(GPUCommandBuffer& commandBuffer);
 		virtual void OnRender(GPUCommandBuffer& commandBuffer);
 		virtual void OnPostRender(GPUCommandBuffer& commandBuffer);
+#ifdef _DEBUG
+		virtual void OnDrawGizmos(GPUCommandBuffer& commandBuffer);
+#endif
 
 		virtual void OnDestroy();
 
@@ -100,6 +103,12 @@ namespace TUK::Framework
 	inline void Component::OnPostRender(GPUCommandBuffer&)
 	{
 	}
+
+#ifdef _DEBUG
+	inline void Component::OnDrawGizmos(GPUCommandBuffer&)
+	{
+	}
+#endif
 
 	inline void Component::OnDestroy()
 	{

@@ -2,12 +2,14 @@
 #include "MyGame.hpp"
 
 #include "Framework/Core.hpp"
-#include "Framework/Objects/SceneSubsystem.hpp"
 #include "Framework/Graphics.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Platform.hpp"
 #include "Framework/Resources.hpp"
 
-#include "../Scenes/Scene_LevelAirplane.hpp"
+#include "../Scenes/Scene_LevelJet.hpp"
+#include "../Scenes/Scene_LevelClear.hpp"
+#include "../Scenes/Scene_LevelFail.hpp"
 #include "../Scenes/Scene_LevelTank.hpp"
 #include "../Scenes/Scene_Title.hpp"
 
@@ -75,8 +77,8 @@ namespace TUK::Game
 		DisplayOptions options{};
 		options.caption = caption;
 		options.position = Vector2D(100, 100);
-		options.size = Vector2D(1280, 960);
-		options.style = WS_OVERLAPPEDWINDOW;
+		options.size = Vector2D(800, 600);
+		options.style = WS_OVERLAPPEDWINDOW & ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
 		options.styleEx = WS_EX_APPWINDOW;
 		options.show = SW_SHOW;
 
@@ -86,6 +88,8 @@ namespace TUK::Game
 			LOG_ERROR("디스플레이 생성에 실패했습니다: {}", result.error());
 			return SystemStatus::FAILURE;
 		}
+
+		result.value()->SetClientSize(options.size);
 
 		return App::Startup();
 	}
@@ -111,8 +115,6 @@ namespace TUK::Game
 
 		if (InputAction* moveAction = subsystem->AddAction("Move"))
 		{
-			// 사용할 키를 미리 묶어놓는 거임
-			// TODO: 좋은 방법이 있으면 교체하기
 			moveAction->AddVector2DBinding(KeyCode::UP, KeyCode::DOWN, KeyCode::LEFT, KeyCode::RIGHT);
 			moveAction->AddVector2DBinding(KeyCode::W, KeyCode::S, KeyCode::A, KeyCode::D);
 		}
@@ -141,8 +143,10 @@ namespace TUK::Game
 		SceneManager::Initialize(subsystem);
 
 		SceneManager::AddScene("Title", std::make_unique<Scene_Title>());
-		SceneManager::AddScene("Stage Airplane", std::make_unique<Scene_LevelAirplane>());
+		SceneManager::AddScene("Stage Jet", std::make_unique<Scene_LevelJet>());
 		SceneManager::AddScene("Stage Tank", std::make_unique<Scene_LevelTank>());
+		SceneManager::AddScene("Game Over", std::make_unique<Scene_LevelFail>());
+		SceneManager::AddScene("Game Clear", std::make_unique<Scene_LevelClear>());
 	}
 
 	void MyGame::OnSceneSubsystemRemoved([[maybe_unused]] SceneSubsystem* subsystem)

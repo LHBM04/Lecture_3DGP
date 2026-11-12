@@ -1,17 +1,16 @@
 ﻿#include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
-#include "Mathf.hpp"
+#include "../Core/Common.hpp"
 
 #include "ColorRGB.hpp"
-
-#include "../Core/Common.hpp"
+#include "Mathf.hpp"
 
 namespace TUK::Framework
 {
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar>::ColorRGBA() noexcept
-		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
+		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1))
 	{
 	}
 
@@ -29,7 +28,7 @@ namespace TUK::Framework
 
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar>::ColorRGBA(const TScalar* values) noexcept
-		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1))
+		: value(static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(0), static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1))
 	{
 		ASSERT_FMT(values, "values가 nullptr입니다.");
 
@@ -116,7 +115,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator+(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(value.x + other.value.x, value.y + other.value.y, value.z + other.value.z, value.w + other.value.w);
 		}
@@ -138,7 +137,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator-(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(value.x - other.value.x, value.y - other.value.y, value.z - other.value.z, value.w - other.value.w);
 		}
@@ -160,7 +159,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator*(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(value.x * other.value.x, value.y * other.value.y, value.z * other.value.z, value.w * other.value.w);
 		}
@@ -175,7 +174,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator*(TScalar scalar) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(value.x * scalar, value.y * scalar, value.z * scalar, value.w * scalar);
 		}
@@ -204,7 +203,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::operator/(TScalar scalar) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			ASSERT_FMT(scalar != TScalar{}, "scalar가 0입니다.");
 
@@ -230,16 +229,16 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	bool ColorRGBA<TScalar>::operator==(const ColorRGBA<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return value.x == other.value.x && value.y == other.value.y && value.z == other.value.z && value.w == other.value.w;
 		}
 		else
 		{
-			return std::abs(value.x - other.value.x) < std::numeric_limits<float>::epsilon() &&
-			std::abs(value.y - other.value.y) < std::numeric_limits<float>::epsilon() &&
-			std::abs(value.z - other.value.z) < std::numeric_limits<float>::epsilon() &&
-			std::abs(value.w - other.value.w) < std::numeric_limits<float>::epsilon();
+			return std::abs(value.x - other.value.x) < std::numeric_limits<f32>::epsilon() &&
+			std::abs(value.y - other.value.y) < std::numeric_limits<f32>::epsilon() &&
+			std::abs(value.z - other.value.z) < std::numeric_limits<f32>::epsilon() &&
+			std::abs(value.w - other.value.w) < std::numeric_limits<f32>::epsilon();
 		}
 	}
 
@@ -307,15 +306,15 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	bool ColorRGBA<TScalar>::IsTransparent(float epsilon) const noexcept
+	bool ColorRGBA<TScalar>::IsTransparent(f32 epsilon) const noexcept
 	{
 		return value.w <= epsilon;
 	}
 
 	template <Scalarable TScalar>
-	bool ColorRGBA<TScalar>::IsOpaque(float epsilon) const noexcept
+	bool ColorRGBA<TScalar>::IsOpaque(f32 epsilon) const noexcept
 	{
-		constexpr TScalar maximum = static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1);
+		constexpr TScalar maximum = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1);
 		return value.w >= maximum - epsilon;
 	}
 
@@ -334,7 +333,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetBlack() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(0, 0, 0, 255);
 		}
@@ -347,7 +346,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetWhite() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(255, 255, 255, 255);
 		}
@@ -360,7 +359,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetRed() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(255, 0, 0, 255);
 		}
@@ -373,7 +372,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetGreen() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(0, 255, 0, 255);
 		}
@@ -386,7 +385,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetBlue() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(0, 0, 255, 255);
 		}
@@ -399,7 +398,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetYellow() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(255, 235, 4, 255);
 		}
@@ -412,7 +411,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetCyan() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(0, 255, 255, 255);
 		}
@@ -425,7 +424,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetMagenta() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(255, 0, 255, 255);
 		}
@@ -438,7 +437,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGBA<TScalar> ColorRGBA<TScalar>::GetClear() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGBA<TScalar>(0, 0, 0, 0);
 		}
@@ -463,7 +462,7 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	bool ColorRGBA<TScalar>::IsApproximately(const ColorRGBA<TScalar>& lhs, const ColorRGBA<TScalar>& rhs, float epsilon) noexcept
+	bool ColorRGBA<TScalar>::IsApproximately(const ColorRGBA<TScalar>& lhs, const ColorRGBA<TScalar>& rhs, f32 epsilon) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return std::abs(lhs.value.x - rhs.value.x) <= epsilon &&
@@ -473,7 +472,7 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	ColorRGBA<TScalar> ColorRGBA<TScalar>::Lerp(const ColorRGBA<TScalar>& start, const ColorRGBA<TScalar>& end, float t) noexcept
+	ColorRGBA<TScalar> ColorRGBA<TScalar>::Lerp(const ColorRGBA<TScalar>& start, const ColorRGBA<TScalar>& end, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		ColorRGBA<TScalar> result{};
@@ -481,6 +480,6 @@ namespace TUK::Framework
 		return result;
 	}
 
-	template class ColorRGBA<std::int32_t>;
-	template class ColorRGBA<float>;
+	template class ColorRGBA<i32>;
+	template class ColorRGBA<f32>;
 }

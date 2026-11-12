@@ -1,7 +1,7 @@
 ﻿#include "Precompiled.hpp"
 #include "TerrainAssetImporter.hpp"
 
-#include <charconv>
+#include "../Core/BinaryReader.hpp"
 
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUMesh.hpp"
@@ -21,149 +21,13 @@ namespace TUK::Framework
 			Vector2D<f32> uvTiling{ 1.0f, 1.0f };
 		};
 
-		[[nodiscard]] constexpr bool IsAsciiWhitespace(char ch) noexcept
-		{
-			return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
-		}
-
-		[[nodiscard]] std::string_view Trim(std::string_view text) noexcept
-		{
-			constexpr std::string_view UTF8_BOM = "\xEF\xBB\xBF";
-			if (text.starts_with(UTF8_BOM))
-			{
-				text.remove_prefix(UTF8_BOM.size());
-			}
-			while (!text.empty() && IsAsciiWhitespace(text.front()))
-			{
-				text.remove_prefix(1);
-			}
-			while (!text.empty() && IsAsciiWhitespace(text.back()))
-			{
-				text.remove_suffix(1);
-			}
-			return text;
-		}
-
-		template <typename TValue>
-		[[nodiscard]] bool TryParseNumber(std::string_view text, TValue& outValue) noexcept
-		{
-			TValue parsed{};
-			const char* begin = text.data();
-			const char* end = begin + text.size();
-			const auto [ptr, ec] = std::from_chars(begin, end, parsed);
-			if (ec != std::errc{} || ptr != end)
-			{
-				return false;
-			}
-
-			outValue = parsed;
-			return true;
-		}
-
-		[[nodiscard]] TerrainImportSettings LoadTerrainSettings(const std::filesystem::path& rawPath)
-		{
-			TerrainImportSettings settings{};
-			std::filesystem::path metaPath = rawPath;
-			metaPath.replace_extension(".meta");
-
-			std::ifstream metaFile(metaPath);
-			if (!metaFile)
-			{
-				return settings;
-			}
-
-			std::string line;
-			while (std::getline(metaFile, line))
-			{
-				const std::string_view trimmed = Trim(line);
-				if (trimmed.empty() || trimmed.starts_with('#') || trimmed.starts_with(';'))
-				{
-					continue;
-				}
-
-				const usize separator = trimmed.find('=');
-				if (separator == std::string_view::npos)
-				{
-					continue;
-				}
-
-				const std::string_view key = Trim(trimmed.substr(0, separator));
-				const std::string_view value = Trim(trimmed.substr(separator + 1));
-
-				if (key == "width")
-				{
-					TryParseNumber(value, settings.width);
-				}
-				else if (key == "height")
-				{
-					TryParseNumber(value, settings.height);
-				}
-				else if (key == "bitDepth")
-				{
-					TryParseNumber(value, settings.bitDepth);
-				}
-				else if (key == "cellSize")
-				{
-					f32 parsed = 0.0f;
-					if (TryParseNumber(value, parsed) && parsed > 0.0f)
-					{
-						settings.cellSize = parsed;
-					}
-				}
-				else if (key == "heightScale")
-				{
-					TryParseNumber(value, settings.heightScale);
-				}
-				else if (key == "uvTilingX")
-				{
-					f32 parsed = 0.0f;
-					if (TryParseNumber(value, parsed))
-					{
-						settings.uvTiling.SetX(parsed);
-					}
-				}
-				else if (key == "uvTilingY")
-				{
-					f32 parsed = 0.0f;
-					if (TryParseNumber(value, parsed))
-					{
-						settings.uvTiling.SetY(parsed);
-					}
-				}
-			}
-
-			return settings;
-		}
-
-		[[nodiscard]] bool HasRawExtension(const std::filesystem::path& path) noexcept
+		[[nodiscard]] bool HasTerrainExtension(const std::filesystem::path& path) noexcept
 		{
 			const std::string extension = path.extension().string();
-			return extension == ".raw" || extension == ".RAW";
+			return extension == ".tukterrain" || extension == ".TUKTERRAIN";
 		}
 
-		[[nodiscard]] u32 FindSquareResolution(u64 sampleCount) noexcept
-		{
-			if (sampleCount == 0)
-			{
-				return 0;
-			}
-
-			const u32 root = static_cast<u32>(std::sqrt(static_cast<f64>(sampleCount)));
-			const u32 minCandidate = (root > 0) ? (root - 1) : 0;
-			const u32 maxCandidate = root + 1;
-
-			for (u32 candidate = minCandidate; candidate <= maxCandidate; ++candidate)
-			{
-				if (static_cast<u64>(candidate) * candidate == sampleCount)
-				{
-					return candidate;
-				}
-			}
-
-			return 0;
-		}
-
-		template <typename TSample>
+		template <class TSample>
 		[[nodiscard]] std::expected<std::vector<f32>, std::string> ReadAndNormalizeSamples(
 			std::ifstream& file,
 			usize sampleCount,
@@ -264,9 +128,9 @@ namespace TUK::Framework
 	std::expected<std::unique_ptr<TerrainAsset>, std::string> TerrainAssetImporter::Import(
 		const std::filesystem::path& path) const
 	{
-		if (!HasRawExtension(path))
+		if (!HasTerrainExtension(path))
 		{
-			return std::unexpected("지형 로더에는 .raw 높이맵 파일이 필요합니다.");
+			return std::unexpected("지형 로더에는 .tukterrain 높이맵 파일이 필요합니다.");
 		}
 
 		std::ifstream file(path, std::ios::binary | std::ios::ate);
@@ -282,47 +146,38 @@ namespace TUK::Framework
 		}
 		file.seekg(0, std::ios::beg);
 
-		const TerrainImportSettings settings = LoadTerrainSettings(path);
-		const u64 byteCount = static_cast<u64>(fileSize);
-
-		u32 width = settings.width;
-		u32 height = settings.height;
-		bool is16Bit = false;
-
-		if (width >= 2 && height >= 2)
+		constexpr u64 HEADER_SIZE = 3 * sizeof(u32) + 4 * sizeof(f32);
+		BinaryReader reader(file);
+		TerrainImportSettings settings{};
+		f32 uvTilingX = 0.0f;
+		f32 uvTilingY = 0.0f;
+		if (!reader.Read(settings.width, settings.height, settings.bitDepth,
+			settings.cellSize, settings.heightScale, uvTilingX, uvTilingY))
 		{
-			const u64 sampleCount = static_cast<u64>(width) * height;
-			if (settings.bitDepth == 16 || (settings.bitDepth == 0 && byteCount == sampleCount * sizeof(u16)))
-			{
-				if (byteCount != sampleCount * sizeof(u16))
-				{
-					return std::unexpected("지형 높이맵 파일 크기가 16비트 해상도와 일치하지 않습니다: " + path.generic_string());
-				}
-				is16Bit = true;
-			}
-			else if (byteCount != sampleCount)
-			{
-				return std::unexpected("지형 높이맵 파일 크기가 해상도와 일치하지 않습니다: " + path.generic_string());
-			}
-		}
-		else
-		{
-			const u32 sizeAs8Bit = (settings.bitDepth == 16) ? 0 : FindSquareResolution(byteCount);
-			const u32 sizeAs16Bit = (settings.bitDepth != 8 && (byteCount % sizeof(u16)) == 0)
-				? FindSquareResolution(byteCount / sizeof(u16))
-				: 0;
-
-			is16Bit = (sizeAs8Bit == 0) && (sizeAs16Bit != 0);
-			width = is16Bit ? sizeAs16Bit : sizeAs8Bit;
-			height = width;
+			return std::unexpected("지형 헤더를 읽지 못했습니다: " + path.generic_string());
 		}
 
-		if (width < 2 || height < 2)
+		if (settings.width < 2 || settings.height < 2
+			|| (settings.bitDepth != 8 && settings.bitDepth != 16)
+			|| settings.cellSize <= 0.0f || settings.heightScale < 0.0f
+			|| uvTilingX <= 0.0f || uvTilingY <= 0.0f)
 		{
-			return std::unexpected("지원되지 않는 높이맵 해상도입니다: " + path.generic_string());
+			return std::unexpected("지형 헤더의 설정값이 유효하지 않습니다: " + path.generic_string());
+		}
+		settings.uvTiling = Vector2D<f32>{ uvTilingX, uvTilingY };
+
+		const u32 width = settings.width;
+		const u32 height = settings.height;
+		const bool is16Bit = settings.bitDepth == 16;
+		const u64 sampleCount64 = static_cast<u64>(width) * height;
+		const u64 sampleSize = is16Bit ? sizeof(u16) : sizeof(u8);
+		if (sampleCount64 > BinaryReader::MAX_ELEMENTS
+			|| static_cast<u64>(fileSize) != HEADER_SIZE + sampleCount64 * sampleSize)
+		{
+			return std::unexpected("지형 높이 데이터 크기가 해상도 및 샘플 형식과 일치하지 않습니다: " + path.generic_string());
 		}
 
-		const usize sampleCount = static_cast<usize>(width) * height;
+		const usize sampleCount = static_cast<usize>(sampleCount64);
 		auto normalizedHeights = is16Bit
 			? ReadAndNormalizeSamples<u16>(file, sampleCount, path)
 			: ReadAndNormalizeSamples<u8>(file, sampleCount, path);

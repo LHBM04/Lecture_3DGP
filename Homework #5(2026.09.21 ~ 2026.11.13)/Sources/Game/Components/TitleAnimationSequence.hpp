@@ -1,7 +1,7 @@
 ﻿#pragma once
 
+#include "Framework/Graphics.hpp"
 #include "Framework/Objects.hpp"
-#include "Framework/Graphics/SkyboxRenderer.hpp"
 
 namespace TUK::Game
 {
