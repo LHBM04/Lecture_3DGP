@@ -263,7 +263,7 @@ namespace TUK::Game
 			return;
 		}
 
-		for (const GameObject* gameObject : GetObjects())
+		for (GameObject* gameObject : GetObjects())
 		{
 			if (gameObject->IsDestroyed() || !gameObject->IsEnabled())
 			{
