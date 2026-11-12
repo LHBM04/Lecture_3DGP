@@ -1,10 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "ButtonUI.hpp"
 
-#include <cmath>
-#include <ranges>
-#include <utility>
-
 #include "../Core/App.hpp"
 
 #include "../GameObjects/GameObject.hpp"
@@ -12,9 +8,17 @@
 #include "../GameObjects/Scene.hpp"
 
 #include "../Graphics/Camera.hpp"
+#ifdef _DEBUG
+#include "../Graphics/GPUCommandBuffer.hpp"
+#include "../Graphics/ShaderConstants.hpp"
+#endif
 
 #include "../Platform/Display.hpp"
 #include "../Platform/InputSubsystem.hpp"
+
+#ifdef _DEBUG
+#include "../Resources/MaterialAsset.hpp"
+#endif
 
 namespace TUK::Framework
 {
@@ -137,4 +141,51 @@ namespace TUK::Framework
 			onExit.Broadcast();
 		}
 	}
+
+#ifdef _DEBUG
+	void ButtonUI::OnPostRender(GPUCommandBuffer& commandBuffer)
+	{
+		if (!debugMaterial)
+		{
+			return;
+		}
+
+		const Transform* transform = GetOwner()->GetComponent<Transform>();
+		if (!transform)
+		{
+			return;
+		}
+
+		ObjectConstants objectConstants{};
+		DirectX::XMStoreFloat4x4(&objectConstants.world, Matrix4x4<f32>::Load(transform->GetWorldMatrix()));
+		if (auto result = commandBuffer.SetGraphicsConstants(objectConstants); !result)
+		{
+			return;
+		}
+
+		const D3D12_VIEWPORT& viewport = commandBuffer.GetActiveViewport();
+		const DirectX::XMFLOAT2 viewportSize = (viewport.Width > 0.0f && viewport.Height > 0.0f)
+			? DirectX::XMFLOAT2{ viewport.Width, viewport.Height }
+			: DirectX::XMFLOAT2{ 1280.0f, 960.0f };
+
+		const DirectX::XMFLOAT4 debugColor = isPressed
+			? DirectX::XMFLOAT4{ 1.0f, 0.0f, 0.0f, 1.0f }
+			: (isHovered ? DirectX::XMFLOAT4{ 1.0f, 1.0f, 0.0f, 1.0f } : DirectX::XMFLOAT4{ 0.0f, 1.0f, 0.0f, 1.0f });
+
+		const ImageUIConstants constants
+		{
+			.viewportSize = viewportSize,
+			.color = debugColor
+		};
+		if (auto result = commandBuffer.SetGraphicsConstants(constants); !result)
+		{
+			return;
+		}
+
+		commandBuffer.SetGPUGraphicsPipelineState(debugMaterial->GetGraphicsPipelineState());
+		commandBuffer.SetPrimitiveTopology(debugMaterial->GetPrimitive());
+		constexpr u32 DEBUG_BORDER_VERTEX_COUNT = 5;
+		commandBuffer.Draw(DEBUG_BORDER_VERTEX_COUNT);
+	}
+#endif
 }

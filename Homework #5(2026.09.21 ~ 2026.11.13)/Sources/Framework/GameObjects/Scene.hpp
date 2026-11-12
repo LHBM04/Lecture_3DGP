@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
-#include <ranges>
-#include <span>
-#include <string_view>
-#include <vector>
-
 #include "../Core/Common.hpp"
 
 #include "../Math/Quaternion.hpp"
@@ -62,6 +56,9 @@ namespace TUK::Framework
 		void AddCamera(Camera* camera);
 		void RemoveCamera(const Camera* camera);
 
+		[[nodiscard]] std::vector<std::unique_ptr<GameObject>> ExtractPersistentObjects();
+		void AdoptObjects(std::vector<std::unique_ptr<GameObject>>&& adopted);
+
 		[[nodiscard]] bool IsEntered() const noexcept;
 
 		[[nodiscard]] GameObject* FindGameObjectByName(std::string_view name) noexcept;
@@ -87,7 +84,6 @@ namespace TUK::Framework
 		virtual void OnFixedUpdate();
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
-
 
 	private:
 		using SceneCallback = void (Scene::*)();

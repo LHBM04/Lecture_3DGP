@@ -1,13 +1,6 @@
 ﻿#pragma once
 
-#include <algorithm>
-#include <array>
 #include <bit>
-#include <cmath>
-#include <concepts>
-#include <fstream>
-#include <string>
-#include <string_view>
 
 #include "Common.hpp"
 

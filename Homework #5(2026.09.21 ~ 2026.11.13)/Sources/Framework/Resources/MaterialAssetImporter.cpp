@@ -1,15 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "MaterialAssetImporter.hpp"
 
-#include <algorithm>
-#include <array>
-#include <filesystem>
-#include <fstream>
-#include <format>
-#include <memory>
-#include <string>
-#include <utility>
-
 #include "../Core/BinaryReader.hpp"
 
 #include "../Graphics/GPUDevice.hpp"

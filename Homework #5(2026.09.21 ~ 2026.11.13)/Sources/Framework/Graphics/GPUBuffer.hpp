@@ -1,14 +1,6 @@
 ﻿#pragma once
 
-#include <cstddef>
-#include <expected>
-#include <span>
-#include <string>
-#include <utility>
-
 #include <wrl/client.h>
-
-#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 

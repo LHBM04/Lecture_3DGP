@@ -1,13 +1,13 @@
 ﻿#include "Precompiled.hpp"
 #include "Time.hpp"
 
-namespace
-{
-	const TimeSubsystem* timeSubsystem = nullptr;
-}
-
 namespace TUK::Game
 {
+	namespace
+	{
+		const TimeSubsystem* timeSubsystem = nullptr;
+	}
+
 	void Time::Initialize(const TimeSubsystem* subsystem)
 	{
 		timeSubsystem = subsystem;

@@ -40,7 +40,7 @@
     <Filter Include="Sources\Game\UI">
       <UniqueIdentifier>{959dc655-7c02-4949-b3b0-96d97d389143}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Component">
+    <Filter Include="Sources\Game\Components">
       <UniqueIdentifier>{60b77e23-16ed-4f8a-b7c8-a8613607197a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -48,10 +48,10 @@
     <ClInclude Include="Sources\Framework\Core\BinaryReader.hpp">
       <Filter>Sources\Framework\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\FontAsset.hpp">
+    <ClInclude Include="Sources\Framework\Resources\BitmapFontAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\FontAssetImporter.hpp">
+    <ClInclude Include="Sources\Framework\Resources\BitmapFontAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp">
@@ -103,6 +103,12 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\MeshVertex.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\ShaderConstants.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\GameObjects\Component.hpp">
@@ -213,6 +219,9 @@
     <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Platform\InputAction.hpp">
+      <Filter>Sources\Framework\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Platform\InputEvents.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
@@ -279,6 +288,9 @@
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\UI\TextView.hpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Game\Scenes\Scene_Title.hpp">
       <Filter>Sources\Game\Scenes</Filter>
     </ClInclude>
@@ -297,8 +309,14 @@
     <ClInclude Include="Sources\Game\Core\MyGame.hpp">
       <Filter>Sources\Game\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Game\Core\SceneManager.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Game\Core\Time.hpp">
       <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\BaseTransition.hpp">
+      <Filter>Sources\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Game\UI\Transition.hpp">
       <Filter>Sources\Game\UI</Filter>
@@ -306,15 +324,18 @@
     <ClInclude Include="Sources\Game\UI\SceneTransition.hpp">
       <Filter>Sources\Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Components\PlayerController.hpp">
-      <Filter>Sources\Game\Component</Filter>
+    <ClInclude Include="Sources\Game\Components\PlayerTankController.hpp">
+      <Filter>Sources\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Components\TitleAnimationSequence.hpp">
+      <Filter>Sources\Game\Components</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Game\Core\Assets.hpp">
       <Filter>Sources\Game\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Framework\Resources\FontAssetImporter.cpp">
+    <ClCompile Include="Sources\Framework\Resources\BitmapFontAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\AnimationAssetImporter.cpp">
@@ -467,6 +488,9 @@
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\UI\TextView.cpp">
+      <Filter>Sources\Framework\UI</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Game\Scenes\Scene_Title.cpp">
       <Filter>Sources\Game\Scenes</Filter>
     </ClCompile>
@@ -479,8 +503,14 @@
     <ClCompile Include="Sources\Game\Core\MyGame.cpp">
       <Filter>Sources\Game\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Game\Core\SceneManager.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Game\Core\Time.cpp">
       <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\BaseTransition.cpp">
+      <Filter>Sources\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\UI\Transition.cpp">
       <Filter>Sources\Game\UI</Filter>
@@ -488,8 +518,11 @@
     <ClCompile Include="Sources\Game\UI\SceneTransition.cpp">
       <Filter>Sources\Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Components\PlayerController.cpp">
-      <Filter>Sources\Game\Component</Filter>
+    <ClCompile Include="Sources\Game\Components\PlayerTankController.cpp">
+      <Filter>Sources\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Components\TitleAnimationSequence.cpp">
+      <Filter>Sources\Game\Components</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Core\Assets.cpp">
       <Filter>Sources\Game\Core</Filter>
@@ -510,6 +543,9 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Standard.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\DebugUI.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
@@ -674,55 +710,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeX.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeY.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeZ.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveX.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveY.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveZ.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Blue Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeX.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeY.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeZ.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveX.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveY.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
-    </None>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveZ.png">
-      <Filter>Resources\Cubemaps\Polyverse Skies - Night Sky</Filter>
-    </None>
     <None Include="Resources\Fonts\BMDOHYEON_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMDOHYEON_ttf.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMDOHYEON_ttf_0.png">
+    <None Include="Resources\Fonts\BMDOHYEON_ttf_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMEuljiro10yearslater 1.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMEuljiro10yearslater 1_0.png">
+    <None Include="Resources\Fonts\BMEuljiro10yearslater 1_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMEuljiro10yearslater.tukfont">
@@ -731,16 +731,10 @@
     <None Include="Resources\Fonts\BMEuljiro10yearslater_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMEuljiro10yearslater_0.png">
-      <Filter>Resources\Fonts</Filter>
-    </None>
     <None Include="Resources\Fonts\BMEuljirooraeorae.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMEuljirooraeorae_0.dds">
-      <Filter>Resources\Fonts</Filter>
-    </None>
-    <None Include="Resources\Fonts\BMEuljirooraeorae_0.png">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMEULJIROTTF.tukfont">
@@ -749,16 +743,13 @@
     <None Include="Resources\Fonts\BMEULJIROTTF_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMEULJIROTTF_0.png">
-      <Filter>Resources\Fonts</Filter>
-    </None>
     <None Include="Resources\Fonts\BMHANNA_11yrs_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMHANNA_11yrs_ttf.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMHANNA_11yrs_ttf_0.png">
+    <None Include="Resources\Fonts\BMHANNA_11yrs_ttf_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMHANNAAir_0.dds">
@@ -767,7 +758,7 @@
     <None Include="Resources\Fonts\BMHANNAAir_ttf.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMHANNAAir_ttf_0.png">
+    <None Include="Resources\Fonts\BMHANNAAir_ttf_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMHANNAPro.tukfont">
@@ -776,16 +767,13 @@
     <None Include="Resources\Fonts\BMHANNAPro_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMHANNAPro_0.png">
-      <Filter>Resources\Fonts</Filter>
-    </None>
     <None Include="Resources\Fonts\BMJUA_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMJUA_ttf.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMJUA_ttf_0.png">
+    <None Include="Resources\Fonts\BMJUA_ttf_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF.tukfont">
@@ -794,16 +782,10 @@
     <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF_0.png">
-      <Filter>Resources\Fonts</Filter>
-    </None>
     <None Include="Resources\Fonts\BMKkubulimTTF.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMKkubulimTTF_0.dds">
-      <Filter>Resources\Fonts</Filter>
-    </None>
-    <None Include="Resources\Fonts\BMKkubulimTTF_0.png">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Fonts\BMYEONSUNG_0.dds">
@@ -812,7 +794,7 @@
     <None Include="Resources\Fonts\BMYEONSUNG_ttf.tukfont">
       <Filter>Resources\Fonts</Filter>
     </None>
-    <None Include="Resources\Fonts\BMYEONSUNG_ttf_0.png">
+    <None Include="Resources\Fonts\BMYEONSUNG_ttf_0.dds">
       <Filter>Resources\Fonts</Filter>
     </None>
     <None Include="Resources\Materials\Carro_Armato_L6_40.tukmat">
@@ -837,6 +819,9 @@
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\ImageUI.tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\TextUI.tukmat">
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\KV_2(1940).tukmat">

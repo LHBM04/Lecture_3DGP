@@ -1,19 +1,6 @@
 ﻿#pragma once
 
-#include <algorithm>
-#include <cassert>
-#include <concepts>
-#include <cstddef>
-#include <cstdint>
-#include <cstdlib>
-#include <format>
-#include <functional>
-#include <memory>
 #include <source_location>
-#include <string_view>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 namespace TUK::Framework
 {
@@ -57,7 +44,7 @@ namespace TUK::Framework
 	{
 	public:
 		using Listener = Action<TArgs...>;
-		using ListenerId = usize;
+		using ListenerId = i32;
 
 		Delegate() noexcept = default;
 		virtual ~Delegate() noexcept = default;

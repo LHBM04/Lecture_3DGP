@@ -1,15 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "ModelAssetImporter.hpp"
 
-#include <array>
-#include <filesystem>
-#include <fstream>
-#include <format>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "../Core/BinaryReader.hpp"
 
 #include "AssetSubsystem.hpp"

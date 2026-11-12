@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <span>
-#include <vector>
-
 #include "../Core/Common.hpp"
 
 #include "../Math/Matrix4x4.hpp"

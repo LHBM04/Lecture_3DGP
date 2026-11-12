@@ -1,11 +1,8 @@
 ﻿#pragma once
 
-#include <memory>
-
 #include <wrl/client.h>
 
-#include <directx/d3d12.h>
-#include <directxtk12/SpriteBatch.h>
+#include "../Math/ColorRGBA.hpp"
 
 #include "../GameObjects/Component.hpp"
 
@@ -22,7 +19,11 @@ namespace TUK::Framework
 		[[nodiscard]] const TextureAsset* GetImage() const noexcept;
 		void SetImage(const TextureAsset* value) noexcept;
 
+		[[nodiscard]] const ColorRGBA<f32>& GetColor() const noexcept;
+		void SetColor(const ColorRGBA<f32>& value) noexcept;
+
 	private:
+		ColorRGBA<f32> color = ColorRGBA<f32>::GetWhite();
 		const TextureAsset* image = nullptr;
 	};
 
@@ -34,5 +35,15 @@ namespace TUK::Framework
 	inline void SpriteRenderer::SetImage(const TextureAsset* value) noexcept
 	{
 		image = value;
+	}
+
+	inline const ColorRGBA<f32>& SpriteRenderer::GetColor() const noexcept
+	{
+		return color;
+	}
+
+	inline void SpriteRenderer::SetColor(const ColorRGBA<f32>& value) noexcept
+	{
+		color = value;
 	}
 }

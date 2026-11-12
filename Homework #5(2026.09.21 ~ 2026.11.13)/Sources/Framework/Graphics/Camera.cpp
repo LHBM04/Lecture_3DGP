@@ -1,12 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Camera.hpp"
 
-#include <algorithm>
-#include <array>
-#include <cmath>
-#include <span>
-#include <utility>
-
 #include "../Core/Common.hpp"
 
 #include "../GameObjects/GameObject.hpp"

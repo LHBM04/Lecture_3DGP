@@ -4,15 +4,17 @@
 #include "Framework/Core.hpp"
 #include "Framework/GameObjects/SceneSubsystem.hpp"
 #include "Framework/Graphics.hpp"
-#include "Framework/Resources.hpp"
 #include "Framework/Platform.hpp"
+#include "Framework/Resources.hpp"
 
-#include "../Scenes/Scene_Stage.hpp"
+#include "../Scenes/Scene_LevelAirplane.hpp"
+#include "../Scenes/Scene_LevelTank.hpp"
 #include "../Scenes/Scene_Title.hpp"
 
 #include "Assets.hpp"
-#include "Time.hpp"
 #include "Input.hpp"
+#include "SceneManager.hpp"
+#include "Time.hpp"
 
 namespace TUK::Game
 {
@@ -42,6 +44,7 @@ namespace TUK::Game
 		OnSubsystemAdded<InputSubsystem>(this, &MyGame::OnInputSubsystemAdded);
 		OnSubsystemRemoved<InputSubsystem>(this, &MyGame::OnInputSubsystemRemoved);
 		OnSubsystemAdded<SceneSubsystem>(this, &MyGame::OnSceneSubsystemAdded);
+		OnSubsystemRemoved<SceneSubsystem>(this, &MyGame::OnSceneSubsystemRemoved);
 		OnSubsystemAdded<AssetSubsystem>(this, &MyGame::OnAssetSubsystemAdded);
 		OnSubsystemRemoved<AssetSubsystem>(this, &MyGame::OnAssetSubsystemRemoved);
 
@@ -84,38 +87,16 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		if (auto initialized = sceneTransition.Initialize(sceneSubsystem, inputSubsystem, renderSubsystem->GetDevice(), assetSubsystem); !initialized)
-		{
-			LOG_ERROR("월드 전환 초기화에 실패했습니다: {}", initialized.error());
-			return SystemStatus::FAILURE;
-		}
-
-		transitionRenderListenerId = renderSubsystem->OnRender().AddListener([this](GPUCommandBuffer& commandBuffer)
-		{
-			if (auto rendered = sceneTransition.GetTransition().Render(commandBuffer); !rendered)
-			{
-				LOG_ERROR("페이드 렌더링에 실패했습니다: {}", rendered.error());
-			}
-		});
-
 		return App::Startup();
 	}
 
 	SystemStatus MyGame::Routine()
 	{
-		sceneTransition.Update(Time::GetUnscaledDeltaTime());
 		return App::Routine();
 	}
 
 	void MyGame::Shutdown()
 	{
-		if (renderSubsystem)
-		{
-			renderSubsystem->OnRender().RemoveListener(transitionRenderListenerId);
-			transitionRenderListenerId = 0;
-		}
-		sceneTransition.Shutdown();
-
 		App::Shutdown();
 	}
 
@@ -128,15 +109,20 @@ namespace TUK::Game
 		eventSubsystem->Subscribe<DisplayCloseEvent>(subsystem, &InputSubsystem::OnDisplayClose);
 		eventSubsystem->Subscribe<DisplayFocusEvent>(subsystem, &InputSubsystem::OnDisplayFocus);
 
-		eventSubsystem->Subscribe<DisplayCreateEvent>([subsystem](const DisplayCreateEvent& event)
+		if (InputAction* moveAction = subsystem->AddAction("Move"))
 		{
-			const InputProvider* provider = subsystem->GetProvider(event.display);
-			Input::Initialize(provider);
-		});
-		eventSubsystem->Subscribe<DisplayCloseEvent>([](const DisplayCloseEvent&)
+			// 사용할 키를 미리 묶어놓는 거임
+			// TODO: 좋은 방법이 있으면 교체하기
+			moveAction->AddVector2DBinding(KeyCode::UP, KeyCode::DOWN, KeyCode::LEFT, KeyCode::RIGHT);
+			moveAction->AddVector2DBinding(KeyCode::W, KeyCode::S, KeyCode::A, KeyCode::D);
+		}
+
+		if (InputAction* cancelAction = subsystem->AddAction("Cancel"))
 		{
-			Input::Release();
-		});
+			cancelAction->AddButtonBinding(KeyCode::ESCAPE);
+		}
+
+		Input::Initialize(subsystem);
 	}
 
 	void MyGame::OnInputSubsystemRemoved([[maybe_unused]] InputSubsystem* subsystem)
@@ -152,9 +138,16 @@ namespace TUK::Game
 		renderSubsystem->OnRender() += std::bind_front(&SceneSubsystem::Render, subsystem);
 		renderSubsystem->OnRender() += std::bind_front(&SceneSubsystem::PostRender, subsystem);
 
-		auto stageScene = std::make_unique<Scene_Stage>();
-		subsystem->AddScene(std::make_unique<Scene_Title>(stageScene.get(), &sceneTransition));
-		subsystem->AddScene(std::move(stageScene));
+		SceneManager::Initialize(subsystem);
+
+		SceneManager::AddScene("Title", std::make_unique<Scene_Title>());
+		SceneManager::AddScene("Stage Airplane", std::make_unique<Scene_LevelAirplane>());
+		SceneManager::AddScene("Stage Tank", std::make_unique<Scene_LevelTank>());
+	}
+
+	void MyGame::OnSceneSubsystemRemoved([[maybe_unused]] SceneSubsystem* subsystem)
+	{
+		SceneManager::Release();
 	}
 
 	void MyGame::OnAssetSubsystemAdded(AssetSubsystem* subsystem)
@@ -172,7 +165,7 @@ namespace TUK::Game
 		subsystem->AddImporter<CubemapAssetImporter>(device);
 		subsystem->AddImporter<MaterialAssetImporter>(device);
 		subsystem->AddImporter<ShaderAssetImporter>();
-		subsystem->AddImporter<FontAssetImporter>();
+		subsystem->AddImporter<BitmapFontAssetImporter>();
 		subsystem->AddImporter<AnimationAssetImporter>();
 
 		Assets::Initialize(subsystem);

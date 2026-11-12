@@ -1,36 +1,58 @@
 ﻿#include "Precompiled.hpp"
 #include "ShaderAssetImporter.hpp"
 
-#include <cstddef>
-#include <cstring>
-#include <format>
-#include <string>
-#include <string_view>
-#include <utility>
-#include <vector>
-
 #include <wrl/client.h>
 
 #include <directx/d3d12shader.h>
-#include <directx/d3dx12.h>
-#include <directx-dxc/dxcapi.h>
 
 #include "../Graphics/GPUShader.hpp"
+#include "../Graphics/MeshVertex.hpp"
 
-#include "MeshAsset.hpp"
 #include "ShaderAsset.hpp"
 
 namespace TUK::Framework
 {
 	namespace
 	{
-		constexpr D3D12_INPUT_ELEMENT_DESC MESH_INPUT_ELEMENTS[] =
+		constexpr bool IsAsciiWhitespace(char ch) noexcept
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, static_cast<u32>(offsetof(MeshVertex, position)), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, static_cast<u32>(offsetof(MeshVertex, normal)), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, static_cast<u32>(offsetof(MeshVertex, color)), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, static_cast<u32>(offsetof(MeshVertex, uv0)), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-		};
+			return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
+		}
+
+		std::string_view Trim(std::string_view text) noexcept
+		{
+			constexpr std::string_view UTF8_BOM = "\xEF\xBB\xBF";
+			if (text.starts_with(UTF8_BOM))
+			{
+				text.remove_prefix(UTF8_BOM.size());
+			}
+			while (!text.empty() && IsAsciiWhitespace(text.front()))
+			{
+				text.remove_prefix(1);
+			}
+			while (!text.empty() && IsAsciiWhitespace(text.back()))
+			{
+				text.remove_suffix(1);
+			}
+			return text;
+		}
+
+		template <class TValue, usize N>
+		bool TryMapValue(
+			std::string_view name,
+			const std::array<std::pair<std::string_view, TValue>, N>& table,
+			TValue& out) noexcept
+		{
+			for (const auto& [key, value] : table)
+			{
+				if (key == name)
+				{
+					out = value;
+					return true;
+				}
+			}
+			return false;
+		}
 
 		void ApplyAlphaBlend(D3D12_BLEND_DESC& blendState) noexcept
 		{
@@ -45,7 +67,98 @@ namespace TUK::Framework
 			blendTarget.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 		}
 
-		void ConfigurePipelineProfile(std::string_view shaderName, ShaderAsset& asset) noexcept
+		void ApplyMetadataEntry(
+			std::string_view key,
+			std::string_view value,
+			D3D12_RASTERIZER_DESC& rasterizerState,
+			D3D12_BLEND_DESC& blendState,
+			D3D12_DEPTH_STENCIL_DESC& depthStencilState,
+			D3D_PRIMITIVE_TOPOLOGY& primitive) noexcept
+		{
+			static constexpr std::array<std::pair<std::string_view, D3D12_CULL_MODE>, 3> CULL_MODES
+			{ {
+				{ "Back", D3D12_CULL_MODE_BACK },
+				{ "Front", D3D12_CULL_MODE_FRONT },
+				{ "None", D3D12_CULL_MODE_NONE }
+			} };
+			static constexpr std::array<std::pair<std::string_view, D3D12_FILL_MODE>, 2> FILL_MODES
+			{ {
+				{ "Solid", D3D12_FILL_MODE_SOLID },
+				{ "Wireframe", D3D12_FILL_MODE_WIREFRAME }
+			} };
+			static constexpr std::array<std::pair<std::string_view, D3D12_COMPARISON_FUNC>, 8> DEPTH_FUNCS
+			{ {
+				{ "Never", D3D12_COMPARISON_FUNC_NEVER },
+				{ "Less", D3D12_COMPARISON_FUNC_LESS },
+				{ "Equal", D3D12_COMPARISON_FUNC_EQUAL },
+				{ "LessEqual", D3D12_COMPARISON_FUNC_LESS_EQUAL },
+				{ "Greater", D3D12_COMPARISON_FUNC_GREATER },
+				{ "NotEqual", D3D12_COMPARISON_FUNC_NOT_EQUAL },
+				{ "GreaterEqual", D3D12_COMPARISON_FUNC_GREATER_EQUAL },
+				{ "Always", D3D12_COMPARISON_FUNC_ALWAYS }
+			} };
+			static constexpr std::array<std::pair<std::string_view, D3D_PRIMITIVE_TOPOLOGY>, 5> TOPOLOGIES
+			{ {
+				{ "TriangleList", D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST },
+				{ "TriangleStrip", D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP },
+				{ "LineList", D3D_PRIMITIVE_TOPOLOGY_LINELIST },
+				{ "LineStrip", D3D_PRIMITIVE_TOPOLOGY_LINESTRIP },
+				{ "PointList", D3D_PRIMITIVE_TOPOLOGY_POINTLIST }
+			} };
+
+			if (key == "cull")
+			{
+				TryMapValue(value, CULL_MODES, rasterizerState.CullMode);
+			}
+			else if (key == "fill")
+			{
+				TryMapValue(value, FILL_MODES, rasterizerState.FillMode);
+			}
+			else if (key == "depth")
+			{
+				if (value == "Off")
+				{
+					depthStencilState.DepthEnable = FALSE;
+				}
+				else if (value == "On")
+				{
+					depthStencilState.DepthEnable = TRUE;
+					depthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+				}
+				else if (TryMapValue(value, DEPTH_FUNCS, depthStencilState.DepthFunc))
+				{
+					depthStencilState.DepthEnable = TRUE;
+				}
+			}
+			else if (key == "depthWrite")
+			{
+				if (value == "Off")
+				{
+					depthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+				}
+				else if (value == "On")
+				{
+					depthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+				}
+			}
+			else if (key == "blend")
+			{
+				if (value == "Alpha")
+				{
+					ApplyAlphaBlend(blendState);
+				}
+				else if (value == "Opaque")
+				{
+					blendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+				}
+			}
+			else if (key == "topology")
+			{
+				TryMapValue(value, TOPOLOGIES, primitive);
+			}
+		}
+
+		void ApplyShaderMetadata(const std::filesystem::path& csoPath, ShaderAsset& asset) noexcept
 		{
 			D3D12_RASTERIZER_DESC rasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 			rasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
@@ -54,26 +167,30 @@ namespace TUK::Framework
 			D3D12_DEPTH_STENCIL_DESC depthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 			D3D_PRIMITIVE_TOPOLOGY primitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-			if (shaderName == "Skybox")
+			std::filesystem::path shaderNamePath = csoPath.stem();
+			if (shaderNamePath.has_extension())
 			{
-				rasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-				depthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-				depthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+				shaderNamePath = shaderNamePath.stem();
 			}
-			else if (shaderName == "ImageUI" || shaderName == "TextUI")
+
+			const std::filesystem::path metaPath = csoPath.parent_path() / (shaderNamePath.string() + ".meta");
+			std::ifstream metaFile(metaPath);
+			if (metaFile)
 			{
-				rasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-				depthStencilState.DepthEnable = FALSE;
-				depthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-				ApplyAlphaBlend(blendState);
-				primitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			}
-			else if (shaderName == "WorldTransition")
-			{
-				rasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-				depthStencilState.DepthEnable = FALSE;
-				depthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-				ApplyAlphaBlend(blendState);
+				std::string line;
+				while (std::getline(metaFile, line))
+				{
+					const std::string_view trimmed = Trim(line);
+					const usize separator = trimmed.find('=');
+					if (separator == std::string_view::npos)
+					{
+						continue;
+					}
+
+					const std::string_view key = Trim(trimmed.substr(0, separator));
+					const std::string_view value = Trim(trimmed.substr(separator + 1));
+					ApplyMetadataEntry(key, value, rasterizerState, blendState, depthStencilState, primitive);
+				}
 			}
 
 			asset.SetRasterizerState(rasterizerState);
@@ -140,7 +257,7 @@ namespace TUK::Framework
 				}
 
 				const D3D12_INPUT_ELEMENT_DESC* matchedElement = nullptr;
-				for (const D3D12_INPUT_ELEMENT_DESC& candidate : MESH_INPUT_ELEMENTS)
+				for (const D3D12_INPUT_ELEMENT_DESC& candidate : MESH_VERTEX_INPUT_ELEMENTS)
 				{
 					if (std::strcmp(candidate.SemanticName, parameterDescription.SemanticName) == 0 &&
 						candidate.SemanticIndex == parameterDescription.SemanticIndex)
@@ -162,15 +279,9 @@ namespace TUK::Framework
 			}
 		}
 
-		std::filesystem::path shaderNamePath = path.stem();
-		if (shaderNamePath.has_extension())
-		{
-			shaderNamePath = shaderNamePath.stem();
-		}
-
 		auto asset = std::make_unique<ShaderAsset>(path, GPUShader(std::move(dxcBlob)));
 		asset->SetInputElements(std::move(inputElements));
-		ConfigurePipelineProfile(shaderNamePath.string(), *asset);
+		ApplyShaderMetadata(path, *asset);
 
 		return asset;
 	}

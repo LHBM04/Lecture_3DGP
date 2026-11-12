@@ -1,12 +1,5 @@
 ﻿#pragma once
 
-#include <compare>
-#include <concepts>
-#include <cstddef>
-#include <limits>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
 #include <nlohmann/json_fwd.hpp>
 
 #include "Vector3D.hpp"
@@ -33,19 +26,19 @@ namespace TUK::Framework
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
 
 		[[nodiscard]] Quaternion operator+(const Quaternion& _other) const noexcept;
-		[[nodiscard]] Quaternion& operator+=(const Quaternion& _other) noexcept;
+		Quaternion& operator+=(const Quaternion& _other) noexcept;
 
 		[[nodiscard]] Quaternion operator-(const Quaternion& _other) const noexcept;
-		[[nodiscard]] Quaternion& operator-=(const Quaternion& _other) noexcept;
+		Quaternion& operator-=(const Quaternion& _other) noexcept;
 
 		[[nodiscard]] Quaternion operator*(TScalar _scalar) const noexcept;
 		[[nodiscard]] Quaternion operator*(const Quaternion& _other) const noexcept;
 		[[nodiscard]] Vector3D<f32> operator*(const Vector3D<f32>& vector) const noexcept requires std::same_as<TScalar, f32>;
-		[[nodiscard]] Quaternion& operator*=(TScalar _scalar) noexcept;
-		[[nodiscard]] Quaternion& operator*=(const Quaternion& _other) noexcept;
+		Quaternion& operator*=(TScalar _scalar) noexcept;
+		Quaternion& operator*=(const Quaternion& _other) noexcept;
 
 		[[nodiscard]] Quaternion operator/(TScalar _scalar) const noexcept;
-		[[nodiscard]] Quaternion& operator/=(TScalar _scalar) noexcept;
+		Quaternion& operator/=(TScalar _scalar) noexcept;
 
 		[[nodiscard]] bool operator==(const Quaternion& other) const noexcept;
 		[[nodiscard]] bool operator!=(const Quaternion& other) const noexcept;

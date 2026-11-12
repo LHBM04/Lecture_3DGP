@@ -1,20 +1,14 @@
 ﻿#pragma once
 
-#include <unordered_map>
-
 #ifndef WIN32_LEAN_AND_MEAN
 	#define WIN32_LEAN_AND_MEAN
 #endif
-
-#include <windows.h>
-#include <wrl.h>
-
-#include <gameinput/gameinput.h>
 
 #include "../Core/AppSubsystem.hpp"
 #include "../Core/Common.hpp"
 
 #include "DisplayEvents.hpp"
+#include "InputAction.hpp"
 #include "InputEvents.hpp"
 #include "InputProvider.hpp"
 
@@ -37,8 +31,10 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsInputEnabled() const noexcept;
 		void SetInputEnabled(bool value) noexcept;
 
-		void AddProvider(const Display* display);
-		void RemoveProvider(const Display* display);
+		InputAction* AddAction(std::string_view name);
+		void RemoveAction(std::string_view name) noexcept;
+		[[nodiscard]] InputAction* GetAction(std::string_view name) noexcept;
+		[[nodiscard]] const InputAction* GetAction(std::string_view name) const noexcept;
 
 		void OnDisplayCreate(const DisplayCreateEvent& event);
 		void OnDisplayClose(const DisplayCloseEvent& event);
@@ -47,33 +43,27 @@ namespace TUK::Framework
 
 		[[nodiscard]] const Display* GetActiveDisplay() const noexcept;
 		[[nodiscard]] const InputProvider* GetProvider() const noexcept;
-		[[nodiscard]] const InputProvider* GetProvider(const Display* display) const noexcept;
 
 	private:
-		void PollKeyboard(InputProvider& provider) noexcept;
-		void PollMouse(InputProvider& provider) noexcept;
+		void PollKeyboard(InputProvider& targetProvider) noexcept;
+		void PollMouse(InputProvider& targetProvider) noexcept;
+		void ResetInputState() noexcept;
 
 		Microsoft::WRL::ComPtr<GameInput::v3::IGameInput> gameInput;
 
-		const Display* activeDisplay;
-		
-		std::unordered_map<const Display*, InputProvider> providers;
+		const Display* activeDisplay = nullptr;
+		InputProvider provider{};
+		std::unordered_map<std::string, std::unique_ptr<InputAction>> actions;
 
 		bool isInputEnabled = true;
 		bool needsInputSync = false;
-		bool hasMouseHistory;
-		Vector2D<i32> lastMousePosition;
-		Vector2D<i32> lastMouseWheel;
+		bool hasMouseHistory = false;
+		Vector2D<i32> lastMousePosition{};
+		Vector2D<i32> lastMouseWheel{};
 	};
 
 	inline InputSubsystem::InputSubsystem() noexcept
 		: AppSubsystem(0)
-		, gameInput(nullptr)
-		, activeDisplay(nullptr)
-		, providers()
-		, hasMouseHistory(false)
-		, lastMousePosition()
-		, lastMouseWheel()
 	{
 	}
 
@@ -89,17 +79,6 @@ namespace TUK::Framework
 
 	inline const InputProvider* InputSubsystem::GetProvider() const noexcept
 	{
-		return activeDisplay ? GetProvider(activeDisplay) : nullptr;
-	}
-
-	inline const InputProvider* InputSubsystem::GetProvider(const Display* display) const noexcept
-	{
-		if (!display)
-		{
-			return nullptr;
-		}
-
-		const auto it = providers.find(display);
-		return it != providers.end() ? &it->second : nullptr;
+		return activeDisplay ? &provider : nullptr;
 	}
 }

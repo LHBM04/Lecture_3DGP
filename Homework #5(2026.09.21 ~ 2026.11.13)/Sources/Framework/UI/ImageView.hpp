@@ -1,10 +1,8 @@
 ﻿#pragma once
 
-#include <expected>
-#include <optional>
-#include <string>
-
 #include "../Graphics/GPUGraphicsPipelineState.hpp"
+
+#include "../Math/ColorRGBA.hpp"
 
 #include "../GameObjects/Component.hpp"
 
@@ -15,9 +13,9 @@ namespace TUK::Framework
 
 	class ImageView final : public Component
 	{
-	public:
 		using Component::Component;
 
+	public:
 		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
 
 		[[nodiscard]] const TextureAsset* GetImage() const noexcept;
@@ -26,7 +24,11 @@ namespace TUK::Framework
 		[[nodiscard]] const MaterialAsset* GetMaterial() const noexcept;
 		void SetMaterial(const MaterialAsset* value) noexcept;
 
+		[[nodiscard]] const ColorRGBA<f32>& GetColor() const noexcept;
+		void SetColor(const ColorRGBA<f32>& value) noexcept;
+
 	private:
+		ColorRGBA<f32> color = ColorRGBA<f32>::GetWhite();
 		const TextureAsset* texture = nullptr;
 		const MaterialAsset* material = nullptr;
 	};
@@ -49,5 +51,15 @@ namespace TUK::Framework
 	inline void ImageView::SetMaterial(const MaterialAsset* value) noexcept
 	{
 		material = value;
+	}
+
+	inline const ColorRGBA<f32>& ImageView::GetColor() const noexcept
+	{
+		return color;
+	}
+
+	inline void ImageView::SetColor(const ColorRGBA<f32>& value) noexcept
+	{
+		color = value;
 	}
 }

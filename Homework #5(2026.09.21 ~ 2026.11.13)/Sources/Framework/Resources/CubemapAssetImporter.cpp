@@ -1,16 +1,7 @@
 ﻿#include "Precompiled.hpp"
 #include "CubemapAssetImporter.hpp"
 
-#include <algorithm>
 #include <cctype>
-#include <cstdlib>
-#include <limits>
-#include <memory>
-#include <utility>
-#include <vector>
-
-#include <directx/d3dx12.h>
-#include <directxtk12/DDSTextureLoader.h>
 
 #include "../Core/Common.hpp"
 

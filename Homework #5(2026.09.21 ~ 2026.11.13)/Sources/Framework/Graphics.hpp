@@ -13,5 +13,7 @@
 #include "Graphics/GPUTarget.hpp"
 #include "Graphics/GPUTexture2D.hpp"
 #include "Graphics/MeshRenderer.hpp"
+#include "Graphics/MeshVertex.hpp"
 #include "Graphics/RenderSubsystem.hpp"
+#include "Graphics/ShaderConstants.hpp"
 #include "Graphics/SkyboxRenderer.hpp"

@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-#include <expected>
-#include <optional>
-#include <string>
-
-#include <directx/d3dx12.h>
-
 #include "../Core/Common.hpp"
 
 #include "../GameObjects/Component.hpp"

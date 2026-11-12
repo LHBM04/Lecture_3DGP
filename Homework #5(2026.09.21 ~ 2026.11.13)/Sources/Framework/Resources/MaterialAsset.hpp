@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-#include <array>
-#include <filesystem>
-#include <utility>
-
-#include <directx/d3d12.h>
-
 #include "../Core/Common.hpp"
 
 #include "../Graphics/GPUGraphicsPipelineState.hpp"

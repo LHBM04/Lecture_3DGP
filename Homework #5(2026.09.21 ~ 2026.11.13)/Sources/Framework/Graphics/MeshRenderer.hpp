@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../Math/ColorRGBA.hpp"
+
 #include "../GameObjects/Component.hpp"
 
 namespace TUK::Framework
@@ -20,7 +22,11 @@ namespace TUK::Framework
 		[[nodiscard]] const MaterialAsset* GetMaterial() const noexcept;
 		void SetMaterial(const MaterialAsset* value) noexcept;
 
+		[[nodiscard]] const ColorRGBA<f32>& GetColor() const noexcept;
+		void SetColor(const ColorRGBA<f32>& value) noexcept;
+
 	private:
+		ColorRGBA<f32> color = ColorRGBA<f32>::GetWhite();
 		const MeshAsset* mesh = nullptr;
 		const MaterialAsset* material = nullptr;
 	};
@@ -43,5 +49,15 @@ namespace TUK::Framework
 	inline void MeshRenderer::SetMaterial(const MaterialAsset* value) noexcept
 	{
 		material = value;
+	}
+
+	inline const ColorRGBA<f32>& MeshRenderer::GetColor() const noexcept
+	{
+		return color;
+	}
+
+	inline void MeshRenderer::SetColor(const ColorRGBA<f32>& value) noexcept
+	{
+		color = value;
 	}
 }

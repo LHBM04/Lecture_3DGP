@@ -1,12 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
-#include <array>
-#include <format>
-#include <iostream>
-#include <ranges>
-#include <utility>
-
 #include "../Platform/Display.hpp"
 #include "../Platform/DisplayEvents.hpp"
 

@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUBuffer.hpp"
 
-#include <cstring>
-
 namespace TUK::Framework
 {
 	std::expected<void, std::string> GPUBuffer::Write(std::span<const u8> data, u64 offset)

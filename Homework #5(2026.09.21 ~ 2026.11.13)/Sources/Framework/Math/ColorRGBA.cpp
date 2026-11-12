@@ -1,10 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
-#include <cmath>
-
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 
 #include "ColorRGB.hpp"

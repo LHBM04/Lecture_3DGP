@@ -1,10 +1,6 @@
 ﻿#pragma once
 
-#include <utility>
-
 #include <wrl/client.h>
-
-#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 

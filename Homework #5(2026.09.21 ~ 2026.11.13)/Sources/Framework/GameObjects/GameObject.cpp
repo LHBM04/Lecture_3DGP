@@ -1,9 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "GameObject.hpp"
 
-#include <algorithm>
-#include <ranges>
-
 #include "Scene.hpp"
 
 #include "../Core/Common.hpp"

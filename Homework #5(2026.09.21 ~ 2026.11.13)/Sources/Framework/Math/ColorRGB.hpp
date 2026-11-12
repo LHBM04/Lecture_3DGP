@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
 #include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"

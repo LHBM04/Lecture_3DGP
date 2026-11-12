@@ -1,14 +1,13 @@
 ﻿#include "Precompiled.hpp"
 #include "SkyboxRenderer.hpp"
 
-#include <array>
-
 #include "../Core/Common.hpp"
 
 #include "../Resources/CubemapAsset.hpp"
 #include "../Resources/MaterialAsset.hpp"
 
 #include "GPUCommandBuffer.hpp"
+#include "ShaderConstants.hpp"
 
 namespace TUK::Framework
 {
@@ -16,6 +15,16 @@ namespace TUK::Framework
 	{
 		if (!cubemap || !material)
 		{
+			return;
+		}
+
+		const SkyboxConstants constants
+		{
+			.color = { color.GetR(), color.GetG(), color.GetB(), color.GetA() }
+		};
+		if (auto result = commandBuffer.SetGraphicsConstants(constants); !result)
+		{
+			LOG_ERROR("스카이박스 색상 상수를 바인딩하지 못했습니다: {}", result.error());
 			return;
 		}
 

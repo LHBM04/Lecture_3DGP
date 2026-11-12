@@ -1,12 +1,5 @@
 ﻿#pragma once
 
-#include <compare>
-#include <concepts>
-#include <cstddef>
-#include <limits>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
 #include <nlohmann/json_fwd.hpp>
 
 #include "../Core/Common.hpp"

@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Quaternion.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 
 #include "Matrix4x4.hpp"

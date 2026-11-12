@@ -1,6 +1,12 @@
 #pragma vertex VSMain
 #pragma pixel PSMain
 
+// @cull None
+// @depth Off
+// @depthWrite Off
+// @blend Alpha
+// @topology TriangleStrip
+
 #pragma pack_matrix(row_major)
 
 cbuffer ObjectConstants : register(b1)
@@ -11,6 +17,8 @@ cbuffer ObjectConstants : register(b1)
 cbuffer ImageUIConstants : register(b2)
 {
     float2 viewportSize;
+    float2 padding;
+    float4 color;
 };
 
 Texture2D<float4> imageTexture : register(t0);
@@ -37,5 +45,5 @@ VSOutput VSMain(uint vertexID : SV_VertexID)
 
 float4 PSMain(VSOutput input) : SV_TARGET
 {
-    return imageTexture.Sample(linearClamp, input.uv);
+    return imageTexture.Sample(linearClamp, input.uv) * color;
 }

@@ -1,70 +1,103 @@
 ﻿#pragma once
 
-#include "Transition.hpp"
+#include "Framework/Graphics.hpp"
+#include "Framework/Platform.hpp"
+#include "Framework/Resources.hpp"
 
-namespace TUK::Framework
-{
-	class AssetSubsystem;
-	class GPUCommandBuffer;
-	class GPUDevice;
-	class InputSubsystem;
-	class Scene;
-	class SceneSubsystem;
-}
+#include "Transition.hpp"
 
 namespace TUK::Game
 {
-	class SceneTransition
+	class SceneTransition : public Transition
 	{
 	public:
-		SceneTransition() noexcept = default;
+		explicit SceneTransition(GameObject* owner) noexcept;
+		~SceneTransition() noexcept override = default;
 
-		[[nodiscard]] std::expected<void, std::string> Initialize(
-			Framework::SceneSubsystem* scenes,
-			Framework::InputSubsystem* input,
-			const Framework::GPUDevice& device,
-			Framework::AssetSubsystem* assets);
-		void Shutdown() noexcept;
+		void OnAwake() override;
+		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
+		void OnDestroy() override;
 
-		[[nodiscard]] bool Request(Framework::Scene* scene, Framework::f32 duration = 0.35f) noexcept;
-		void Update(Framework::f32 deltaTime);
+		void Reset() noexcept override;
+		void OpenComplete() override;
+		void CloseComplete() override;
+
+		[[nodiscard]] bool Go(Scene* scene, f32 duration = 0.35f);
+		virtual void NextScene();
+
 		[[nodiscard]] bool IsActive() const noexcept;
-		[[nodiscard]] Transition& GetTransition() noexcept;
-		[[nodiscard]] const Transition& GetTransition() const noexcept;
+		[[nodiscard]] Scene* GetTargetScene() const noexcept;
+		void SetTargetScene(Scene* scene) noexcept;
+
+		[[nodiscard]] const MaterialAsset* GetMaterial() const noexcept;
+		void SetMaterial(const MaterialAsset* value) noexcept;
+
+		[[nodiscard]] const ColorRGBA<f32>& GetFadeColor() const noexcept;
+		void SetFadeColor(const ColorRGBA<f32>& value) noexcept;
+
+		[[nodiscard]] Delegate<>& OnNextScene() noexcept;
 
 	private:
-		enum class Phase : Framework::u8
-		{
-			IDLE,
-			WAIT_FOR_EXIT,
-			WAIT_FOR_SCENE,
-			WAIT_FOR_ENTER
-		};
+		static constexpr std::string_view DEFAULT_MATERIAL_PATH = "Resources/Materials/WorldTransition.tukmat";
 
-		void BeginEnter() noexcept;
-		void Finish() noexcept;
-
-		Framework::SceneSubsystem* scenes = nullptr;
-		Framework::InputSubsystem* input = nullptr;
-		Transition transition;
-		Framework::Scene* targetScene = nullptr;
-		Phase phase = Phase::IDLE;
-		Framework::f32 fadeDuration = 0.35f;
+		SceneSubsystem* scenes = nullptr;
+		InputSubsystem* input = nullptr;
+		const MaterialAsset* material = nullptr;
+		std::filesystem::path materialPath = DEFAULT_MATERIAL_PATH;
+		ColorRGBA<f32> fadeColor{ 0.0f, 0.0f, 0.0f, 1.0f };
+		Scene* targetScene = nullptr;
 		bool wasInputEnabled = true;
+
+		Delegate<Scene*>::ListenerId exitSceneListenerId = 0;
+		Delegate<> onNextScene;
 	};
+
+	inline SceneTransition::SceneTransition(GameObject* owner) noexcept
+		: Transition(owner)
+	{
+	}
 
 	inline bool SceneTransition::IsActive() const noexcept
 	{
-		return phase != Phase::IDLE;
+		return GetState() != TransitionState::IDLE && GetState() != TransitionState::CLOSE_COMPLETE;
 	}
 
-	inline Transition& SceneTransition::GetTransition() noexcept
+	inline Scene* SceneTransition::GetTargetScene() const noexcept
 	{
-		return transition;
+		return targetScene;
 	}
 
-	inline const Transition& SceneTransition::GetTransition() const noexcept
+	inline void SceneTransition::SetTargetScene(Scene* scene) noexcept
 	{
-		return transition;
+		targetScene = scene;
+	}
+
+	inline const MaterialAsset* SceneTransition::GetMaterial() const noexcept
+	{
+		return material;
+	}
+
+	inline void SceneTransition::SetMaterial(const MaterialAsset* value) noexcept
+	{
+		material = value;
+		if (material)
+		{
+			materialPath = material->GetPath();
+		}
+	}
+
+	inline const ColorRGBA<f32>& SceneTransition::GetFadeColor() const noexcept
+	{
+		return fadeColor;
+	}
+
+	inline void SceneTransition::SetFadeColor(const ColorRGBA<f32>& value) noexcept
+	{
+		fadeColor = value;
+	}
+
+	inline Delegate<>& SceneTransition::OnNextScene() noexcept
+	{
+		return onNextScene;
 	}
 }

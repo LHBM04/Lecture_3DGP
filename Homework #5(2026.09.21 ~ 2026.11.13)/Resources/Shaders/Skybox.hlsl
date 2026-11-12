@@ -1,12 +1,22 @@
 #pragma vertex VSMain
 #pragma pixel PSMain
 
+// @cull None
+// @blend Alpha
+// @depth LessEqual
+// @depthWrite Off
+
 #pragma pack_matrix(row_major)
 
 cbuffer CameraBuffer : register(b0)
 {
     matrix viewMatrix;
     matrix projectionMatrix;
+};
+
+cbuffer SkyboxConstants : register(b2)
+{
+    float4 color;
 };
 
 TextureCube<float4> skyboxTexture : register(t0);
@@ -40,5 +50,5 @@ VSOutput VSMain(VSInput input)
 
 float4 PSMain(VSOutput input) : SV_TARGET
 {
-    return float4(skyboxTexture.Sample(linearClamp, input.direction).rgb, 1.0f);
+    return float4(skyboxTexture.Sample(linearClamp, input.direction).rgb, 1.0f) * color;
 }

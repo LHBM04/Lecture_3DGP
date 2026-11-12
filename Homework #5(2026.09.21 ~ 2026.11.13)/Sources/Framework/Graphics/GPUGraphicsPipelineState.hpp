@@ -1,10 +1,6 @@
 ﻿#pragma once
 
-#include <utility>
-
 #include <wrl/client.h>
-
-#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 
@@ -36,7 +32,6 @@ namespace TUK::Framework
 	inline ID3D12PipelineState& GPUGraphicsPipelineState::GetD3DPipelineState() const noexcept
 	{
 		ASSERT_FMT(d3dPipelineState.Get(), "d3dPipelineState가 nullptr입니다.");
-
 		return *d3dPipelineState.Get();
 	}
 }

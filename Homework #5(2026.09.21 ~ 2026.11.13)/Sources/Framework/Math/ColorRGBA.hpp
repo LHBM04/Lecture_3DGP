@@ -1,10 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <limits>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
 #include <nlohmann/json_fwd.hpp>
 
 #include "Vector3D.hpp"

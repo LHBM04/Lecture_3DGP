@@ -1,14 +1,11 @@
 ﻿#include "Precompiled.hpp"
 #include "Scene.hpp"
 
-#include <algorithm>
-#include <cmath>
-#include <span>
-
 #include "../Graphics/Camera.hpp"
 #include "../Graphics/GPUCommandBuffer.hpp"
 #include "../Graphics/GPUTarget.hpp"
 #include "../Graphics/MeshRenderer.hpp"
+#include "../Graphics/ShaderConstants.hpp"
 
 #include "../Resources/ModelAsset.hpp"
 
@@ -111,9 +108,7 @@ namespace TUK::Framework
 
 		RunPhase([this, &commandBuffer]()
 		{
-			// 렌더 콜백 중 카메라 목록이 변경되어도 현재 순회는 유지합니다.
-			const auto frameCameras = activeCameras;
-			for (Camera* activeCamera : frameCameras)
+			for (const Camera* activeCamera : activeCameras)
 			{
 				ASSERT_FMT(activeCamera, "활성화된 카메라가 nullptr입니다.");
 
@@ -163,16 +158,10 @@ namespace TUK::Framework
 					continue;
 				}
 
-				struct CameraConstants final
-				{
-					DirectX::XMFLOAT4X4 view;
-					DirectX::XMFLOAT4X4 projection;
-				};
 				CameraConstants constants{};
 				DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(activeCamera->GetViewMatrix()));
 				DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(activeCamera->GetProjectionMatrix()));
-				constexpr u32 CAMERA_ROOT_SLOT = 0;
-				if (auto uploaded = commandBuffer.SetGraphicsConstants(CAMERA_ROOT_SLOT, std::as_bytes(std::span(&constants, 1))); !uploaded)
+				if (auto uploaded = commandBuffer.SetGraphicsConstants(constants); !uploaded)
 				{
 					LOG_ERROR("월드의 카메라 상수 설정에 실패했습니다: {}", uploaded.error());
 					continue;
@@ -425,11 +414,9 @@ namespace TUK::Framework
 			return;
 		}
 
-		const auto destroyedCount = std::ranges::count_if(objects,
-			[](const auto& gameObject)
-			{
-				return gameObject->IsDestroyed();
-			});
+		const auto destroyedCount = std::ranges::count_if(objects, [](const auto& gameObject) {
+			return gameObject->IsDestroyed();
+		});
 		if (destroyedCount == 0)
 		{
 			return;
@@ -492,6 +479,51 @@ namespace TUK::Framework
 		ASSERT_FMT(camera, "등록 해제할 카메라가 nullptr입니다.");
 
 		std::erase(activeCameras, camera);
+	}
+
+	std::vector<std::unique_ptr<GameObject>> Scene::ExtractPersistentObjects()
+	{
+		std::vector<std::unique_ptr<GameObject>> extracted;
+		for (auto object = objects.begin(); object != objects.end();)
+		{
+			GameObject* gameObject = object->get();
+			if (gameObject->ShouldDontDestoryOnLoad() && !gameObject->IsDestroyed())
+			{
+				if (Camera* camera = gameObject->GetComponent<Camera>())
+				{
+					RemoveCamera(camera);
+				}
+
+				// 씬이 전환되어도 파괴되지 않는 객체는 따로 수집해둔다
+				extracted.push_back(std::move(*object));
+				object = objects.erase(object);
+			}
+			else
+			{
+				++object;
+			}
+		}
+
+		return extracted;
+	}
+
+	void Scene::AdoptObjects(std::vector<std::unique_ptr<GameObject>>&& adopted)
+	{
+		for (std::unique_ptr<GameObject>& gameObject : adopted)
+		{
+			if (!gameObject)
+			{
+				continue;
+			}
+
+			gameObject->scene = this;
+			if (Camera* camera = gameObject->GetComponent<Camera>())
+			{
+				AddCamera(camera);
+			}
+
+			objects.push_back(std::move(gameObject));
+		}
 	}
 
 	GameObject* Scene::FindGameObjectByName(std::string_view name) noexcept

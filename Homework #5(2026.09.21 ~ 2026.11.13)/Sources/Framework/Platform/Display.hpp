@@ -4,8 +4,6 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <windows.h>
-
 #include "../Core/Common.hpp"
 
 #include "../Math/Vector2D.hpp"

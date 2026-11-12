@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <utility>
-
 #include "Common.hpp"
 
 #include "AppSubsystem.hpp"

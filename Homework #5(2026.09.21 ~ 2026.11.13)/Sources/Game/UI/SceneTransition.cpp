@@ -1,128 +1,162 @@
 ﻿#include "Precompiled.hpp"
 #include "SceneTransition.hpp"
 
-#include <cmath>
-
-#include "Framework/GameObjects/Scene.hpp"
-#include "Framework/GameObjects/SceneSubsystem.hpp"
-#include "Framework/Platform/InputSubsystem.hpp"
+#include "../Core/Assets.hpp"
 
 namespace TUK::Game
 {
-	using namespace Framework;
-
-	std::expected<void, std::string> SceneTransition::Initialize(
-		SceneSubsystem* scenes, InputSubsystem* input, const GPUDevice& device, AssetSubsystem* assets)
+	void SceneTransition::OnAwake()
 	{
-		ASSERT_FMT(scenes, "월드 서브시스템이 nullptr입니다.");
-		ASSERT_FMT(input, "입력 서브시스템이 nullptr입니다.");
-		if (auto initialized = transition.Initialize(device, assets); !initialized)
+		Transition::OnAwake();
+
+		scenes = App::GetInstance().GetSubsystem<SceneSubsystem>();
+		input = App::GetInstance().GetSubsystem<InputSubsystem>();
+
+		if (scenes && exitSceneListenerId == 0)
 		{
-			return initialized;
+			exitSceneListenerId = scenes->OnExitScene().AddListener([this]([[maybe_unused]] Scene* exitedScene)
+			{
+				material = nullptr;
+			});
 		}
-		this->scenes = scenes;
-		this->input = input;
-		return {};
+
+		if (!material && !materialPath.empty())
+		{
+			material = Assets::LoadAsset<MaterialAsset>(materialPath);
+		}
 	}
 
-	void SceneTransition::Shutdown() noexcept
+	void SceneTransition::OnPostRender(GPUCommandBuffer& commandBuffer)
 	{
-		Finish();
-		transition.Shutdown();
+		const f32 opacity = GetProgress();
+		if (opacity <= 0.0f)
+		{
+			return;
+		}
+
+		if (!material && !materialPath.empty())
+		{
+			material = Assets::LoadAsset<MaterialAsset>(materialPath);
+		}
+
+		if (!material)
+		{
+			return;
+		}
+
+		const D3D12_RECT& bounds = commandBuffer.GetActiveTargetBounds();
+		const CD3DX12_VIEWPORT viewport(
+			static_cast<f32>(bounds.left),
+			static_cast<f32>(bounds.top),
+			static_cast<f32>(bounds.right - bounds.left),
+			static_cast<f32>(bounds.bottom - bounds.top));
+		commandBuffer.SetViewport(viewport);
+		commandBuffer.SetScissorRect(bounds);
+
+		const DirectX::XMFLOAT4 color{
+			fadeColor.GetR(),
+			fadeColor.GetG(),
+			fadeColor.GetB(),
+			fadeColor.GetA() * opacity
+		};
+		commandBuffer.SetGraphicsRootConstants(
+			GPUCommandBuffer::ROOT_CONSTANT_SLOT, std::as_bytes(std::span(&color, 1)));
+
+		commandBuffer.SetGPUGraphicsPipelineState(material->GetGraphicsPipelineState());
+		commandBuffer.SetPrimitiveTopology(material->GetPrimitive());
+		constexpr u32 FULLSCREEN_VERTEX_COUNT = 3;
+		commandBuffer.Draw(FULLSCREEN_VERTEX_COUNT);
+	}
+
+	void SceneTransition::OnDestroy()
+	{
+		if (IsActive() && input)
+		{
+			input->SetInputEnabled(wasInputEnabled);
+		}
+
+		if (scenes && exitSceneListenerId != 0)
+		{
+			scenes->OnExitScene().RemoveListener(exitSceneListenerId);
+			exitSceneListenerId = 0;
+		}
+
+		Reset();
+		material = nullptr;
 		scenes = nullptr;
 		input = nullptr;
 	}
 
-	bool SceneTransition::Request(Scene* scene, f32 duration) noexcept
+	void SceneTransition::Reset() noexcept
 	{
-		if (!scenes || !input || IsActive() || !scene || scene == scenes->GetCurrentScene())
-		{
-			return false;
-		}
-		if (!transition.Exit(duration))
-		{
-			return false;
-		}
-		targetScene = scene;
-		fadeDuration = duration;
-		wasInputEnabled = input->IsInputEnabled();
-		input->SetInputEnabled(false);
-		phase = Phase::WAIT_FOR_EXIT;
-		return true;
+		Transition::Reset();
+		targetScene = nullptr;
 	}
 
-	void SceneTransition::Update(f32 deltaTime)
+	void SceneTransition::OpenComplete()
 	{
-		if (!std::isfinite(deltaTime) || deltaTime < 0.0f)
+		if (GetState() == TransitionState::OPEN_COMPLETE)
 		{
 			return;
 		}
-		transition.Update(deltaTime);
-		switch (phase)
-		{
-			case Phase::WAIT_FOR_EXIT:
-			{
-				// The next update follows submission and presentation of the covered frame.
-				if (transition.HasRenderedExit())
-				{
-					if (scenes->RequestSceneChange(targetScene))
-					{
-						phase = Phase::WAIT_FOR_SCENE;
-					}
-					else
-					{
-						LOG_ERROR("페이드 후 월드 전환을 예약하지 못했습니다.");
-						BeginEnter();
-					}
-				}
-				break;
-			}
-			case Phase::WAIT_FOR_SCENE:
-			{
-				const Scene* currentScene = scenes->GetCurrentScene();
-				if (currentScene && currentScene->IsEntered())
-				{
-					if (currentScene != targetScene)
-					{
-						LOG_WARNING("페이드 중 전환 대상이 변경되어 현재 월드를 표시합니다.");
-					}
-					BeginEnter();
-				}
-				break;
-			}
-			case Phase::WAIT_FOR_ENTER:
-			{
-				if (transition.GetCurrentState() == TransitionState::ENTERCOMPLETE)
-				{
-					Finish();
-				}
-				break;
-			}
-			default:
-			{
-				break;
-			}
-		}
+
+		Transition::OpenComplete();
+		NextScene();
 	}
 
-	void SceneTransition::BeginEnter() noexcept
+	void SceneTransition::CloseComplete()
 	{
-		if (!transition.Enter(fadeDuration))
+		if (GetState() == TransitionState::CLOSE_COMPLETE)
 		{
-			Finish();
 			return;
 		}
-		phase = Phase::WAIT_FOR_ENTER;
-	}
 
-	void SceneTransition::Finish() noexcept
-	{
-		if (IsActive())
+		Transition::CloseComplete();
+		if (input)
 		{
 			input->SetInputEnabled(wasInputEnabled);
 		}
-		phase = Phase::IDLE;
+
 		targetScene = nullptr;
-		transition.Reset();
+		Stop();
+	}
+
+	bool SceneTransition::Go(Scene* scene, f32 duration)
+	{
+		if (!scenes || IsActive() || !scene || scene == scenes->GetCurrentScene())
+		{
+			return false;
+		}
+
+		if (!std::isfinite(duration) || duration <= 0.0f)
+		{
+			return false;
+		}
+
+		targetScene = scene;
+		SetDuration(duration);
+		if (input)
+		{
+			wasInputEnabled = input->IsInputEnabled();
+			input->SetInputEnabled(false);
+		}
+
+		Open();
+		return true;
+	}
+
+	void SceneTransition::NextScene()
+	{
+		Close();
+
+		if (scenes && targetScene)
+		{
+			if (!scenes->RequestSceneChange(targetScene))
+			{
+				LOG_ERROR("페이드 후 월드 전환을 예약하지 못했습니다.");
+			}
+		}
+
+		onNextScene.Broadcast();
 	}
 }

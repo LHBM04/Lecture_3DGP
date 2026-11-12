@@ -1,16 +1,9 @@
 ﻿#pragma once
 
-#include <filesystem>
-#include <span>
-#include <string>
-#include <utility>
-#include <vector>
-
-#include <directxmath/DirectXMath.h>
-
 #include "../Core/Common.hpp"
 
 #include "../Graphics/GPUMesh.hpp"
+#include "../Graphics/MeshVertex.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Vector2D.hpp"
@@ -20,14 +13,6 @@
 
 namespace TUK::Framework
 {
-	struct MeshVertex final
-	{
-		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT3 normal;
-		DirectX::XMFLOAT4 color;
-		DirectX::XMFLOAT2 uv0;
-	};
-
 	class MeshAsset final : public Asset
 	{
 	public:

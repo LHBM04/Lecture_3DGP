@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <directx/d3d12.h>
-#include <directx/d3dx12.h>
-
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework

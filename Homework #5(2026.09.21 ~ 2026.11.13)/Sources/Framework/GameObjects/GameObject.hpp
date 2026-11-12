@@ -1,16 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <memory>
-#include <ranges>
-#include <span>
-#include <string>
-#include <string_view>
-#include <typeindex>
-#include <unordered_map>
-#include <utility>
-#include <vector>
-
 #include "../Core/Common.hpp"
 
 #include "Component.hpp"
@@ -54,6 +43,9 @@ namespace TUK::Framework
 		[[nodiscard]] bool IsEnabled() const noexcept;
 		void SetEnabled(bool value) noexcept;
 
+		[[nodiscard]] bool ShouldDontDestoryOnLoad() const noexcept;
+		void SetDontDestroyOnLoad(bool value) noexcept;
+
 		[[nodiscard]] bool IsDestroyed() const noexcept;
 		void Destroy() noexcept;
 
@@ -76,6 +68,8 @@ namespace TUK::Framework
 		[[nodiscard]] auto GetComponents() const noexcept;
 
 	private:
+		friend class Scene;
+
 		using ComponentCallback = void (Component::*)();
 		using RenderCallback = void (Component::*)(GPUCommandBuffer&);
 
@@ -93,6 +87,7 @@ namespace TUK::Framework
 		Scene* scene = nullptr;
 
 		bool isEnabled = true;
+		bool dontDestroyOnLoad = false;
 		bool isDestroyed = false;
 	};
 
@@ -160,6 +155,16 @@ namespace TUK::Framework
 	inline void GameObject::SetEnabled(bool value) noexcept
 	{
 		isEnabled = value;
+	}
+
+	inline bool GameObject::ShouldDontDestoryOnLoad() const noexcept
+	{
+		return dontDestroyOnLoad;
+	}
+
+	inline void GameObject::SetDontDestroyOnLoad(bool value) noexcept
+	{
+		dontDestroyOnLoad = value;
 	}
 
 	inline bool GameObject::IsDestroyed() const noexcept

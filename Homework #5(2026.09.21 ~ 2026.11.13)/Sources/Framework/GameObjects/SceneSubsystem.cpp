@@ -1,8 +1,7 @@
 ﻿#include "Precompiled.hpp"
 #include "SceneSubsystem.hpp"
 
-#include <algorithm>
-
+#include "GameObject.hpp"
 #include "Scene.hpp"
 
 #include "../Core/Common.hpp"
@@ -88,10 +87,15 @@ namespace TUK::Framework
 
 	SystemStatus SceneSubsystem::OnEarlyUpdate()
 	{
+		std::vector<std::unique_ptr<GameObject>> persistentObjects;
 		if (nextScene)
 		{
 			if (nextScene != currentScene)
 			{
+				if (currentScene)
+				{
+					persistentObjects = currentScene->ExtractPersistentObjects();
+				}
 				ExitCurrentScene();
 			}
 			currentScene = std::exchange(nextScene, nullptr);
@@ -106,11 +110,19 @@ namespace TUK::Framework
 		{
 			Scene* enteringScene = currentScene;
 			enteringScene->Enter();
+			if (currentScene == enteringScene && !persistentObjects.empty())
+			{
+				enteringScene->AdoptObjects(std::move(persistentObjects));
+			}
 			if (currentScene == enteringScene)
 			{
 				onEnterScene.Broadcast(enteringScene);
 				NotifyIfSceneExited(enteringScene);
 			}
+		}
+		else if (!persistentObjects.empty())
+		{
+			currentScene->AdoptObjects(std::move(persistentObjects));
 		}
 
 		if (currentScene)

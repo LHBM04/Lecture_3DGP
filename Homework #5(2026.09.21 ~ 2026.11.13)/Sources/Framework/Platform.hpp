@@ -6,6 +6,7 @@
 #include "Platform/DisplaySubsystem.hpp"
 #include "Platform/Event.hpp"
 #include "Platform/EventSubsystem.hpp"
+#include "Platform/InputAction.hpp"
 #include "Platform/InputEvents.hpp"
 #include "Platform/InputProvider.hpp"
 #include "Platform/InputStates.hpp"

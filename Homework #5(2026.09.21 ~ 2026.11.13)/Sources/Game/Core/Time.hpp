@@ -3,10 +3,10 @@
 #include "Framework/Core.hpp"
 #include "Framework/Platform.hpp"
 
-using namespace TUK::Framework;
-
 namespace TUK::Game
 {
+	using namespace Framework;
+
 	namespace Time
 	{
 		void Initialize(const TimeSubsystem* subsystem);

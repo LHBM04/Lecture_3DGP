@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Vector3D.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 #include "Vector2D.hpp"
 #include "Vector4D.hpp"

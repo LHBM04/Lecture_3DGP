@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-#include <filesystem>
-#include <span>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "../Core/Common.hpp"
 
 #include "../Math/Quaternion.hpp"

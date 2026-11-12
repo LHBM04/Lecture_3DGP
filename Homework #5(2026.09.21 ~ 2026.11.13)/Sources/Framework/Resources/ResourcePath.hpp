@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <expected>
-#include <filesystem>
-#include <string>
-
 namespace TUK::Framework
 {
 	[[nodiscard]] inline std::expected<std::filesystem::path, std::string> FindResourceRoot(

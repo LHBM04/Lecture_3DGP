@@ -1,15 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "MeshAssetImporter.hpp"
 
-#include <array>
-#include <filesystem>
-#include <fstream>
-#include <memory>
-#include <span>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "../Core/BinaryReader.hpp"
 
 #include "../Graphics/GPUBuffer.hpp"

@@ -1,15 +1,6 @@
 ﻿#pragma once
 
-#include <cstddef>
-#include <expected>
-#include <span>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include <wrl/client.h>
-
-#include <directx/d3d12.h>
 
 #include "../Core/Common.hpp"
 
@@ -49,6 +40,12 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
 			u32 rootSlot, std::span<const std::byte> bytes);
+		template <typename T>
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
+			u32 rootSlot, const T& constants);
+		template <typename T>
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
+			const T& constants);
 		void SetGraphicsRootConstants(
 			u32 rootSlot, std::span<const std::byte> bytes, u32 offset = 0) noexcept;
 
@@ -114,6 +111,7 @@ namespace TUK::Framework
 		DXGI_FORMAT activeTargetFormat = DXGI_FORMAT_UNKNOWN;
 		D3D12_CPU_DESCRIPTOR_HANDLE activeRTV{};
 		D3D12_CPU_DESCRIPTOR_HANDLE activeDSV{};
+
 		D3D12_RECT activeTargetBounds{};
 		D3D12_VIEWPORT activeViewport{};
 	};
@@ -153,5 +151,20 @@ namespace TUK::Framework
 	{
 		ASSERT_FMT(d3dCommandAllocator.Get(), "d3dCommandAllocator가 nullptr입니다.");
 		return *d3dCommandAllocator.Get();
+	}
+
+	template <typename T>
+	inline std::expected<void, std::string> GPUCommandBuffer::SetGraphicsConstants(
+		u32 rootSlot, const T& constants)
+	{
+		static_assert(std::is_trivially_copyable_v<T>, "상수 버퍼 타입은 trivially copyable이어야 합니다.");
+		return SetGraphicsConstants(rootSlot, std::as_bytes(std::span(&constants, 1)));
+	}
+
+	template <typename T>
+	inline std::expected<void, std::string> GPUCommandBuffer::SetGraphicsConstants(
+		const T& constants)
+	{
+		return SetGraphicsConstants(T::ROOT_SLOT, constants);
 	}
 }

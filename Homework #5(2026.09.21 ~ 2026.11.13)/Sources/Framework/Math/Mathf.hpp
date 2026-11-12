@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <algorithm>
-#include <cmath>
-#include <limits>
-
 #include "../Core/Common.hpp"
 
 namespace TUK::Framework

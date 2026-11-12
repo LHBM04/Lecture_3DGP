@@ -1,13 +1,5 @@
 ﻿#pragma once
 
-#include <filesystem>
-#include <span>
-#include <utility>
-#include <vector>
-
-#include <directx/d3d12.h>
-#include <directx/d3dx12.h>
-
 #include "../Core/Common.hpp"
 
 #include "../Graphics/GPUShader.hpp"
