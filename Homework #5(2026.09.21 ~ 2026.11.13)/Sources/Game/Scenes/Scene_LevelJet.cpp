@@ -24,7 +24,8 @@ namespace TUK::Game
 		totalEnemyCount = 10;
 		maxPlayerHealth = 10;
 		isGameOver = false;
-		hudTextView = nullptr;
+		hpTextView = nullptr;
+		leftTextView = nullptr;
 
 		Terrain* terrain = nullptr;
 		{
@@ -167,28 +168,41 @@ namespace TUK::Game
 		}
 
 		{
+			constexpr f32 HUD_WIDTH = 300.0f;
+			constexpr f32 HUD_ROW_HEIGHT = 32.0f;
+			constexpr f32 HUD_ROW_GAP = 10.0f;
+			constexpr f32 HUD_MARGIN_X = 14.0f;
+			constexpr f32 HUD_MARGIN_Y = 14.0f;
+
 			const DisplaySubsystem* displays = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 			const Display* display = displays ? displays->GetDisplay(0) : nullptr;
 			const Vector2D<i32> clientSize = display ? display->GetClientSize() : Vector2D<i32>(1280, 960);
-			const f32 hudX = -static_cast<f32>(clientSize.GetX()) * 0.5f + 30.0f;
-			const f32 hudY = -static_cast<f32>(clientSize.GetY()) * 0.5f + 40.0f;
+			const f32 hudX = -static_cast<f32>(clientSize.GetX()) * 0.5f + HUD_WIDTH * 0.5f + HUD_MARGIN_X;
+			const f32 firstRowY = -static_cast<f32>(clientSize.GetY()) * 0.5f + HUD_ROW_HEIGHT * 0.5f + HUD_MARGIN_Y;
 
-			GameObject* hudGameObject = Instantiate();
-			hudGameObject->SetName("HUD Text");
+			const auto createHudTextView = [this, hudX](std::string_view name, f32 y, std::string text) -> TextView*
+			{
+				GameObject* hudGameObject = Instantiate();
+				hudGameObject->SetName(name);
 
-			Transform* hudTransform = hudGameObject->AddComponent<Transform>();
-			hudTransform->SetLocalPosition(Vector3D<f32>(hudX, hudY, 0.0f));
-			hudTransform->SetLocalRotation(Quaternion<f32>{});
-			hudTransform->SetLocalScale(Vector3D<f32>(300.0f, 70.0f, 1.0f));
+				Transform* hudTransform = hudGameObject->AddComponent<Transform>();
+				hudTransform->SetLocalPosition(Vector3D<f32>(hudX, y, 0.0f));
+				hudTransform->SetLocalRotation(Quaternion<f32>{});
+				hudTransform->SetLocalScale(Vector3D<f32>(HUD_WIDTH, HUD_ROW_HEIGHT, 1.0f));
 
-			hudTextView = hudGameObject->AddComponent<TextView>();
-			hudTextView->SetHorizontalAlignment(TextHorizontalAlignment::LEFT);
-			hudTextView->SetTexture(Assets::LoadAsset<TextureAsset>("Resources/Fonts/BMDOHYEON_ttf_0.dds"));
-			hudTextView->SetFont(Assets::LoadAsset<BitmapFontAsset>("Resources/Fonts/BMDOHYEON_ttf.tukfont"));
-			hudTextView->SetMaterial(Assets::LoadAsset<MaterialAsset>("Resources/Materials/TextUI.tukmat"));
-			hudTextView->SetFontSize(28.0f);
-			hudTextView->SetColor(ColorRGBA<f32>::GetWhite());
-			hudTextView->SetText(std::format("HP: {}/{}\nLEFT: {}/{}", maxPlayerHealth, maxPlayerHealth, totalEnemyCount, totalEnemyCount));
+				TextView* textView = hudGameObject->AddComponent<TextView>();
+				textView->SetHorizontalAlignment(TextHorizontalAlignment::LEFT);
+				textView->SetTexture(Assets::LoadAsset<TextureAsset>("Resources/Fonts/BMDOHYEON_ttf_0.dds"));
+				textView->SetFont(Assets::LoadAsset<BitmapFontAsset>("Resources/Fonts/BMDOHYEON_ttf.tukfont"));
+				textView->SetMaterial(Assets::LoadAsset<MaterialAsset>("Resources/Materials/TextUI.tukmat"));
+				textView->SetFontSize(28.0f);
+				textView->SetColor(ColorRGBA<f32>::GetWhite());
+				textView->SetText(std::move(text));
+				return textView;
+			};
+
+			hpTextView = createHudTextView("HP Text", firstRowY, std::format("HP: {}/{}", maxPlayerHealth, maxPlayerHealth));
+			leftTextView = createHudTextView("Left Text", firstRowY + HUD_ROW_HEIGHT + HUD_ROW_GAP, std::format("LEFT: {}/{}", totalEnemyCount, totalEnemyCount));
 		}
 
 		if (InputAction* cancelAction = Input::GetAction("Cancel"))
@@ -222,9 +236,13 @@ namespace TUK::Game
 			}
 		}
 
-		if (hudTextView)
+		if (hpTextView)
 		{
-			hudTextView->SetText(std::format("HP: {}/{}\nLEFT: {}/{}", currentPlayerHealth, maxPlayerHealth, enemyCount, totalEnemyCount));
+			hpTextView->SetText(std::format("HP: {}/{}", currentPlayerHealth, maxPlayerHealth));
+		}
+		if (leftTextView)
+		{
+			leftTextView->SetText(std::format("LEFT: {}/{}", enemyCount, totalEnemyCount));
 		}
 
 		if (!FindGameObjectByTag("Player"))

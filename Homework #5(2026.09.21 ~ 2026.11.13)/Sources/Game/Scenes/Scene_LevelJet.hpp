@@ -27,7 +27,8 @@ namespace TUK::Game
 
 		bool isGameOver = false;
 
-		TextView* hudTextView = nullptr;
+		TextView* hpTextView = nullptr;
+		TextView* leftTextView = nullptr;
 		InputAction::ActionCallback::ListenerId returnListenerId = -1;
 	};
 
