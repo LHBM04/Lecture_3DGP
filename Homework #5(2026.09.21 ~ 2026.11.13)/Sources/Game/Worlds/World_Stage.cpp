@@ -12,9 +12,10 @@
 #include "Framework/UI/ButtonUI.hpp"
 #include "Framework/UI/ImageView.hpp"
 
+#include "../Core/Input.hpp"
+#include "../Core/Time.hpp"
+
 #include "../Components/PlayerController.hpp"
-#include "../Input.hpp"
-#include "../Time.hpp"
 
 using namespace TUK::Framework;
 

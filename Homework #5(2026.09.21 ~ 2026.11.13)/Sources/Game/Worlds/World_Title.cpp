@@ -7,7 +7,7 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Platform/DisplaySubsystem.hpp"
 
-#include "../WorldTransition.hpp"
+#include "../UI/WorldTransition.hpp"
 
 namespace TUK::Game
 {

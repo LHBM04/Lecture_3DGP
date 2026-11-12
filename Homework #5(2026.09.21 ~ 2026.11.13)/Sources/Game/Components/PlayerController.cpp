@@ -1,8 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "PlayerController.hpp"
 
-#include "../Time.hpp"
-#include "../Input.hpp"
+#include "../Core/Time.hpp"
+#include "../Core/Input.hpp"
 
 namespace TUK::Game
 {

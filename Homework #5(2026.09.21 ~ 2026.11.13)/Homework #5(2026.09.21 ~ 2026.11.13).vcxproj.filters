@@ -46,6 +46,9 @@
     <Filter Include="Sources\Game\UI">
       <UniqueIdentifier>{959dc655-7c02-4949-b3b0-96d97d389143}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Game\Component">
+      <UniqueIdentifier>{60b77e23-16ed-4f8a-b7c8-a8613607197a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Core\BinaryReader.hpp">
@@ -291,26 +294,8 @@
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Components\PlayerController.hpp">
-      <Filter>Sources\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\Input.hpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\MyEngine.hpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\MyGame.hpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\Time.hpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Game\Worlds\World_Title.hpp">
       <Filter>Sources\Game\Worlds</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Game\WorldTransition.hpp">
-      <Filter>Sources\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Resource.hpp">
       <Filter>Sources</Filter>
@@ -318,8 +303,26 @@
     <ClInclude Include="Sources\Framework\UI.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Transition.hpp">
+    <ClInclude Include="Sources\Game\Core\Input.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\MyEngine.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\MyGame.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Core\Time.hpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\Transition.hpp">
       <Filter>Sources\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\UI\WorldTransition.hpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Components\PlayerController.hpp">
+      <Filter>Sources\Game\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -470,29 +473,29 @@
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Components\PlayerController.cpp">
-      <Filter>Sources\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\Input.cpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\MyEngine.cpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\MyGame.cpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\Time.cpp">
-      <Filter>Sources\Game\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Game\Worlds\World_Title.cpp">
       <Filter>Sources\Game\Worlds</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Transition.cpp">
-      <Filter>Sources\Game</Filter>
+    <ClCompile Include="Sources\Game\Core\Input.cpp">
+      <Filter>Sources\Game\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\WorldTransition.cpp">
+    <ClCompile Include="Sources\Game\Core\MyEngine.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\MyGame.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Core\Time.cpp">
+      <Filter>Sources\Game\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\Transition.cpp">
       <Filter>Sources\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\UI\WorldTransition.cpp">
+      <Filter>Sources\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Components\PlayerController.cpp">
+      <Filter>Sources\Game\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -523,21 +526,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Sources\Framework\Resources\FontBinaryFormat.md">
-      <Filter>Sources\Framework\Resources</Filter>
-    </None>
-    <None Include="Sources\Framework\Resources\TUKFontExporter.md">
-      <Filter>Sources\Framework\Resources</Filter>
-    </None>
-    <None Include="Sources\Framework\Resources\TUKFontExporter.cs">
-      <Filter>Sources\Framework\Resources</Filter>
-    </None>
-    <None Include="Sources\Framework\Resources\TUKEntityExporter.cs">
-      <Filter>Sources\Framework\Resources</Filter>
-    </None>
-    <None Include="Sources\Framework\Resources\TUKSerializer.cs">
-      <Filter>Sources\Framework\Resources</Filter>
-    </None>
     <None Include="Resources\Materials\Skybox.tukmaterial">
       <Filter>Resources\Materials</Filter>
     </None>
@@ -553,6 +541,9 @@
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Resources\Shaders\WorldTransition.hlsl">
+      <Filter>Resources\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\Shaders\TextUI.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

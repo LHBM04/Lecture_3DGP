@@ -1,17 +1,14 @@
 ﻿#include "Precompiled.hpp"
 #include "MyGame.hpp"
 
-#include <functional>
-#include <utility>
+#include "Framework/Core.hpp"
+#include "Framework/Objects/WorldSubsystem.hpp"
+#include "Framework/Graphics.hpp"
+#include "Framework/Resources.hpp"
+#include "Framework/Platform.hpp"
 
-#include "../Framework/Core.hpp"
-#include "../Framework/Objects/WorldSubsystem.hpp"
-#include "../Framework/Graphics.hpp"
-#include "../Framework/Resources.hpp"
-#include "../Framework/Platform.hpp"
-
-#include "Worlds/World_Stage.hpp"
-#include "Worlds/World_Title.hpp"
+#include "../Worlds/World_Stage.hpp"
+#include "../Worlds/World_Title.hpp"
 
 #include "Time.hpp"
 #include "Input.hpp"

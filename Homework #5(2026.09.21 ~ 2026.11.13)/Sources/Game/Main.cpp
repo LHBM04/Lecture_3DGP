@@ -2,8 +2,8 @@
 
 #include "Framework/Core.hpp"
 
-#include "MyEngine.hpp"
-#include "MyGame.hpp"
+#include "Core/MyEngine.hpp"
+#include "Core/MyGame.hpp"
 
 using namespace TUK::Framework;
 using namespace TUK::Game;

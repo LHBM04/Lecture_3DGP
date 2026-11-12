@@ -6,7 +6,7 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 
-#include "WorldTransition.hpp"
+#include "../UI/WorldTransition.hpp"
 
 using namespace TUK::Framework;
 
