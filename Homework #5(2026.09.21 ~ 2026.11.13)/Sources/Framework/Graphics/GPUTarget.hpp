@@ -18,7 +18,7 @@ namespace TUK::Framework
 	{
 	public:
 		static constexpr DXGI_FORMAT DEPTH_FORMAT = DXGI_FORMAT_D32_FLOAT;
-		static constexpr float DEPTH_CLEAR_VALUE = 1.0f;
+		static constexpr f32 DEPTH_CLEAR_VALUE = 1.0f;
 
 		explicit GPUTarget(const GPUTargetCreateInfo& createInfo) noexcept;
 

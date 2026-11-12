@@ -88,7 +88,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	bool ColorRGB<TScalar>::operator==(const ColorRGB<TScalar>& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return value.x == other.value.x && value.y == other.value.y && value.z == other.value.z;
 		}
@@ -169,7 +169,7 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	float ColorRGB<TScalar>::GetGrayscale() const noexcept
+	f32 ColorRGB<TScalar>::GetGrayscale() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return 0.299f * value.x + 0.587f * value.y + 0.114f * value.z;
@@ -190,7 +190,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	bool ColorRGB<TScalar>::IsHDR() const noexcept
 	{
-		constexpr TScalar maximum = static_cast<TScalar>(std::same_as<TScalar, std::int32_t> ? 255 : 1);
+		constexpr TScalar maximum = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1);
 		return value.x > maximum || value.y > maximum || value.z > maximum;
 	}
 
@@ -215,7 +215,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetBlack() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(0, 0, 0);
 		}
@@ -228,7 +228,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetWhite() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(255, 255, 255);
 		}
@@ -241,7 +241,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetRed() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(255, 0, 0);
 		}
@@ -254,7 +254,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetGreen() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(0, 255, 0);
 		}
@@ -267,7 +267,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetBlue() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(0, 0, 255);
 		}
@@ -280,7 +280,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetYellow() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(255, 255, 0);
 		}
@@ -293,7 +293,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	ColorRGB<TScalar> ColorRGB<TScalar>::GetCyan() noexcept
 	{
-		if constexpr (std::same_as<TScalar, std::int32_t>)
+		if constexpr (std::same_as<TScalar, i32>)
 		{
 			return ColorRGB<TScalar>(0, 255, 255);
 		}
@@ -350,37 +350,37 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	bool ColorRGB<TScalar>::IsApproximately(const ColorRGB<TScalar>& lhs, const ColorRGB<TScalar>& rhs, float epsilon) noexcept
+	bool ColorRGB<TScalar>::IsApproximately(const ColorRGB<TScalar>& lhs, const ColorRGB<TScalar>& rhs, f32 epsilon) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		return std::abs(lhs.value.x - rhs.value.x) <= epsilon
-		&& std::abs(lhs.value.y - rhs.value.y) <= epsilon
-		&& std::abs(lhs.value.z - rhs.value.z) <= epsilon;
+		return std::abs(lhs.value.x - rhs.value.x) <= epsilon &&
+			   std::abs(lhs.value.y - rhs.value.y) <= epsilon &&
+			   std::abs(lhs.value.z - rhs.value.z) <= epsilon;
 	}
 
 	template <Scalarable TScalar>
-	float ColorRGB<TScalar>::LinearToGammaSpace(float value) noexcept
+	f32 ColorRGB<TScalar>::LinearToGammaSpace(f32 value) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return std::pow(std::max(0.0f, value), 1.0f / 2.2f);
 	}
 
 	template <Scalarable TScalar>
-	float ColorRGB<TScalar>::GammaToLinearSpace(float value) noexcept
+	f32 ColorRGB<TScalar>::GammaToLinearSpace(f32 value) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return std::pow(std::max(0.0f, value), 2.2f);
 	}
 
 	template <Scalarable TScalar>
-	ColorRGB<TScalar> ColorRGB<TScalar>::HSVToRGB(float h, float s, float v) noexcept
+	ColorRGB<TScalar> ColorRGB<TScalar>::HSVToRGB(f32 h, f32 s, f32 v) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return HSVToRGB(h, s, v, false);
 	}
 
 	template <Scalarable TScalar>
-	ColorRGB<TScalar> ColorRGB<TScalar>::HSVToRGB(float h, float s, float v, bool hdr) noexcept
+	ColorRGB<TScalar> ColorRGB<TScalar>::HSVToRGB(f32 h, f32 s, f32 v, bool hdr) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		h = h - std::floor(h);
@@ -390,40 +390,58 @@ namespace TUK::Framework
 			v = std::clamp(v, 0.0f, 1.0f);
 		}
 
-		if (s <= std::numeric_limits<float>::epsilon())
+		if (s <= std::numeric_limits<f32>::epsilon())
 		{
 			return ColorRGB<TScalar>(v, v, v);
 		}
 
-		const float scaledH = h * 6.0f;
-		const int sector = static_cast<int>(std::floor(scaledH));
-		const float f = scaledH - static_cast<float>(sector);
-		const float p = v * (1.0f - s);
-		const float q = v * (1.0f - s * f);
-		const float t = v * (1.0f - s * (1.0f - f));
+		const f32 scaledH = h * 6.0f;
+		const i32 sector = static_cast<i32>(std::floor(scaledH));
+		const f32 f = scaledH - static_cast<f32>(sector);
+		const f32 p = v * (1.0f - s);
+		const f32 q = v * (1.0f - s * f);
+		const f32 t = v * (1.0f - s * (1.0f - f));
 
 		switch (sector % 6)
 		{
-		case 0: return ColorRGB<TScalar>(v, t, p);
-		case 1: return ColorRGB<TScalar>(q, v, p);
-		case 2: return ColorRGB<TScalar>(p, v, t);
-		case 3: return ColorRGB<TScalar>(p, q, v);
-		case 4: return ColorRGB<TScalar>(t, p, v);
-		default: return ColorRGB<TScalar>(v, p, q);
+			case 0:
+			{
+				return ColorRGB<TScalar>(v, t, p);
+			}
+			case 1:
+			{
+				return ColorRGB<TScalar>(q, v, p);
+			}
+			case 2:
+			{
+				return ColorRGB<TScalar>(p, v, t);
+			}
+			case 3:
+			{
+				return ColorRGB<TScalar>(p, q, v);
+			}
+			case 4:
+			{
+				return ColorRGB<TScalar>(t, p, v);
+			}
+			default:
+			{
+				return ColorRGB<TScalar>(v, p, q);
+			}
 		}
 	}
 
 	template <Scalarable TScalar>
-	void ColorRGB<TScalar>::RGBToHSV(const ColorRGB<TScalar>& rgbColor, float& h, float& s, float& v) noexcept
+	void ColorRGB<TScalar>::RGBToHSV(const ColorRGB<TScalar>& rgbColor, f32& h, f32& s, f32& v) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float r = rgbColor.value.x;
-		const float g = rgbColor.value.y;
-		const float b = rgbColor.value.z;
+		const f32 r = rgbColor.value.x;
+		const f32 g = rgbColor.value.y;
+		const f32 b = rgbColor.value.z;
 
-		const float maxV = std::max(r, std::max(g, b));
-		const float minV = std::min(r, std::min(g, b));
-		const float delta = maxV - minV;
+		const f32 maxV = std::max(r, std::max(g, b));
+		const f32 minV = std::min(r, std::min(g, b));
+		const f32 delta = maxV - minV;
 
 		v = maxV;
 

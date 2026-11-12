@@ -6,7 +6,6 @@
 
 namespace TUK::Framework
 {
-	// Reads the sequential little-endian format written by TUKBinaryWriter.
 	class BinaryReader final
 	{
 	public:
@@ -15,14 +14,30 @@ namespace TUK::Framework
 		static constexpr u32 MAX_DEPTH = 128;
 
 		explicit BinaryReader(std::ifstream& file) noexcept;
-		template <class T> requires ((std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>)
+		~BinaryReader() noexcept = default;
+
+		BinaryReader(const BinaryReader&) = delete;
+		BinaryReader& operator=(const BinaryReader&) = delete;
+
+		BinaryReader(BinaryReader&&) = delete;
+		BinaryReader& operator=(BinaryReader&&) = delete;
+
+		template <class T>
+		requires ((std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>)
 		[[nodiscard]] bool Read(T& value);
+
 		[[nodiscard]] bool Read(bool& value);
+
 		[[nodiscard]] bool Read(std::string& value);
-		template <class T, usize N> [[nodiscard]] bool Read(std::array<T, N>& values);
-		template <class T, class... TRest> requires (sizeof...(TRest) > 0)
+
+		template <class T, usize N>
+		[[nodiscard]] bool Read(std::array<T, N>& values);
+
+		template <class T, class... TRest>
 		[[nodiscard]] bool Read(T& first, TRest&... rest);
+
 		[[nodiscard]] bool ReadCount(i32& count, usize elementSize);
+
 		[[nodiscard]] bool IsAtEnd() const noexcept;
 
 	private:
@@ -41,6 +56,7 @@ namespace TUK::Framework
 		{
 			return;
 		}
+
 		file.seekg(0, std::ios::end);
 		const auto size = file.tellg();
 		if (size <= 0 || size > static_cast<std::streamoff>(MAX_BYTES))
@@ -48,11 +64,13 @@ namespace TUK::Framework
 			file.setstate(std::ios::failbit);
 			return;
 		}
+
 		remainingBytes = static_cast<usize>(size);
 		file.seekg(0);
 	}
 
-	template <class T> requires ((std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>)
+	template <class T>
+	requires ((std::integral<T> && !std::same_as<T, bool>) || std::floating_point<T>)
 	bool BinaryReader::Read(T& value)
 	{
 		std::array<char, sizeof(T)> encoded{};
@@ -60,15 +78,18 @@ namespace TUK::Framework
 		{
 			return false;
 		}
+
 		if constexpr (std::endian::native == std::endian::big)
 		{
 			std::ranges::reverse(encoded);
 		}
+
 		value = std::bit_cast<T>(encoded);
 		if constexpr (std::floating_point<T>)
 		{
 			return std::isfinite(value);
 		}
+
 		return true;
 	}
 
@@ -79,13 +100,13 @@ namespace TUK::Framework
 		{
 			return false;
 		}
+
 		value = encoded != 0;
 		return true;
 	}
 
 	inline bool BinaryReader::Read(std::string& value)
 	{
-		// BinaryWriter prefixes UTF-8 strings with a 7-bit encoded byte count.
 		u32 length = 0;
 		bool complete = false;
 		for (u32 i = 0; i < 5; ++i)
@@ -95,6 +116,7 @@ namespace TUK::Framework
 			{
 				return false;
 			}
+
 			length |= static_cast<u32>(encoded & 0x7F) << (i * 7);
 			if ((encoded & 0x80) == 0)
 			{
@@ -102,12 +124,15 @@ namespace TUK::Framework
 				break;
 			}
 		}
+
 		if (!complete || length > MAX_ELEMENTS || length > remainingBytes || length > allocationBudget)
 		{
 			return false;
 		}
+
 		allocationBudget -= length;
 		value.resize(length);
+
 		return ReadBytes(value.data(), length) && IsValidText(value);
 	}
 
@@ -121,10 +146,11 @@ namespace TUK::Framework
 				return false;
 			}
 		}
+
 		return true;
 	}
 
-	template <class T, class... TRest> requires (sizeof...(TRest) > 0)
+	template <class T, class... TRest>
 	bool BinaryReader::Read(T& first, TRest&... rest)
 	{
 		return Read(first) && (Read(rest) && ...);
@@ -132,12 +158,13 @@ namespace TUK::Framework
 
 	inline bool BinaryReader::ReadCount(i32& count, usize elementSize)
 	{
-		if (!Read(count) || count < 0 || static_cast<u32>(count) > MAX_ELEMENTS
-			|| static_cast<usize>(count) > remainingBytes || elementSize == 0
-			|| static_cast<usize>(count) > allocationBudget / elementSize)
+		if (!Read(count) || count < 0 || static_cast<u32>(count) > MAX_ELEMENTS ||
+			static_cast<usize>(count) > remainingBytes || elementSize == 0 ||
+			static_cast<usize>(count) > allocationBudget / elementSize)
 		{
 			return false;
 		}
+
 		allocationBudget -= static_cast<usize>(count) * elementSize;
 		return true;
 	}
@@ -153,6 +180,7 @@ namespace TUK::Framework
 		{
 			return false;
 		}
+
 		remainingBytes -= size;
 		return true;
 	}
@@ -166,10 +194,12 @@ namespace TUK::Framework
 			{
 				return false;
 			}
+
 			if (first < 0x80)
 			{
 				continue;
 			}
+
 			u32 codepoint = 0;
 			u32 minimum = 0;
 			usize continuationCount = 0;
@@ -195,10 +225,12 @@ namespace TUK::Framework
 			{
 				return false;
 			}
+
 			if (continuationCount > text.size() - i)
 			{
 				return false;
 			}
+
 			for (usize j = 0; j < continuationCount; ++j)
 			{
 				const auto next = static_cast<u8>(text[i++]);
@@ -206,14 +238,16 @@ namespace TUK::Framework
 				{
 					return false;
 				}
+
 				codepoint = (codepoint << 6) | (next & 0x3F);
 			}
+
 			if (codepoint < minimum || codepoint > 0x10FFFF || (codepoint >= 0xD800 && codepoint <= 0xDFFF))
 			{
 				return false;
 			}
 		}
+
 		return true;
 	}
-
 }

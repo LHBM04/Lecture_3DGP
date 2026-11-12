@@ -36,8 +36,8 @@ namespace TUK::Framework
 		[[nodiscard]] operator DirectX::XMFLOAT4() const noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] operator DirectX::XMINT4() const noexcept requires std::same_as<TScalar, i32>;
 
-		[[nodiscard]] TScalar operator[](std::size_t index) const noexcept;
-		[[nodiscard]] TScalar& operator[](std::size_t index) noexcept;
+		[[nodiscard]] TScalar operator[](usize index) const noexcept;
+		[[nodiscard]] TScalar& operator[](usize index) noexcept;
 
 		[[nodiscard]] Vector4D operator+() const noexcept;
 		[[nodiscard]] Vector4D operator+(const Vector4D& other) const noexcept;

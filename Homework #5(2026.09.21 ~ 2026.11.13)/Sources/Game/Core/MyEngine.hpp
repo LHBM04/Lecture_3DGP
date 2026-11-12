@@ -10,9 +10,9 @@ namespace TUK::Game
 
 	class MyEngine : public Engine
 	{
+	public:
 		using Engine::Engine;
 
-	public:
 		SystemStatus Startup() override;
 
 	private:

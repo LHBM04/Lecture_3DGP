@@ -82,8 +82,8 @@ namespace TUK::Framework
 				std::abort();
 			}
 		}
-		if (std::abs(matrix[3]) > TOLERANCE || std::abs(matrix[7]) > TOLERANCE
-			|| std::abs(matrix[11]) > TOLERANCE || std::abs(matrix[15] - 1.0f) > TOLERANCE)
+		if (std::abs(matrix[3]) > TOLERANCE || std::abs(matrix[7]) > TOLERANCE ||
+			std::abs(matrix[11]) > TOLERANCE || std::abs(matrix[15] - 1.0f) > TOLERANCE)
 		{
 			std::abort();
 		}
@@ -97,8 +97,8 @@ namespace TUK::Framework
 		const Matrix4x4<f32> recomposed = Matrix4x4<f32>::TRS(position, rotation, scale);
 		for (usize index = 0; index < 16; ++index)
 		{
-			if (!std::isfinite(recomposed[index])
-				|| std::abs(recomposed[index] - matrix[index]) > TOLERANCE * std::max(1.0f, std::abs(matrix[index])))
+			if (!std::isfinite(recomposed[index]) ||
+				std::abs(recomposed[index] - matrix[index]) > TOLERANCE * std::max(1.0f, std::abs(matrix[index])))
 			{
 				std::abort();
 			}
@@ -203,12 +203,12 @@ namespace TUK::Framework
 	{
 		return parent;
 	}
-	
+
 	const Transform* Transform::GetParent() const noexcept
 	{
 		return parent;
 	}
-	
+
 	std::span<Transform* const> Transform::GetChildren() noexcept
 	{
 		return children;

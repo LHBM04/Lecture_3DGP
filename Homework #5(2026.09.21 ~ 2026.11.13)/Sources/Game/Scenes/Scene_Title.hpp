@@ -9,9 +9,9 @@ namespace TUK::Game
 
 	class Scene_Title : public Scene
 	{
+	public:
 		using Scene::Scene;
 
-	public:
 		void OnEnter() override;
 	};
 }

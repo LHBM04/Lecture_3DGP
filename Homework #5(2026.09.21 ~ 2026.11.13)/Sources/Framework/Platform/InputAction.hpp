@@ -141,42 +141,42 @@ namespace TUK::Framework
 		{
 			switch (binding.kind)
 			{
-			case BindingKind::KEY_BUTTON:
-			{
-				if (provider.IsKeyHeld(binding.primaryKey))
+				case BindingKind::KEY_BUTTON:
 				{
-					x = 1.0f;
+					if (provider.IsKeyHeld(binding.primaryKey))
+					{
+						x = 1.0f;
+					}
+					break;
 				}
-				break;
-			}
-			case BindingKind::MOUSE_BUTTON:
-			{
-				if (provider.HasMouseButtonState() && provider.IsMouseButtonHeld(binding.mouseButton))
+				case BindingKind::MOUSE_BUTTON:
 				{
-					x = 1.0f;
+					if (provider.HasMouseButtonState() && provider.IsMouseButtonHeld(binding.mouseButton))
+					{
+						x = 1.0f;
+					}
+					break;
 				}
-				break;
-			}
-			case BindingKind::AXIS_1D:
-			{
-				const f32 axis =
-					static_cast<f32>(provider.IsKeyHeld(binding.secondaryKey)) -
-					static_cast<f32>(provider.IsKeyHeld(binding.primaryKey));
-				x += axis;
-				break;
-			}
-			case BindingKind::VECTOR_2D:
-			{
-				const f32 horizontal =
-					static_cast<f32>(provider.IsKeyHeld(binding.rightKey)) -
-					static_cast<f32>(provider.IsKeyHeld(binding.leftKey));
-				const f32 vertical =
-					static_cast<f32>(provider.IsKeyHeld(binding.primaryKey)) -
-					static_cast<f32>(provider.IsKeyHeld(binding.secondaryKey));
-				x += horizontal;
-				y += vertical;
-				break;
-			}
+				case BindingKind::AXIS_1D:
+				{
+					const f32 axis =
+						static_cast<f32>(provider.IsKeyHeld(binding.secondaryKey)) -
+						static_cast<f32>(provider.IsKeyHeld(binding.primaryKey));
+					x += axis;
+					break;
+				}
+				case BindingKind::VECTOR_2D:
+				{
+					const f32 horizontal =
+						static_cast<f32>(provider.IsKeyHeld(binding.rightKey)) -
+						static_cast<f32>(provider.IsKeyHeld(binding.leftKey));
+					const f32 vertical =
+						static_cast<f32>(provider.IsKeyHeld(binding.primaryKey)) -
+						static_cast<f32>(provider.IsKeyHeld(binding.secondaryKey));
+					x += horizontal;
+					y += vertical;
+					break;
+				}
 			}
 		}
 

@@ -24,9 +24,9 @@ namespace TUK.Editor
         private GUIStyle cardStyle;
         private GUIStyle headingStyle;
 
-        protected abstract Type ObjectType 
-        { 
-            get; 
+        protected abstract Type ObjectType
+        {
+            get;
         }
 
         protected virtual bool AllowSceneObjects

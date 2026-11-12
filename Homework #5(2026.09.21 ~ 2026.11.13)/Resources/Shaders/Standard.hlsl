@@ -3,18 +3,22 @@
 
 #pragma pack_matrix(row_major)
 
-cbuffer CameraConstants : register(b0, space0)
+cbuffer CameraConstants : register(b0)
 {
     float4x4 view;
     float4x4 projection;
+    float3 lightDirection;
+    float lightIntensity;
+    float4 lightColor;
+    float4 ambientLightColor;
 };
 
-cbuffer ObjectConstants : register(b1, space0)
+cbuffer ObjectConstants : register(b1)
 {
     float4x4 world;
 };
 
-cbuffer MaterialConstants : register(b2, space0)
+cbuffer MaterialConstants : register(b2)
 {
     float4 baseColor;
     float4 emissiveColor;
@@ -25,16 +29,16 @@ cbuffer MaterialConstants : register(b2, space0)
     float4 specularColor;
 };
 
-Texture2D<float4> baseColorTexture : register(t0, space0);
-Texture2D<float4> normalTexture : register(t1, space0);
-Texture2D<float4> metallicTexture : register(t2, space0);
-Texture2D<float4> roughnessTexture : register(t3, space0);
-Texture2D<float4> occlusionTexture : register(t4, space0);
-Texture2D<float4> emissiveTexture : register(t5, space0);
-Texture2D<float4> specularTexture : register(t6, space0);
-Texture2D<float4> maskTexture : register(t7, space0);
+Texture2D<float4> baseColorTexture : register(t0);
+Texture2D<float4> normalTexture : register(t1);
+Texture2D<float4> metallicTexture : register(t2);
+Texture2D<float4> roughnessTexture : register(t3);
+Texture2D<float4> occlusionTexture : register(t4);
+Texture2D<float4> emissiveTexture : register(t5);
+Texture2D<float4> specularTexture : register(t6);
+Texture2D<float4> maskTexture : register(t7);
 
-SamplerState materialSampler : register(s0, space0);
+SamplerState materialSampler : register(s0);
 
 static const uint BASE_COLOR_SLOT = 0u;
 static const uint NORMAL_SLOT = 1u;
@@ -72,7 +76,7 @@ VSOutput VSMain(VSInput input)
     output.uv0 = input.uv0;
 
     output.viewPosition = position.xyz;
-    output.lightDirection = normalize(mul(float4(0.5f, 1.0f, -0.5f, 0.0f), view).xyz);
+    output.lightDirection = normalize(mul(float4(-lightDirection, 0.0f), view).xyz);
     return output;
 }
 
@@ -92,7 +96,7 @@ float3 GetSurfaceNormal(VSOutput input)
     float3 tangentNormal = normalTexture.Sample(materialSampler, input.uv0).xyz * 2.0f - 1.0f;
     float3 positionDx = ddx(input.viewPosition);
     float3 positionDy = ddy(input.viewPosition);
-    
+
     float2 sourceUV = float2(input.uv0.x, 1.0f - input.uv0.y);
     float2 uvDx = ddx(sourceUV);
     float2 uvDy = ddy(sourceUV);
@@ -180,7 +184,8 @@ float4 PSMain(VSOutput input) : SV_TARGET
     float3 diffuse = surfaceColor.rgb * (1.0f - metalness);
     float3 reflectance = lerp(dielectricSpecular, surfaceColor.rgb, metalness);
     float3 specular = reflectance * pow(nDotH, shininess);
-    float3 ambient = surfaceColor.rgb * (0.15f * ambientOcclusion);
-    float3 litColor = ambient + (diffuse + specular) * nDotL + emissive;
+    float3 ambient = surfaceColor.rgb * (ambientLightColor.rgb * ambientOcclusion);
+    float3 directLight = (diffuse + specular) * (nDotL * lightColor.rgb * lightIntensity);
+    float3 litColor = ambient + directLight + emissive;
     return float4(litColor, surfaceColor.a);
 }

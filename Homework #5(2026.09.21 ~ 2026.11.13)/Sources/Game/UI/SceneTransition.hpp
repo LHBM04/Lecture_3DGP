@@ -11,8 +11,7 @@ namespace TUK::Game
 	class SceneTransition : public Transition
 	{
 	public:
-		explicit SceneTransition(GameObject* owner) noexcept;
-		~SceneTransition() noexcept override = default;
+		using Transition::Transition;
 
 		void OnAwake() override;
 		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
@@ -38,12 +37,10 @@ namespace TUK::Game
 		[[nodiscard]] Delegate<>& OnNextScene() noexcept;
 
 	private:
-		static constexpr std::string_view DEFAULT_MATERIAL_PATH = "Resources/Materials/SceneTransition.tukmat";
-
 		SceneSubsystem* scenes = nullptr;
 		InputSubsystem* input = nullptr;
 		const MaterialAsset* material = nullptr;
-		std::filesystem::path materialPath = DEFAULT_MATERIAL_PATH;
+		std::filesystem::path materialPath = "Resources/Materials/SceneTransition.tukmat";
 		ColorRGBA<f32> fadeColor{ 0.0f, 0.0f, 0.0f, 1.0f };
 		Scene* targetScene = nullptr;
 		bool wasInputEnabled = true;
@@ -51,11 +48,6 @@ namespace TUK::Game
 		Delegate<Scene*>::ListenerId exitSceneListenerId = 0;
 		Delegate<> onNextScene;
 	};
-
-	inline SceneTransition::SceneTransition(GameObject* owner) noexcept
-		: Transition(owner)
-	{
-	}
 
 	inline bool SceneTransition::IsActive() const noexcept
 	{

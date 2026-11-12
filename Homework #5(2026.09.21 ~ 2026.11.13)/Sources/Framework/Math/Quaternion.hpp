@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Vector3D.hpp"
-
 #include "../Core/Common.hpp"
+
+#include "Vector3D.hpp"
 
 namespace TUK::Framework
 {
@@ -28,23 +28,23 @@ namespace TUK::Framework
 		[[nodiscard]] operator DirectX::XMFLOAT4() const noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] operator DirectX::XMINT4() const noexcept requires std::same_as<TScalar, i32>;
 
-		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
-		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
+		[[nodiscard]] TScalar operator[](usize index) const noexcept;
+		[[nodiscard]] TScalar& operator[](usize index) noexcept;
 
-		[[nodiscard]] Quaternion operator+(const Quaternion& _other) const noexcept;
-		Quaternion& operator+=(const Quaternion& _other) noexcept;
+		[[nodiscard]] Quaternion operator+(const Quaternion& other) const noexcept;
+		Quaternion& operator+=(const Quaternion& other) noexcept;
 
-		[[nodiscard]] Quaternion operator-(const Quaternion& _other) const noexcept;
-		Quaternion& operator-=(const Quaternion& _other) noexcept;
+		[[nodiscard]] Quaternion operator-(const Quaternion& other) const noexcept;
+		Quaternion& operator-=(const Quaternion& other) noexcept;
 
-		[[nodiscard]] Quaternion operator*(TScalar _scalar) const noexcept;
-		[[nodiscard]] Quaternion operator*(const Quaternion& _other) const noexcept;
+		[[nodiscard]] Quaternion operator*(TScalar scalar) const noexcept;
+		[[nodiscard]] Quaternion operator*(const Quaternion& other) const noexcept;
 		[[nodiscard]] Vector3D<f32> operator*(const Vector3D<f32>& vector) const noexcept requires std::same_as<TScalar, f32>;
-		Quaternion& operator*=(TScalar _scalar) noexcept;
-		Quaternion& operator*=(const Quaternion& _other) noexcept;
+		Quaternion& operator*=(TScalar scalar) noexcept;
+		Quaternion& operator*=(const Quaternion& other) noexcept;
 
-		[[nodiscard]] Quaternion operator/(TScalar _scalar) const noexcept;
-		Quaternion& operator/=(TScalar _scalar) noexcept;
+		[[nodiscard]] Quaternion operator/(TScalar scalar) const noexcept;
+		Quaternion& operator/=(TScalar scalar) noexcept;
 
 		[[nodiscard]] bool operator==(const Quaternion& other) const noexcept;
 		[[nodiscard]] bool operator!=(const Quaternion& other) const noexcept;

@@ -12,9 +12,9 @@ namespace TUK::Framework
 
 	class ButtonUI final : public Component
 	{
+	public:
 		using Component::Component;
 
-	public:
 		void OnUpdate() override;
 		void OnDisable() override;
 #ifdef _DEBUG

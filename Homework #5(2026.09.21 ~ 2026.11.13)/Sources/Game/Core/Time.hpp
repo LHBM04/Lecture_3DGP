@@ -9,17 +9,17 @@ namespace TUK::Game
 
 	namespace Time
 	{
-		void Initialize(const TimeSubsystem* subsystem);
-		void Release();
+		void Initialize(const TimeSubsystem* subsystem) noexcept;
+		void Release() noexcept;
 
 		[[nodiscard]] const TimeSubsystem* GetSubsystem() noexcept;
 
-		[[nodiscard]] f32 GetTimeScale();
+		[[nodiscard]] f32 GetTimeScale() noexcept;
 
-		[[nodiscard]] f32 GetDeltaTime();
-		[[nodiscard]] f32 GetUnscaledDeltaTime();
+		[[nodiscard]] f32 GetDeltaTime() noexcept;
+		[[nodiscard]] f32 GetUnscaledDeltaTime() noexcept;
 
-		[[nodiscard]] f32 GetFixedDeltaTime();
-		[[nodiscard]] f32 GetUnscaledFixedDeltaTime();
+		[[nodiscard]] f32 GetFixedDeltaTime() noexcept;
+		[[nodiscard]] f32 GetUnscaledFixedDeltaTime() noexcept;
 	}
 }

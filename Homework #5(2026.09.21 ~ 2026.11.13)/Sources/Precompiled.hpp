@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #if defined(_M_IX86)
-    #error "This project is designed for x64 architecture. Please build for x64 instead of x86!"
+	#error "This project is designed for x64 architecture. Please build for x64 instead of x86!"
 #endif
 
 #ifndef _CRT_SECURE_NO_WARNINGS
@@ -10,7 +10,10 @@
 
 #include <algorithm>
 #include <array>
+#include <bit>
+#include <bitset>
 #include <cassert>
+#include <cctype>
 #include <chrono>
 #include <cmath>
 #include <compare>
@@ -36,8 +39,10 @@
 #include <numbers>
 #include <optional>
 #include <print>
+#include <random>
 #include <ranges>
 #include <set>
+#include <source_location>
 #include <span>
 #include <stdfloat>
 #include <string>
@@ -76,6 +81,7 @@
 
 #include <directx/d3d12.h>
 #include <directx/d3d12sdklayers.h>
+#include <directx/d3d12shader.h>
 #include <directx/d3dx12.h>
 
 #include <dxgi1_6.h>

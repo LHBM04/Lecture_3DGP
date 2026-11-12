@@ -1,9 +1,8 @@
 ﻿#include "Precompiled.hpp"
 #include "DisplaySubsystem.hpp"
 
-#include "../Core/Engine.hpp"
-
 #include "../Core/Common.hpp"
+#include "../Core/Engine.hpp"
 
 #include "DisplayEvents.hpp"
 #include "EventSubsystem.hpp"
@@ -199,7 +198,7 @@ namespace TUK::Framework
 
 		ShowWindow(hWnd, options.show);
 		UpdateWindow(hWnd);
-		
+
 		return pointer;
 	}
 

@@ -1,9 +1,9 @@
 ﻿#pragma once
 
+#include "../Core/Common.hpp"
+
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -35,8 +35,8 @@ namespace TUK::Framework
 		[[nodiscard]] operator DirectX::XMMATRIX() const noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] operator DirectX::XMFLOAT4X4() const noexcept requires std::same_as<TScalar, f32>;
 
-		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
-		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
+		[[nodiscard]] TScalar operator[](usize index) const noexcept;
+		[[nodiscard]] TScalar& operator[](usize index) noexcept;
 
 		[[nodiscard]] Matrix4x4 operator*(const Matrix4x4& other) const noexcept;
 		Matrix4x4& operator*=(const Matrix4x4& other) noexcept;
@@ -45,11 +45,11 @@ namespace TUK::Framework
 		[[nodiscard]] bool operator!=(const Matrix4x4& other) const noexcept;
 		[[nodiscard]] std::partial_ordering operator<=>(const Matrix4x4& other) const noexcept;
 
-		[[nodiscard]] Vector4D<TScalar> GetRow(std::size_t index) const noexcept;
-		void SetRow(std::size_t index, const Vector4D<TScalar>& row) noexcept;
+		[[nodiscard]] Vector4D<TScalar> GetRow(usize index) const noexcept;
+		void SetRow(usize index, const Vector4D<TScalar>& row) noexcept;
 
-		[[nodiscard]] Vector4D<TScalar> GetColumn(std::size_t index) const noexcept;
-		void SetColumn(std::size_t index, const Vector4D<TScalar>& column) noexcept;
+		[[nodiscard]] Vector4D<TScalar> GetColumn(usize index) const noexcept;
+		void SetColumn(usize index, const Vector4D<TScalar>& column) noexcept;
 
 		[[nodiscard]] f32 GetDeterminant() const noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] Matrix4x4 GetTranspose() const noexcept;

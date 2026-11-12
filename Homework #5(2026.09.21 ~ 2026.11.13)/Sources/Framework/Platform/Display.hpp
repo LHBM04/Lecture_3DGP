@@ -15,7 +15,7 @@ namespace TUK::Framework
 		friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	public:
-		enum class ID : u32{};
+		enum class ID : u32 {};
 
 		explicit Display(HWND hWnd) noexcept;
 		~Display() noexcept;

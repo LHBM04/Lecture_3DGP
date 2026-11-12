@@ -1,10 +1,10 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
+#include "../Core/Common.hpp"
+
 #include "../Platform/Display.hpp"
 #include "../Platform/DisplayEvents.hpp"
-
-#include "../Core/Common.hpp"
 
 #include "GPUTexture2D.hpp"
 
@@ -317,5 +317,4 @@ namespace TUK::Framework
 
 		return std::unexpected("GPU 디바이스 생성에 실패했습니다.");
 	}
-
 }

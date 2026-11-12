@@ -29,7 +29,7 @@ namespace TUK::Framework
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 		{
-			return std::unexpected("Cannot open resource: " + path.generic_string());
+			return std::unexpected("리소스를 열 수 없습니다: " + path.generic_string());
 		}
 
 		BinaryReader reader(file);
@@ -46,7 +46,7 @@ namespace TUK::Framework
 		if (!reader.Read(base, emission, metallic, roughness, textureReferences,
 			vertexShader, hullShader, domainShader, geometryShader, pixelShader) || !reader.IsAtEnd())
 		{
-			return std::unexpected("Invalid material data: " + path.generic_string());
+			return std::unexpected("머티리얼 데이터가 유효하지 않습니다: " + path.generic_string());
 		}
 
 		const auto root = FindResourceRoot(path, "Materials");
@@ -69,7 +69,6 @@ namespace TUK::Framework
 		const f32 parsedRoughness = std::clamp(roughness, 0.0f, 1.0f);
 
 		MaterialTextures textures{};
-		// Height is stored at file slot 6, but has no runtime texture slot.
 		constexpr usize FILE_SLOTS[]{ 0, 1, 2, 3, 4, 5, 7, 8 };
 		for (usize slot = 0; slot < textures.size(); ++slot)
 		{
@@ -88,7 +87,7 @@ namespace TUK::Framework
 			const TextureAsset* texture = assets->LoadAsset<TextureAsset>(*texturePath);
 			if (!texture)
 			{
-				return std::unexpected("Cannot load material texture: " + texturePath->generic_string());
+				return std::unexpected("머티리얼 텍스처를 로드하지 못했습니다: " + texturePath->generic_string());
 			}
 
 			textures[slot] = texture;
@@ -124,12 +123,12 @@ namespace TUK::Framework
 			const auto shaderPath = ResolveResourcePath(*root, *name);
 			if (!shaderPath || !(*target = assets->LoadAsset<ShaderAsset>(*shaderPath)))
 			{
-				return std::unexpected("Cannot load material shader: " + *name);
+				return std::unexpected("머티리얼 셰이더를 로드하지 못했습니다: " + *name);
 			}
 		}
 		if (static_cast<bool>(hull) != static_cast<bool>(domain))
 		{
-			return std::unexpected("Hull and domain shaders must be provided together");
+			return std::unexpected("헐 셰이더와 도메인 셰이더는 함께 지정해야 합니다.");
 		}
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description = vertex->CreatePipelineDescription(targetFormat);

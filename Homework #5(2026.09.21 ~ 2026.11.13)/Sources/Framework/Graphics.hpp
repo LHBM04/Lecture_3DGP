@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#include "Graphics/BillboardRenderer.hpp"
 #include "Graphics/Camera.hpp"
+#include "Graphics/DirectionalLight.hpp"
 #include "Graphics/GPUBuffer.hpp"
 #include "Graphics/GPUCommandBuffer.hpp"
 #include "Graphics/GPUConstants.hpp"

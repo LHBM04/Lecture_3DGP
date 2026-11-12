@@ -90,7 +90,7 @@ namespace TUK.Editor
             writer.Write(data.AscentLine);
             writer.Write(data.DescentLine);
             writer.Write(data.AtlasPadding);
-            
+
             writer.Write(data.Atlases.Count);
 
             foreach (FontAtlasData atlas in data.Atlases)
@@ -100,7 +100,7 @@ namespace TUK.Editor
                 writer.Write(atlas.Width);
                 writer.Write(atlas.Height);
             }
-            
+
             writer.Write(data.Characters.Count);
 
             foreach (FontCharacterData character in data.Characters)
@@ -124,7 +124,7 @@ namespace TUK.Editor
 
         internal static FontData GetMetaData(TMP_FontAsset current)
         {
-            if (current.characterTable == null || 
+            if (current.characterTable == null ||
                 current.characterTable.Count == 0)
             {
                 throw new InvalidOperationException("문자가 생성된 TMP 폰트가 필요합니다.");
@@ -153,7 +153,7 @@ namespace TUK.Editor
 
             foreach (TMP_Character character in current.characterTable.OrderBy(value => value == null ? 0u : value.unicode))
             {
-                if (character == null || 
+                if (character == null ||
                     character.glyph == null)
                 {
                     throw new InvalidOperationException("글리프가 없는 문자입니다.");
@@ -162,9 +162,9 @@ namespace TUK.Editor
                 var glyph = character.glyph;
                 int page = glyph.atlasIndex;
 
-                if (current.atlasTextures == null || 
-                    page < 0 || 
-                    page >= current.atlasTextures.Length || 
+                if (current.atlasTextures == null ||
+                    page < 0 ||
+                    page >= current.atlasTextures.Length ||
                     !current.atlasTextures[page])
                 {
                     throw new InvalidOperationException("글리프 아틀라스가 없습니다.");
@@ -279,7 +279,7 @@ namespace TUK.Editor
                 output.Apply(false, false);
                 byte[] bytes = output.EncodeToPNG();
 
-                if (bytes == null || 
+                if (bytes == null ||
                     bytes.Length == 0)
                 {
                     throw new InvalidOperationException("아틀라스 PNG 기록에 실패했습니다.");

@@ -1,9 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "GameObject.hpp"
 
-#include "Scene.hpp"
-
 #include "../Core/Common.hpp"
+
+#include "Scene.hpp"
 
 namespace TUK::Framework
 {
@@ -42,6 +42,13 @@ namespace TUK::Framework
 		RenderComponents(&Component::OnPostRender, commandBuffer);
 	}
 
+#ifdef _DEBUG
+	void GameObject::DrawGizmos(GPUCommandBuffer& commandBuffer)
+	{
+		RenderComponents(&Component::OnDrawGizmos, commandBuffer);
+	}
+#endif
+
 	void GameObject::UpdateComponents(ComponentCallback callback)
 	{
 		ASSERT_FMT(callback, "callback이 비어 있습니다.");
@@ -53,7 +60,6 @@ namespace TUK::Framework
 
 		DestroyComponents();
 
-		// 콜백에서 추가한 컴포넌트는 다음 갱신 단계부터 실행합니다.
 		const usize count = components.size();
 		for (usize index = 0; index < count && scene->IsEntered() && isEnabled && !isDestroyed; ++index)
 		{
@@ -105,7 +111,6 @@ namespace TUK::Framework
 			return;
 		}
 
-		// 삭제 콜백이 컴포넌트를 추가하더라도 원래 컨테이너의 순회에 영향을 주지 않는다.
 		std::vector<std::unique_ptr<Component>> destroyed;
 		destroyed.reserve(static_cast<usize>(destroyedCount));
 		std::erase_if(componentsByType,
@@ -132,7 +137,6 @@ namespace TUK::Framework
 		}
 		components.resize(remainingCount);
 
-		// 같은 타입이 여러 개라면 남아 있는 마지막 컴포넌트를 조회 대상으로 사용한다.
 		for (const auto& component : components)
 		{
 			componentsByType[std::type_index(typeid(*component))] = component.get();

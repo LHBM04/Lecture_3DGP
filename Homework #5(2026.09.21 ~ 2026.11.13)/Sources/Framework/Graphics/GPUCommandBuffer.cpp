@@ -181,14 +181,34 @@ namespace TUK::Framework
 
 	void GPUCommandBuffer::Draw(u32 vertexCount, u32 firstVertex)
 	{
-		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-		d3dCommandList->DrawInstanced(vertexCount, 1, firstVertex, 0);
+		DrawInstanced(vertexCount, 1, firstVertex, 0);
 	}
 
 	void GPUCommandBuffer::DrawIndexed(u32 indexCount, u32 firstIndex, i32 baseVertex)
 	{
+		DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
+	}
+
+	void GPUCommandBuffer::DrawInstanced(
+		u32 vertexCountPerInstance,
+		u32 instanceCount,
+		u32 firstVertex,
+		u32 firstInstance)
+	{
 		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
-		d3dCommandList->DrawIndexedInstanced(indexCount, 1, firstIndex, baseVertex, 0);
+		d3dCommandList->DrawInstanced(vertexCountPerInstance, instanceCount, firstVertex, firstInstance);
+	}
+
+	void GPUCommandBuffer::DrawIndexedInstanced(
+		u32 indexCountPerInstance,
+		u32 instanceCount,
+		u32 firstIndex,
+		i32 baseVertex,
+		u32 firstInstance)
+	{
+		ASSERT_FMT(d3dCommandList.Get(), "d3dCommandList가 nullptr입니다.");
+		d3dCommandList->DrawIndexedInstanced(
+			indexCountPerInstance, instanceCount, firstIndex, baseVertex, firstInstance);
 	}
 
 	void GPUCommandBuffer::ClearRenderTarget(const f32 (&color)[4], const D3D12_RECT& rect) noexcept
@@ -224,10 +244,10 @@ namespace TUK::Framework
 
 		constexpr u32 DESCRIPTORS_PER_PAGE = 256;
 		constexpr auto HEAP_TYPE = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		
+
 		const usize pageIndex = textureDescriptorCount / DESCRIPTORS_PER_PAGE;
 		const usize slot = textureDescriptorCount % DESCRIPTORS_PER_PAGE;
-		
+
 		if (pageIndex == textureDescriptorPages.size())
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC description{};
@@ -246,7 +266,7 @@ namespace TUK::Framework
 		ID3D12DescriptorHeap* heap = textureDescriptorPages[pageIndex].Get();
 		const UINT descriptorStride = d3dDevice.GetDescriptorHandleIncrementSize(HEAP_TYPE);
 		const usize offset = slot * descriptorStride;
-		
+
 		auto cpuHandle = heap->GetCPUDescriptorHandleForHeapStart();
 		cpuHandle.ptr += offset;
 
@@ -255,7 +275,7 @@ namespace TUK::Framework
 		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		nullView.Texture2D.MipLevels = 1;
-		
+
 		for (usize index = 0; index < textures.size(); ++index)
 		{
 			const GPUTexture2D* texture = textures[index];
@@ -264,7 +284,7 @@ namespace TUK::Framework
 			{
 				view = firstView;
 			}
-		
+
 			d3dDevice.CreateShaderResourceView(texture ? &texture->GetD3DResource() : nullptr, view, cpuHandle);
 			cpuHandle.ptr += descriptorStride;
 		}
@@ -276,10 +296,10 @@ namespace TUK::Framework
 
 		auto gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
 		gpuHandle.ptr += offset;
-		
+
 		d3dCommandList->SetGraphicsRootDescriptorTable(TEXTURE_ROOT_SLOT, gpuHandle);
 		textureDescriptorCount += TEXTURE_SLOT_COUNT;
-		
+
 		return {};
 	}
 

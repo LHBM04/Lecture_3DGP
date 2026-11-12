@@ -58,7 +58,7 @@ namespace TUK::Framework
 
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
-		
+
 		return { rect.left, rect.top };
 	}
 
@@ -82,7 +82,7 @@ namespace TUK::Framework
 
 		RECT rect;
 		GetWindowRect(hWnd, &rect);
-		
+
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 
@@ -106,7 +106,7 @@ namespace TUK::Framework
 
 		RECT rect;
 		GetClientRect(hWnd, &rect);
-		
+
 		return { rect.right - rect.left, rect.bottom - rect.top };
 	}
 

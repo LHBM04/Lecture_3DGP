@@ -1,9 +1,9 @@
 ﻿#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
-#include "Framework/Platform.hpp"
+#include "Framework/Core.hpp"
 #include "Framework/Graphics.hpp"
-#include "Framework/Core/Common.hpp"
+#include "Framework/Platform.hpp"
 
 #include "Time.hpp"
 

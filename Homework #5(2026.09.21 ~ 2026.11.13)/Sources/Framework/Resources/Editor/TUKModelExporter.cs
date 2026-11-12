@@ -74,14 +74,12 @@ namespace TUK.Editor
                 TUKMeshExporter.Save(Path.Combine(outputRoot, meshPath), TUKMeshExporter.GetMetaData(mesh));
             }
 
-            // 매시를 가지고 있으면 데이터를 저장한다.
             if (current.TryGetComponent(out Renderer renderer))
             {
                 materialPath = TUKMaterialExporter.DirectoryPath + TUKBinaryWriter.GetName(renderer.sharedMaterial) + TUKMaterialExporter.FileExtension;
                 TUKMaterialExporter.Save(Path.Combine(outputRoot, materialPath), TUKMaterialExporter.GetMetaData(renderer.sharedMaterial, vertexShader, hullShader, domainShader, geometryShader, pixelShader));
             }
 
-            // 자식이 있으면 재귀적으로 데이터를 모아온다
             if (current.childCount > 0)
             {
                 foreach (Transform child in current)

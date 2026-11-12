@@ -26,7 +26,6 @@ namespace TUK::Framework
 	{
 		const Camera* FindUICamera(const Scene* scene) noexcept
 		{
-			// UI uses the viewport left active by the last camera in the world render pass.
 			for (const Camera* camera : scene->GetCameras() | std::views::reverse)
 			{
 				const GameObject* owner = camera->GetOwner();
@@ -66,7 +65,6 @@ namespace TUK::Framework
 				return false;
 			}
 
-			// ImageUI transforms a centered unit quad and uses only the resulting XY coordinates.
 			const f32 offsetX = x - viewport.Width * 0.5f - world[12];
 			const f32 offsetY = y - viewport.Height * 0.5f - world[13];
 			const f32 localX = (offsetX * world[5] - offsetY * world[4]) / determinant;

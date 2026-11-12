@@ -128,7 +128,7 @@ namespace TUK.Editor
                 var package = PackageInfo.FindForAssetPath(assetPath);
                 string source = package == null ? Path.GetFullPath(assetPath) :
                 Path.Combine(package.resolvedPath, assetPath.Substring(package.assetPath.Length).TrimStart('/'));
-                
+
                 string extension = Path.GetExtension(source).ToLowerInvariant();
                 if (!AvailableExtensions.Contains(extension) || !File.Exists(source))
                 {

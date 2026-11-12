@@ -1,10 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "ShaderAssetImporter.hpp"
 
-#include <wrl/client.h>
-
-#include <directx/d3d12shader.h>
-
 #include "../Graphics/GPUShader.hpp"
 #include "../Graphics/MeshVertex.hpp"
 

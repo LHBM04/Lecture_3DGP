@@ -13,11 +13,18 @@ namespace TUK::Framework
 	class TextureAsset;
 	struct FontCharacterData;
 
+	enum class TextHorizontalAlignment : u8
+	{
+		LEFT,
+		CENTER,
+		RIGHT
+	};
+
 	class TextView final : public Component
 	{
+	public:
 		using Component::Component;
 
-	public:
 		void OnPostRender(GPUCommandBuffer& commandBuffer) override;
 
 		[[nodiscard]] const TextureAsset* GetTexture() const noexcept;
@@ -38,6 +45,9 @@ namespace TUK::Framework
 		[[nodiscard]] const ColorRGBA<f32>& GetColor() const noexcept;
 		void SetColor(const ColorRGBA<f32>& value) noexcept;
 
+		[[nodiscard]] TextHorizontalAlignment GetHorizontalAlignment() const noexcept;
+		void SetHorizontalAlignment(TextHorizontalAlignment value) noexcept;
+
 	private:
 		[[nodiscard]] const FontCharacterData* GetCharacter(u32 unicode) const noexcept;
 
@@ -47,6 +57,7 @@ namespace TUK::Framework
 
 		std::string text = "New Text!";
 		f32 fontSize = 32.0f;
+		TextHorizontalAlignment horizontalAlignment = TextHorizontalAlignment::LEFT;
 		ColorRGBA<f32> color = ColorRGBA<f32>::GetWhite();
 		std::unordered_map<u32, const FontCharacterData*> characterMap;
 	};
@@ -104,5 +115,15 @@ namespace TUK::Framework
 	inline void TextView::SetColor(const ColorRGBA<f32>& value) noexcept
 	{
 		color = value;
+	}
+
+	inline TextHorizontalAlignment TextView::GetHorizontalAlignment() const noexcept
+	{
+		return horizontalAlignment;
+	}
+
+	inline void TextView::SetHorizontalAlignment(TextHorizontalAlignment value) noexcept
+	{
+		horizontalAlignment = value;
 	}
 }

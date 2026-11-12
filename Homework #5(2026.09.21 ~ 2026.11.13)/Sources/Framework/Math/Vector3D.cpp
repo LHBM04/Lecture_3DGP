@@ -1,11 +1,11 @@
 ﻿#include "Precompiled.hpp"
 #include "Vector3D.hpp"
 
+#include "../Core/Common.hpp"
+
 #include "Mathf.hpp"
 #include "Vector2D.hpp"
 #include "Vector4D.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {
@@ -97,34 +97,34 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	TScalar Vector3D<TScalar>::operator[](std::size_t index) const noexcept
+	TScalar Vector3D<TScalar>::operator[](usize index) const noexcept
 	{
 		ASSERT_FMT(index < 3, "index가 유효 범위(0~2)를 벗어났습니다.");
 
 		switch (index)
 		{
-		case 0:
-			return value.x;
-		case 1:
-			return value.y;
-		default:
-			return value.z;
+			case 0:
+				return value.x;
+			case 1:
+				return value.y;
+			default:
+				return value.z;
 		}
 	}
 
 	template <Scalarable TScalar>
-	TScalar& Vector3D<TScalar>::operator[](std::size_t index) noexcept
+	TScalar& Vector3D<TScalar>::operator[](usize index) noexcept
 	{
 		ASSERT_FMT(index < 3, "index가 유효 범위(0~2)를 벗어났습니다.");
 
 		switch (index)
 		{
-		case 0:
-			return value.x;
-		case 1:
-			return value.y;
-		default:
-			return value.z;
+			case 0:
+				return value.x;
+			case 1:
+				return value.y;
+			default:
+				return value.z;
 		}
 	}
 
@@ -137,7 +137,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector3D<TScalar> Vector3D<TScalar>::operator+(const Vector3D& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, float>)
+		if constexpr (std::same_as<TScalar, f32>)
 		{
 			Vector3D result;
 			Store(result, DirectX::XMVectorAdd(Load(*this), Load(other)));
@@ -165,7 +165,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector3D<TScalar> Vector3D<TScalar>::operator-(const Vector3D& other) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, float>)
+		if constexpr (std::same_as<TScalar, f32>)
 		{
 			Vector3D result;
 			Store(result, DirectX::XMVectorSubtract(Load(*this), Load(other)));
@@ -187,7 +187,7 @@ namespace TUK::Framework
 	template <Scalarable TScalar>
 	Vector3D<TScalar> Vector3D<TScalar>::operator*(TScalar scalar) const noexcept
 	{
-		if constexpr (std::same_as<TScalar, float>)
+		if constexpr (std::same_as<TScalar, f32>)
 		{
 			Vector3D result;
 			Store(result, DirectX::XMVectorScale(Load(*this), scalar));
@@ -211,7 +211,7 @@ namespace TUK::Framework
 	{
 		ASSERT_FMT(scalar != TScalar{}, "scalar가 0입니다.");
 
-		if constexpr (std::same_as<TScalar, float>)
+		if constexpr (std::same_as<TScalar, f32>)
 		{
 			Vector3D result;
 			Store(result, DirectX::XMVectorDivide(Load(*this), DirectX::XMVectorReplicate(scalar)));
@@ -301,28 +301,28 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::GetMagnitude() const noexcept
+	f32 Vector3D<TScalar>::GetMagnitude() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector3Length(Load(*this)));
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::GetSqrMagnitude() const noexcept
+	f32 Vector3D<TScalar>::GetSqrMagnitude() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, *this);
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::GetLength() const noexcept
+	f32 Vector3D<TScalar>::GetLength() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return GetMagnitude();
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::GetLengthSquared() const noexcept
+	f32 Vector3D<TScalar>::GetLengthSquared() const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return GetSqrMagnitude();
@@ -336,17 +336,17 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	bool Vector3D<TScalar>::IsZero(float epsilon) const noexcept
+	bool Vector3D<TScalar>::IsZero(f32 epsilon) const noexcept
 	{
 		ASSERT_FMT(epsilon >= 0.0f, "epsilon이 0 이상이어야 합니다.");
 
-		return std::abs(static_cast<double>(GetX())) <= epsilon && std::abs(static_cast<double>(GetY())) <= epsilon && std::abs(static_cast<double>(GetZ())) <= epsilon;
+		return std::abs(static_cast<f64>(GetX())) <= epsilon && std::abs(static_cast<f64>(GetY())) <= epsilon && std::abs(static_cast<f64>(GetZ())) <= epsilon;
 	}
 
 	template <Scalarable TScalar>
 	bool Vector3D<TScalar>::IsFinite() const noexcept
 	{
-		return std::isfinite(static_cast<double>(GetX())) && std::isfinite(static_cast<double>(GetY())) && std::isfinite(static_cast<double>(GetZ()));
+		return std::isfinite(static_cast<f64>(GetX())) && std::isfinite(static_cast<f64>(GetY())) && std::isfinite(static_cast<f64>(GetZ()));
 	}
 
 	template <Scalarable TScalar>
@@ -357,7 +357,7 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::Dot(const Vector3D& other) const noexcept
+	f32 Vector3D<TScalar>::Dot(const Vector3D& other) const noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return Dot(*this, other);
@@ -415,16 +415,16 @@ namespace TUK::Framework
 	Vector3D<TScalar> Vector3D<TScalar>::GetPositiveInfinity() noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float infinity = std::numeric_limits<float>::infinity();
-		    return Vector3D<TScalar>(infinity, infinity, infinity);
+		const f32 infinity = std::numeric_limits<f32>::infinity();
+		return Vector3D<TScalar>(infinity, infinity, infinity);
 	}
 
 	template <Scalarable TScalar>
 	Vector3D<TScalar> Vector3D<TScalar>::GetNegativeInfinity() noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float negativeInfinity = -std::numeric_limits<float>::infinity();
-		    return Vector3D<TScalar>(negativeInfinity, negativeInfinity, negativeInfinity);
+		const f32 negativeInfinity = -std::numeric_limits<f32>::infinity();
+		return Vector3D<TScalar>(negativeInfinity, negativeInfinity, negativeInfinity);
 	}
 
 	template <Scalarable TScalar>
@@ -442,12 +442,12 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	bool Vector3D<TScalar>::IsApproximately(const Vector3D<TScalar>& lhs, const Vector3D<TScalar>& rhs, float epsilon) noexcept
+	bool Vector3D<TScalar>::IsApproximately(const Vector3D<TScalar>& lhs, const Vector3D<TScalar>& rhs, f32 epsilon) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		return std::abs(lhs.GetX() - rhs.GetX()) <= epsilon
-		        && std::abs(lhs.GetY() - rhs.GetY()) <= epsilon
-		        && std::abs(lhs.GetZ() - rhs.GetZ()) <= epsilon;
+		return std::abs(lhs.GetX() - rhs.GetX()) <= epsilon &&
+			   std::abs(lhs.GetY() - rhs.GetY()) <= epsilon &&
+			   std::abs(lhs.GetZ() - rhs.GetZ()) <= epsilon;
 	}
 
 	template <Scalarable TScalar>
@@ -469,24 +469,24 @@ namespace TUK::Framework
 		requires std::same_as<TScalar, f32>
 	{
 		return Vector3D<TScalar>(
-		        std::clamp(value.GetX(), min.GetX(), max.GetX()),
-		        std::clamp(value.GetY(), min.GetY(), max.GetY()),
-		        std::clamp(value.GetZ(), min.GetZ(), max.GetZ())
-		    );
+			std::clamp(value.GetX(), min.GetX(), max.GetX()),
+			std::clamp(value.GetY(), min.GetY(), max.GetY()),
+			std::clamp(value.GetZ(), min.GetZ(), max.GetZ())
+		);
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::ClampMagnitude(const Vector3D<TScalar>& vector, float maxLength) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::ClampMagnitude(const Vector3D<TScalar>& vector, f32 maxLength) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float sqrMagnitude = vector.GetSqrMagnitude();
-		    const float maxSqr = maxLength * maxLength;
-		    if (sqrMagnitude <= maxSqr)
-		    {
-		        return vector;
-		    }
-		
-		    return Normalize(vector) * maxLength;
+		const f32 sqrMagnitude = vector.GetSqrMagnitude();
+		const f32 maxSqr = maxLength * maxLength;
+		if (sqrMagnitude <= maxSqr)
+		{
+			return vector;
+		}
+
+		return Normalize(vector) * maxLength;
 	}
 
 	template <Scalarable TScalar>
@@ -501,8 +501,8 @@ namespace TUK::Framework
 		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<TScalar> res{};
-		    Store(res, DirectX::XMVector3Normalize(Load(value)));
-		    return res;
+		Store(res, DirectX::XMVector3Normalize(Load(value)));
+		return res;
 	}
 
 	template <Scalarable TScalar>
@@ -510,8 +510,8 @@ namespace TUK::Framework
 		requires std::same_as<TScalar, f32>
 	{
 		normal = Normalize(normal);
-		    tangent = tangent - normal * Dot(normal, tangent);
-		    tangent = Normalize(tangent);
+		tangent = tangent - normal * Dot(normal, tangent);
+		tangent = Normalize(tangent);
 	}
 
 	template <Scalarable TScalar>
@@ -519,11 +519,11 @@ namespace TUK::Framework
 		requires std::same_as<TScalar, f32>
 	{
 		OrthoNormalize(normal, tangent);
-		    binormal = Normalize(Cross(normal, tangent));
+		binormal = Normalize(Cross(normal, tangent));
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::Dot(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b) noexcept
+	f32 Vector3D<TScalar>::Dot(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return DirectX::XMVectorGetX(DirectX::XMVector3Dot(Load(a), Load(b)));
@@ -534,49 +534,49 @@ namespace TUK::Framework
 		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<TScalar> res{};
-		    Store(res, DirectX::XMVector3Cross(Load(a), Load(b)));
-		    return res;
+		Store(res, DirectX::XMVector3Cross(Load(a), Load(b)));
+		return res;
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::Distance(const Vector3D<TScalar>& _v1, const Vector3D<TScalar>& _v2) noexcept
+	f32 Vector3D<TScalar>::Distance(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		return (_v1 - _v2).GetMagnitude();
+		return (a - b).GetMagnitude();
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::Angle(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b) noexcept
+	f32 Vector3D<TScalar>::Angle(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		const Vector3D<TScalar> from = Normalize(a);
-		    const Vector3D<TScalar> to = Normalize(b);
-		    const float dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
-		    return std::acos(dot);
+		const Vector3D<TScalar> to = Normalize(b);
+		const f32 dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
+		return std::acos(dot);
 	}
 
 	template <Scalarable TScalar>
-	float Vector3D<TScalar>::SignedAngle(const Vector3D<TScalar>& from, const Vector3D<TScalar>& to, const Vector3D<TScalar>& axis) noexcept
+	f32 Vector3D<TScalar>::SignedAngle(const Vector3D<TScalar>& from, const Vector3D<TScalar>& to, const Vector3D<TScalar>& axis) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		const Vector3D<TScalar> cross = Cross(from, to);
-		    const float angle = Angle(from, to);
-		    const float sign = (Dot(axis, cross) >= 0.0f) ? 1.0f : -1.0f;
-		    return angle * sign;
+		const f32 angle = Angle(from, to);
+		const f32 sign = (Dot(axis, cross) >= 0.0f) ? 1.0f : -1.0f;
+		return angle * sign;
 	}
 
 	template <Scalarable TScalar>
 	Vector3D<TScalar> Vector3D<TScalar>::Project(const Vector3D<TScalar>& vector, const Vector3D<TScalar>& onNormal) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float denominator = Dot(onNormal, onNormal);
-		    if (denominator <= std::numeric_limits<float>::epsilon())
-		    {
-		        return GetZero();
-		    }
-		
-		    const float scale = Dot(vector, onNormal) / denominator;
-		    return onNormal * scale;
+		const f32 denominator = Dot(onNormal, onNormal);
+		if (denominator <= std::numeric_limits<f32>::epsilon())
+		{
+			return GetZero();
+		}
+
+		const f32 scale = Dot(vector, onNormal) / denominator;
+		return onNormal * scale;
 	}
 
 	template <Scalarable TScalar>
@@ -587,120 +587,120 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::Reflect(const Vector3D<TScalar>& _vector, const Vector3D<TScalar>& _normal) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::Reflect(const Vector3D<TScalar>& vector, const Vector3D<TScalar>& normal) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<TScalar> res{};
-		    Store(res, DirectX::XMVector3Reflect(Load(_vector), Load(_normal)));
-		    return res;
+		Store(res, DirectX::XMVector3Reflect(Load(vector), Load(normal)));
+		return res;
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::Refract(const Vector3D<TScalar>& _vector, const Vector3D<TScalar>& _normal, float _eta) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::Refract(const Vector3D<TScalar>& vector, const Vector3D<TScalar>& normal, f32 eta) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<TScalar> res{};
-		    Store(res, DirectX::XMVector3Refract(Load(_vector), Load(_normal), _eta));
-		    return res;
+		Store(res, DirectX::XMVector3Refract(Load(vector), Load(normal), eta));
+		return res;
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::Lerp(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, float t) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::Lerp(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<TScalar> res{};
-		    Store(res, DirectX::XMVectorLerp(Load(a), Load(b), std::clamp(t, 0.0f, 1.0f)));
-		    return res;
+		Store(res, DirectX::XMVectorLerp(Load(a), Load(b), std::clamp(t, 0.0f, 1.0f)));
+		return res;
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::LerpUnclamped(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, float t) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::LerpUnclamped(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		Vector3D<TScalar> res{};
-		    Store(res, DirectX::XMVectorLerp(Load(a), Load(b), t));
-		    return res;
+		Store(res, DirectX::XMVectorLerp(Load(a), Load(b), t));
+		return res;
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::Slerp(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, float t) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::Slerp(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		return SlerpUnclamped(a, b, std::clamp(t, 0.0f, 1.0f));
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::SlerpUnclamped(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, float t) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::SlerpUnclamped(const Vector3D<TScalar>& a, const Vector3D<TScalar>& b, f32 t) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float aMag = a.GetMagnitude();
-		    const float bMag = b.GetMagnitude();
-		
-		    if (aMag <= std::numeric_limits<float>::epsilon() || bMag <= std::numeric_limits<float>::epsilon())
-		    {
-		        return LerpUnclamped(a, b, t);
-		    }
-		
-		    const Vector3D<TScalar> from = a / aMag;
-		    const Vector3D<TScalar> to = b / bMag;
-		
-		    float dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
-		    const float theta = std::acos(dot) * t;
-		
-		    Vector3D<TScalar> relative = to - from * dot;
-		    const float relativeMag = relative.GetMagnitude();
-		    if (relativeMag <= std::numeric_limits<float>::epsilon())
-		    {
-		        return LerpUnclamped(a, b, t);
-		    }
-		
-		    relative /= relativeMag;
-		    const Vector3D<TScalar> direction = from * std::cos(theta) + relative * std::sin(theta);
-		    const float magnitude = Mathf::Lerp(aMag, bMag, t);
-		
-		    return direction * magnitude;
+		const f32 aMag = a.GetMagnitude();
+		const f32 bMag = b.GetMagnitude();
+
+		if (aMag <= std::numeric_limits<f32>::epsilon() || bMag <= std::numeric_limits<f32>::epsilon())
+		{
+			return LerpUnclamped(a, b, t);
+		}
+
+		const Vector3D<TScalar> from = a / aMag;
+		const Vector3D<TScalar> to = b / bMag;
+
+		f32 dot = std::clamp(Dot(from, to), -1.0f, 1.0f);
+		const f32 theta = std::acos(dot) * t;
+
+		Vector3D<TScalar> relative = to - from * dot;
+		const f32 relativeMag = relative.GetMagnitude();
+		if (relativeMag <= std::numeric_limits<f32>::epsilon())
+		{
+			return LerpUnclamped(a, b, t);
+		}
+
+		relative /= relativeMag;
+		const Vector3D<TScalar> direction = from * std::cos(theta) + relative * std::sin(theta);
+		const f32 magnitude = Mathf::Lerp(aMag, bMag, t);
+
+		return direction * magnitude;
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::MoveTowards(const Vector3D<TScalar>& current, const Vector3D<TScalar>& target, float maxDistanceDelta) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::MoveTowards(const Vector3D<TScalar>& current, const Vector3D<TScalar>& target, f32 maxDistanceDelta) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		const Vector3D<TScalar> delta = target - current;
-		    const float distance = delta.GetMagnitude();
-		
-		    if (distance <= maxDistanceDelta || distance <= std::numeric_limits<float>::epsilon())
-		    {
-		        return target;
-		    }
-		
-		    return current + (delta / distance) * maxDistanceDelta;
+		const f32 distance = delta.GetMagnitude();
+
+		if (distance <= maxDistanceDelta || distance <= std::numeric_limits<f32>::epsilon())
+		{
+			return target;
+		}
+
+		return current + (delta / distance) * maxDistanceDelta;
 	}
 
 	template <Scalarable TScalar>
-	Vector3D<TScalar> Vector3D<TScalar>::RotateTowards(const Vector3D<TScalar>& current, const Vector3D<TScalar>& target, float maxRadiansDelta, float maxMagnitudeDelta) noexcept
+	Vector3D<TScalar> Vector3D<TScalar>::RotateTowards(const Vector3D<TScalar>& current, const Vector3D<TScalar>& target, f32 maxRadiansDelta, f32 maxMagnitudeDelta) noexcept
 		requires std::same_as<TScalar, f32>
 	{
-		const float currentMag = current.GetMagnitude();
-		    const float targetMag = target.GetMagnitude();
-		
-		    if (currentMag <= std::numeric_limits<float>::epsilon() || targetMag <= std::numeric_limits<float>::epsilon())
-		    {
-		        return MoveTowards(current, target, maxMagnitudeDelta);
-		    }
-		
-		    const Vector3D<TScalar> currentDir = current / currentMag;
-		    const Vector3D<TScalar> targetDir = target / targetMag;
-		
-		    const float angle = Angle(currentDir, targetDir);
-		    const float t = (angle <= std::numeric_limits<float>::epsilon()) ? 1.0f : std::min(1.0f, maxRadiansDelta / angle);
-		
-		    const Vector3D<TScalar> newDir = SlerpUnclamped(currentDir, targetDir, t).GetNormalized();
-		
-		    float deltaMag = targetMag - currentMag;
-		    deltaMag = std::clamp(deltaMag, -maxMagnitudeDelta, maxMagnitudeDelta);
-		    const float newMag = currentMag + deltaMag;
-		
-		    return newDir * newMag;
+		const f32 currentMag = current.GetMagnitude();
+		const f32 targetMag = target.GetMagnitude();
+
+		if (currentMag <= std::numeric_limits<f32>::epsilon() || targetMag <= std::numeric_limits<f32>::epsilon())
+		{
+			return MoveTowards(current, target, maxMagnitudeDelta);
+		}
+
+		const Vector3D<TScalar> currentDir = current / currentMag;
+		const Vector3D<TScalar> targetDir = target / targetMag;
+
+		const f32 angle = Angle(currentDir, targetDir);
+		const f32 t = (angle <= std::numeric_limits<f32>::epsilon()) ? 1.0f : std::min(1.0f, maxRadiansDelta / angle);
+
+		const Vector3D<TScalar> newDir = SlerpUnclamped(currentDir, targetDir, t).GetNormalized();
+
+		f32 deltaMag = targetMag - currentMag;
+		deltaMag = std::clamp(deltaMag, -maxMagnitudeDelta, maxMagnitudeDelta);
+		const f32 newMag = currentMag + deltaMag;
+
+		return newDir * newMag;
 	}
 
 	template <Scalarable TScalar>
@@ -708,47 +708,46 @@ namespace TUK::Framework
 	const Vector3D<TScalar>& current,
 	const Vector3D<TScalar>& target,
 	Vector3D<TScalar>& currentVelocity,
-	float smoothTime,
-	float maxSpeed,
-	float deltaTime) noexcept
+	f32 smoothTime,
+	f32 maxSpeed,
+	f32 deltaTime) noexcept
 		requires std::same_as<TScalar, f32>
 	{
 		smoothTime = std::max(0.0001f, smoothTime);
-		    const float omega = 2.0f / smoothTime;
-		    const float x = omega * deltaTime;
-		    const float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
-		
-		    Vector3D<TScalar> change = current - target;
-		    const Vector3D<TScalar> originalTarget = target;
-		
-		    const float maxChange = maxSpeed * smoothTime;
-		    change = ClampMagnitude(change, maxChange);
-		    const Vector3D<TScalar> adjustedTarget = current - change;
-		
-		    const Vector3D<TScalar> temp = (currentVelocity + change * omega) * deltaTime;
-		    currentVelocity = (currentVelocity - temp * omega) * exp;
-		    Vector3D<TScalar> output = adjustedTarget + (change + temp) * exp;
-		
-		    if (Dot(originalTarget - current, output - originalTarget) > 0.0f)
-		    {
-		        output = originalTarget;
-		        currentVelocity = Vector3D<TScalar>(0.0f, 0.0f, 0.0f);
-		    }
-		
-		    return output;
+		const f32 omega = 2.0f / smoothTime;
+		const f32 x = omega * deltaTime;
+		const f32 exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+		Vector3D<TScalar> change = current - target;
+		const Vector3D<TScalar> originalTarget = target;
+
+		const f32 maxChange = maxSpeed * smoothTime;
+		change = ClampMagnitude(change, maxChange);
+		const Vector3D<TScalar> adjustedTarget = current - change;
+
+		const Vector3D<TScalar> temp = (currentVelocity + change * omega) * deltaTime;
+		currentVelocity = (currentVelocity - temp * omega) * exp;
+		Vector3D<TScalar> output = adjustedTarget + (change + temp) * exp;
+
+		if (Dot(originalTarget - current, output - originalTarget) > 0.0f)
+		{
+			output = originalTarget;
+			currentVelocity = Vector3D<TScalar>(0.0f, 0.0f, 0.0f);
+		}
+
+		return output;
 	}
 
-	template class Vector3D<std::int32_t>;
-	template class Vector3D<float>;
+	template class Vector3D<i32>;
+	template class Vector3D<f32>;
 
-	Vector3D<std::int32_t> operator*(std::int32_t scalar, const Vector3D<std::int32_t>& vector) noexcept
+	Vector3D<i32> operator*(i32 scalar, const Vector3D<i32>& vector) noexcept
 	{
 		return vector * scalar;
 	}
 
-	Vector3D<float> operator*(float scalar, const Vector3D<float>& vector) noexcept
+	Vector3D<f32> operator*(f32 scalar, const Vector3D<f32>& vector) noexcept
 	{
 		return vector * scalar;
 	}
-
 }

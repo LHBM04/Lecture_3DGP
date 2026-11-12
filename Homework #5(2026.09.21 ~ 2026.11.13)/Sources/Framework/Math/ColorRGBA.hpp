@@ -1,9 +1,9 @@
 ﻿#pragma once
 
+#include "../Core/Common.hpp"
+
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
-
-#include "../Core/Common.hpp"
 
 namespace TUK::Framework
 {

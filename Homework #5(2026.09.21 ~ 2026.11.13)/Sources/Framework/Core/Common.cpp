@@ -59,6 +59,42 @@ namespace TUK::Framework
 		}
 	}
 
+	namespace Random
+	{
+		namespace
+		{
+			std::mt19937 generator{ std::random_device{}() };
+		}
+
+		i32 RandInt(i32 min, i32 max)
+		{
+			ASSERT_FMT(min <= max, "난수 범위의 min은 max 이하여야 합니다.");
+
+			if (min == max)
+			{
+				return min;
+			}
+
+			std::uniform_int_distribution<i32> distribution(min, max);
+			return distribution(generator);
+		}
+
+		f32 RandFloat(f32 min, f32 max)
+		{
+			ASSERT_FMT(std::isfinite(min), "난수 범위의 min은 유한한 값이어야 합니다.");
+			ASSERT_FMT(std::isfinite(max), "난수 범위의 max는 유한한 값이어야 합니다.");
+			ASSERT_FMT(min <= max, "난수 범위의 min은 max 이하여야 합니다.");
+
+			if (min == max)
+			{
+				return min;
+			}
+
+			std::uniform_real_distribution<f64> distribution(min, max);
+			return static_cast<f32>(distribution(generator));
+		}
+	}
+
 	void Logger::Log(Category level, std::string_view message, const std::source_location& location)
 	{
 		const std::string line = std::format(

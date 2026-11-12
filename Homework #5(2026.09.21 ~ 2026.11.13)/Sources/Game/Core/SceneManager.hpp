@@ -8,7 +8,6 @@ namespace TUK::Game
 {
 	using namespace Framework;
 
-	/** 편하게 쓰기 위한 래퍼 */
 	namespace SceneManager
 	{
 		void Initialize(SceneSubsystem* subsystem) noexcept;

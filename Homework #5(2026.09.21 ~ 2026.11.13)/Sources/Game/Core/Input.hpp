@@ -6,11 +6,14 @@ namespace TUK::Game
 {
 	using namespace Framework;
 
-	/** 편하게 쓰기 위한 래퍼 */
 	namespace Input
 	{
 		void Initialize(InputSubsystem* newSubsystem) noexcept;
 		void Release() noexcept;
+		void EnableCursorBlock(bool enabled) noexcept;
+		void SetCursorBoundary(const D3D12_RECT& boundary) noexcept;
+		void UpdateCursorClip() noexcept;
+		void SetCursorVisible(bool visible) noexcept;
 
 		[[nodiscard]] InputAction* AddAction(std::string_view name);
 		void RemoveAction(std::string_view name) noexcept;

@@ -246,9 +246,9 @@ namespace TUK::Framework
 		DXGI_FORMAT indexFormat,
 		D3D12_PRIMITIVE_TOPOLOGY primitive) const
 	{
-		if (vertexStride == 0 || vertexBuffer.GetSizeInBytes() == 0
-			|| vertexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
-			|| vertexBuffer.GetSizeInBytes() % vertexStride != 0)
+		if (vertexStride == 0 || vertexBuffer.GetSizeInBytes() == 0 ||
+			vertexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max() ||
+			vertexBuffer.GetSizeInBytes() % vertexStride != 0)
 		{
 			return std::unexpected("정점 버퍼 크기 또는 스트라이드가 유효하지 않습니다.");
 		}
@@ -259,9 +259,9 @@ namespace TUK::Framework
 		}
 
 		const u32 INDEX_SIZE = indexFormat == DXGI_FORMAT_R16_UINT ? 2 : 4;
-		if (indexBuffer.GetSizeInBytes() == 0
-			|| indexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max()
-			|| indexBuffer.GetSizeInBytes() % INDEX_SIZE != 0)
+		if (indexBuffer.GetSizeInBytes() == 0 ||
+			indexBuffer.GetSizeInBytes() > std::numeric_limits<u32>::max() ||
+			indexBuffer.GetSizeInBytes() % INDEX_SIZE != 0)
 		{
 			return std::unexpected("인덱스 버퍼 크기가 유효하지 않습니다.");
 		}

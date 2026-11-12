@@ -148,8 +148,36 @@ namespace TUK::Framework
 		const f32 scale = (pointSize > 0.0f) ? (fontSize / pointSize) : 1.0f;
 		const f32 lineHeight = font->GetLineHeight() * scale;
 
-		const f32 startX = -scaleX * 0.5f;
-		f32 cursorX = startX;
+		const auto getLineStartX = [this, scale, scaleX](usize startIndex) -> f32
+		{
+			if (horizontalAlignment == TextHorizontalAlignment::LEFT)
+			{
+				return -scaleX * 0.5f;
+			}
+
+			f32 lineWidth = 0.0f;
+			while (startIndex < text.size())
+			{
+				const u32 codePoint = DecodeUTF8(text, startIndex);
+				if (codePoint == U'\n')
+				{
+					break;
+				}
+				if (codePoint == U'\r')
+				{
+					continue;
+				}
+				if (const FontCharacterData* character = GetCharacter(codePoint))
+				{
+					lineWidth += character->advance * scale;
+				}
+			}
+
+			return horizontalAlignment == TextHorizontalAlignment::CENTER
+				? -lineWidth * 0.5f
+				: scaleX * 0.5f - lineWidth;
+		};
+		f32 cursorX = getLineStartX(0);
 		f32 baselineY = -scaleY * 0.5f + font->GetAscentLine() * scale;
 
 		constexpr u32 TEXT_VERTEX_COUNT = 4;
@@ -164,7 +192,7 @@ namespace TUK::Framework
 			}
 			if (codePoint == U'\n')
 			{
-				cursorX = startX;
+				cursorX = getLineStartX(index);
 				baselineY += lineHeight;
 				continue;
 			}

@@ -10,6 +10,7 @@
 namespace TUK::Framework
 {
 	class Camera;
+	class DirectionalLight;
 	class GameObject;
 	class GPUCommandBuffer;
 	class ModelAsset;
@@ -56,6 +57,12 @@ namespace TUK::Framework
 		void AddCamera(Camera* camera);
 		void RemoveCamera(const Camera* camera);
 
+		void AddDirectionalLight(DirectionalLight* light);
+		void RemoveDirectionalLight(const DirectionalLight* light);
+
+		[[nodiscard]] DirectionalLight* GetMainLight() noexcept;
+		[[nodiscard]] const DirectionalLight* GetMainLight() const noexcept;
+
 		[[nodiscard]] std::vector<std::unique_ptr<GameObject>> ExtractPersistentObjects();
 		void AdoptObjects(std::vector<std::unique_ptr<GameObject>>&& adopted);
 
@@ -76,6 +83,9 @@ namespace TUK::Framework
 
 		[[nodiscard]] std::span<Camera* const> GetCameras() noexcept;
 		[[nodiscard]] std::span<const Camera* const> GetCameras() const noexcept;
+
+		[[nodiscard]] std::span<DirectionalLight* const> GetDirectionalLights() noexcept;
+		[[nodiscard]] std::span<const DirectionalLight* const> GetDirectionalLights() const noexcept;
 
 	protected:
 		virtual void OnEnter();
@@ -106,6 +116,7 @@ namespace TUK::Framework
 
 		std::vector<std::unique_ptr<GameObject>> objects{};
 		std::vector<Camera*> activeCameras{};
+		std::vector<DirectionalLight*> activeDirectionalLights{};
 	};
 
 	inline bool Scene::IsEntered() const noexcept
@@ -137,6 +148,16 @@ namespace TUK::Framework
 	inline std::span<const Camera* const> Scene::GetCameras() const noexcept
 	{
 		return activeCameras;
+	}
+
+	inline std::span<DirectionalLight* const> Scene::GetDirectionalLights() noexcept
+	{
+		return activeDirectionalLights;
+	}
+
+	inline std::span<const DirectionalLight* const> Scene::GetDirectionalLights() const noexcept
+	{
+		return activeDirectionalLights;
 	}
 
 	inline void Scene::OnEnter()

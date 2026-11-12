@@ -28,6 +28,9 @@ namespace TUK::Framework
 		void PreRender(GPUCommandBuffer& commandBuffer);
 		void Render(GPUCommandBuffer& commandBuffer);
 		void PostRender(GPUCommandBuffer& commandBuffer);
+#ifdef _DEBUG
+		void DrawGizmos(GPUCommandBuffer& commandBuffer);
+#endif
 
 		[[nodiscard]] const std::string& GetName() const noexcept;
 		void SetName(std::string_view value) noexcept;

@@ -21,7 +21,7 @@ namespace TUK::Framework
 				break;
 			}
 		}
-		return std::unexpected("Resource category directory not found: " + resourcePath.generic_string());
+		return std::unexpected("리소스 분류 디렉터리를 찾을 수 없습니다: " + resourcePath.generic_string());
 	}
 
 	inline std::expected<std::filesystem::path, std::string> ResolveResourcePath(
@@ -29,7 +29,7 @@ namespace TUK::Framework
 	{
 		if (relativePath.empty() || relativePath.find('\0') != std::string::npos)
 		{
-			return std::unexpected("Empty or invalid resource reference");
+			return std::unexpected("리소스 참조 경로가 비어 있거나 유효하지 않습니다.");
 		}
 		auto path = std::filesystem::path(std::u8string(relativePath.begin(), relativePath.end())).lexically_normal();
 		if (root.filename() == "Resources" && !path.empty() && *path.begin() == "Resources")
@@ -38,7 +38,7 @@ namespace TUK::Framework
 		}
 		if (path.empty() || path.has_root_path() || *path.begin() == "..")
 		{
-			return std::unexpected("Resource reference must stay inside its root: " + relativePath);
+			return std::unexpected("리소스 참조 경로는 루트 디렉터리 내부여야 합니다: " + relativePath);
 		}
 		return (root / path).lexically_normal();
 	}

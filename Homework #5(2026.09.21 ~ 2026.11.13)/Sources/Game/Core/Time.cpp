@@ -8,12 +8,12 @@ namespace TUK::Game
 		const TimeSubsystem* timeSubsystem = nullptr;
 	}
 
-	void Time::Initialize(const TimeSubsystem* subsystem)
+	void Time::Initialize(const TimeSubsystem* subsystem) noexcept
 	{
 		timeSubsystem = subsystem;
 	}
 
-	void Time::Release()
+	void Time::Release() noexcept
 	{
 		timeSubsystem = nullptr;
 	}
@@ -23,27 +23,27 @@ namespace TUK::Game
 		return timeSubsystem;
 	}
 
-	f32 Time::GetTimeScale()
+	f32 Time::GetTimeScale() noexcept
 	{
 		return timeSubsystem->GetTimeScale();
 	}
 
-	f32 Time::GetDeltaTime()
+	f32 Time::GetDeltaTime() noexcept
 	{
 		return timeSubsystem->GetDeltaTime();
 	}
 
-	f32 Time::GetUnscaledDeltaTime()
+	f32 Time::GetUnscaledDeltaTime() noexcept
 	{
 		return timeSubsystem->GetUnscaledDeltaTime();
 	}
 
-	f32 Time::GetFixedDeltaTime()
+	f32 Time::GetFixedDeltaTime() noexcept
 	{
 		return timeSubsystem->GetFixedDeltaTime();
 	}
 
-	f32 Time::GetUnscaledFixedDeltaTime()
+	f32 Time::GetUnscaledFixedDeltaTime() noexcept
 	{
 		return timeSubsystem->GetUnscaledFixedDeltaTime();
 	}

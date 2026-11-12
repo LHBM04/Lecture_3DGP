@@ -1,11 +1,17 @@
 ﻿#include "Precompiled.hpp"
 #include "Input.hpp"
 
+#include "Framework/Core.hpp"
+
 namespace TUK::Game
 {
 	namespace
 	{
 		InputSubsystem* subsystem = nullptr;
+		bool cursorClipped = false;
+		bool cursorBlockEnabled = false;
+		D3D12_RECT cursorBoundary{};
+		i32 cursorHideCalls = 0;
 
 		[[nodiscard]] const InputProvider* GetActiveProvider() noexcept
 		{
@@ -20,7 +26,75 @@ namespace TUK::Game
 
 	void Input::Release() noexcept
 	{
+		EnableCursorBlock(false);
 		subsystem = nullptr;
+	}
+
+	void Input::EnableCursorBlock(bool enabled) noexcept
+	{
+		cursorBlockEnabled = enabled;
+		UpdateCursorClip();
+	}
+
+	void Input::SetCursorBoundary(const D3D12_RECT& boundary) noexcept
+	{
+		cursorBoundary = boundary;
+		if (cursorBlockEnabled)
+		{
+			UpdateCursorClip();
+		}
+	}
+
+	void Input::UpdateCursorClip() noexcept
+	{
+		const DisplaySubsystem* displays = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
+		const Display* display = displays && displays->GetDisplayCount() > 0 ? displays->GetDisplay(0) : nullptr;
+		const HWND window = display ? display->GetHWND() : nullptr;
+
+		POINT topLeft{ cursorBoundary.left, cursorBoundary.top };
+		POINT bottomRight{ cursorBoundary.right, cursorBoundary.bottom };
+
+		if (cursorBlockEnabled && window && GetForegroundWindow() == window && !IsIconic(window)
+			&& cursorBoundary.right > cursorBoundary.left && cursorBoundary.bottom > cursorBoundary.top
+			&& ClientToScreen(window, &topLeft) && ClientToScreen(window, &bottomRight))
+		{
+			const RECT rect{ topLeft.x, topLeft.y, bottomRight.x, bottomRight.y };
+			if (ClipCursor(&rect))
+			{
+				cursorClipped = true;
+				SetCursorVisible(false);
+				return;
+			}
+		}
+
+		if (cursorClipped)
+		{
+			ClipCursor(nullptr);
+			cursorClipped = false;
+		}
+
+		SetCursorVisible(true);
+	}
+
+	void Input::SetCursorVisible(bool visible) noexcept
+	{
+		if (visible)
+		{
+			while (cursorHideCalls > 0)
+			{
+				ShowCursor(TRUE);
+				--cursorHideCalls;
+			}
+		}
+		else if (cursorHideCalls == 0)
+		{
+			i32 count = 0;
+			do
+			{
+				count = ShowCursor(FALSE);
+				++cursorHideCalls;
+			} while (count >= 0);
+		}
 	}
 
 	InputAction* Input::AddAction(std::string_view name)

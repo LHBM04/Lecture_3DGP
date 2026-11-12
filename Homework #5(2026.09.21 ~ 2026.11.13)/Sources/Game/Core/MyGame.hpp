@@ -12,9 +12,9 @@ namespace TUK::Game
 
 	class MyGame : public App
 	{
+	public:
 		using App::App;
 
-	public:
 		SystemStatus Startup() override;
 		SystemStatus Routine() override;
 		void Shutdown() override;

@@ -51,8 +51,8 @@ namespace TUK::Framework
 		const f32 halfWidth = GetLocalWidth() * 0.5f;
 		const f32 halfDepth = GetLocalDepth() * 0.5f;
 
-		return localX >= -halfWidth && localX <= halfWidth
-			&& localZ >= -halfDepth && localZ <= halfDepth;
+		return localX >= -halfWidth && localX <= halfWidth &&
+			   localZ >= -halfDepth && localZ <= halfDepth;
 	}
 
 	f32 Terrain::SampleHeightAtLocalPosition(f32 localX, f32 localZ) const noexcept
