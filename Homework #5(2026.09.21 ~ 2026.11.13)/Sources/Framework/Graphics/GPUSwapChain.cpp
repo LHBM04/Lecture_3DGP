@@ -1,0 +1,35 @@
+﻿#include "Precompiled.hpp"
+#include "GPUSwapChain.hpp"
+
+#include "../Core/Common.hpp"
+
+namespace TUK::Framework
+{
+	void GPUSwapChain::Present() const
+	{
+		ASSERT_FMT(dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+
+		dxgiSwapChain->Present(1, 0);
+	}
+
+	GPUTarget GPUSwapChain::GetCurrentBackBufferTarget() const noexcept
+	{
+		ASSERT_FMT(dxgiSwapChain.Get(), "dxgiSwapChain이 nullptr입니다.");
+		ASSERT_FMT(rtvHeap.Get(), "rtvHeap이 nullptr입니다.");
+		ASSERT_FMT(dsvHeap.Get(), "dsvHeap이 nullptr입니다.");
+
+		const u32 index = dxgiSwapChain->GetCurrentBackBufferIndex();
+		const CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(
+			rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+			static_cast<INT>(index),
+			rtvDescriptorSize);
+
+		const GPUTexture2D& texture = backBuffers[index];
+		return GPUTarget(GPUTargetCreateInfo{
+			.texture = &texture,
+			.rtvHandle = rtvHandle,
+			.dsvHandle = dsvHeap->GetCPUDescriptorHandleForHeapStart(),
+			.format = texture.GetD3DResource().GetDesc().Format
+		});
+	}
+}
