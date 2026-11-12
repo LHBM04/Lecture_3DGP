@@ -325,19 +325,6 @@ namespace TUK.Editor
             pixelShaderPath = "";
         }
 
-        private ShaderData GetShaderData()
-        {
-            ShaderData data = new();
-
-            data.VertexShader = vertexShaderPath.Trim().Replace('\\', '/');
-            data.HullShader = hullShaderPath.Trim().Replace('\\', '/');
-            data.DomainShader = domainShaderPath.Trim().Replace('\\', '/');
-            data.GeometryShader = geometryShaderPath.Trim().Replace('\\', '/');
-            data.PixelShader = pixelShaderPath.Trim().Replace('\\', '/');
-
-            return data;
-        }
-
         private void Export()
         {
             selectedObjects.RemoveAll(value => !IsCompatible(value));
@@ -353,7 +340,13 @@ namespace TUK.Editor
                 return;
             }
 
-            TUKExporter.Export(selectedObjects.ToArray(), outputRoot.Trim(), GetShaderData());
+            TUKExporter.Export(
+                selectedObjects.ToArray(), outputRoot.Trim(),
+                vertexShaderPath.Trim().Replace('\\', '/'),
+                hullShaderPath.Trim().Replace('\\', '/'),
+                domainShaderPath.Trim().Replace('\\', '/'),
+                geometryShaderPath.Trim().Replace('\\', '/'),
+                pixelShaderPath.Trim().Replace('\\', '/'));
         }
     }
 }

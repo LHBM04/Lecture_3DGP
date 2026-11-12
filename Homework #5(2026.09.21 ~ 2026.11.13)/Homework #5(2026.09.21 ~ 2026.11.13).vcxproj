@@ -1585,5 +1585,20 @@
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Normal.dds" />
     <None Include="Resources\Terrains\HeightMap0.raw" />
     <None Include="Resources\Terrains\HeightMap1.raw" />
+    <None Include="Sources\Framework\Resources\Editor\TUKAnimationExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKAnimationExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKBinaryWriter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKCubemapExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKCubemapExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKFontExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKFontExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMaterialExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMaterialExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMeshExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMeshExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKModelExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKModelExporterWindow.cs" />
   </ItemGroup>
 </Project>

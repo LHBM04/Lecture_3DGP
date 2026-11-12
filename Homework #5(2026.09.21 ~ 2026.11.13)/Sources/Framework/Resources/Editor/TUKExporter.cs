@@ -13,7 +13,9 @@ namespace TUK.Editor
 {
     internal static class TUKExporter
     {
-        internal static void Export(IEnumerable<Object> objects, string root, ShaderData shaders)
+        internal static void Export(
+            IEnumerable<Object> objects, string root,
+            string vertexShader, string hullShader, string domainShader, string geometryShader, string pixelShader)
         {
             Object[] selectedObjects = objects.Where(value => value).Distinct().ToArray();
             if (selectedObjects.Length == 0)
@@ -22,7 +24,7 @@ namespace TUK.Editor
                 return;
             }
 
-            if (selectedObjects.Any(value => value is GameObject || value is Material) && !ValidateShaders(shaders))
+            if (selectedObjects.Any(value => value is GameObject || value is Material) && !ValidateShaders(vertexShader, hullShader, domainShader, geometryShader, pixelShader))
             {
                 return;
             }
@@ -44,7 +46,7 @@ namespace TUK.Editor
                         continue;
                     }
 
-                    if (ExportObject(root, selected, shaders))
+                    if (ExportObject(root, selected, vertexShader, hullShader, domainShader, geometryShader, pixelShader))
                     {
                         savedCount++;
                     }
@@ -68,15 +70,16 @@ namespace TUK.Editor
             }
         }
 
-        private static bool ValidateShaders(ShaderData data)
+        private static bool ValidateShaders(
+            string vertexShader, string hullShader, string domainShader, string geometryShader, string pixelShader)
         {
-            if (string.IsNullOrEmpty(data.VertexShader) || string.IsNullOrEmpty(data.PixelShader))
+            if (string.IsNullOrEmpty(vertexShader) || string.IsNullOrEmpty(pixelShader))
             {
                 Debug.LogWarning("모델·머티리얼을 내보내려면 Vertex와 Pixel 셰이더 경로가 필요합니다.");
                 return false;
             }
 
-            string[] paths = { data.VertexShader, data.HullShader, data.DomainShader, data.GeometryShader, data.PixelShader };
+            string[] paths = { vertexShader, hullShader, domainShader, geometryShader, pixelShader };
             foreach (string path in paths)
             {
                 if (string.IsNullOrEmpty(path))
@@ -108,7 +111,9 @@ namespace TUK.Editor
             return false;
         }
 
-        private static bool ExportObject(string root, Object selected, ShaderData shaders)
+        private static bool ExportObject(
+            string root, Object selected,
+            string vertexShader, string hullShader, string domainShader, string geometryShader, string pixelShader)
         {
             string name = TUKBinaryWriter.GetName(selected);
 
@@ -116,7 +121,7 @@ namespace TUK.Editor
             {
                 case GameObject model:
                 {
-                    ModelData data = TUKModelExporter.GetMetaData(model.transform, root, shaders);
+                    ModelData data = TUKModelExporter.GetMetaData(model.transform, root, vertexShader, hullShader, domainShader, geometryShader, pixelShader);
                     string path = Path.Combine(root, TUKModelExporter.DirectoryPath, name + TUKModelExporter.FileExtension);
 
                     using (TUKBinaryWriter writer = new(path))
@@ -136,7 +141,7 @@ namespace TUK.Editor
                 }
                 case Material material:
                 {
-                    MaterialData data = TUKMaterialExporter.GetMetaData(material, shaders);
+                    MaterialData data = TUKMaterialExporter.GetMetaData(material, vertexShader, hullShader, domainShader, geometryShader, pixelShader);
                     string path = Path.Combine(root, TUKMaterialExporter.DirectoryPath, name + TUKMaterialExporter.FileExtension);
 
                     TUKMaterialExporter.Save(path, data);

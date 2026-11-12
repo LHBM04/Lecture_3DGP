@@ -48,15 +48,20 @@ namespace TUK.Editor
 
         internal static ModelData GetMetaData(Transform current, string outputRoot)
         {
-            return GetMetaData(current, outputRoot, ShaderData.GetDefault());
+            return GetMetaData(current, outputRoot, "Shaders/Standard.vert.cso", "", "", "", "Shaders/Standard.frag.cso");
         }
 
-        internal static ModelData GetMetaData(Transform current, string outputRoot, ShaderData shaders)
+        internal static ModelData GetMetaData(
+            Transform current, string outputRoot,
+            string vertexShader, string hullShader, string domainShader, string geometryShader, string pixelShader)
         {
-            return GetMetaData(current, outputRoot, shaders, TUKBinaryWriter.GetName(current.gameObject));
+            return GetMetaData(current, outputRoot, vertexShader, hullShader, domainShader, geometryShader, pixelShader, TUKBinaryWriter.GetName(current.gameObject));
         }
 
-        private static ModelData GetMetaData(Transform current, string outputRoot, ShaderData shaders, string modelName)
+        private static ModelData GetMetaData(
+            Transform current, string outputRoot,
+            string vertexShader, string hullShader, string domainShader, string geometryShader, string pixelShader,
+            string modelName)
         {
             string meshPath = "";
             string materialPath = "";
@@ -73,7 +78,7 @@ namespace TUK.Editor
             if (current.TryGetComponent(out Renderer renderer))
             {
                 materialPath = TUKMaterialExporter.DirectoryPath + TUKBinaryWriter.GetName(renderer.sharedMaterial) + TUKMaterialExporter.FileExtension;
-                TUKMaterialExporter.Save(Path.Combine(outputRoot, materialPath), TUKMaterialExporter.GetMetaData(renderer.sharedMaterial, shaders));
+                TUKMaterialExporter.Save(Path.Combine(outputRoot, materialPath), TUKMaterialExporter.GetMetaData(renderer.sharedMaterial, vertexShader, hullShader, domainShader, geometryShader, pixelShader));
             }
 
             // 자식이 있으면 재귀적으로 데이터를 모아온다
@@ -81,7 +86,7 @@ namespace TUK.Editor
             {
                 foreach (Transform child in current)
                 {
-                    children.Add(GetMetaData(child, outputRoot, shaders, modelName));
+                    children.Add(GetMetaData(child, outputRoot, vertexShader, hullShader, domainShader, geometryShader, pixelShader, modelName));
                 }
             }
 
