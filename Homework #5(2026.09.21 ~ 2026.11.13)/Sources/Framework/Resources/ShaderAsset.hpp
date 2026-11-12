@@ -39,8 +39,7 @@ namespace TUK::Framework
 		[[nodiscard]] D3D_PRIMITIVE_TOPOLOGY GetPrimitive() const noexcept;
 		void SetPrimitive(D3D_PRIMITIVE_TOPOLOGY value) noexcept;
 
-		[[nodiscard]] D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePipelineDescription(
-			DXGI_FORMAT targetFormat = DXGI_FORMAT_R8G8B8A8_UNORM) const noexcept;
+		[[nodiscard]] D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePipelineDescription(DXGI_FORMAT targetFormat = DXGI_FORMAT_R8G8B8A8_UNORM) const noexcept;
 
 	private:
 		GPUShader shader;
@@ -117,7 +116,7 @@ namespace TUK::Framework
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC description{};
 		description.InputLayout = {
 			inputElements.empty() ? nullptr : inputElements.data(),
-			static_cast<UINT>(inputElements.size())
+			static_cast<u32>(inputElements.size())
 		};
 		description.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		if (primitive == D3D_PRIMITIVE_TOPOLOGY_POINTLIST)

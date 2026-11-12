@@ -7,7 +7,7 @@
 #include <directx/d3d12.h>
 #include <directxtk12/SpriteBatch.h>
 
-#include "../Objects/Component.hpp"
+#include "../GameObjects/Component.hpp"
 
 namespace TUK::Framework
 {

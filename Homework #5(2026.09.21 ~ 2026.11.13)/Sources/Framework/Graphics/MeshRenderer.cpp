@@ -6,8 +6,8 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Objects/GameObject.hpp"
-#include "../Objects/Transform.hpp"
+#include "../GameObjects/GameObject.hpp"
+#include "../GameObjects/Transform.hpp"
 
 #include "../Resources/MaterialAsset.hpp"
 #include "../Resources/MeshAsset.hpp"

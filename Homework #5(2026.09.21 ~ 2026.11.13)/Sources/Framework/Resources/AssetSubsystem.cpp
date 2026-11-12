@@ -26,11 +26,11 @@ namespace TUK::Framework
 		assets.clear();
 	}
 
-	void AssetSubsystem::OnWorldEntered([[maybe_unused]] const World* world)
+	void AssetSubsystem::OnSceneEntered([[maybe_unused]] const Scene* scene)
 	{
 	}
 
-	void AssetSubsystem::OnWorldExited([[maybe_unused]] const World* world)
+	void AssetSubsystem::OnSceneExited([[maybe_unused]] const Scene* scene)
 	{
 		UnloadAllAssets();
 	}
@@ -63,7 +63,7 @@ namespace TUK::Framework
 	void AssetSubsystem::OnShutdown()
 	{
 		UnloadAllAssets();
-		assetLoadersByType.clear();
-		assetLoaders.clear();
+		assetImportersByType.clear();
+		assetImporters.clear();
 	}
 }

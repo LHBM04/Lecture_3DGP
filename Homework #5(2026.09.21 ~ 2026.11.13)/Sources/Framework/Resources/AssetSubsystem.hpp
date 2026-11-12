@@ -18,20 +18,20 @@
 #include "../Core/Common.hpp"
 
 #include "Asset.hpp"
-#include "AssetLoader.hpp"
+#include "AssetImporter.hpp"
 
 namespace TUK::Framework
 {
 	class MaterialAsset;
-	class World;
+	class Scene;
 
 	class AssetSubsystem : public AppSubsystem
 	{
 	public:
 		AssetSubsystem() noexcept;
 
-		template <std::derived_from<AssetLoader<>> TAssetLoader, class... TArgs>
-		void AddLoader(TArgs&&... args);
+		template <std::derived_from<AssetImporter<>> TAssetImporter, class... TArgs>
+		void AddImporter(TArgs&&... args);
 
 		template <std::derived_from<Asset> TAsset>
 		[[nodiscard]] const TAsset* LoadAsset(const std::filesystem::path& path);
@@ -39,8 +39,8 @@ namespace TUK::Framework
 		void UnloadAsset(const std::filesystem::path& path);
 		void UnloadAllAssets() noexcept;
 
-		void OnWorldEntered(const World* world);
-		void OnWorldExited(const World* world);
+		void OnSceneEntered(const Scene* scene);
+		void OnSceneExited(const Scene* scene);
 
 		SystemStatus OnStartup() override;
 		SystemStatus OnEarlyUpdate() override;
@@ -53,14 +53,14 @@ namespace TUK::Framework
 		template <std::derived_from<Asset> TAsset>
 		[[nodiscard]] const TAsset* GetLoadedAsset(const std::filesystem::path& path) const noexcept;
 
-		using AssetLoaderList = std::vector<std::unique_ptr<AssetLoader<>>>;
-		using AssetLoaderDict = std::unordered_map<std::type_index, AssetLoader<>*>;
+		using AssetImporterList = std::vector<std::unique_ptr<AssetImporter<>>>;
+		using AssetImporterDict = std::unordered_map<std::type_index, AssetImporter<>*>;
 
 		using AssetList = std::vector<std::unique_ptr<Asset>>;
 		using AssetDict = std::unordered_map<std::filesystem::path, const Asset*>;
 
-		AssetLoaderList assetLoaders;
-		AssetLoaderDict assetLoadersByType;
+		AssetImporterList assetImporters;
+		AssetImporterDict assetImportersByType;
 
 		AssetList assets;
 		AssetDict assetsByPath;
@@ -71,25 +71,25 @@ namespace TUK::Framework
 	{
 	}
 
-	template <std::derived_from<AssetLoader<>> TAssetLoader, class... TArgs>
-	void AssetSubsystem::AddLoader(TArgs&&... args)
+	template <std::derived_from<AssetImporter<>> TAssetImporter, class... TArgs>
+	void AssetSubsystem::AddImporter(TArgs&&... args)
 	{
-		const auto getAssetType = []<class TLoader, std::derived_from<Asset> TAsset>(
-			std::expected<std::unique_ptr<TAsset>, std::string>(TLoader::*)(const std::filesystem::path&) const) noexcept
+		const auto getAssetType = []<class TImporter, std::derived_from<Asset> TAsset>(
+			std::expected<std::unique_ptr<TAsset>, std::string>(TImporter::*)(const std::filesystem::path&) const) noexcept
 		{
 			return std::type_index(typeid(TAsset));
 		};
 
-		const std::type_index assetType = getAssetType(&TAssetLoader::Load);
-		if (assetLoadersByType.contains(assetType))
+		const std::type_index assetType = getAssetType(&TAssetImporter::Import);
+		if (assetImportersByType.contains(assetType))
 		{
 			return;
 		}
 
-		auto loader = std::make_unique<TAssetLoader>(this, std::forward<TArgs>(args)...);
-		AssetLoader<>* pointer = loader.get();
-		assetLoaders.emplace_back(std::move(loader));
-		assetLoadersByType.emplace(assetType, pointer);
+		auto importer = std::make_unique<TAssetImporter>(this, std::forward<TArgs>(args)...);
+		AssetImporter<>* pointer = importer.get();
+		assetImporters.emplace_back(std::move(importer));
+		assetImportersByType.emplace(assetType, pointer);
 	}
 
 	template <std::derived_from<Asset> TAsset>
@@ -112,14 +112,14 @@ namespace TUK::Framework
 			return dynamic_cast<const TAsset*>(cached->second);
 		}
 
-		const auto assetLoader = assetLoadersByType.find(std::type_index(typeid(TAsset)));
-		if (assetLoader == assetLoadersByType.end())
+		const auto assetImporter = assetImportersByType.find(std::type_index(typeid(TAsset)));
+		if (assetImporter == assetImportersByType.end())
 		{
 			return nullptr;
 		}
 
-		const auto* loader = static_cast<const AssetLoader<TAsset>*>(assetLoader->second);
-		auto asset = loader->Load(normalizedPath);
+		const auto* importer = static_cast<const AssetImporter<TAsset>*>(assetImporter->second);
+		auto asset = importer->Import(normalizedPath);
 		if (!asset)
 		{
 			LOG_ERROR("에셋 로드에 실패했습니다: {}: {}", normalizedPath.generic_string(), asset.error());

@@ -7,9 +7,9 @@
 
 #include "../Core/App.hpp"
 
-#include "../Objects/GameObject.hpp"
-#include "../Objects/Transform.hpp"
-#include "../Objects/World.hpp"
+#include "../GameObjects/GameObject.hpp"
+#include "../GameObjects/Transform.hpp"
+#include "../GameObjects/Scene.hpp"
 
 #include "../Graphics/Camera.hpp"
 
@@ -20,10 +20,10 @@ namespace TUK::Framework
 {
 	namespace
 	{
-		const Camera* FindUICamera(const World* world) noexcept
+		const Camera* FindUICamera(const Scene* scene) noexcept
 		{
 			// UI uses the viewport left active by the last camera in the world render pass.
-			for (const Camera* camera : world->GetCameras() | std::views::reverse)
+			for (const Camera* camera : scene->GetCameras() | std::views::reverse)
 			{
 				const GameObject* owner = camera->GetOwner();
 				if (camera->IsEnabled() && !camera->IsDestroyed() && owner->IsEnabled() && !owner->IsDestroyed())
@@ -75,17 +75,17 @@ namespace TUK::Framework
 	void ButtonUI::OnUpdate()
 	{
 		const GameObject* owner = GetOwner();
-		const World* world = owner->GetWorld();
-		const auto isActive = [this, owner, world]()
+		const Scene* scene = owner->GetScene();
+		const auto isActive = [this, owner, scene]()
 		{
-			return IsEnabled() && !IsDestroyed() && owner->IsEnabled() && !owner->IsDestroyed() && world->IsEntered();
+			return IsEnabled() && !IsDestroyed() && owner->IsEnabled() && !owner->IsDestroyed() && scene->IsEntered();
 		};
 
 		const InputSubsystem* input = App::GetInstance().GetSubsystem<InputSubsystem>();
 		const InputProvider* provider = input ? input->GetProvider() : nullptr;
 		const Display* display = input ? input->GetActiveDisplay() : nullptr;
 		const Transform* transform = owner->GetComponent<Transform>();
-		const Camera* camera = FindUICamera(world);
+		const Camera* camera = FindUICamera(scene);
 		if (!provider || !provider->HasMousePosition() || !display || !transform || !camera)
 		{
 			isPressed = false;

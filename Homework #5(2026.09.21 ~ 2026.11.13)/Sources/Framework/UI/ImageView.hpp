@@ -6,7 +6,7 @@
 
 #include "../Graphics/GPUGraphicsPipelineState.hpp"
 
-#include "../Objects/Component.hpp"
+#include "../GameObjects/Component.hpp"
 
 namespace TUK::Framework
 {

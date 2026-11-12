@@ -9,8 +9,8 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Objects/GameObject.hpp"
-#include "../Objects/Transform.hpp"
+#include "../GameObjects/GameObject.hpp"
+#include "../GameObjects/Transform.hpp"
 
 #include "../Graphics/GPUCommandBuffer.hpp"
 #include "../Graphics/GPUDevice.hpp"

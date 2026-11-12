@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Objects/Component.hpp"
+#include "../GameObjects/Component.hpp"
 
 namespace TUK::Framework
 {

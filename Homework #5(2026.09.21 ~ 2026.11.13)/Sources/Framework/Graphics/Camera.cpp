@@ -9,9 +9,9 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Objects/GameObject.hpp"
-#include "../Objects/Transform.hpp"
-#include "../Objects/World.hpp"
+#include "../GameObjects/GameObject.hpp"
+#include "../GameObjects/Transform.hpp"
+#include "../GameObjects/Scene.hpp"
 
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"
@@ -24,12 +24,12 @@ namespace TUK::Framework
 {
 	void Camera::OnEnable()
 	{
-		GetOwner()->GetWorld()->AddCamera(this);
+		GetOwner()->GetScene()->AddCamera(this);
 	}
 
 	void Camera::OnDisable()
 	{
-		GetOwner()->GetWorld()->RemoveCamera(this);
+		GetOwner()->GetScene()->RemoveCamera(this);
 	}
 
 	Matrix4x4<f32> Camera::GetViewMatrix() const noexcept

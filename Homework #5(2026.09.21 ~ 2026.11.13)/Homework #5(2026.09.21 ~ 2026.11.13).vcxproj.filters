@@ -7,7 +7,7 @@
     <Filter Include="Sources\Game">
       <UniqueIdentifier>{b4a5aea1-254d-4503-bc15-32b43ddd36ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Worlds">
+    <Filter Include="Sources\Game\Scenes">
       <UniqueIdentifier>{9A98B935-C06F-48B3-A38A-CB795E409464}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Framework">
@@ -16,7 +16,7 @@
     <Filter Include="Sources\Framework\Core">
       <UniqueIdentifier>{5EA6E942-B2E7-4D2A-898A-054D4397724A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Framework\Objects">
+    <Filter Include="Sources\Framework\GameObjects">
       <UniqueIdentifier>{F9AA077E-A280-4C23-B731-C8F3986E182F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Framework\Resources">
@@ -51,13 +51,13 @@
     <ClInclude Include="Sources\Framework\Resources\FontAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\FontAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\FontAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\AnimationAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\AnimationAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ResourcePath.hpp">
@@ -105,20 +105,20 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Objects\Component.hpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\Component.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Objects\GameObject.hpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\GameObject.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Objects\Transform.hpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\Transform.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Objects\World.hpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\Scene.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Objects\WorldSubsystem.hpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClInclude Include="Sources\Framework\GameObjects\SceneSubsystem.hpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Math.hpp">
       <Filter>Sources\Framework</Filter>
@@ -153,7 +153,7 @@
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\AssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\AssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\AssetSubsystem.hpp">
@@ -162,10 +162,10 @@
     <ClInclude Include="Sources\Framework\Resources\MaterialAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\MaterialAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\MaterialAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\MeshAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\MeshAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\MeshAsset.hpp">
@@ -174,25 +174,25 @@
     <ClInclude Include="Sources\Framework\Resources\ModelAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\ModelAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\ModelAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\CubemapAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\CubemapLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\CubemapAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\TextureAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\TextureAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\TextureAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources\ShaderAsset.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Resources\ShaderAssetLoader.hpp">
+    <ClInclude Include="Sources\Framework\Resources\ShaderAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">
@@ -225,10 +225,10 @@
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Worlds\World_Stage.hpp">
-      <Filter>Sources\Game\Worlds</Filter>
+    <ClInclude Include="Sources\Game\Scenes\Scene_Stage.hpp">
+      <Filter>Sources\Game\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Objects.hpp">
+    <ClInclude Include="Sources\Framework\GameObjects.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources.hpp">
@@ -279,8 +279,8 @@
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Worlds\World_Title.hpp">
-      <Filter>Sources\Game\Worlds</Filter>
+    <ClInclude Include="Sources\Game\Scenes\Scene_Title.hpp">
+      <Filter>Sources\Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Resource.hpp">
       <Filter>Sources</Filter>
@@ -303,7 +303,7 @@
     <ClInclude Include="Sources\Game\UI\Transition.hpp">
       <Filter>Sources\Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\UI\WorldTransition.hpp">
+    <ClInclude Include="Sources\Game\UI\SceneTransition.hpp">
       <Filter>Sources\Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Game\Components\PlayerController.hpp">
@@ -314,10 +314,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Framework\Resources\FontAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\FontAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\AnimationAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\AnimationAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\App.cpp">
@@ -347,17 +347,17 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Objects\GameObject.cpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\GameObject.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Objects\Transform.cpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\Transform.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Objects\World.cpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\Scene.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Objects\WorldSubsystem.cpp">
-      <Filter>Sources\Framework\Objects</Filter>
+    <ClCompile Include="Sources\Framework\GameObjects\SceneSubsystem.cpp">
+      <Filter>Sources\Framework\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
       <Filter>Sources\Framework\Math</Filter>
@@ -392,10 +392,10 @@
     <ClCompile Include="Sources\Framework\Resources\MaterialAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\MaterialAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\MaterialAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\MeshAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\MeshAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\MeshAsset.cpp">
@@ -404,22 +404,22 @@
     <ClCompile Include="Sources\Framework\Resources\ModelAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\ModelAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\ModelAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\TextureAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\TextureAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\CubemapLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\CubemapAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Resources\ShaderAsset.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Resources\ShaderAssetLoader.cpp">
+    <ClCompile Include="Sources\Framework\Resources\ShaderAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Main.cpp">
@@ -437,8 +437,8 @@
     <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Worlds\World_Stage.cpp">
-      <Filter>Sources\Game\Worlds</Filter>
+    <ClCompile Include="Sources\Game\Scenes\Scene_Stage.cpp">
+      <Filter>Sources\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
@@ -467,8 +467,8 @@
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp">
       <Filter>Sources\Framework\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\Worlds\World_Title.cpp">
-      <Filter>Sources\Game\Worlds</Filter>
+    <ClCompile Include="Sources\Game\Scenes\Scene_Title.cpp">
+      <Filter>Sources\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Core\Input.cpp">
       <Filter>Sources\Game\Core</Filter>
@@ -485,7 +485,7 @@
     <ClCompile Include="Sources\Game\UI\Transition.cpp">
       <Filter>Sources\Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Game\UI\WorldTransition.cpp">
+    <ClCompile Include="Sources\Game\UI\SceneTransition.cpp">
       <Filter>Sources\Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Game\Components\PlayerController.cpp">

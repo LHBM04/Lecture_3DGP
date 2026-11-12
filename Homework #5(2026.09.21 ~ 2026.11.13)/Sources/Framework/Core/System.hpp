@@ -196,18 +196,18 @@ namespace TUK::Framework
 	auto System<TSubsystem>::GetSubsystems() noexcept
 	{
 		return subsystems | std::views::transform([](const auto& subsystem) -> TSubsystem*
-			{
-				return subsystem.get();
-			});
+		{
+			return subsystem.get();
+		});
 	}
 
 	template <std::derived_from<Subsystem> TSubsystem>
 	auto System<TSubsystem>::GetSubsystems() const noexcept
 	{
 		return subsystems | std::views::transform([](const auto& subsystem) -> const TSubsystem*
-			{
-				return subsystem.get();
-			});
+		{
+			return subsystem.get();
+		});
 	}
 
 	template <std::derived_from<Subsystem> TSubsystem>

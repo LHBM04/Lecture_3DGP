@@ -12,7 +12,7 @@
 #include "Framework/Graphics/GPUDevice.hpp"
 #include "Framework/Graphics/GPUTarget.hpp"
 
-#include "Framework/Resources/ShaderAssetLoader.hpp"
+#include "Framework/Resources/ShaderAssetImporter.hpp"
 
 namespace TUK::Game
 {
@@ -24,13 +24,13 @@ namespace TUK::Game
 		ASSERT_FMT(assets, "에셋 서브시스템이 nullptr입니다.");
 
 		// Load directly so world asset cleanup cannot release the transition pipeline.
-		ShaderAssetLoader loader(assets);
-		auto vertex = loader.Load("Resources/Shaders/WorldTransition.vert.cso");
+		ShaderAssetImporter importer(assets);
+		auto vertex = importer.Import("Resources/Shaders/WorldTransition.vert.cso");
 		if (!vertex)
 		{
 			return std::unexpected(vertex.error());
 		}
-		auto pixel = loader.Load("Resources/Shaders/WorldTransition.frag.cso");
+		auto pixel = importer.Import("Resources/Shaders/WorldTransition.frag.cso");
 		if (!pixel)
 		{
 			return std::unexpected(pixel.error());

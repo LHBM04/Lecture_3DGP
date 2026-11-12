@@ -2,13 +2,13 @@
 #include "MyGame.hpp"
 
 #include "Framework/Core.hpp"
-#include "Framework/Objects/WorldSubsystem.hpp"
+#include "Framework/GameObjects/SceneSubsystem.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 #include "Framework/Platform.hpp"
 
-#include "../Worlds/World_Stage.hpp"
-#include "../Worlds/World_Title.hpp"
+#include "../Scenes/Scene_Stage.hpp"
+#include "../Scenes/Scene_Title.hpp"
 
 #include "Assets.hpp"
 #include "Time.hpp"
@@ -41,7 +41,7 @@ namespace TUK::Game
 
 		OnSubsystemAdded<InputSubsystem>(this, &MyGame::OnInputSubsystemAdded);
 		OnSubsystemRemoved<InputSubsystem>(this, &MyGame::OnInputSubsystemRemoved);
-		OnSubsystemAdded<WorldSubsystem>(this, &MyGame::OnWorldSubsystemAdded);
+		OnSubsystemAdded<SceneSubsystem>(this, &MyGame::OnSceneSubsystemAdded);
 		OnSubsystemAdded<AssetSubsystem>(this, &MyGame::OnAssetSubsystemAdded);
 		OnSubsystemRemoved<AssetSubsystem>(this, &MyGame::OnAssetSubsystemRemoved);
 
@@ -52,8 +52,8 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		worldSubsystem = AddSubsystem<WorldSubsystem>();
-		if (!worldSubsystem)
+		sceneSubsystem = AddSubsystem<SceneSubsystem>();
+		if (!sceneSubsystem)
 		{
 			LOG_ERROR("월드 서브시스템을 가져오지 못했습니다.");
 			return SystemStatus::FAILURE;
@@ -84,7 +84,7 @@ namespace TUK::Game
 			return SystemStatus::FAILURE;
 		}
 
-		if (auto initialized = worldTransition.Initialize(worldSubsystem, inputSubsystem, renderSubsystem->GetDevice(), assetSubsystem); !initialized)
+		if (auto initialized = sceneTransition.Initialize(sceneSubsystem, inputSubsystem, renderSubsystem->GetDevice(), assetSubsystem); !initialized)
 		{
 			LOG_ERROR("월드 전환 초기화에 실패했습니다: {}", initialized.error());
 			return SystemStatus::FAILURE;
@@ -92,7 +92,7 @@ namespace TUK::Game
 
 		transitionRenderListenerId = renderSubsystem->OnRender().AddListener([this](GPUCommandBuffer& commandBuffer)
 		{
-			if (auto rendered = worldTransition.GetTransition().Render(commandBuffer); !rendered)
+			if (auto rendered = sceneTransition.GetTransition().Render(commandBuffer); !rendered)
 			{
 				LOG_ERROR("페이드 렌더링에 실패했습니다: {}", rendered.error());
 			}
@@ -103,7 +103,7 @@ namespace TUK::Game
 
 	SystemStatus MyGame::Routine()
 	{
-		worldTransition.Update(Time::GetUnscaledDeltaTime());
+		sceneTransition.Update(Time::GetUnscaledDeltaTime());
 		return App::Routine();
 	}
 
@@ -114,7 +114,7 @@ namespace TUK::Game
 			renderSubsystem->OnRender().RemoveListener(transitionRenderListenerId);
 			transitionRenderListenerId = 0;
 		}
-		worldTransition.Shutdown();
+		sceneTransition.Shutdown();
 
 		App::Shutdown();
 	}
@@ -144,36 +144,36 @@ namespace TUK::Game
 		Input::Release();
 	}
 
-	void MyGame::OnWorldSubsystemAdded(WorldSubsystem* subsystem)
+	void MyGame::OnSceneSubsystemAdded(SceneSubsystem* subsystem)
 	{
 		ASSERT_FMT(renderSubsystem, "렌더 서브시스템이 nullptr입니다.");
 
-		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::PreRender, subsystem);
-		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::Render, subsystem);
-		renderSubsystem->OnRender() += std::bind_front(&WorldSubsystem::PostRender, subsystem);
+		renderSubsystem->OnRender() += std::bind_front(&SceneSubsystem::PreRender, subsystem);
+		renderSubsystem->OnRender() += std::bind_front(&SceneSubsystem::Render, subsystem);
+		renderSubsystem->OnRender() += std::bind_front(&SceneSubsystem::PostRender, subsystem);
 
-		auto stageWorld = std::make_unique<World_Stage>();
-		subsystem->AddWorld(std::make_unique<World_Title>(stageWorld.get(), &worldTransition));
-		subsystem->AddWorld(std::move(stageWorld));
+		auto stageScene = std::make_unique<Scene_Stage>();
+		subsystem->AddScene(std::make_unique<Scene_Title>(stageScene.get(), &sceneTransition));
+		subsystem->AddScene(std::move(stageScene));
 	}
 
 	void MyGame::OnAssetSubsystemAdded(AssetSubsystem* subsystem)
 	{
-		ASSERT_FMT(worldSubsystem, "월드 서브시스템이 nullptr입니다.");
+		ASSERT_FMT(sceneSubsystem, "월드 서브시스템이 nullptr입니다.");
 		ASSERT_FMT(renderSubsystem, "렌더 서브시스템이 nullptr입니다.");
 
-		worldSubsystem->OnEnterWorld() += std::bind_front(&AssetSubsystem::OnWorldEntered, subsystem);
-		worldSubsystem->OnExitWorld() += std::bind_front(&AssetSubsystem::OnWorldExited, subsystem);
+		sceneSubsystem->OnEnterScene() += std::bind_front(&AssetSubsystem::OnSceneEntered, subsystem);
+		sceneSubsystem->OnExitScene() += std::bind_front(&AssetSubsystem::OnSceneExited, subsystem);
 
 		const GPUDevice& device = renderSubsystem->GetDevice();
-		subsystem->AddLoader<ModelAssetLoader>();
-		subsystem->AddLoader<MeshAssetLoader>(device);
-		subsystem->AddLoader<TextureAssetLoader>(device);
-		subsystem->AddLoader<CubemapLoader>(device);
-		subsystem->AddLoader<MaterialAssetLoader>(device);
-		subsystem->AddLoader<ShaderAssetLoader>();
-		subsystem->AddLoader<FontAssetLoader>();
-		subsystem->AddLoader<AnimationAssetLoader>();
+		subsystem->AddImporter<ModelAssetImporter>();
+		subsystem->AddImporter<MeshAssetImporter>(device);
+		subsystem->AddImporter<TextureAssetImporter>(device);
+		subsystem->AddImporter<CubemapAssetImporter>(device);
+		subsystem->AddImporter<MaterialAssetImporter>(device);
+		subsystem->AddImporter<ShaderAssetImporter>();
+		subsystem->AddImporter<FontAssetImporter>();
+		subsystem->AddImporter<AnimationAssetImporter>();
 
 		Assets::Initialize(subsystem);
 	}

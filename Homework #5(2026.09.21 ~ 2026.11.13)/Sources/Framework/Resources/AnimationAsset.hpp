@@ -15,7 +15,7 @@ namespace TUK::Framework
 {
 	struct AnimationFrame final
 	{
-		f32 time{};
+		f32 time = 0.0f;
 		std::array<f32, 3> position{};
 		std::array<f32, 4> rotation{};
 		std::array<f32, 3> scale{};
@@ -23,8 +23,8 @@ namespace TUK::Framework
 
 	struct AnimationTransform final
 	{
-		std::string path{};
-		std::vector<AnimationFrame> frames{};
+		std::string path;
+		std::vector<AnimationFrame> frames;
 	};
 
 	class AnimationAsset final : public Asset
@@ -43,10 +43,10 @@ namespace TUK::Framework
 		[[nodiscard]] std::span<const AnimationTransform> GetTransforms() const noexcept;
 
 	private:
-		std::string name{};
-		f32 length{};
-		f32 frameRate{};
-		std::vector<AnimationTransform> transforms{};
+		std::string name;
+		f32 length = 0.0f;
+		f32 frameRate = 0.0f;
+		std::vector<AnimationTransform> transforms;
 	};
 
 	inline AnimationAsset::AnimationAsset(

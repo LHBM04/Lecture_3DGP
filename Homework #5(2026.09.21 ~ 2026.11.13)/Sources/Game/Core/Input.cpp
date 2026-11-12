@@ -48,7 +48,7 @@ namespace TUK::Game
 		return provider && provider->IsMouseButtonReleased(button);
 	}
 
-	float Input::GetHorizontal(KeyCode left, KeyCode right)
+	f32 Input::GetHorizontal(KeyCode left, KeyCode right)
 	{
 		if (!provider)
 		{
@@ -57,13 +57,13 @@ namespace TUK::Game
 		return static_cast<f32>(Input::IsKeyHeld(left)) - static_cast<f32>(Input::IsKeyHeld(right));
 	}
 
-	float Input::GetVertical(KeyCode up, KeyCode Down)
+	f32 Input::GetVertical(KeyCode up, KeyCode down)
 	{
 		if (!provider)
 		{
 			return 0.0f;
 		}
-		return static_cast<f32>(Input::IsKeyHeld(up)) - static_cast<f32>(Input::IsKeyHeld(Down));
+		return static_cast<f32>(Input::IsKeyHeld(up)) - static_cast<f32>(Input::IsKeyHeld(down));
 	}
 
 	Vector2D<i32> Input::GetMousePosition() noexcept

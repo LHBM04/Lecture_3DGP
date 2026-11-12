@@ -8,7 +8,7 @@
 
 #include "../Core/Common.hpp"
 
-#include "../Objects/Component.hpp"
+#include "../GameObjects/Component.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Matrix4x4.hpp"

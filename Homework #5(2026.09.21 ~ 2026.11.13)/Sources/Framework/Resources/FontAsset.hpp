@@ -15,28 +15,28 @@ namespace TUK::Framework
 {
 	struct FontAtlasData final
 	{
-		i32 index{};
-		std::string texture{};
-		i32 width{};
-		i32 height{};
+		i32 index = 0;
+		std::string texture;
+		i32 width = 0;
+		i32 height = 0;
 	};
 
 	struct FontCharacterData final
 	{
-		u32 unicode{};
-		u32 glyphIndex{};
-		i32 atlasIndex{};
-		f32 characterScale{};
-		f32 glyphScale{};
+		u32 unicode = 0;
+		u32 glyphIndex = 0;
+		i32 atlasIndex = 0;
+		f32 characterScale = 0.0f;
+		f32 glyphScale = 0.0f;
 		std::array<f32, 4> glyphRect{};
 		std::array<f32, 4> sampleRect{};
 		std::array<f32, 2> uvMin{};
 		std::array<f32, 2> uvMax{};
-		f32 width{};
-		f32 height{};
-		f32 bearingX{};
-		f32 bearingY{};
-		f32 advance{};
+		f32 width = 0.0f;
+		f32 height = 0.0f;
+		f32 bearingX = 0.0f;
+		f32 bearingY = 0.0f;
+		f32 advance = 0.0f;
 	};
 
 	class TextureAsset;
@@ -47,10 +47,10 @@ namespace TUK::Framework
 		explicit FontAsset(std::filesystem::path path) noexcept;
 
 		[[nodiscard]] const std::string& GetName() const noexcept;
-		void SetName(std::string value) noexcept;
+		void SetName(std::string&& value) noexcept;
 
 		[[nodiscard]] const std::string& GetRenderMode() const noexcept;
-		void SetRenderMode(std::string value) noexcept;
+		void SetRenderMode(std::string&& value) noexcept;
 
 		[[nodiscard]] bool IsDistanceField() const noexcept;
 		void SetDistanceField(bool value) noexcept;
@@ -83,17 +83,17 @@ namespace TUK::Framework
 		void SetAtlases(std::vector<const TextureAsset*>&& value) noexcept;
 
 	private:
-		std::string name{};
-		std::string renderMode{};
-		bool isDistanceField{};
-		f32 pointSize{};
-		f32 faceScale{};
-		f32 lineHeight{};
-		f32 ascentLine{};
-		f32 descentLine{};
-		i32 atlasPadding{};
-		std::vector<FontAtlasData> atlasData{};
-		std::vector<FontCharacterData> characters{};
+		std::string name;
+		std::string renderMode;
+		bool isDistanceField = false;
+		f32 pointSize = 0.0f;
+		f32 faceScale = 0.0f;
+		f32 lineHeight = 0.0f;
+		f32 ascentLine = 0.0f;
+		f32 descentLine = 0.0f;
+		i32 atlasPadding = 0;
+		std::vector<FontAtlasData> atlasData;
+		std::vector<FontCharacterData> characters;
 		std::vector<const TextureAsset*> atlases;
 	};
 
@@ -107,7 +107,7 @@ namespace TUK::Framework
 		return name;
 	}
 
-	inline void FontAsset::SetName(std::string value) noexcept
+	inline void FontAsset::SetName(std::string&& value) noexcept
 	{
 		name = std::move(value);
 	}
@@ -117,7 +117,7 @@ namespace TUK::Framework
 		return renderMode;
 	}
 
-	inline void FontAsset::SetRenderMode(std::string value) noexcept
+	inline void FontAsset::SetRenderMode(std::string&& value) noexcept
 	{
 		renderMode = std::move(value);
 	}
