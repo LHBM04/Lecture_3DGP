@@ -1,12 +1,6 @@
 ﻿#pragma once
 
-#include <utility>
-#include <vector>
-
 #include <wrl/client.h>
-
-#include <directx/d3d12.h>
-#include <dxgi1_6.h>
 
 #include "../Core/Common.hpp"
 

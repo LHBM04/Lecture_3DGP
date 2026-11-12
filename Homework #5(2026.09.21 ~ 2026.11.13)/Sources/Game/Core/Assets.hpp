@@ -1,14 +1,11 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <filesystem>
-
 #include "Framework/Resources.hpp"
-
-using namespace TUK::Framework;
 
 namespace TUK::Game
 {
+	using namespace Framework;
+
 	namespace Assets
 	{
 		void Initialize(AssetSubsystem* subsystem) noexcept;

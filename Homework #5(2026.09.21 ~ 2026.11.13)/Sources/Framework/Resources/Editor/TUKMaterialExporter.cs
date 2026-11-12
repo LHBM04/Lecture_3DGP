@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -163,10 +162,12 @@ namespace TUK.Editor
 
         internal static MaterialData GetMetaData(Material current)
         {
-            return GetMetaData(current, ShaderData.GetDefault());
+            return GetMetaData(current, "Shaders/Standard.vert.cso", "", "", "", "Shaders/Standard.frag.cso");
         }
 
-        internal static MaterialData GetMetaData(Material current, ShaderData shaders)
+        internal static MaterialData GetMetaData(
+            Material current,
+            string vertexShader, string hullShader, string domainShader, string geometryShader, string pixelShader)
         {
             Color baseColor = Color.white;
             Color emissiveColor = Color.black;
@@ -224,11 +225,11 @@ namespace TUK.Editor
             materialData.SpecularTexture = GetTexture(current, sources, "_SpecGlossMap", "_SpecularColorMap");
             materialData.MaskTexture = GetTexture(current, sources, "_MaskMap");
 
-            materialData.VertexShader = shaders.VertexShader;
-            materialData.HullShader = shaders.HullShader;
-            materialData.DomainShader = shaders.DomainShader;
-            materialData.GeometryShader = shaders.GeometryShader;
-            materialData.PixelShader = shaders.PixelShader;
+            materialData.VertexShader = vertexShader;
+            materialData.HullShader = hullShader;
+            materialData.DomainShader = domainShader;
+            materialData.GeometryShader = geometryShader;
+            materialData.PixelShader = pixelShader;
 
             materialData.TextureSources = sources;
 
@@ -236,4 +237,3 @@ namespace TUK.Editor
         }
     }
 }
-#endif

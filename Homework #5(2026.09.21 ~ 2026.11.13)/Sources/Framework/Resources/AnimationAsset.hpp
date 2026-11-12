@@ -1,12 +1,5 @@
 ﻿#pragma once
 
-#include <array>
-#include <filesystem>
-#include <span>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "../Core/Common.hpp"
 
 #include "Asset.hpp"

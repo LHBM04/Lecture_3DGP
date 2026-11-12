@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "MyEngine.hpp"
 
-#include <functional>
-
 #include "Framework/Platform.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Core/Common.hpp"

@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 
 using UnityEditor;
 using UnityEngine;
@@ -23,4 +22,3 @@ namespace TUK.Editor
         }
     }
 }
-#endif

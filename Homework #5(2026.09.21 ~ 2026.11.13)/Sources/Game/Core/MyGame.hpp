@@ -2,16 +2,14 @@
 
 #include "Framework/Core.hpp"
 #include "Framework/Platform.hpp"
-#include "Framework/GameObjects.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 
-#include "../UI/SceneTransition.hpp"
-
-using namespace TUK::Framework;
-
 namespace TUK::Game
 {
+	using namespace Framework;
+
 	class MyGame : public App
 	{
 		using App::App;
@@ -25,6 +23,7 @@ namespace TUK::Game
 		void OnInputSubsystemAdded(InputSubsystem* subsystem);
 		void OnInputSubsystemRemoved(InputSubsystem* subsystem);
 		void OnSceneSubsystemAdded(SceneSubsystem* subsystem);
+		void OnSceneSubsystemRemoved(SceneSubsystem* subsystem);
 		void OnAssetSubsystemAdded(AssetSubsystem* subsystem);
 		void OnAssetSubsystemRemoved(AssetSubsystem* subsystem);
 
@@ -34,7 +33,5 @@ namespace TUK::Game
 		SceneSubsystem* sceneSubsystem = nullptr;
 		InputSubsystem* inputSubsystem = nullptr;
 		AssetSubsystem* assetSubsystem = nullptr;
-		SceneTransition sceneTransition;
-		Delegate<GPUCommandBuffer&>::ListenerId transitionRenderListenerId = 0;
 	};
 }

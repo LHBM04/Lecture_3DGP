@@ -1,18 +1,13 @@
 ﻿#include "Precompiled.hpp"
 #include "ImageView.hpp"
 
-#include <array>
-#include <span>
-#include <utility>
-
-#include <directx/d3dx12.h>
-
 #include "../Core/Common.hpp"
 
-#include "../GameObjects/GameObject.hpp"
-#include "../GameObjects/Transform.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
 
 #include "../Graphics/GPUCommandBuffer.hpp"
+#include "../Graphics/GPUConstants.hpp"
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUTarget.hpp"
 
@@ -36,26 +31,23 @@ namespace TUK::Framework
 			return;
 		}
 
-		DirectX::XMFLOAT4X4 world;
-		DirectX::XMStoreFloat4x4(&world, Matrix4x4<f32>::Load(transform->GetWorldMatrix()));
+		const ObjectConstants objectConstants
+		{
+			.world = transform->GetWorldMatrix()
+		};
 
-		constexpr u32 OBJECT_ROOT_SLOT = 1;
-		if (auto result = commandBuffer.SetGraphicsConstants(OBJECT_ROOT_SLOT, std::as_bytes(std::span(&world, 1))); !result)
+		if (auto result = commandBuffer.SetGraphicsConstants(objectConstants); !result)
 		{
 			LOG_ERROR("UI 이미지 변환을 바인딩하지 못했습니다: {}", result.error());
 			return;
 		}
 
-		struct ImageUIConstants final
+		const ImageUIConstants constants
 		{
-			DirectX::XMFLOAT2 viewportSize;
-			DirectX::XMFLOAT2 padding{};
+			.viewportSize = Vector2D<f32>{ 1280.0f, 960.0f },
+			.color = color
 		};
-		static_assert(sizeof(ImageUIConstants) == 16);
-
-		const ImageUIConstants constants{ { 1280, 960 } };
-		constexpr u32 IMAGE_UI_ROOT_SLOT = 2;
-		if (auto result = commandBuffer.SetGraphicsConstants(IMAGE_UI_ROOT_SLOT, std::as_bytes(std::span(&constants, 1))); !result)
+		if (auto result = commandBuffer.SetGraphicsConstants(constants); !result)
 		{
 			LOG_ERROR("UI 뷰포트 상수를 바인딩하지 못했습니다: {}", result.error());
 			return;

@@ -4,10 +4,10 @@
 #include "Framework/Graphics.hpp"
 #include "Framework/Platform.hpp"
 
-using namespace TUK::Framework;
-
 namespace TUK::Game
 {
+	using namespace Framework;
+
 	class MyEngine : public Engine
 	{
 		using Engine::Engine;

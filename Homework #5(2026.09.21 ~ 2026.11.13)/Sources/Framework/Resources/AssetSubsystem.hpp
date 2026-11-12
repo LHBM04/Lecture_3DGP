@@ -1,19 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <expected>
-#include <filesystem>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <typeindex>
-#include <unordered_map>
-#include <utility>
-#include <vector>
-
-#include <directx/d3d12.h>
-
 #include "../Core/AppSubsystem.hpp"
 #include "../Core/Common.hpp"
 
@@ -134,6 +120,7 @@ namespace TUK::Framework
 
 		assets.emplace_back(std::move(*asset));
 		assetsByPath.emplace(normalizedPath, result);
+		LOG_TRACE("에셋을 로드했습니다: {}", normalizedPath.generic_string());
 		return result;
 	}
 }

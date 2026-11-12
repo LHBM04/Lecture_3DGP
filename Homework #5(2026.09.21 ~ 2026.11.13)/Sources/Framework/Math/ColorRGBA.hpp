@@ -1,12 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <limits>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
-#include <nlohmann/json_fwd.hpp>
-
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
 
@@ -32,12 +25,18 @@ namespace TUK::Framework
 		ColorRGBA(const ColorRGB<TScalar>& rgb, TScalar a = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1)) noexcept;
 		explicit ColorRGBA(const Vector3D<TScalar>& vector, TScalar alpha = static_cast<TScalar>(std::same_as<TScalar, i32> ? 255 : 1)) noexcept;
 		ColorRGBA(const Vector4D<TScalar>& vector) noexcept;
+		explicit ColorRGBA(DirectX::XMVECTOR vector) noexcept requires std::same_as<TScalar, f32>;
+		explicit ColorRGBA(const DirectX::XMFLOAT4& source) noexcept requires std::same_as<TScalar, f32>;
+		explicit ColorRGBA(const DirectX::XMINT4& source) noexcept requires std::same_as<TScalar, i32>;
 
 		ColorRGBA& operator=(const ColorRGBA& other) noexcept = default;
 		ColorRGBA& operator=(ColorRGBA&& other) noexcept = default;
 		ColorRGBA& operator=(const Vector4D<TScalar>& other) noexcept;
 
 		operator Vector4D<TScalar>() const noexcept;
+		[[nodiscard]] operator DirectX::XMVECTOR() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT4() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMINT4() const noexcept requires std::same_as<TScalar, i32>;
 
 		ColorRGBA operator+(const ColorRGBA& other) const noexcept;
 		ColorRGBA& operator+=(const ColorRGBA& other) noexcept;
@@ -95,9 +94,6 @@ namespace TUK::Framework
 		[[nodiscard]] static bool IsApproximately(const ColorRGBA& lhs, const ColorRGBA& rhs, f32 epsilon = std::numeric_limits<f32>::epsilon()) noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] static ColorRGBA Lerp(const ColorRGBA& start, const ColorRGBA& end, f32 t) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

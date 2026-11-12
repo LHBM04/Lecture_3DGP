@@ -1,15 +1,5 @@
 ﻿#pragma once
 
-#include <array>
-#include <compare>
-#include <concepts>
-#include <cstddef>
-#include <limits>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
-#include <nlohmann/json_fwd.hpp>
-
 #include "Vector3D.hpp"
 #include "Vector4D.hpp"
 
@@ -37,9 +27,13 @@ namespace TUK::Framework
 		Matrix4x4(Matrix4x4&& other) noexcept = default;
 
 		explicit Matrix4x4(DirectX::XMMATRIX matrix) noexcept requires std::same_as<TScalar, f32>;
+		explicit Matrix4x4(const DirectX::XMFLOAT4X4& source) noexcept requires std::same_as<TScalar, f32>;
 
 		Matrix4x4& operator=(const Matrix4x4& other) noexcept = default;
 		Matrix4x4& operator=(Matrix4x4&& other) noexcept = default;
+
+		[[nodiscard]] operator DirectX::XMMATRIX() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT4X4() const noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
@@ -106,9 +100,6 @@ namespace TUK::Framework
 		[[nodiscard]] static Matrix4x4 Ortho(f32 width, f32 height, f32 nearZ, f32 farZ) noexcept requires std::same_as<TScalar, f32>;
 
 		static bool TryInverse3DAffine(const Matrix4x4& input, Matrix4x4& result) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, std::array<i32, 16>, DirectX::XMFLOAT4X4> value;

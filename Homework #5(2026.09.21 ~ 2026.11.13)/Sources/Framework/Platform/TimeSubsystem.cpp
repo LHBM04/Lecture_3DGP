@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "TimeSubsystem.hpp"
 
-#include <cmath>
-
 namespace TUK::Framework
 {
 	TimeSubsystem::TimeSubsystem() noexcept

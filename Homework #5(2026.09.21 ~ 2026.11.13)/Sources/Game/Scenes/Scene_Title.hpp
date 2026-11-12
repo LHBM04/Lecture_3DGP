@@ -1,23 +1,17 @@
 ﻿#pragma once
 
-#include "Framework/GameObjects.hpp"
-
-using namespace TUK::Framework;
+#include "Framework/Core.hpp"
+#include "Framework/Objects.hpp"
 
 namespace TUK::Game
 {
-	class SceneTransition;
+	using namespace Framework;
 
 	class Scene_Title : public Scene
 	{
+		using Scene::Scene;
+
 	public:
-		explicit Scene_Title(Scene* stageScene, SceneTransition* transition) noexcept;
-
 		void OnEnter() override;
-		void OnExit() override;
-
-	private:
-		Scene* stageScene;
-		SceneTransition* transition;
 	};
 }

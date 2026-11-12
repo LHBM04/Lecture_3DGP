@@ -1,10 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Matrix4x4.hpp"
 
-#include <cmath>
-
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 
 #include "Quaternion.hpp"
@@ -71,6 +67,27 @@ namespace TUK::Framework
 		: value{}
 	{
 		Store(*this, matrix);
+	}
+
+	template <Scalarable TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(const DirectX::XMFLOAT4X4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Matrix4x4<TScalar>::operator DirectX::XMMATRIX() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Matrix4x4<TScalar>::operator DirectX::XMFLOAT4X4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>
@@ -571,50 +588,6 @@ namespace TUK::Framework
 			return false;
 		}
 		return input.TryGetInverse(result);
-	}
-
-	template <Scalarable TScalar>
-	nlohmann::json Matrix4x4<TScalar>::Serialize() const
-	{
-		TScalar components[16]{};
-		for (usize index = 0; index < 16; ++index)
-		{
-			components[index] = (*this)[index];
-		}
-
-		for (const TScalar component : components)
-		{
-			if (!std::isfinite(component))
-			{
-				return nlohmann::json::value_t::discarded;
-			}
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool Matrix4x4<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 16;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = Matrix4x4<TScalar>{ components };
-		return true;
 	}
 
 	template class Matrix4x4<std::int32_t>;

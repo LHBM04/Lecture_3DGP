@@ -22,22 +22,14 @@ namespace TUK::Framework
 
 	SystemStatus InputSubsystem::OnEarlyUpdate()
 	{
-		if (!isInputEnabled)
+		if (!isInputEnabled || !activeDisplay)
 		{
 			return SystemStatus::CONTINUE;
 		}
 
-		const auto it = providers.find(activeDisplay);
-		if (it == providers.end())
-		{
-			return SystemStatus::CONTINUE;
-		}
-
-		InputProvider& provider = it->second;
 		if (GetForegroundWindow() != activeDisplay->GetHWND())
 		{
-			provider.Reset();
-			hasMouseHistory = false;
+			ResetInputState();
 			return SystemStatus::CONTINUE;
 		}
 
@@ -48,6 +40,11 @@ namespace TUK::Framework
 		{
 			provider.SynchronizeHistory();
 			needsInputSync = false;
+		}
+
+		for (const auto& action : actions | std::views::values)
+		{
+			action->Evaluate(provider);
 		}
 
 		return SystemStatus::CONTINUE;
@@ -70,10 +67,10 @@ namespace TUK::Framework
 
 	void InputSubsystem::OnShutdown()
 	{
+		ResetInputState();
+		actions.clear();
 		gameInput.Reset();
 		activeDisplay = nullptr;
-		providers.clear();
-		hasMouseHistory = false;
 	}
 
 	void InputSubsystem::SetInputEnabled(bool value) noexcept
@@ -85,57 +82,70 @@ namespace TUK::Framework
 
 		isInputEnabled = value;
 		needsInputSync = value;
-		hasMouseHistory = false;
-		for (InputProvider& provider : providers | std::views::values)
+		ResetInputState();
+	}
+
+	InputAction* InputSubsystem::AddAction(std::string_view name)
+	{
+		const std::string key(name);
+		auto [it, inserted] = actions.try_emplace(key, nullptr);
+		if (inserted)
 		{
-			provider.Reset();
+			it->second = std::make_unique<InputAction>(key);
+		}
+		return it->second.get();
+	}
+
+	void InputSubsystem::RemoveAction(std::string_view name) noexcept
+	{
+		const auto it = actions.find(std::string(name));
+		if (it != actions.end())
+		{
+			it->second->Reset();
+			actions.erase(it);
 		}
 	}
 
-	void InputSubsystem::AddProvider(const Display* display)
+	InputAction* InputSubsystem::GetAction(std::string_view name) noexcept
 	{
-		ASSERT_FMT(display, "입력 제공자를 등록할 디스플레이가 nullptr입니다.");
-
-		providers.try_emplace(display);
-		if (display->GetHWND() == GetFocus())
-		{
-			activeDisplay = display;
-			hasMouseHistory = false;
-		}
+		const auto it = actions.find(std::string(name));
+		return it != actions.end() ? it->second.get() : nullptr;
 	}
 
-	void InputSubsystem::RemoveProvider(const Display* display)
+	const InputAction* InputSubsystem::GetAction(std::string_view name) const noexcept
 	{
-		ASSERT_FMT(display, "입력 제공자를 해제할 디스플레이가 nullptr입니다.");
-
-		if (activeDisplay == display)
-		{
-			activeDisplay = nullptr;
-			hasMouseHistory = false;
-		}
-		providers.erase(display);
+		const auto it = actions.find(std::string(name));
+		return it != actions.end() ? it->second.get() : nullptr;
 	}
 
 	void InputSubsystem::OnDisplayCreate(const DisplayCreateEvent& event)
 	{
-		AddProvider(event.display);
+		ASSERT_FMT(event.display, "입력 서브시스템에 등록할 디스플레이가 nullptr입니다.");
+
+		if (!activeDisplay || event.display->GetHWND() == GetFocus())
+		{
+			activeDisplay = event.display;
+			hasMouseHistory = false;
+		}
 	}
 
 	void InputSubsystem::OnDisplayClose(const DisplayCloseEvent& event)
 	{
-		RemoveProvider(event.display);
+		if (activeDisplay == event.display)
+		{
+			ResetInputState();
+			activeDisplay = nullptr;
+		}
 	}
 
 	void InputSubsystem::OnDisplayFocus(const DisplayFocusEvent& event)
 	{
-		const auto it = providers.find(event.display);
-		if (it == providers.end())
+		if (!event.display)
 		{
 			return;
 		}
 
-		it->second.Reset();
-		hasMouseHistory = false;
+		ResetInputState();
 
 		if (!event.isFocused)
 		{
@@ -146,11 +156,6 @@ namespace TUK::Framework
 			return;
 		}
 
-		if (const auto previous = providers.find(activeDisplay); previous != providers.end())
-		{
-			previous->second.Reset();
-		}
-
 		activeDisplay = event.display;
 	}
 
@@ -158,15 +163,11 @@ namespace TUK::Framework
 	{
 		if (!event.isActive)
 		{
-			for (InputProvider& provider : providers | std::views::values)
-			{
-				provider.Reset();
-			}
-			hasMouseHistory = false;
+			ResetInputState();
 		}
 	}
 
-	void InputSubsystem::PollKeyboard(InputProvider& provider) noexcept
+	void InputSubsystem::PollKeyboard(InputProvider& targetProvider) noexcept
 	{
 		Microsoft::WRL::ComPtr<IGameInputReading> reading;
 		if (FAILED(gameInput->GetCurrentReading(GameInputKindKeyboard, nullptr, &reading)))
@@ -188,26 +189,26 @@ namespace TUK::Framework
 		for (u32 i = 0; i < READ_COUNT; ++i)
 		{
 			const KeyCode KEY = static_cast<KeyCode>(keyStates[i].virtualKey);
-			provider.SetKey(KEY, true);
+			targetProvider.SetKey(KEY, true);
 		}
 
-		provider.SetKey(
+		targetProvider.SetKey(
 			KeyCode::SHIFT,
-			provider.IsKeyHeld(KeyCode::LEFT_SHIFT) || provider.IsKeyHeld(KeyCode::RIGHT_SHIFT));
-		provider.SetKey(
+			targetProvider.IsKeyHeld(KeyCode::LEFT_SHIFT) || targetProvider.IsKeyHeld(KeyCode::RIGHT_SHIFT));
+		targetProvider.SetKey(
 			KeyCode::CONTROL,
-			provider.IsKeyHeld(KeyCode::LEFT_CONTROL) || provider.IsKeyHeld(KeyCode::RIGHT_CONTROL));
-		provider.SetKey(
+			targetProvider.IsKeyHeld(KeyCode::LEFT_CONTROL) || targetProvider.IsKeyHeld(KeyCode::RIGHT_CONTROL));
+		targetProvider.SetKey(
 			KeyCode::ALT,
-			provider.IsKeyHeld(KeyCode::LEFT_ALT) || provider.IsKeyHeld(KeyCode::RIGHT_ALT));
+			targetProvider.IsKeyHeld(KeyCode::LEFT_ALT) || targetProvider.IsKeyHeld(KeyCode::RIGHT_ALT));
 	}
 
-	void InputSubsystem::PollMouse(InputProvider& provider) noexcept
+	void InputSubsystem::PollMouse(InputProvider& targetProvider) noexcept
 	{
 		POINT cursorPos{};
 		if (GetCursorPos(&cursorPos) && ScreenToClient(activeDisplay->GetHWND(), &cursorPos))
 		{
-			provider.SetMousePosition({ cursorPos.x, cursorPos.y });
+			targetProvider.SetMousePosition({ cursorPos.x, cursorPos.y });
 		}
 
 		Microsoft::WRL::ComPtr<IGameInputReading> reading;
@@ -223,7 +224,7 @@ namespace TUK::Framework
 			return;
 		}
 
-		provider.SetMouseButtons(static_cast<u32>(mouseState.buttons));
+		targetProvider.SetMouseButtons(static_cast<u32>(mouseState.buttons));
 
 		const Vector2D<i32> CURRENT_POS{
 			static_cast<i32>(mouseState.positionX),
@@ -239,12 +240,22 @@ namespace TUK::Framework
 			const Vector2D<i32> POS_DELTA = CURRENT_POS - lastMousePosition;
 			const Vector2D<i32> WHEEL_OFFSET = CURRENT_WHEEL - lastMouseWheel;
 
-			provider.AddMousePositionDelta(POS_DELTA);
-			provider.AddMouseWheelDelta(WHEEL_OFFSET);
+			targetProvider.AddMousePositionDelta(POS_DELTA);
+			targetProvider.AddMouseWheelDelta(WHEEL_OFFSET);
 		}
 
 		lastMousePosition = CURRENT_POS;
 		lastMouseWheel = CURRENT_WHEEL;
 		hasMouseHistory = true;
+	}
+
+	void InputSubsystem::ResetInputState() noexcept
+	{
+		for (const auto& action : actions | std::views::values)
+		{
+			action->Reset();
+		}
+		provider.Reset();
+		hasMouseHistory = false;
 	}
 }

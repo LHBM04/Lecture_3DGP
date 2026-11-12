@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Vector4D.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 #include "Vector2D.hpp"
 #include "Vector3D.hpp"
@@ -44,6 +42,28 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	Vector4D<TScalar>::Vector4D(DirectX::XMVECTOR vector) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
+	{
+		Store(*this, vector);
+	}
+
+	template <Scalarable TScalar>
+	Vector4D<TScalar>::Vector4D(const DirectX::XMFLOAT4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Vector4D<TScalar>::Vector4D(const DirectX::XMINT4& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
 	Vector4D<TScalar>::operator Vector2D<TScalar>() const noexcept
 	{
 		return Vector2D<TScalar>(GetX(), GetY());
@@ -53,6 +73,27 @@ namespace TUK::Framework
 	Vector4D<TScalar>::operator Vector3D<TScalar>() const noexcept
 	{
 		return Vector3D<TScalar>(GetX(), GetY(), GetZ());
+	}
+
+	template <Scalarable TScalar>
+	Vector4D<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Vector4D<TScalar>::operator DirectX::XMFLOAT4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	Vector4D<TScalar>::operator DirectX::XMINT4() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>
@@ -566,43 +607,6 @@ namespace TUK::Framework
 		    }
 		
 		    return current + (delta / distance) * maxDistanceDelta;
-	}
-
-	template <Scalarable TScalar>
-	nlohmann::json Vector4D<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetX(), GetY(), GetZ(), GetW() };
-
-		if (!IsFinite())
-		{
-			return nlohmann::json::value_t::discarded;
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool Vector4D<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 4;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = Vector4D<TScalar>{ components[0], components[1], components[2], components[3] };
-		return true;
 	}
 
 	template class Vector4D<std::int32_t>;

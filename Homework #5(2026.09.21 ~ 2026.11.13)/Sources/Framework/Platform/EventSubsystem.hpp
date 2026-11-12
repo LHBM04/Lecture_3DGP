@@ -1,12 +1,5 @@
 ﻿#pragma once
 
-#include <concepts>
-#include <functional>
-#include <typeindex>
-#include <unordered_map>
-#include <utility>
-#include <vector>
-
 #include "../Core/Common.hpp"
 #include "../Core/EngineSubsystem.hpp"
 

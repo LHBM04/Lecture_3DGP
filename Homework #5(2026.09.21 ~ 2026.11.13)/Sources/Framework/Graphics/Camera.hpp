@@ -1,14 +1,8 @@
 ﻿#pragma once
 
-#include <expected>
-#include <optional>
-#include <string>
-
-#include <directx/d3dx12.h>
-
 #include "../Core/Common.hpp"
 
-#include "../GameObjects/Component.hpp"
+#include "../Objects/Component.hpp"
 
 #include "../Math/ColorRGBA.hpp"
 #include "../Math/Matrix4x4.hpp"

@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <filesystem>
-#include <utility>
-
 #include "../Graphics/GPUTexture2D.hpp"
 
 #include "Asset.hpp"

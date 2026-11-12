@@ -16,7 +16,9 @@
 #include "Resources/TextureAsset.hpp"
 #include "Resources/TextureAssetImporter.hpp"
 
-#include "Resources/FontAsset.hpp"
-#include "Resources/FontAssetImporter.hpp"
+#include "Resources/BitmapFontAsset.hpp"
+#include "Resources/BitmapFontAssetImporter.hpp"
 #include "Resources/AnimationAsset.hpp"
 #include "Resources/AnimationAssetImporter.hpp"
+#include "Resources/TerrainAsset.hpp"
+#include "Resources/TerrainAssetImporter.hpp"

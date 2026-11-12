@@ -1,10 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "ColorRGBA.hpp"
 
-#include <cmath>
-
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 
 #include "ColorRGB.hpp"
@@ -59,6 +55,28 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(DirectX::XMVECTOR vector) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
+	{
+		Store(*this, vector);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const DirectX::XMFLOAT4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const DirectX::XMINT4& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
 	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(const Vector4D<TScalar>& other) noexcept
 	{
 		value.x = other.GetX();
@@ -72,6 +90,27 @@ namespace TUK::Framework
 	ColorRGBA<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
 		return Vector4D<TScalar>(value.x, value.y, value.z, value.w);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::operator DirectX::XMFLOAT4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::operator DirectX::XMINT4() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>
@@ -440,46 +479,6 @@ namespace TUK::Framework
 		ColorRGBA<TScalar> result{};
 		Store(result, DirectX::XMVectorLerp(Load(start), Load(end), t));
 		return result;
-	}
-
-	template <Scalarable TScalar>
-	nlohmann::json ColorRGBA<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetR(), GetG(), GetB(), GetA() };
-
-		for (const TScalar component : components)
-		{
-			if (!std::isfinite(component))
-			{
-				return nlohmann::json::value_t::discarded;
-			}
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool ColorRGBA<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 4;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = ColorRGBA<TScalar>{ components[0], components[1], components[2], components[3] };
-		return true;
 	}
 
 	template class ColorRGBA<std::int32_t>;

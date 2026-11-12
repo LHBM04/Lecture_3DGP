@@ -204,18 +204,17 @@
   </Target>
   <ItemGroup>
     <ClInclude Include="Sources\Framework\Core\BinaryReader.hpp" />
-    <ClInclude Include="Sources\Framework\Resources\FontAsset.hpp" />
-    <ClInclude Include="Sources\Framework\Resources\FontAssetImporter.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\BitmapFontAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\BitmapFontAssetImporter.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AnimationAssetImporter.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\Component.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\GameObject.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\Transform.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\Scene.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\SceneSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Objects.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Component.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\GameObject.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Transform.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Scene.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\SceneSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ResourcePath.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp" />
     <ClInclude Include="Sources\Framework\Resources.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\App.hpp" />
@@ -241,6 +240,8 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUConstants.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\MeshVertex.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
@@ -257,6 +258,7 @@
     <ClInclude Include="Sources\Framework\Platform\Event.hpp" />
     <ClInclude Include="Sources\Framework\Platform\EventSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputStates.hpp" />
+    <ClInclude Include="Sources\Framework\Platform\InputAction.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputEvents.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputProvider.hpp" />
     <ClInclude Include="Sources\Framework\Platform\InputSubsystem.hpp" />
@@ -268,15 +270,21 @@
     <ClInclude Include="Sources\Framework\UI.hpp" />
     <ClInclude Include="Sources\Framework\UI\ButtonUI.hpp" />
     <ClInclude Include="Sources\Framework\UI\ImageView.hpp" />
-    <ClInclude Include="Sources\Game\Components\PlayerController.hpp" />
+    <ClInclude Include="Sources\Framework\UI\TextView.hpp" />
+    <ClInclude Include="Sources\Game\Components\PlayerAirplaneController.hpp" />
+    <ClInclude Include="Sources\Game\Components\PlayerTankController.hpp" />
+    <ClInclude Include="Sources\Game\Components\TitleAnimationSequence.hpp" />
     <ClInclude Include="Sources\Game\Core\Assets.hpp" />
     <ClInclude Include="Sources\Game\Core\Input.hpp" />
     <ClInclude Include="Sources\Game\Core\MyEngine.hpp" />
     <ClInclude Include="Sources\Game\Core\MyGame.hpp" />
+    <ClInclude Include="Sources\Game\Core\SceneManager.hpp" />
     <ClInclude Include="Sources\Game\Core\Time.hpp" />
+    <ClInclude Include="Sources\Game\Scenes\Scene_LevelAirplane.hpp" />
+    <ClInclude Include="Sources\Game\UI\BaseTransition.hpp" />
     <ClInclude Include="Sources\Game\UI\Transition.hpp" />
     <ClInclude Include="Sources\Game\UI\SceneTransition.hpp" />
-    <ClInclude Include="Sources\Game\Scenes\Scene_Stage.hpp" />
+    <ClInclude Include="Sources\Game\Scenes\Scene_LevelTank.hpp" />
     <ClInclude Include="Sources\Framework\Resources\Asset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AssetImporter.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AssetSubsystem.hpp" />
@@ -291,15 +299,18 @@
     <ClInclude Include="Sources\Game\Scenes\Scene_Title.hpp" />
     <ClInclude Include="Sources\Resource.hpp" />
     <ClInclude Include="Sources\Precompiled.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Terrain.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\TerrainAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\TerrainAssetImporter.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Framework\Resources\FontAssetImporter.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\BitmapFontAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\Resources\AnimationAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\GameObject.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\Transform.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\Scene.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\SceneSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\GameObject.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\Transform.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\Scene.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\SceneSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\TextureAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\Resources\CubemapAssetImporter.cpp" />
@@ -314,10 +325,7 @@
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp" />
@@ -341,16 +349,22 @@
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\UI\ButtonUI.cpp" />
     <ClCompile Include="Sources\Framework\UI\ImageView.cpp" />
-    <ClCompile Include="Sources\Game\Components\PlayerController.cpp" />
+    <ClCompile Include="Sources\Framework\UI\TextView.cpp" />
+    <ClCompile Include="Sources\Game\Components\PlayerAirplaneController.cpp" />
+    <ClCompile Include="Sources\Game\Components\PlayerTankController.cpp" />
+    <ClCompile Include="Sources\Game\Components\TitleAnimationSequence.cpp" />
     <ClCompile Include="Sources\Game\Core\Assets.cpp" />
     <ClCompile Include="Sources\Game\Core\Input.cpp" />
     <ClCompile Include="Sources\Game\Core\MyEngine.cpp" />
     <ClCompile Include="Sources\Game\Core\MyGame.cpp" />
+    <ClCompile Include="Sources\Game\Core\SceneManager.cpp" />
     <ClCompile Include="Sources\Game\Core\Time.cpp" />
     <ClCompile Include="Sources\Game\Main.cpp" />
+    <ClCompile Include="Sources\Game\Scenes\Scene_LevelAirplane.cpp" />
+    <ClCompile Include="Sources\Game\UI\BaseTransition.cpp" />
     <ClCompile Include="Sources\Game\UI\Transition.cpp" />
     <ClCompile Include="Sources\Game\UI\SceneTransition.cpp" />
-    <ClCompile Include="Sources\Game\Scenes\Scene_Stage.cpp" />
+    <ClCompile Include="Sources\Game\Scenes\Scene_LevelTank.cpp" />
     <ClCompile Include="Sources\Game\Scenes\Scene_Title.cpp" />
     <ClCompile Include="Sources\Precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -358,6 +372,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Objects\Terrain.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\TerrainAsset.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\TerrainAssetImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\Homework #5(2026.09.21 ~ 2026.11.13).rc" />
@@ -373,7 +390,7 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <RuntimeResource Include="Resources\Models\**\*.tukmodel;Resources\Meshes\**\*.tukmesh;Resources\Materials\**\*.tukmat;Resources\Textures\**\*.dds;Resources\Fonts\**\*.tukfont;Resources\Fonts\**\*.dds;Resources\Animations\**\*.tukanim;Resources\Cubemaps\**\*.dds;Resources\Cubemaps\**\*.png" />
+    <RuntimeResource Include="Resources\Models\**\*.tukmodel;Resources\Meshes\**\*.tukmesh;Resources\Materials\**\*.tukmat;Resources\Textures\**\*.dds;Resources\Fonts\**\*.tukfont;Resources\Fonts\**\*.dds;Resources\Animations\**\*.tukanim;Resources\Cubemaps\**\*.dds;Resources\Terrains\**\*.raw;Resources\Terrains\**\*.meta" />
   </ItemGroup>
   <Target Name="CopyRuntimeResources" AfterTargets="Build">
     <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />
@@ -384,86 +401,77 @@
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Standard.hlsl">
       <FileType>Document</FileType>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
       <Message>Compiling %(Filename)%(Extension)</Message>
-      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\Skybox.hlsl">
       <FileType>Document</FileType>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
       <Message>Compiling %(Filename)%(Extension)</Message>
-      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="Resources\Shaders\DebugUI.hlsl">
+      <FileType>Document</FileType>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
+      <Message>Compiling %(Filename)%(Extension)</Message>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
+    </CustomBuild>
     <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
       <FileType>Document</FileType>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
       <Message>Compiling %(Filename)%(Extension)</Message>
-      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
     </CustomBuild>
-    <CustomBuild Include="Resources\Shaders\WorldTransition.hlsl">
+    <CustomBuild Include="Resources\Shaders\SceneTransition.hlsl">
       <FileType>Document</FileType>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } }"</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
       <Message>Compiling %(Filename)%(Extension)</Message>
-      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso</Outputs>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\Shaders\TextUI.hlsl">
       <FileType>Document</FileType>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
+      <Message>Compiling %(Filename)%(Extension)</Message>
+      <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeX.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeY.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_NegativeZ.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveX.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveY.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Blue Sky\Polyverse Skies - Blue Sky_PositiveZ.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeX.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeY.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_NegativeZ.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveX.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveY.png" />
-    <None Include="Resources\Cubemaps\Polyverse Skies - Night Sky\Polyverse Skies - Night Sky_PositiveZ.png" />
     <None Include="Resources\Fonts\BMDOHYEON_0.dds" />
     <None Include="Resources\Fonts\BMDOHYEON_ttf.tukfont" />
-    <None Include="Resources\Fonts\BMDOHYEON_ttf_0.png" />
+    <None Include="Resources\Fonts\BMDOHYEON_ttf_0.dds" />
     <None Include="Resources\Fonts\BMEuljiro10yearslater 1.tukfont" />
-    <None Include="Resources\Fonts\BMEuljiro10yearslater 1_0.png" />
+    <None Include="Resources\Fonts\BMEuljiro10yearslater 1_0.dds" />
     <None Include="Resources\Fonts\BMEuljiro10yearslater.tukfont" />
     <None Include="Resources\Fonts\BMEuljiro10yearslater_0.dds" />
-    <None Include="Resources\Fonts\BMEuljiro10yearslater_0.png" />
     <None Include="Resources\Fonts\BMEuljirooraeorae.tukfont" />
     <None Include="Resources\Fonts\BMEuljirooraeorae_0.dds" />
-    <None Include="Resources\Fonts\BMEuljirooraeorae_0.png" />
     <None Include="Resources\Fonts\BMEULJIROTTF.tukfont" />
     <None Include="Resources\Fonts\BMEULJIROTTF_0.dds" />
-    <None Include="Resources\Fonts\BMEULJIROTTF_0.png" />
     <None Include="Resources\Fonts\BMHANNA_11yrs_0.dds" />
     <None Include="Resources\Fonts\BMHANNA_11yrs_ttf.tukfont" />
-    <None Include="Resources\Fonts\BMHANNA_11yrs_ttf_0.png" />
+    <None Include="Resources\Fonts\BMHANNA_11yrs_ttf_0.dds" />
     <None Include="Resources\Fonts\BMHANNAAir_0.dds" />
     <None Include="Resources\Fonts\BMHANNAAir_ttf.tukfont" />
-    <None Include="Resources\Fonts\BMHANNAAir_ttf_0.png" />
+    <None Include="Resources\Fonts\BMHANNAAir_ttf_0.dds" />
     <None Include="Resources\Fonts\BMHANNAPro.tukfont" />
     <None Include="Resources\Fonts\BMHANNAPro_0.dds" />
-    <None Include="Resources\Fonts\BMHANNAPro_0.png" />
     <None Include="Resources\Fonts\BMJUA_0.dds" />
     <None Include="Resources\Fonts\BMJUA_ttf.tukfont" />
-    <None Include="Resources\Fonts\BMJUA_ttf_0.png" />
+    <None Include="Resources\Fonts\BMJUA_ttf_0.dds" />
     <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF.tukfont" />
     <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF_0.dds" />
-    <None Include="Resources\Fonts\BMKIRANGHAERANG-TTF_0.png" />
     <None Include="Resources\Fonts\BMKkubulimTTF.tukfont" />
     <None Include="Resources\Fonts\BMKkubulimTTF_0.dds" />
-    <None Include="Resources\Fonts\BMKkubulimTTF_0.png" />
     <None Include="Resources\Fonts\BMYEONSUNG_0.dds" />
     <None Include="Resources\Fonts\BMYEONSUNG_ttf.tukfont" />
-    <None Include="Resources\Fonts\BMYEONSUNG_ttf_0.png" />
+    <None Include="Resources\Fonts\BMYEONSUNG_ttf_0.dds" />
     <None Include="Resources\Materials\Carro_Armato_L6_40.tukmat" />
     <None Include="Resources\Materials\Carro_Armato_M13_40.tukmat" />
     <None Include="Resources\Materials\Chi_Ha.tukmat" />
@@ -472,6 +480,7 @@
     <None Include="Resources\Materials\Ha_Go.tukmat" />
     <None Include="Resources\Materials\Hotchkiss_H35.tukmat" />
     <None Include="Resources\Materials\ImageUI.tukmat" />
+    <None Include="Resources\Materials\TextUI.tukmat" />
     <None Include="Resources\Materials\KV_2(1940).tukmat" />
     <None Include="Resources\Materials\M4A3(75)_Sherman.tukmat" />
     <None Include="Resources\Materials\M5A1_Stuart.tukmat" />
@@ -483,6 +492,7 @@
     <None Include="Resources\Materials\SOMUA_S35.tukmat" />
     <None Include="Resources\Materials\T_28_85.tukmat" />
     <None Include="Resources\Materials\T_34_76(1942).tukmat" />
+    <None Include="Resources\Materials\Terrain.tukmat" />
     <None Include="Resources\Materials\Track.tukmat" />
     <None Include="Resources\Materials\Vickers_MK_E_Type_B.tukmat" />
     <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Gun.tukmesh" />
@@ -1573,5 +1583,22 @@
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_AO.dds" />
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Metallic.dds" />
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Normal.dds" />
+    <None Include="Resources\Terrains\HeightMap0.raw" />
+    <None Include="Resources\Terrains\HeightMap1.raw" />
+    <None Include="Sources\Framework\Resources\Editor\TUKAnimationExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKAnimationExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKBinaryWriter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKCubemapExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKCubemapExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKFontExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKFontExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMaterialExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMaterialExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMeshExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKMeshExporterWindow.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKModelExporter.cs" />
+    <None Include="Sources\Framework\Resources\Editor\TUKModelExporterWindow.cs" />
   </ItemGroup>
 </Project>

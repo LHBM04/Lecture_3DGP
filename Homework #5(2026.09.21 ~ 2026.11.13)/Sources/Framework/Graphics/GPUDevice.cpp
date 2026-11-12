@@ -1,11 +1,5 @@
 ﻿#include "Precompiled.hpp"
-
 #include "GPUDevice.hpp"
-
-#include <format>
-#include <limits>
-#include <utility>
-#include <vector>
 
 #include "../Platform/Display.hpp"
 

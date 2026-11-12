@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Quaternion.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 
 #include "Matrix4x4.hpp"
@@ -27,6 +25,49 @@ namespace TUK::Framework
 	Quaternion<TScalar>::Quaternion(TScalar x, TScalar y, TScalar z, TScalar w) noexcept
 		: value(x, y, z, w)
 	{
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::Quaternion(DirectX::XMVECTOR quaternion) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
+	{
+		Store(*this, quaternion);
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::Quaternion(const DirectX::XMFLOAT4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::Quaternion(const DirectX::XMINT4& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::operator DirectX::XMFLOAT4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::operator DirectX::XMINT4() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>
@@ -612,43 +653,6 @@ namespace TUK::Framework
 
 		const float t = std::min(1.0f, maxDegreesDelta / angleDegrees);
 		return SlerpUnclamped(from, to, t);
-	}
-
-	template <Scalarable TScalar>
-	nlohmann::json Quaternion<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetX(), GetY(), GetZ(), GetW() };
-
-		if (!IsFinite())
-		{
-			return nlohmann::json::value_t::discarded;
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool Quaternion<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 4;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = Quaternion<TScalar>{ components[0], components[1], components[2], components[3] };
-		return true;
 	}
 
 	template class Quaternion<std::int32_t>;

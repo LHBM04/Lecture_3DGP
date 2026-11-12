@@ -1,10 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "AnimationAssetImporter.hpp"
 
-#include <cmath>
-#include <fstream>
-#include <unordered_set>
-
 #include "../Core/BinaryReader.hpp"
 
 namespace TUK::Framework

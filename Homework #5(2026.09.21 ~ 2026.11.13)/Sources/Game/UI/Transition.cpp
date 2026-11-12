@@ -1,114 +1,50 @@
 ﻿#include "Precompiled.hpp"
 #include "Transition.hpp"
 
-#include <algorithm>
-#include <cmath>
-#include <span>
-#include <utility>
-
-#include <directx/d3dx12.h>
-
-#include "Framework/Graphics/GPUCommandBuffer.hpp"
-#include "Framework/Graphics/GPUDevice.hpp"
-#include "Framework/Graphics/GPUTarget.hpp"
-
-#include "Framework/Resources/ShaderAssetImporter.hpp"
+#include "../Core/Time.hpp"
 
 namespace TUK::Game
 {
-	using namespace Framework;
-
-	std::expected<void, std::string> Transition::Initialize(
-		const GPUDevice& device, AssetSubsystem* assets)
+	void Transition::OnPlayingUpdate()
 	{
-		ASSERT_FMT(assets, "에셋 서브시스템이 nullptr입니다.");
+		BaseTransition::OnPlayingUpdate();
 
-		// Load directly so world asset cleanup cannot release the transition pipeline.
-		ShaderAssetImporter importer(assets);
-		auto vertex = importer.Import("Resources/Shaders/WorldTransition.vert.cso");
-		if (!vertex)
-		{
-			return std::unexpected(vertex.error());
-		}
-		auto pixel = importer.Import("Resources/Shaders/WorldTransition.frag.cso");
-		if (!pixel)
-		{
-			return std::unexpected(pixel.error());
-		}
-
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC description = (*vertex)->CreatePipelineDescription(TARGET_FORMAT);
-		description.VS = (*vertex)->GetShader().GetD3DBytecode();
-		description.PS = (*pixel)->GetShader().GetD3DBytecode();
-
-		auto created = device.CreateGraphicsPipelineState(description);
-		if (!created)
-		{
-			return std::unexpected(created.error());
-		}
-
-		pipeline = std::move(*created);
-		return {};
-	}
-
-	void Transition::Shutdown() noexcept
-	{
-		Reset();
-		pipeline.reset();
-	}
-
-	void Transition::Reset() noexcept
-	{
-		state = TransitionState::IDLE;
-		opacity = 0.0f;
-		hasRenderedExit = false;
-	}
-
-	bool Transition::Enter(f32 duration) noexcept
-	{
-		if (!pipeline || !std::isfinite(duration) || duration <= 0.0f)
-		{
-			return false;
-		}
-		this->duration = duration;
-		state = TransitionState::ENTER;
-		return true;
-	}
-
-	bool Transition::Exit(f32 duration) noexcept
-	{
-		if (!pipeline || !std::isfinite(duration) || duration <= 0.0f)
-		{
-			return false;
-		}
-		this->duration = duration;
-		hasRenderedExit = false;
-		state = TransitionState::EXIT;
-		return true;
-	}
-
-	void Transition::Update(f32 deltaTime)
-	{
-		if (!std::isfinite(deltaTime) || deltaTime < 0.0f)
+		const f32 rawDeltaTime = Time::GetUnscaledDeltaTime();
+		if (!std::isfinite(rawDeltaTime) || rawDeltaTime < 0.0f)
 		{
 			return;
 		}
-		switch (state)
+
+		const f32 deltaTime = std::min(rawDeltaTime, MAX_DELTA_TIME);
+		switch (GetState())
 		{
-			case TransitionState::ENTER:
+			case TransitionState::OPEN:
 			{
-				opacity = std::max(opacity - deltaTime / duration, 0.0f);
-				if (opacity == 0.0f)
+				if (openDuration <= 0.0f)
 				{
-					state = TransitionState::ENTERCOMPLETE;
+					OpenComplete();
+					break;
+				}
+
+				SetProgress(GetProgress() + (deltaTime / openDuration));
+				if (GetProgress() >= 1.0f)
+				{
+					OpenComplete();
 				}
 				break;
 			}
-			case TransitionState::EXIT:
+			case TransitionState::CLOSE:
 			{
-				opacity = std::min(opacity + deltaTime / duration, 1.0f);
-				if (opacity == 1.0f)
+				if (closeDuration <= 0.0f)
 				{
-					state = TransitionState::EXITCOMPLETE;
+					CloseComplete();
+					break;
+				}
+
+				SetProgress(GetProgress() - (deltaTime / closeDuration));
+				if (GetProgress() <= 0.0f)
+				{
+					CloseComplete();
 				}
 				break;
 			}
@@ -119,36 +55,101 @@ namespace TUK::Game
 		}
 	}
 
-	std::expected<void, std::string> Transition::Render(GPUCommandBuffer& commandBuffer)
+	void Transition::Reset() noexcept
 	{
-		if (!pipeline || opacity <= 0.0f)
+		BaseTransition::Reset();
+	}
+
+	void Transition::Open()
+	{
+		if (GetState() != TransitionState::CLOSE)
 		{
-			return {};
-		}
-		if (commandBuffer.GetActiveTargetFormat() != TARGET_FORMAT)
-		{
-			return std::unexpected("페이드 파이프라인과 렌더 타깃의 형식이 다릅니다.");
+			SetProgress(0.0f);
 		}
 
-		const D3D12_RECT& bounds = commandBuffer.GetActiveTargetBounds();
-		const CD3DX12_VIEWPORT viewport(
-			static_cast<f32>(bounds.left), static_cast<f32>(bounds.top),
-			static_cast<f32>(bounds.right - bounds.left), static_cast<f32>(bounds.bottom - bounds.top));
-		commandBuffer.SetViewport(viewport);
-		commandBuffer.SetScissorRect(bounds);
+		BaseTransition::Open();
+		onOpenBegin.Broadcast();
+	}
 
-		const DirectX::XMFLOAT4 color{ 0.0f, 0.0f, 0.0f, opacity };
-		commandBuffer.SetGraphicsRootConstants(
-			GPUCommandBuffer::ROOT_CONSTANT_SLOT, std::as_bytes(std::span(&color, 1)));
-
-		commandBuffer.SetGPUGraphicsPipelineState(*pipeline);
-		commandBuffer.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		constexpr u32 FULLSCREEN_VERTEX_COUNT = 3;
-		commandBuffer.Draw(FULLSCREEN_VERTEX_COUNT);
-		if (state == TransitionState::EXITCOMPLETE)
+	void Transition::OpenComplete()
+	{
+		if (GetState() == TransitionState::OPEN_COMPLETE)
 		{
-			hasRenderedExit = true;
+			return;
 		}
-		return {};
+
+		SetProgress(1.0f);
+		onOpenComplete.Broadcast();
+		BaseTransition::OpenComplete();
+	}
+
+	void Transition::Close()
+	{
+		if (GetState() == TransitionState::IDLE)
+		{
+			return;
+		}
+
+		if (GetState() != TransitionState::OPEN)
+		{
+			SetProgress(1.0f);
+		}
+
+		BaseTransition::Close();
+		onCloseBegin.Broadcast();
+	}
+
+	void Transition::CloseComplete()
+	{
+		if (GetState() == TransitionState::CLOSE_COMPLETE)
+		{
+			return;
+		}
+
+		BaseTransition::CloseComplete();
+		onCloseComplete.Broadcast();
+	}
+
+	void Transition::Play()
+	{
+		if (IsPlaying())
+		{
+			return;
+		}
+
+		BaseTransition::Play();
+		onPlay.Broadcast();
+	}
+
+	void Transition::Pause()
+	{
+		if (!IsPlaying())
+		{
+			return;
+		}
+
+		BaseTransition::Pause();
+		onPause.Broadcast();
+	}
+
+	void Transition::Stop()
+	{
+		if (GetState() == TransitionState::IDLE)
+		{
+			return;
+		}
+
+		BaseTransition::Stop();
+		onStop.Broadcast();
+	}
+
+	void Transition::SetProgress(f32 value) noexcept
+	{
+		const f32 previous = GetProgress();
+		BaseTransition::SetProgress(value);
+		if (GetProgress() != previous)
+		{
+			onProgressChanged.Broadcast(GetProgress());
+		}
 	}
 }

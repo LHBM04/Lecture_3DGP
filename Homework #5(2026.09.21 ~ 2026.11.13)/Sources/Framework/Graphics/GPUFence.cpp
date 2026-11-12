@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "GPUFence.hpp"
 
-#include <limits>
-
 #include "GPUDevice.hpp"
 
 namespace TUK::Framework

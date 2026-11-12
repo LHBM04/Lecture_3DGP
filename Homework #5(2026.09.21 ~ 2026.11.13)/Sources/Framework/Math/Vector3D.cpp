@@ -1,8 +1,6 @@
 ﻿#include "Precompiled.hpp"
 #include "Vector3D.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include "Mathf.hpp"
 #include "Vector2D.hpp"
 #include "Vector4D.hpp"
@@ -52,6 +50,20 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	Vector3D<TScalar>::Vector3D(const DirectX::XMFLOAT3& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::Vector3D(const DirectX::XMINT3& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
 	Vector3D<TScalar>::operator Vector2D<TScalar>() const noexcept
 	{
 		return Vector2D<TScalar>(GetX(), GetY());
@@ -61,6 +73,27 @@ namespace TUK::Framework
 	Vector3D<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
 		return Vector4D<TScalar>(GetX(), GetY(), GetZ(), TScalar{});
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::operator DirectX::XMFLOAT3() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::operator DirectX::XMINT3() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>
@@ -703,43 +736,6 @@ namespace TUK::Framework
 		    }
 		
 		    return output;
-	}
-
-	template <Scalarable TScalar>
-	nlohmann::json Vector3D<TScalar>::Serialize() const
-	{
-		const TScalar components[]{ GetX(), GetY(), GetZ() };
-
-		if (!IsFinite())
-		{
-			return nlohmann::json::value_t::discarded;
-		}
-
-		return nlohmann::json(components);
-	}
-
-	template <Scalarable TScalar>
-	bool Vector3D<TScalar>::Deserialize(const nlohmann::json& value) noexcept
-	{
-		constexpr usize COMPONENT_COUNT = 3;
-		if (!value.is_array() || value.size() != COMPONENT_COUNT)
-		{
-			return false;
-		}
-
-		TScalar components[COMPONENT_COUNT]{};
-		for (usize index = 0; index < COMPONENT_COUNT; ++index)
-		{
-			const auto& component = value[index];
-			const bool isNumber = std::same_as<TScalar, i32> ? component.is_number_integer() : component.is_number();
-			if (!isNumber || !Mathf::TryConvertScalar(component.get<f64>(), components[index]))
-			{
-				return false;
-			}
-		}
-
-		*this = Vector3D<TScalar>{ components[0], components[1], components[2] };
-		return true;
 	}
 
 	template class Vector3D<std::int32_t>;

@@ -1,17 +1,11 @@
 ﻿#include "Precompiled.hpp"
 #include "Camera.hpp"
 
-#include <algorithm>
-#include <array>
-#include <cmath>
-#include <span>
-#include <utility>
-
 #include "../Core/Common.hpp"
 
-#include "../GameObjects/GameObject.hpp"
-#include "../GameObjects/Transform.hpp"
-#include "../GameObjects/Scene.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
+#include "../Objects/Scene.hpp"
 
 #include "../Math/Quaternion.hpp"
 #include "../Math/Vector3D.hpp"

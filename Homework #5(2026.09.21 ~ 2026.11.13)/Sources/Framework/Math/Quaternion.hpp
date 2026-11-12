@@ -1,14 +1,5 @@
 ﻿#pragma once
 
-#include <compare>
-#include <concepts>
-#include <cstddef>
-#include <limits>
-#include <type_traits>
-
-#include <directxmath/DirectXMath.h>
-#include <nlohmann/json_fwd.hpp>
-
 #include "Vector3D.hpp"
 
 #include "../Core/Common.hpp"
@@ -26,26 +17,34 @@ namespace TUK::Framework
 		Quaternion(const Quaternion& other) noexcept = default;
 		Quaternion(Quaternion&& other) noexcept = default;
 
+		explicit Quaternion(DirectX::XMVECTOR quaternion) noexcept requires std::same_as<TScalar, f32>;
+		explicit Quaternion(const DirectX::XMFLOAT4& source) noexcept requires std::same_as<TScalar, f32>;
+		explicit Quaternion(const DirectX::XMINT4& source) noexcept requires std::same_as<TScalar, i32>;
+
 		Quaternion& operator=(const Quaternion& other) noexcept = default;
 		Quaternion& operator=(Quaternion&& other) noexcept = default;
+
+		[[nodiscard]] operator DirectX::XMVECTOR() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT4() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMINT4() const noexcept requires std::same_as<TScalar, i32>;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
 
 		[[nodiscard]] Quaternion operator+(const Quaternion& _other) const noexcept;
-		[[nodiscard]] Quaternion& operator+=(const Quaternion& _other) noexcept;
+		Quaternion& operator+=(const Quaternion& _other) noexcept;
 
 		[[nodiscard]] Quaternion operator-(const Quaternion& _other) const noexcept;
-		[[nodiscard]] Quaternion& operator-=(const Quaternion& _other) noexcept;
+		Quaternion& operator-=(const Quaternion& _other) noexcept;
 
 		[[nodiscard]] Quaternion operator*(TScalar _scalar) const noexcept;
 		[[nodiscard]] Quaternion operator*(const Quaternion& _other) const noexcept;
 		[[nodiscard]] Vector3D<f32> operator*(const Vector3D<f32>& vector) const noexcept requires std::same_as<TScalar, f32>;
-		[[nodiscard]] Quaternion& operator*=(TScalar _scalar) noexcept;
-		[[nodiscard]] Quaternion& operator*=(const Quaternion& _other) noexcept;
+		Quaternion& operator*=(TScalar _scalar) noexcept;
+		Quaternion& operator*=(const Quaternion& _other) noexcept;
 
 		[[nodiscard]] Quaternion operator/(TScalar _scalar) const noexcept;
-		[[nodiscard]] Quaternion& operator/=(TScalar _scalar) noexcept;
+		Quaternion& operator/=(TScalar _scalar) noexcept;
 
 		[[nodiscard]] bool operator==(const Quaternion& other) const noexcept;
 		[[nodiscard]] bool operator!=(const Quaternion& other) const noexcept;
@@ -114,9 +113,6 @@ namespace TUK::Framework
 		[[nodiscard]] static Quaternion FromToRotation(const Vector3D<f32>& fromDirection, const Vector3D<f32>& toDirection) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion LookRotation(const Vector3D<f32>& forward, const Vector3D<f32>& up) noexcept requires std::same_as<TScalar, f32>;
 		[[nodiscard]] static Quaternion RotateTowards(const Quaternion& from, const Quaternion& to, f32 maxDegreesDelta) noexcept requires std::same_as<TScalar, f32>;
-
-		[[nodiscard]] nlohmann::json Serialize() const;
-		[[nodiscard]] bool Deserialize(const nlohmann::json& value) noexcept;
 
 	private:
 		std::conditional_t<std::same_as<TScalar, i32>, DirectX::XMINT4, DirectX::XMFLOAT4> value;

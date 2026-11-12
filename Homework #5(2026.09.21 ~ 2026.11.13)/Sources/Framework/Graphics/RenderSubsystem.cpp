@@ -1,18 +1,11 @@
 ﻿#include "Precompiled.hpp"
 #include "RenderSubsystem.hpp"
 
-#include <array>
-#include <format>
-#include <iostream>
-#include <ranges>
-#include <utility>
-
 #include "../Platform/Display.hpp"
 #include "../Platform/DisplayEvents.hpp"
 
 #include "../Core/Common.hpp"
 
-#include "GPUSampler.hpp"
 #include "GPUTexture2D.hpp"
 
 namespace TUK::Framework
@@ -69,12 +62,12 @@ namespace TUK::Framework
 			const GPUTarget target = swapChain.GetCurrentBackBufferTarget();
 			const GPUTexture2D& backBuffer = target.GetTexture();
 
-			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			commandBuffer->Transition(backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			commandBuffer->SetGPUTarget(target);
 
 			onRender.Broadcast(*commandBuffer);
 
-			commandBuffer->TransitionTexture(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+			commandBuffer->Transition(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		}
 
 		if (auto result = commandBuffer->Submit(); !result)
@@ -215,9 +208,54 @@ namespace TUK::Framework
 
 			const std::array samplers =
 			{
-				GPUSampler::LinearWrap().ToStaticDescription(0),
-				GPUSampler::LinearClamp().ToStaticDescription(1),
-				GPUSampler::PointClamp().ToStaticDescription(2)
+				D3D12_STATIC_SAMPLER_DESC
+				{
+					.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+					.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+					.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+					.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+					.MipLODBias = 0.0f,
+					.MaxAnisotropy = 1,
+					.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
+					.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK,
+					.MinLOD = 0.0f,
+					.MaxLOD = D3D12_FLOAT32_MAX,
+					.ShaderRegister = 0,
+					.RegisterSpace = 0,
+					.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
+				},
+				D3D12_STATIC_SAMPLER_DESC
+				{
+					.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+					.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+					.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+					.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+					.MipLODBias = 0.0f,
+					.MaxAnisotropy = 1,
+					.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
+					.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK,
+					.MinLOD = 0.0f,
+					.MaxLOD = D3D12_FLOAT32_MAX,
+					.ShaderRegister = 1,
+					.RegisterSpace = 0,
+					.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
+				},
+				D3D12_STATIC_SAMPLER_DESC
+				{
+					.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT,
+					.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+					.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+					.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+					.MipLODBias = 0.0f,
+					.MaxAnisotropy = 1,
+					.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
+					.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK,
+					.MinLOD = 0.0f,
+					.MaxLOD = D3D12_FLOAT32_MAX,
+					.ShaderRegister = 2,
+					.RegisterSpace = 0,
+					.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
+				}
 			};
 
 			CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription{};
