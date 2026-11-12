@@ -70,6 +70,27 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	Matrix4x4<TScalar>::Matrix4x4(const DirectX::XMFLOAT4X4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Matrix4x4<TScalar>::operator DirectX::XMMATRIX() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Matrix4x4<TScalar>::operator DirectX::XMFLOAT4X4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
 	TScalar Matrix4x4<TScalar>::operator[](size_t index) const noexcept
 	{
 		ASSERT_FMT(index < 16, "index가 유효 범위(0~15)를 벗어났습니다.");

@@ -82,7 +82,7 @@ namespace TUK::Framework
 			rootSlot, static_cast<u32>(bytes.size() / sizeof(u32)), bytes.data(), offset);
 	}
 
-	void GPUCommandBuffer::TransitionTexture(
+	void GPUCommandBuffer::Transition(
 		const GPUTexture2D& texture,
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
@@ -98,7 +98,7 @@ namespace TUK::Framework
 		d3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
-	void GPUCommandBuffer::TransitionBuffer(
+	void GPUCommandBuffer::Transition(
 		const GPUBuffer& buffer,
 		D3D12_RESOURCE_STATES stateBefore,
 		D3D12_RESOURCE_STATES stateAfter)
@@ -220,12 +220,14 @@ namespace TUK::Framework
 		std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
 		const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView)
 	{
+		auto& d3dDevice = device->GetD3DDevice();
+
 		constexpr u32 DESCRIPTORS_PER_PAGE = 256;
-		static_assert(DESCRIPTORS_PER_PAGE % TEXTURE_SLOT_COUNT == 0);
 		constexpr auto HEAP_TYPE = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		
 		const usize pageIndex = textureDescriptorCount / DESCRIPTORS_PER_PAGE;
 		const usize slot = textureDescriptorCount % DESCRIPTORS_PER_PAGE;
-		auto& d3dDevice = device->GetD3DDevice();
+		
 		if (pageIndex == textureDescriptorPages.size())
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC description{};
@@ -244,6 +246,7 @@ namespace TUK::Framework
 		ID3D12DescriptorHeap* heap = textureDescriptorPages[pageIndex].Get();
 		const UINT descriptorStride = d3dDevice.GetDescriptorHandleIncrementSize(HEAP_TYPE);
 		const usize offset = slot * descriptorStride;
+		
 		auto cpuHandle = heap->GetCPUDescriptorHandleForHeapStart();
 		cpuHandle.ptr += offset;
 
@@ -252,6 +255,7 @@ namespace TUK::Framework
 		nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 		nullView.Texture2D.MipLevels = 1;
+		
 		for (usize index = 0; index < textures.size(); ++index)
 		{
 			const GPUTexture2D* texture = textures[index];
@@ -260,6 +264,7 @@ namespace TUK::Framework
 			{
 				view = firstView;
 			}
+		
 			d3dDevice.CreateShaderResourceView(texture ? &texture->GetD3DResource() : nullptr, view, cpuHandle);
 			cpuHandle.ptr += descriptorStride;
 		}
@@ -271,8 +276,10 @@ namespace TUK::Framework
 
 		auto gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
 		gpuHandle.ptr += offset;
+		
 		d3dCommandList->SetGraphicsRootDescriptorTable(TEXTURE_ROOT_SLOT, gpuHandle);
 		textureDescriptorCount += TEXTURE_SLOT_COUNT;
+		
 		return {};
 	}
 
@@ -284,6 +291,7 @@ namespace TUK::Framework
 
 		constexpr u64 CONSTANT_BUFFER_PAGE_SIZE = 64 * 1024;
 		constexpr u64 ALIGNMENT = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
+
 		if (bytes.empty() || bytes.size() > CONSTANT_BUFFER_PAGE_SIZE)
 		{
 			return std::unexpected("GPU 디바이스 또는 상수 버퍼 데이터가 유효하지 않습니다.");
@@ -306,11 +314,13 @@ namespace TUK::Framework
 			{
 				return std::unexpected(page.error());
 			}
+
 			constantBufferPages.emplace_back(std::move(*page));
 		}
 
 		const u64 offset = constantBufferOffset;
 		GPUBuffer& page = constantBufferPages[constantBufferPageIndex];
+
 		if (auto result = page.Write(std::span<const u8>(reinterpret_cast<const u8*>(bytes.data()), bytes.size()), offset); !result)
 		{
 			return std::unexpected(result.error());

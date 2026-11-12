@@ -53,7 +53,7 @@ namespace TUK::Game
 		commandBuffer.SetViewport(viewport);
 		commandBuffer.SetScissorRect(bounds);
 
-		const DirectX::XMFLOAT4 color{
+		const ColorRGBA<f32> color{
 			fadeColor.GetR(),
 			fadeColor.GetG(),
 			fadeColor.GetB(),

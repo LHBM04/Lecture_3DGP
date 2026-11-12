@@ -3,11 +3,11 @@
 
 #include "../Core/Common.hpp"
 
-#include "../GameObjects/GameObject.hpp"
-#include "../GameObjects/Transform.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
 
 #include "../Graphics/GPUCommandBuffer.hpp"
-#include "../Graphics/ShaderConstants.hpp"
+#include "../Graphics/GPUConstants.hpp"
 
 #include "../Resources/BitmapFontAsset.hpp"
 #include "../Resources/MaterialAsset.hpp"
@@ -104,21 +104,23 @@ namespace TUK::Framework
 			return;
 		}
 
-		ObjectConstants objectConstants{};
-		DirectX::XMStoreFloat4x4(&objectConstants.world, Matrix4x4<f32>::Load(transform->GetWorldMatrix()));
+		ObjectConstants objectConstants
+		{
+			.world = transform->GetWorldMatrix()
+		};
 
-		const f32 scaleX = std::hypot(objectConstants.world._11, objectConstants.world._12);
-		const f32 scaleY = std::hypot(objectConstants.world._21, objectConstants.world._22);
+		const f32 scaleX = std::hypot(objectConstants.world[0], objectConstants.world[1]);
+		const f32 scaleY = std::hypot(objectConstants.world[4], objectConstants.world[5]);
 		constexpr f32 MIN_SCALE = 1.0e-6f;
 		if (scaleX > MIN_SCALE)
 		{
-			objectConstants.world._11 /= scaleX;
-			objectConstants.world._12 /= scaleX;
+			objectConstants.world[0] /= scaleX;
+			objectConstants.world[1] /= scaleX;
 		}
 		if (scaleY > MIN_SCALE)
 		{
-			objectConstants.world._21 /= scaleY;
-			objectConstants.world._22 /= scaleY;
+			objectConstants.world[4] /= scaleY;
+			objectConstants.world[5] /= scaleY;
 		}
 
 		if (auto result = commandBuffer.SetGraphicsConstants(objectConstants); !result)
@@ -138,9 +140,9 @@ namespace TUK::Framework
 		commandBuffer.SetPrimitiveTopology(material->GetPrimitive());
 
 		const D3D12_VIEWPORT& viewport = commandBuffer.GetActiveViewport();
-		const DirectX::XMFLOAT2 viewportSize = (viewport.Width > 0.0f && viewport.Height > 0.0f)
-			? DirectX::XMFLOAT2{ viewport.Width, viewport.Height }
-			: DirectX::XMFLOAT2{ 1280.0f, 960.0f };
+		const Vector2D<f32> viewportSize = (viewport.Width > 0.0f && viewport.Height > 0.0f)
+			? Vector2D<f32>{ viewport.Width, viewport.Height }
+			: Vector2D<f32>{ 1280.0f, 960.0f };
 
 		const f32 pointSize = font->GetPointSize();
 		const f32 scale = (pointSize > 0.0f) ? (fontSize / pointSize) : 1.0f;
@@ -183,9 +185,9 @@ namespace TUK::Framework
 				const TextUIConstants constants
 				{
 					.viewportSize = viewportSize,
-					.glyphRect = { glyphX, glyphY, glyphWidth, glyphHeight },
-					.glyphUV = { character->uvMin[0], character->uvMin[1], character->uvMax[0], character->uvMax[1] },
-					.textColor = { color.GetR(), color.GetG(), color.GetB(), color.GetA() }
+					.glyphRect = Vector4D<f32>{ glyphX, glyphY, glyphWidth, glyphHeight },
+					.glyphUV = Vector4D<f32>{ character->uvMin[0], character->uvMin[1], character->uvMax[0], character->uvMax[1] },
+					.textColor = color
 				};
 
 				if (auto result = commandBuffer.SetGraphicsConstants(constants); !result)

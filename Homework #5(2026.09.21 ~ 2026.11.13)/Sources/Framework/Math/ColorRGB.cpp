@@ -43,6 +43,49 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	ColorRGB<TScalar>::ColorRGB(DirectX::XMVECTOR vector) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{}, TScalar{})
+	{
+		Store(*this, vector);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGB<TScalar>::ColorRGB(const DirectX::XMFLOAT3& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	ColorRGB<TScalar>::ColorRGB(const DirectX::XMINT3& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	ColorRGB<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGB<TScalar>::operator DirectX::XMFLOAT3() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	ColorRGB<TScalar>::operator DirectX::XMINT3() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
 	bool ColorRGB<TScalar>::operator==(const ColorRGB<TScalar>& other) const noexcept
 	{
 		if constexpr (std::same_as<TScalar, std::int32_t>)

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Framework/Core.hpp"
-#include "Framework/GameObjects.hpp"
+#include "Framework/Objects.hpp"
 
 namespace TUK::Game
 {

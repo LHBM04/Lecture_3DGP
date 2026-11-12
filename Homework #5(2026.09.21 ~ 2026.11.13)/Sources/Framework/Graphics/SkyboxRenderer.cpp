@@ -7,7 +7,7 @@
 #include "../Resources/MaterialAsset.hpp"
 
 #include "GPUCommandBuffer.hpp"
-#include "ShaderConstants.hpp"
+#include "GPUConstants.hpp"
 
 namespace TUK::Framework
 {
@@ -20,7 +20,7 @@ namespace TUK::Framework
 
 		const SkyboxConstants constants
 		{
-			.color = { color.GetR(), color.GetG(), color.GetB(), color.GetA() }
+			.color = color
 		};
 		if (auto result = commandBuffer.SetGraphicsConstants(constants); !result)
 		{

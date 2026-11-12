@@ -112,14 +112,14 @@ namespace TUK::Framework
 			const Vector3D<f32>& pos = parsedPositions[i];
 			const Vector3D<f32>& norm = parsedNormals[i];
 
-			const DirectX::XMFLOAT2 uv = parsedUVs.empty()
-				? DirectX::XMFLOAT2{ 0.0f, 0.0f }
-				: DirectX::XMFLOAT2{ parsedUVs[i].GetX(), 1.0f - parsedUVs[i].GetY() };
+			const Vector2D<f32> uv = parsedUVs.empty()
+				? Vector2D<f32>::GetZero()
+				: Vector2D<f32>{ parsedUVs[i].GetX(), 1.0f - parsedUVs[i].GetY() };
 
 			builtVertices[i] = MeshVertex{
-				DirectX::XMFLOAT3{ pos.GetX(), pos.GetY(), pos.GetZ() },
-				DirectX::XMFLOAT3{ norm.GetX(), norm.GetY(), norm.GetZ() },
-				DirectX::XMFLOAT4{ 1.0f, 1.0f, 1.0f, 1.0f },
+				pos,
+				norm,
+				ColorRGBA<f32>::GetWhite(),
 				uv
 			};
 		}

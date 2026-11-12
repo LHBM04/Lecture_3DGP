@@ -38,7 +38,7 @@ namespace TUK::Game
 		[[nodiscard]] Delegate<>& OnNextScene() noexcept;
 
 	private:
-		static constexpr std::string_view DEFAULT_MATERIAL_PATH = "Resources/Materials/WorldTransition.tukmat";
+		static constexpr std::string_view DEFAULT_MATERIAL_PATH = "Resources/Materials/SceneTransition.tukmat";
 
 		SceneSubsystem* scenes = nullptr;
 		InputSubsystem* input = nullptr;

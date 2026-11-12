@@ -28,6 +28,49 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	Quaternion<TScalar>::Quaternion(DirectX::XMVECTOR quaternion) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
+	{
+		Store(*this, quaternion);
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::Quaternion(const DirectX::XMFLOAT4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::Quaternion(const DirectX::XMINT4& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::operator DirectX::XMFLOAT4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	Quaternion<TScalar>::operator DirectX::XMINT4() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
 	TScalar Quaternion<TScalar>::operator[](size_t index) const noexcept
 	{
 		ASSERT_FMT(index < 4, "index가 유효 범위(0~3)를 벗어났습니다.");

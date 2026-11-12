@@ -2,7 +2,7 @@
 
 #include "Framework/Core.hpp"
 #include "Framework/Platform.hpp"
-#include "Framework/GameObjects.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 

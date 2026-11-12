@@ -42,6 +42,28 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	Vector2D<TScalar>::Vector2D(DirectX::XMVECTOR vector) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{})
+	{
+		Store(*this, vector);
+	}
+
+	template <Scalarable TScalar>
+	Vector2D<TScalar>::Vector2D(const DirectX::XMFLOAT2& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Vector2D<TScalar>::Vector2D(const DirectX::XMINT2& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
 	Vector2D<TScalar>::operator Vector3D<TScalar>() const noexcept
 	{
 		return Vector3D<TScalar>(GetX(), GetY(), TScalar{});
@@ -51,6 +73,27 @@ namespace TUK::Framework
 	Vector2D<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
 		return Vector4D<TScalar>(GetX(), GetY(), TScalar{}, TScalar{});
+	}
+
+	template <Scalarable TScalar>
+	Vector2D<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Vector2D<TScalar>::operator DirectX::XMFLOAT2() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	Vector2D<TScalar>::operator DirectX::XMINT2() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>

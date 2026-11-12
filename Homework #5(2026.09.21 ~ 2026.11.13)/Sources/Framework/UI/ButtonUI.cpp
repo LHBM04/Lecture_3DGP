@@ -3,14 +3,14 @@
 
 #include "../Core/App.hpp"
 
-#include "../GameObjects/GameObject.hpp"
-#include "../GameObjects/Transform.hpp"
-#include "../GameObjects/Scene.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
+#include "../Objects/Scene.hpp"
 
 #include "../Graphics/Camera.hpp"
 #ifdef _DEBUG
 #include "../Graphics/GPUCommandBuffer.hpp"
-#include "../Graphics/ShaderConstants.hpp"
+#include "../Graphics/GPUConstants.hpp"
 #endif
 
 #include "../Platform/Display.hpp"
@@ -58,9 +58,8 @@ namespace TUK::Framework
 				return false;
 			}
 
-			DirectX::XMFLOAT4X4 world;
-			DirectX::XMStoreFloat4x4(&world, Matrix4x4<f32>::Load(transform->GetWorldMatrix()));
-			const f32 determinant = world._11 * world._22 - world._12 * world._21;
+			const Matrix4x4<f32> world = transform->GetWorldMatrix();
+			const f32 determinant = world[0] * world[5] - world[1] * world[4];
 			constexpr f32 MIN_DETERMINANT = 1.0e-6f;
 			if (!std::isfinite(determinant) || std::abs(determinant) <= MIN_DETERMINANT)
 			{
@@ -68,10 +67,10 @@ namespace TUK::Framework
 			}
 
 			// ImageUI transforms a centered unit quad and uses only the resulting XY coordinates.
-			const f32 offsetX = x - viewport.Width * 0.5f - world._41;
-			const f32 offsetY = y - viewport.Height * 0.5f - world._42;
-			const f32 localX = (offsetX * world._22 - offsetY * world._21) / determinant;
-			const f32 localY = (world._11 * offsetY - world._12 * offsetX) / determinant;
+			const f32 offsetX = x - viewport.Width * 0.5f - world[12];
+			const f32 offsetY = y - viewport.Height * 0.5f - world[13];
+			const f32 localX = (offsetX * world[5] - offsetY * world[4]) / determinant;
+			const f32 localY = (world[0] * offsetY - world[1] * offsetX) / determinant;
 			return std::abs(localX) <= 0.5f && std::abs(localY) <= 0.5f;
 		}
 	}
@@ -156,21 +155,23 @@ namespace TUK::Framework
 			return;
 		}
 
-		ObjectConstants objectConstants{};
-		DirectX::XMStoreFloat4x4(&objectConstants.world, Matrix4x4<f32>::Load(transform->GetWorldMatrix()));
+		const ObjectConstants objectConstants
+		{
+			.world = transform->GetWorldMatrix()
+		};
 		if (auto result = commandBuffer.SetGraphicsConstants(objectConstants); !result)
 		{
 			return;
 		}
 
 		const D3D12_VIEWPORT& viewport = commandBuffer.GetActiveViewport();
-		const DirectX::XMFLOAT2 viewportSize = (viewport.Width > 0.0f && viewport.Height > 0.0f)
-			? DirectX::XMFLOAT2{ viewport.Width, viewport.Height }
-			: DirectX::XMFLOAT2{ 1280.0f, 960.0f };
+		const Vector2D<f32> viewportSize = (viewport.Width > 0.0f && viewport.Height > 0.0f)
+			? Vector2D<f32>{ viewport.Width, viewport.Height }
+			: Vector2D<f32>{ 1280.0f, 960.0f };
 
-		const DirectX::XMFLOAT4 debugColor = isPressed
-			? DirectX::XMFLOAT4{ 1.0f, 0.0f, 0.0f, 1.0f }
-			: (isHovered ? DirectX::XMFLOAT4{ 1.0f, 1.0f, 0.0f, 1.0f } : DirectX::XMFLOAT4{ 0.0f, 1.0f, 0.0f, 1.0f });
+		const ColorRGBA<f32> debugColor = isPressed
+			? ColorRGBA<f32>::GetRed()
+			: (isHovered ? ColorRGBA<f32>::GetYellow() : ColorRGBA<f32>::GetGreen());
 
 		const ImageUIConstants constants
 		{

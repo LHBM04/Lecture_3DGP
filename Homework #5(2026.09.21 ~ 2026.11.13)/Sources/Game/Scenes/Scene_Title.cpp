@@ -73,20 +73,40 @@ namespace TUK::Game
 		}
 		// 타이틀 로고 세팅
 		{
-			GameObject* logoGameObject = Instantiate();
-			logoGameObject->SetName("Title Logo");
+			// 로고 세팅
+			{
+				GameObject* logoGameObject = Instantiate();
+				logoGameObject->SetName("Title Logo");
 
-			Transform* logoTransform = logoGameObject->AddComponent<Transform>();
-			logoTransform->SetLocalPosition({ 0.0f, -200.0f, 0.0f });
-			logoTransform->SetLocalRotation({ 0.0f, 0.0f, 0.0f, 1.0f });
-			logoTransform->SetLocalScale({ 780.0f, 80.0f, 1.0f });
+				Transform* logoTransform = logoGameObject->AddComponent<Transform>();
+				logoTransform->SetLocalPosition({ 0.0f, -200.0f, 0.0f });
+				logoTransform->SetLocalRotation({ 0.0f, 0.0f, 0.0f, 1.0f });
+				logoTransform->SetLocalScale({ 780.0f, 80.0f, 1.0f });
 
-			TextView* titleText = logoGameObject->AddComponent<TextView>();
-			titleText->SetTexture(Assets::LoadAsset<TextureAsset>("Resources/Fonts/BMDOHYEON_ttf_0.dds"));
-			titleText->SetFont(Assets::LoadAsset<BitmapFontAsset>("Resources/Fonts/BMDOHYEON_ttf.tukfont"));
-			titleText->SetMaterial(Assets::LoadAsset<MaterialAsset>("Resources/Materials/TextUI.tukmat"));
-			titleText->SetText("3D GAME PROGRAMMING");
-			titleText->SetFontSize(64.0f);
+				TextView* titleText = logoGameObject->AddComponent<TextView>();
+				titleText->SetTexture(Assets::LoadAsset<TextureAsset>("Resources/Fonts/BMDOHYEON_ttf_0.dds"));
+				titleText->SetFont(Assets::LoadAsset<BitmapFontAsset>("Resources/Fonts/BMDOHYEON_ttf.tukfont"));
+				titleText->SetMaterial(Assets::LoadAsset<MaterialAsset>("Resources/Materials/TextUI.tukmat"));
+				titleText->SetText("3D GAME PROGRAMMING");
+				titleText->SetFontSize(64.0f);
+			}
+			// 부제 세팅
+			{
+				GameObject* subtitleGameObject = Instantiate();
+				subtitleGameObject->SetName("Title Subtitle");
+
+				Transform* subtitleTransform = subtitleGameObject->AddComponent<Transform>();
+				subtitleTransform->SetLocalPosition({ 270.0f, -140.0f, 0.0f });
+				subtitleTransform->SetLocalRotation({ 0.0f, 0.0f, 0.0f, 1.0f });
+				subtitleTransform->SetLocalScale({ 240.0f, 40.0f, 1.0f });
+
+				TextView* subtitleText = subtitleGameObject->AddComponent<TextView>();
+				subtitleText->SetTexture(Assets::LoadAsset<TextureAsset>("Resources/Fonts/BMDOHYEON_ttf_0.dds"));
+				subtitleText->SetFont(Assets::LoadAsset<BitmapFontAsset>("Resources/Fonts/BMDOHYEON_ttf.tukfont"));
+				subtitleText->SetMaterial(Assets::LoadAsset<MaterialAsset>("Resources/Materials/TextUI.tukmat"));
+				subtitleText->SetText("1st Homework");
+				subtitleText->SetFontSize(32.0f);
+			}
 		}
 		// 시작 버튼 세팅
 		{

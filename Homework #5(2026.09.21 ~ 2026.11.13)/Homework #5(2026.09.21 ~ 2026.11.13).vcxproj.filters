@@ -16,7 +16,7 @@
     <Filter Include="Sources\Framework\Core">
       <UniqueIdentifier>{5EA6E942-B2E7-4D2A-898A-054D4397724A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Framework\GameObjects">
+    <Filter Include="Sources\Framework\Objects">
       <UniqueIdentifier>{F9AA077E-A280-4C23-B731-C8F3986E182F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Framework\Resources">
@@ -105,26 +105,29 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Graphics\GPUConstants.hpp">
+      <Filter>Sources\Framework\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\MeshVertex.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\ShaderConstants.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
+    <ClInclude Include="Sources\Framework\Objects\Component.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\GameObjects\Component.hpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClInclude Include="Sources\Framework\Objects\GameObject.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\GameObjects\GameObject.hpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClInclude Include="Sources\Framework\Objects\Transform.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\GameObjects\Transform.hpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClInclude Include="Sources\Framework\Objects\Scene.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\GameObjects\Scene.hpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClInclude Include="Sources\Framework\Objects\SceneSubsystem.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Framework\GameObjects\SceneSubsystem.hpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClInclude Include="Sources\Framework\Objects\Terrain.hpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Math.hpp">
       <Filter>Sources\Framework</Filter>
@@ -201,6 +204,12 @@
     <ClInclude Include="Sources\Framework\Resources\ShaderAssetImporter.hpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\TerrainAsset.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Resources\TerrainAssetImporter.hpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Precompiled.hpp">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -234,10 +243,7 @@
     <ClInclude Include="Sources\Framework\Platform\TimeSubsystem.hpp">
       <Filter>Sources\Framework\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Game\Scenes\Scene_Stage.hpp">
-      <Filter>Sources\Game\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\GameObjects.hpp">
+    <ClInclude Include="Sources\Framework\Objects.hpp">
       <Filter>Sources\Framework</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Resources.hpp">
@@ -259,9 +265,6 @@
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUSwapChain.hpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Graphics\GPUTexture2D.hpp">
@@ -333,6 +336,15 @@
     <ClInclude Include="Sources\Game\Core\Assets.hpp">
       <Filter>Sources\Game\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Game\Components\PlayerAirplaneController.hpp">
+      <Filter>Sources\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Scenes\Scene_LevelAirplane.hpp">
+      <Filter>Sources\Game\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Scenes\Scene_LevelTank.hpp">
+      <Filter>Sources\Game\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Resources\BitmapFontAssetImporter.cpp">
@@ -356,29 +368,23 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
+    <ClCompile Include="Sources\Framework\Objects\GameObject.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp">
-      <Filter>Sources\Framework\Graphics</Filter>
+    <ClCompile Include="Sources\Framework\Objects\Transform.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\GameObjects\GameObject.cpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClCompile Include="Sources\Framework\Objects\Scene.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\GameObjects\Transform.cpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClCompile Include="Sources\Framework\Objects\SceneSubsystem.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Framework\GameObjects\Scene.cpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Framework\GameObjects\SceneSubsystem.cpp">
-      <Filter>Sources\Framework\GameObjects</Filter>
+    <ClCompile Include="Sources\Framework\Objects\Terrain.cpp">
+      <Filter>Sources\Framework\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp">
       <Filter>Sources\Framework\Math</Filter>
@@ -443,6 +449,12 @@
     <ClCompile Include="Sources\Framework\Resources\ShaderAssetImporter.cpp">
       <Filter>Sources\Framework\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\TerrainAsset.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Resources\TerrainAssetImporter.cpp">
+      <Filter>Sources\Framework\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Sources\Game\Main.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
@@ -457,9 +469,6 @@
     </ClCompile>
     <ClCompile Include="Sources\Framework\Platform\TimeSubsystem.cpp">
       <Filter>Sources\Framework\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Game\Scenes\Scene_Stage.cpp">
-      <Filter>Sources\Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Graphics\RenderSubsystem.cpp">
       <Filter>Sources\Framework\Graphics</Filter>
@@ -527,6 +536,15 @@
     <ClCompile Include="Sources\Game\Core\Assets.cpp">
       <Filter>Sources\Game\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Game\Components\PlayerAirplaneController.cpp">
+      <Filter>Sources\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Scenes\Scene_LevelAirplane.cpp">
+      <Filter>Sources\Game\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Scenes\Scene_LevelTank.cpp">
+      <Filter>Sources\Game\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\Homework #5(2026.09.21 ~ 2026.11.13).rc">
@@ -551,7 +569,7 @@
     <CustomBuild Include="Resources\Shaders\ImageUI.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Resources\Shaders\WorldTransition.hlsl">
+    <CustomBuild Include="Resources\Shaders\SceneTransition.hlsl">
       <Filter>Resources\Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Resources\Shaders\TextUI.hlsl">
@@ -855,6 +873,9 @@
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\T_34_76(1942).tukmat">
+      <Filter>Resources\Materials</Filter>
+    </None>
+    <None Include="Resources\Materials\Terrain.tukmat">
       <Filter>Resources\Materials</Filter>
     </None>
     <None Include="Resources\Materials\Track.tukmat">
@@ -4126,6 +4147,12 @@
     </None>
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Normal.dds">
       <Filter>Resources\Textures\Vickers_Mk_E_Type_B</Filter>
+    </None>
+    <None Include="Resources\Terrains\HeightMap0.raw">
+      <Filter>Resources\Terrains</Filter>
+    </None>
+    <None Include="Resources\Terrains\HeightMap1.raw">
+      <Filter>Resources\Terrains</Filter>
     </None>
   </ItemGroup>
 </Project>

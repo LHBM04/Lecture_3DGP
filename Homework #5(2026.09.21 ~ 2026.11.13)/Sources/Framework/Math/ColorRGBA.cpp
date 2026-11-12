@@ -55,6 +55,28 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(DirectX::XMVECTOR vector) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(TScalar{}, TScalar{}, TScalar{}, TScalar{})
+	{
+		Store(*this, vector);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const DirectX::XMFLOAT4& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::ColorRGBA(const DirectX::XMINT4& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
 	ColorRGBA<TScalar>& ColorRGBA<TScalar>::operator=(const Vector4D<TScalar>& other) noexcept
 	{
 		value.x = other.GetX();
@@ -68,6 +90,27 @@ namespace TUK::Framework
 	ColorRGBA<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
 		return Vector4D<TScalar>(value.x, value.y, value.z, value.w);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::operator DirectX::XMFLOAT4() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	ColorRGBA<TScalar>::operator DirectX::XMINT4() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>

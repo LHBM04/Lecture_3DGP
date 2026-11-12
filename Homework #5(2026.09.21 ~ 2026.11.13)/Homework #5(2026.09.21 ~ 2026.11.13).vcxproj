@@ -208,14 +208,13 @@
     <ClInclude Include="Sources\Framework\Resources\BitmapFontAssetImporter.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AnimationAsset.hpp" />
     <ClInclude Include="Sources\Framework\Resources\AnimationAssetImporter.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\Component.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\GameObject.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\Transform.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\Scene.hpp" />
-    <ClInclude Include="Sources\Framework\GameObjects\SceneSubsystem.hpp" />
+    <ClInclude Include="Sources\Framework\Objects.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Component.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\GameObject.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Transform.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Scene.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\SceneSubsystem.hpp" />
     <ClInclude Include="Sources\Framework\Resources\ResourcePath.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\GPUSampler.hpp" />
     <ClInclude Include="Sources\Framework\Resources.hpp" />
     <ClInclude Include="Sources\Framework\Core.hpp" />
     <ClInclude Include="Sources\Framework\Core\App.hpp" />
@@ -241,8 +240,8 @@
     <ClInclude Include="Sources\Framework\Graphics\GPUGraphicsPipelineState.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUMesh.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\GPUShader.hpp" />
+    <ClInclude Include="Sources\Framework\Graphics\GPUConstants.hpp" />
     <ClInclude Include="Sources\Framework\Graphics\MeshVertex.hpp" />
-    <ClInclude Include="Sources\Framework\Graphics\ShaderConstants.hpp" />
     <ClInclude Include="Sources\Framework\Math.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGB.hpp" />
     <ClInclude Include="Sources\Framework\Math\ColorRGBA.hpp" />
@@ -300,15 +299,18 @@
     <ClInclude Include="Sources\Game\Scenes\Scene_Title.hpp" />
     <ClInclude Include="Sources\Resource.hpp" />
     <ClInclude Include="Sources\Precompiled.hpp" />
+    <ClInclude Include="Sources\Framework\Objects\Terrain.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\TerrainAsset.hpp" />
+    <ClInclude Include="Sources\Framework\Resources\TerrainAssetImporter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\Resources\BitmapFontAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\Resources\AnimationAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\Core\App.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\GameObject.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\Transform.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\Scene.cpp" />
-    <ClCompile Include="Sources\Framework\GameObjects\SceneSubsystem.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\GameObject.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\Transform.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\Scene.cpp" />
+    <ClCompile Include="Sources\Framework\Objects\SceneSubsystem.cpp" />
     <ClCompile Include="Sources\Framework\Resources\TextureAsset.cpp" />
     <ClCompile Include="Sources\Framework\Resources\TextureAssetImporter.cpp" />
     <ClCompile Include="Sources\Framework\Resources\CubemapAssetImporter.cpp" />
@@ -324,8 +326,6 @@
     <ClCompile Include="Sources\Framework\Graphics\GPUBuffer.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUFence.cpp" />
     <ClCompile Include="Sources\Framework\Graphics\GPUMesh.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUSampler.cpp" />
-    <ClCompile Include="Sources\Framework\Graphics\GPUShader.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGB.cpp" />
     <ClCompile Include="Sources\Framework\Math\ColorRGBA.cpp" />
     <ClCompile Include="Sources\Framework\Math\Matrix4x4.cpp" />
@@ -372,6 +372,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Framework\Objects\Terrain.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\TerrainAsset.cpp" />
+    <ClCompile Include="Sources\Framework\Resources\TerrainAssetImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\Homework #5(2026.09.21 ~ 2026.11.13).rc" />
@@ -387,7 +390,7 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <RuntimeResource Include="Resources\Models\**\*.tukmodel;Resources\Meshes\**\*.tukmesh;Resources\Materials\**\*.tukmat;Resources\Textures\**\*.dds;Resources\Fonts\**\*.tukfont;Resources\Fonts\**\*.dds;Resources\Animations\**\*.tukanim;Resources\Cubemaps\**\*.dds" />
+    <RuntimeResource Include="Resources\Models\**\*.tukmodel;Resources\Meshes\**\*.tukmesh;Resources\Materials\**\*.tukmat;Resources\Textures\**\*.dds;Resources\Fonts\**\*.tukfont;Resources\Fonts\**\*.dds;Resources\Animations\**\*.tukanim;Resources\Cubemaps\**\*.dds;Resources\Terrains\**\*.raw;Resources\Terrains\**\*.meta" />
   </ItemGroup>
   <Target Name="CopyRuntimeResources" AfterTargets="Build">
     <Copy SourceFiles="@(RuntimeResource)" DestinationFiles="@(RuntimeResource->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />
@@ -424,7 +427,7 @@
       <Message>Compiling %(Filename)%(Extension)</Message>
       <Outputs>$(OutDir)Resources\Shaders\%(Filename).vert.cso;$(OutDir)Resources\Shaders\%(Filename).frag.cso;$(OutDir)Resources\Shaders\%(Filename).meta</Outputs>
     </CustomBuild>
-    <CustomBuild Include="Resources\Shaders\WorldTransition.hlsl">
+    <CustomBuild Include="Resources\Shaders\SceneTransition.hlsl">
       <FileType>Document</FileType>
       <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$src = '%(FullPath)'; $outDir = '$(OutDir)Resources\Shaders'; $dxc = '$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxc.exe'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $stages = @{ vertex = @{ profile = 'vs_6_0'; ext = 'vert' }; pixel = @{ profile = 'ps_6_0'; ext = 'frag' } }; $meta = @(); Get-Content $src | ForEach-Object { if ($_ -match '^#pragma\s+(vertex|pixel)\s+(\S+)') { $s = $stages[$Matches[1]]; &amp; $dxc -nologo -T $s.profile -E $Matches[2] $src -Fo (Join-Path $outDir ('%(Filename).' + $s.ext + '.cso')); if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } elseif ($_ -match '^\s*//\s*@(\w+)\s+(\S+)') { $meta += ($Matches[1] + '=' + $Matches[2]) } }; [System.IO.File]::WriteAllLines((Join-Path $outDir ('%(Filename).meta')), [string[]]$meta, [System.Text.UTF8Encoding]::new($false))"</Command>
       <Message>Compiling %(Filename)%(Extension)</Message>
@@ -489,6 +492,7 @@
     <None Include="Resources\Materials\SOMUA_S35.tukmat" />
     <None Include="Resources\Materials\T_28_85.tukmat" />
     <None Include="Resources\Materials\T_34_76(1942).tukmat" />
+    <None Include="Resources\Materials\Terrain.tukmat" />
     <None Include="Resources\Materials\Track.tukmat" />
     <None Include="Resources\Materials\Vickers_MK_E_Type_B.tukmat" />
     <None Include="Resources\Meshes\Carro_Armato_L6_40\Carro_Armato_L6_40_Gun.tukmesh" />
@@ -1579,5 +1583,7 @@
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_AO.dds" />
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Metallic.dds" />
     <None Include="Resources\Textures\Vickers_Mk_E_Type_B\Vickers_Mk_E_Type_B_Normal.dds" />
+    <None Include="Resources\Terrains\HeightMap0.raw" />
+    <None Include="Resources\Terrains\HeightMap1.raw" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Framework/Core.hpp"
-#include "Framework/GameObjects.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Platform.hpp"
 
 namespace TUK::Game
@@ -10,9 +10,9 @@ namespace TUK::Game
 
 	class PlayerTankController : public Component
 	{
+	public:
 		using Component::Component;
 
-	public:
 		void OnStart() override;
 		void OnDestroy() override;
 

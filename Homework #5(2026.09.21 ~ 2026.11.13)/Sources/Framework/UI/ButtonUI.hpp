@@ -2,7 +2,7 @@
 
 #include "../Core/Common.hpp"
 
-#include "../GameObjects/Component.hpp"
+#include "../Objects/Component.hpp"
 
 namespace TUK::Framework
 {

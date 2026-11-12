@@ -19,8 +19,16 @@ namespace TUK::Framework
 		Quaternion(const Quaternion& other) noexcept = default;
 		Quaternion(Quaternion&& other) noexcept = default;
 
+		explicit Quaternion(DirectX::XMVECTOR quaternion) noexcept requires std::same_as<TScalar, f32>;
+		explicit Quaternion(const DirectX::XMFLOAT4& source) noexcept requires std::same_as<TScalar, f32>;
+		explicit Quaternion(const DirectX::XMINT4& source) noexcept requires std::same_as<TScalar, i32>;
+
 		Quaternion& operator=(const Quaternion& other) noexcept = default;
 		Quaternion& operator=(Quaternion&& other) noexcept = default;
+
+		[[nodiscard]] operator DirectX::XMVECTOR() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT4() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMINT4() const noexcept requires std::same_as<TScalar, i32>;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;

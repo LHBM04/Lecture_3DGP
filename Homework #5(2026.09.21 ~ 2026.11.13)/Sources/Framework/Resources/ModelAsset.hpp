@@ -14,12 +14,6 @@ namespace TUK::Framework
 
 	struct Submodel final
 	{
-		struct RenderPart final
-		{
-			const MeshAsset* mesh = nullptr;
-			const MaterialAsset* material = nullptr;
-		};
-
 		i32 parentIndex = -1;
 		std::string name;
 
@@ -27,7 +21,8 @@ namespace TUK::Framework
 		Quaternion<f32> localRotation{ 0.0f, 0.0f, 0.0f, 1.0f };
 		Vector3D<f32> localScale{ 1.0f, 1.0f, 1.0f };
 
-		std::vector<RenderPart> renderParts;
+		const MeshAsset* mesh = nullptr;
+		const MaterialAsset* material = nullptr;
 	};
 
 	class ModelAsset final : public Asset

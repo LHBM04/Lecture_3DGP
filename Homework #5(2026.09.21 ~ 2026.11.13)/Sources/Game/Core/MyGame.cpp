@@ -2,7 +2,7 @@
 #include "MyGame.hpp"
 
 #include "Framework/Core.hpp"
-#include "Framework/GameObjects/SceneSubsystem.hpp"
+#include "Framework/Objects/SceneSubsystem.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Platform.hpp"
 #include "Framework/Resources.hpp"
@@ -167,6 +167,7 @@ namespace TUK::Game
 		subsystem->AddImporter<ShaderAssetImporter>();
 		subsystem->AddImporter<BitmapFontAssetImporter>();
 		subsystem->AddImporter<AnimationAssetImporter>();
+		subsystem->AddImporter<TerrainAssetImporter>(device);
 
 		Assets::Initialize(subsystem);
 	}

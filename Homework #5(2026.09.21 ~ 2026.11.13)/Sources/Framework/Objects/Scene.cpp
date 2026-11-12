@@ -5,7 +5,7 @@
 #include "../Graphics/GPUCommandBuffer.hpp"
 #include "../Graphics/GPUTarget.hpp"
 #include "../Graphics/MeshRenderer.hpp"
-#include "../Graphics/ShaderConstants.hpp"
+#include "../Graphics/GPUConstants.hpp"
 
 #include "../Resources/ModelAsset.hpp"
 
@@ -158,9 +158,11 @@ namespace TUK::Framework
 					continue;
 				}
 
-				CameraConstants constants{};
-				DirectX::XMStoreFloat4x4(&constants.view, Matrix4x4<f32>::Load(activeCamera->GetViewMatrix()));
-				DirectX::XMStoreFloat4x4(&constants.projection, Matrix4x4<f32>::Load(activeCamera->GetProjectionMatrix()));
+				const CameraConstants constants
+				{
+					.view = activeCamera->GetViewMatrix(),
+					.projection = activeCamera->GetProjectionMatrix()
+				};
 				if (auto uploaded = commandBuffer.SetGraphicsConstants(constants); !uploaded)
 				{
 					LOG_ERROR("월드의 카메라 상수 설정에 실패했습니다: {}", uploaded.error());
@@ -334,13 +336,10 @@ namespace TUK::Framework
 
 		for (const Submodel& submodel : submodels)
 		{
-			for (const Submodel::RenderPart& part : submodel.renderParts)
+			if ((submodel.mesh != nullptr) != (submodel.material != nullptr))
 			{
-				if (!part.mesh || !part.material)
-				{
-					LOG_ERROR("모델의 렌더 파트가 유효하지 않습니다: {}", model.GetName());
-					return nullptr;
-				}
+				LOG_ERROR("모델 노드의 메시와 머티리얼은 함께 지정해야 합니다: {}", submodel.name);
+				return nullptr;
 			}
 		}
 
@@ -367,12 +366,11 @@ namespace TUK::Framework
 			transform->SetLocalRotation(node.localRotation);
 			transform->SetLocalScale(node.localScale);
 
-			for (const Submodel::RenderPart& part : node.renderParts)
+			if (node.mesh && node.material)
 			{
-				GameObject* partGameObject = Instantiate(transform);
-				MeshRenderer* renderer = partGameObject->AddComponent<MeshRenderer>();
-				renderer->SetMesh(part.mesh);
-				renderer->SetMaterial(part.material);
+				MeshRenderer* renderer = gameObject->AddComponent<MeshRenderer>();
+				renderer->SetMesh(node.mesh);
+				renderer->SetMaterial(node.material);
 			}
 
 			nodeObjects[index] = gameObject;

@@ -3,13 +3,13 @@
 
 #include "../Core/Common.hpp"
 
-#include "../GameObjects/GameObject.hpp"
-#include "../GameObjects/Transform.hpp"
+#include "../Objects/GameObject.hpp"
+#include "../Objects/Transform.hpp"
 
 #include "../Graphics/GPUCommandBuffer.hpp"
+#include "../Graphics/GPUConstants.hpp"
 #include "../Graphics/GPUDevice.hpp"
 #include "../Graphics/GPUTarget.hpp"
-#include "../Graphics/ShaderConstants.hpp"
 
 #include "../Resources/MaterialAsset.hpp"
 #include "../Resources/ShaderAsset.hpp"
@@ -31,8 +31,10 @@ namespace TUK::Framework
 			return;
 		}
 
-		ObjectConstants objectConstants{};
-		DirectX::XMStoreFloat4x4(&objectConstants.world, Matrix4x4<f32>::Load(transform->GetWorldMatrix()));
+		const ObjectConstants objectConstants
+		{
+			.world = transform->GetWorldMatrix()
+		};
 
 		if (auto result = commandBuffer.SetGraphicsConstants(objectConstants); !result)
 		{
@@ -42,8 +44,8 @@ namespace TUK::Framework
 
 		const ImageUIConstants constants
 		{
-			.viewportSize = { 1280.0f, 960.0f },
-			.color = { color.GetR(), color.GetG(), color.GetB(), color.GetA() }
+			.viewportSize = Vector2D<f32>{ 1280.0f, 960.0f },
+			.color = color
 		};
 		if (auto result = commandBuffer.SetGraphicsConstants(constants); !result)
 		{

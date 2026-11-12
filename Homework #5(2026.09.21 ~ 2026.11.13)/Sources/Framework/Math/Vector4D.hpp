@@ -25,12 +25,18 @@ namespace TUK::Framework
 
 		explicit Vector4D(const Vector2D<TScalar>& vector, TScalar z = TScalar{}, TScalar w = TScalar{}) noexcept;
 		explicit Vector4D(const Vector3D<TScalar>& vector, TScalar w = TScalar{}) noexcept;
+		explicit Vector4D(DirectX::XMVECTOR vector) noexcept requires std::same_as<TScalar, f32>;
+		explicit Vector4D(const DirectX::XMFLOAT4& source) noexcept requires std::same_as<TScalar, f32>;
+		explicit Vector4D(const DirectX::XMINT4& source) noexcept requires std::same_as<TScalar, i32>;
 
 		Vector4D& operator=(const Vector4D& other) noexcept = default;
 		Vector4D& operator=(Vector4D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector2D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector3D<TScalar>() const noexcept;
+		[[nodiscard]] operator DirectX::XMVECTOR() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT4() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMINT4() const noexcept requires std::same_as<TScalar, i32>;
 
 		[[nodiscard]] TScalar operator[](std::size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](std::size_t index) noexcept;

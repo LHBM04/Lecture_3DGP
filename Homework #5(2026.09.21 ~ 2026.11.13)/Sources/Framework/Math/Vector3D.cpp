@@ -50,6 +50,20 @@ namespace TUK::Framework
 	}
 
 	template <Scalarable TScalar>
+	Vector3D<TScalar>::Vector3D(const DirectX::XMFLOAT3& source) noexcept
+		requires std::same_as<TScalar, f32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::Vector3D(const DirectX::XMINT3& source) noexcept
+		requires std::same_as<TScalar, i32>
+		: value(source)
+	{
+	}
+
+	template <Scalarable TScalar>
 	Vector3D<TScalar>::operator Vector2D<TScalar>() const noexcept
 	{
 		return Vector2D<TScalar>(GetX(), GetY());
@@ -59,6 +73,27 @@ namespace TUK::Framework
 	Vector3D<TScalar>::operator Vector4D<TScalar>() const noexcept
 	{
 		return Vector4D<TScalar>(GetX(), GetY(), GetZ(), TScalar{});
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::operator DirectX::XMVECTOR() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return Load(*this);
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::operator DirectX::XMFLOAT3() const noexcept
+		requires std::same_as<TScalar, f32>
+	{
+		return value;
+	}
+
+	template <Scalarable TScalar>
+	Vector3D<TScalar>::operator DirectX::XMINT3() const noexcept
+		requires std::same_as<TScalar, i32>
+	{
+		return value;
 	}
 
 	template <Scalarable TScalar>

@@ -2,14 +2,18 @@
 
 #include "../Core/Common.hpp"
 
+#include "../Math/ColorRGBA.hpp"
+#include "../Math/Vector2D.hpp"
+#include "../Math/Vector3D.hpp"
+
 namespace TUK::Framework
 {
 	struct MeshVertex final
 	{
-		DirectX::XMFLOAT3 position{};
-		DirectX::XMFLOAT3 normal{};
-		DirectX::XMFLOAT4 color{};
-		DirectX::XMFLOAT2 textureCoordinate{};
+		Vector3D<f32> position{};
+		Vector3D<f32> normal{};
+		ColorRGBA<f32> color{};
+		Vector2D<f32> textureCoordinate{};
 	};
 
 	inline constexpr std::array<D3D12_INPUT_ELEMENT_DESC, 4> MESH_VERTEX_INPUT_ELEMENTS

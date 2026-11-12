@@ -2,7 +2,7 @@
 #include "Scene_LevelTank.hpp"
 
 #include "Framework/Core.hpp"
-#include "Framework/GameObjects.hpp"
+#include "Framework/Objects.hpp"
 #include "Framework/Graphics.hpp"
 #include "Framework/Resources.hpp"
 
@@ -19,6 +19,29 @@ namespace TUK::Game
 {
 	void Scene_LevelTank::OnEnter()
 	{
+		// 터레인 세팅
+		Terrain* terrain = nullptr;
+		{
+			GameObject* terrainGameObject = Instantiate();
+			terrainGameObject->SetName("Terrain");
+			terrainGameObject->SetTag("Terrain");
+
+			Transform* terrainTransform = terrainGameObject->AddComponent<Transform>();
+			terrainTransform->SetLocalPosition(Vector3D<f32>::GetZero());
+			terrainTransform->SetLocalRotation({});
+			terrainTransform->SetLocalScale(Vector3D<f32>::GetOne());
+
+			terrain = terrainGameObject->AddComponent<Terrain>();
+			terrain->SetTerrain(Assets::LoadAsset<TerrainAsset>("Resources/Terrains/HeightMap0.raw"));
+
+			MeshRenderer* terrainRenderer = terrainGameObject->AddComponent<MeshRenderer>();
+			terrainRenderer->SetMaterial(Assets::LoadAsset<MaterialAsset>("Resources/Materials/Terrain.tukmat"));
+		}
+
+		const f32 terrainHeight = (terrain && terrain->IsValid())
+			? terrain->SampleHeightAtWorldPosition(Vector3D<f32>::GetZero())
+			: 0.0f;
+
 		// 카메라 세팅
 		{
 			GameObject* cameraGameObject = Instantiate();
@@ -27,7 +50,7 @@ namespace TUK::Game
 
 			Transform* cameraTransform = cameraGameObject->AddComponent<Transform>();
 			cameraTransform->SetLocalRotation(Quaternion<f32>{});
-			cameraTransform->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, -10.0f));
+			cameraTransform->SetLocalPosition(Vector3D<f32>(0.0f, terrainHeight + 3.0f, -10.0f));
 
 			const DisplaySubsystem* displays = Engine::GetInstance().GetSubsystem<DisplaySubsystem>();
 			ASSERT_FMT(displays, "디스플레이 서브시스템을 가져오지 못했습니다.");
@@ -60,7 +83,7 @@ namespace TUK::Game
 			playerObject->SetTag("Player");
 
 			Transform* playerTransform = playerObject->AddComponent<Transform>();
-			playerTransform->SetLocalPosition(Vector3D<f32>(0.0f, 0.0f, 0.0f));
+			playerTransform->SetLocalPosition(Vector3D<f32>(0.0f, terrainHeight, 0.0f));
 			playerTransform->SetLocalRotation(Quaternion<f32>{});
 			playerTransform->SetLocalScale(Vector3D<f32>(1.0f, 1.0f, 1.0f));
 

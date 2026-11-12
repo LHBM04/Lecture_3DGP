@@ -38,27 +38,27 @@ namespace TUK::Framework
 		[[nodiscard]] std::expected<void, std::string> Reset();
 		[[nodiscard]] std::expected<void, std::string> Submit();
 
-		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
-			u32 rootSlot, std::span<const std::byte> bytes);
 		template <typename T>
-		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
-			u32 rootSlot, const T& constants);
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(u32 rootSlot, const T& constants);
+		
 		template <typename T>
-		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(
-			const T& constants);
-		void SetGraphicsRootConstants(
-			u32 rootSlot, std::span<const std::byte> bytes, u32 offset = 0) noexcept;
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(const T& constants);
+
+		[[nodiscard]] std::expected<void, std::string> SetGraphicsConstants(u32 rootSlot, std::span<const std::byte> bytes);
+		
+		void SetGraphicsRootConstants(u32 rootSlot, std::span<const std::byte> bytes, u32 offset = 0) noexcept;
+		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
 
 		[[nodiscard]] std::expected<void, std::string> BindTextures(
 			std::span<const GPUTexture2D* const, TEXTURE_SLOT_COUNT> textures,
 			const D3D12_SHADER_RESOURCE_VIEW_DESC* firstView = nullptr);
 
-		void TransitionTexture(
+		void Transition(
 			const GPUTexture2D& texture,
 			D3D12_RESOURCE_STATES stateBefore,
 			D3D12_RESOURCE_STATES stateAfter);
 
-		void TransitionBuffer(
+		void Transition(
 			const GPUBuffer& buffer,
 			D3D12_RESOURCE_STATES stateBefore,
 			D3D12_RESOURCE_STATES stateAfter);
@@ -70,9 +70,8 @@ namespace TUK::Framework
 			u64 sourceOffset,
 			u64 sizeInBytes);
 
-		void SetGPUGraphicsPipelineState(const GPUGraphicsPipelineState& pipelineState) noexcept;
-
 		void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitive) noexcept;
+
 		void SetViewport(const D3D12_VIEWPORT& viewport) noexcept;
 		void SetScissorRect(const D3D12_RECT& scissorRect) noexcept;
 

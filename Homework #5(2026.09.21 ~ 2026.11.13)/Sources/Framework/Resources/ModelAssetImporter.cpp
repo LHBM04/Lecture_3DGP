@@ -68,6 +68,10 @@ namespace TUK::Framework
 			node.localPosition.Set(position[0], position[1], position[2]);
 			node.localRotation.Set(rotation[0], rotation[1], rotation[2], rotation[3]);
 			node.localScale.Set(scale[0], scale[1], scale[2]);
+			if (meshReference.empty() != materialReference.empty())
+			{
+				return std::unexpected("Model mesh and material references must be provided together: " + node.name);
+			}
 			if (!meshReference.empty() && !materialReference.empty())
 			{
 				const auto meshPath = ResolveResourcePath(*root, meshReference);
@@ -76,14 +80,13 @@ namespace TUK::Framework
 				{
 					return std::unexpected("Invalid model resource reference");
 				}
-				const MeshAsset* mesh = assets->LoadAsset<MeshAsset>(*meshPath);
-				const MaterialAsset* material = assets->LoadAsset<MaterialAsset>(*materialPath);
-				if (!mesh || !material)
+				node.mesh = assets->LoadAsset<MeshAsset>(*meshPath);
+				node.material = assets->LoadAsset<MaterialAsset>(*materialPath);
+				if (!node.mesh || !node.material)
 				{
-					return std::unexpected(std::format("Cannot load model render part: {}, {}",
+					return std::unexpected(std::format("Cannot load model resources: {}, {}",
 						meshPath->generic_string(), materialPath->generic_string()));
 				}
-				node.renderParts.push_back({ mesh, material });
 			}
 			const i32 index = static_cast<i32>(nodes.size());
 			nodes.push_back(std::move(node));

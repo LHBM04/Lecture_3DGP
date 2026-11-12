@@ -27,9 +27,16 @@ namespace TUK::Framework
 		explicit ColorRGB(const Vector3D<TScalar>& vector) noexcept;
 		explicit ColorRGB(const Vector4D<TScalar>& vector) noexcept;
 		explicit ColorRGB(const ColorRGBA<TScalar>& color) noexcept;
+		explicit ColorRGB(DirectX::XMVECTOR vector) noexcept requires std::same_as<TScalar, f32>;
+		explicit ColorRGB(const DirectX::XMFLOAT3& source) noexcept requires std::same_as<TScalar, f32>;
+		explicit ColorRGB(const DirectX::XMINT3& source) noexcept requires std::same_as<TScalar, i32>;
 
 		ColorRGB& operator=(const ColorRGB& other) noexcept = default;
 		ColorRGB& operator=(ColorRGB&& other) noexcept = default;
+
+		[[nodiscard]] operator DirectX::XMVECTOR() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT3() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMINT3() const noexcept requires std::same_as<TScalar, i32>;
 
 		[[nodiscard]] bool operator==(const ColorRGB& other) const noexcept;
 		[[nodiscard]] bool operator!=(const ColorRGB& other) const noexcept;

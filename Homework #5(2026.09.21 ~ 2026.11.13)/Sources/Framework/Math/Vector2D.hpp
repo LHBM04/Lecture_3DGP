@@ -25,12 +25,18 @@ namespace TUK::Framework
 
 		explicit Vector2D(const Vector3D<TScalar>& vector) noexcept;
 		explicit Vector2D(const Vector4D<TScalar>& vector) noexcept;
+		explicit Vector2D(DirectX::XMVECTOR vector) noexcept requires std::same_as<TScalar, f32>;
+		explicit Vector2D(const DirectX::XMFLOAT2& source) noexcept requires std::same_as<TScalar, f32>;
+		explicit Vector2D(const DirectX::XMINT2& source) noexcept requires std::same_as<TScalar, i32>;
 
 		Vector2D& operator=(const Vector2D& other) noexcept = default;
 		Vector2D& operator=(Vector2D&& other) noexcept = default;
 
 		[[nodiscard]] operator Vector3D<TScalar>() const noexcept;
 		[[nodiscard]] operator Vector4D<TScalar>() const noexcept;
+		[[nodiscard]] operator DirectX::XMVECTOR() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT2() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMINT2() const noexcept requires std::same_as<TScalar, i32>;
 
 		[[nodiscard]] TScalar operator[](std::size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](std::size_t index) noexcept;

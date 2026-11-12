@@ -29,9 +29,13 @@ namespace TUK::Framework
 		Matrix4x4(Matrix4x4&& other) noexcept = default;
 
 		explicit Matrix4x4(DirectX::XMMATRIX matrix) noexcept requires std::same_as<TScalar, f32>;
+		explicit Matrix4x4(const DirectX::XMFLOAT4X4& source) noexcept requires std::same_as<TScalar, f32>;
 
 		Matrix4x4& operator=(const Matrix4x4& other) noexcept = default;
 		Matrix4x4& operator=(Matrix4x4&& other) noexcept = default;
+
+		[[nodiscard]] operator DirectX::XMMATRIX() const noexcept requires std::same_as<TScalar, f32>;
+		[[nodiscard]] operator DirectX::XMFLOAT4X4() const noexcept requires std::same_as<TScalar, f32>;
 
 		[[nodiscard]] TScalar operator[](size_t index) const noexcept;
 		[[nodiscard]] TScalar& operator[](size_t index) noexcept;
